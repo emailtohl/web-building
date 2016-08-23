@@ -1,0 +1,94 @@
+<section class="content-header">
+  <h1>
+    TEST
+    <small>select2</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+    <li class="active">Here</li>
+  </ol>
+</section>
+
+<section class="content">
+	<div class="row">
+	  <div class="col-md-6">
+	    <div class="form-group">
+	      <label>Minimal</label>
+	      <select class="form-control select2" style="width: 100%;" select2 ng-model="ctrl.strval">
+	        <option value="">请选择</option>
+			<option ng-repeat="x in ctrl.stringList" value="{{x}}">{{x}}</option>
+	      </select>
+	      <br/>
+		  strval: {{ctrl.strval}}
+		  <input type="text" ng-model="ctrl.strval">
+	    </div>
+	    <!-- /.form-group -->
+   	    <div class="form-group">
+	      <label>Multiple</label>
+	      <select class="form-control select2" multiple="multiple" data-placeholder="Select a State" style="width: 100%;" select2 ng-model="ctrl.strvalMultiple">
+	        <option value="">请选择</option>
+	        <option ng-repeat="x in ctrl.stringList" value="{{x}}">{{x}}</option>
+	      </select>
+	      <br/>
+		  strval Multiple: {{ctrl.strvalMultiple}}
+		  <input type="text" ng-model="ctrl.strvalMultiple">
+	    </div>
+	    <!-- /.form-group -->
+	  </div>
+	  <!-- /.col -->
+	  <div class="col-md-6">
+	    <!-- /.form-group -->
+	    <div class="form-group">
+	      <label>选择对象</label>
+	      <select class="form-control select2" style="width: 100%;" select2 id="objList" ng-model="ctrl.objval">
+	        <option value="">请选择</option>
+			<option ng-repeat="x in ctrl.objList" value="{{x}}">{{x.b}}</option>
+	      </select>
+	      <br>
+	      selected : {{ctrl.objval}}
+	    </div>
+	    <!-- /.form-group -->
+   	    <div class="form-group">
+	      <label>多选对象</label>
+	      <select class="form-control select2" select2 multiple="multiple" style="width: 100%;" ng-model="ctrl.objs">
+	        <option value="">请选择</option>
+	        <option ng-repeat="x in ctrl.objList" value="{{x}}">{{x.b}}</option>
+	      </select>
+	      <br>
+	      selected : {{ctrl.objs}}
+	    </div>
+	  </div>
+	  <!-- /.col -->
+	</div>
+
+<!-- 
+
+	TestStringList
+	<select select2 style="width:100%" ng-model="ctrl.strval">
+		<option value="">请选择</option>
+		<option ng-repeat="x in ctrl.stringList" value="{{x}}">{{x}}</option>
+	</select>
+	<br/>
+	strval: {{ctrl.strval}}
+	<input type="text" ng-model="ctrl.strval">
+	<br/>
+	
+	TestStringList multiple
+	<select multiple select2 style="width:100%" ng-model="ctrl.strvalMultiple">
+		<option ng-repeat="x in ctrl.stringList" value="{{x}}">{{x}}</option>
+	</select>
+	<br/>
+	strval Multiple: {{ctrl.strvalMultiple}}
+	<input type="text" ng-model="ctrl.strvalMultiple">
+	<br/>
+		
+	TestObjList
+	<select select2 id="objList" style="width:100%" ng-model="ctrl.objval">
+		<option value="">请选择</option>
+		<option ng-repeat="x in ctrl.objList" value="{{x}}">{{x.b}}</option>
+	</select>
+	<br>
+	selected : {{ctrl.objval}}
+	<br>
+	 -->
+</section>

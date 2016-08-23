@@ -1,0 +1,27 @@
+<section class="content-header">
+  <h1>
+    TEST
+    <small>merge</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+    <li class="active">Here</li>
+  </ol>
+</section>
+
+<section class="content">
+	<div class="row">
+	  <p><h3>编辑与合并测试</h3></p>
+	</div>
+	<div class="row">
+	  <div class="col-md-12">
+		<merge orig-left="{{ctrl.origLeft}}" orig-right="{{ctrl.origRight}}" ng-model="ctrl.value"/>
+	  </div>
+	</div>
+	<p>
+	  <h3>model信息</h3>
+      {{ctrl.value}}
+	</p>
+	<button ng-click="ctrl.change()">更改内容</button>
+	<button ng-click="ctrl.pringModel()">打印model</button>
+</section>

@@ -1,0 +1,148 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>用户管理
+    <small>Preview</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li><a href="#">Forms</a></li>
+    <li class="active">General Elements</li>
+  </ol>
+</section>
+<!-- Main content -->
+<section class="content">
+  <div class="row">
+	<div class="col-xs-12">
+	    <!-- general form elements -->
+	    <div class="box box-primary">
+	      <div class="box-header with-border">
+	        <h3 class="box-title">搜索用户</h3>
+	      </div>
+	      <!-- /.box-header -->
+	      <!-- form start -->
+	      <form role="form">
+	        <div class="box-body">
+	          <div class="form-group col-md-6">
+	            <label for="exampleInputEmail1">姓名</label>
+	            <input type="text" class="form-control" ng-model="ctrl.condition.name" placeholder="可模糊查询">
+	          </div>
+	          <div class="form-group col-md-6">
+	            <label for="exampleInputEmail1">用户名</label>
+	            <input type="text" class="form-control" ng-model="ctrl.condition.nickname" placeholder="可模糊查询">
+	          </div>
+	        </div>
+	        <!-- /.box-body -->
+	
+	        <div class="box-footer">
+	          <button type="reset" class="btn btn-default" ng-click="ctrl.reset()">重置</button>
+	          <button type="submit" class="btn btn-primary pull-right" ng-click="ctrl.query()">查询</button>
+	        </div>
+	      </form>
+	    </div>
+	    <!-- /.box -->
+    </div>
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">用户表</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                  <th class="col-md-2">姓名</th>
+                  <th class="col-md-2">用户名</th>
+                  <th class="col-md-2">电话</th>
+                  <th class="col-md-2">邮箱</th>
+                  <th class="col-md-2">描述</th>
+                  <th class="col-md-2">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="x in ctrl.pager.dataList">
+                  <td ng-bind="x.name" class="col-md-2"></td>
+                  <td ng-bind="x.nickname" class="col-md-2"></td>
+                  <td ng-bind="x.contact.telephone" class="col-md-2"></td>
+                  <td ng-bind="x.contact.email" class="col-md-2"></td>
+                  <td ng-bind="x.description" class="col-md-2"></td>
+                  <td class="col-md-2" ng-if="hasAuthority('ADMIN') || x.nickname == authentication.username">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-default" ng-click="ctrl.openEditDialog(x.id)">编辑</button>
+                      <button type="button" class="btn btn-default" ng-click="ctrl.delete(x.id)" ng-if="hasAuthority('ADMIN')">删除</button>
+                    </div>
+                  </td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                  <th class="col-md-2">姓名</th>
+                  <th class="col-md-2">用户名</th>
+                  <th class="col-md-2">电话</th>
+                  <th class="col-md-2">邮箱</th>
+                  <th class="col-md-2">描述</th>
+                  <th class="col-md-2">操作</th>
+                </tr>
+                </tfoot>
+              </table>
+              <pager pager-model="ctrl.pager" condition="ctrl.condition" get="ctrl.query()">
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+
+        </div>
+        <!-- /.col -->
+        <div id="dialog_edit" title="编辑用户" class="ui-dialog-content ui-widget-content" style="width: auto; min-height: 19px; max-height: none; height: auto; display:none">
+          <div class="box box-primary">
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form role="form">
+              <div class="box-body">
+                <div class="form-group">
+                  <label for="">姓名</label>
+                  <input type="text" class="form-control" placeholder="姓名" ng-model="ctrl.user.name">
+                </div>
+                <div class="form-group">
+                  <label for="">用户名</label>
+                  <input type="text" class="form-control" placeholder="用户名" ng-model="ctrl.user.nickname">
+                </div>
+                <div class="form-group">
+                  <label for="">电话</label>
+                  <input type="text" class="form-control" placeholder="电话" ng-model="ctrl.user.contact.telephone">
+                </div>
+                <div class="form-group">
+                  <label for="">邮箱</label>
+                  <input type="text" class="form-control" placeholder="邮箱" ng-model="ctrl.user.contact.email">
+                </div>
+                <div class="form-group">
+                  <label for="">描述</label>
+                  <input type="text" class="form-control" placeholder="描述" ng-model="ctrl.user.description">
+                </div>
+<!--            <div class="form-group">
+                  <label for="exampleInputFile">权限</label>
+                  <select class="form-control select2" multiple="multiple" data-placeholder="Select a State" style="width: 100%;" select2 ng-model="ctrl.user.authority">
+			        <option value="">无</option>
+			        <option value="ADMIN">ADMIN</option>
+			        <option value="USER">USER</option>
+			      </select>
+                  <p class="help-block">Example block-level help text here.</p>
+                </div> -->
+                <div class="form-group" ng-if="ctrl.user.nickname == authentication.username || hasAuthority('ADMIN')">
+                  <label for="">修改密码</label>
+                  <input type="password" class="form-control" placeholder="修改密码" ng-model="ctrl.user.plainPassword">
+                </div>
+<!--            <div class="checkbox">
+                  <label>
+                    <input type="checkbox" ng-model="ctrl.user.enabled" ng-true-value="true" ng-false-value="false"> 是否启动
+                  </label>
+                </div> -->
+              </div>
+              <!-- /.box-body -->
+            </form>
+          </div>
+        </div>
+    </div>
+    <!-- /.row -->
+</section>
+<!-- /.content -->

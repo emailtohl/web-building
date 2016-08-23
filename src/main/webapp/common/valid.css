@@ -1,0 +1,14 @@
+@CHARSET "UTF-8";
+
+.ng-invalid {
+	background-color: lightpink;
+}
+
+.ng-valid {
+	background-color: lightgreen;
+}
+
+span.error {
+	color: red;
+	font-weight: bold;
+}

@@ -1,0 +1,1 @@
+define(['test/module', 'test/router', 'test/Controller'], function() {});

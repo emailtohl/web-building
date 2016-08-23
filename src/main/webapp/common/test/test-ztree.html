@@ -1,0 +1,36 @@
+<section class="content-header">
+  <h1>
+    TEST
+    <small>ztree</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+    <li class="active">Here</li>
+  </ol>
+</section>
+
+<section class="content">
+	<div class="row">
+	  <div class="col-md-3">
+	    <p>notes:</p>
+	    <input ng-model="ctrl.nodes">
+	  </div>
+	  <div class="col-md-3">
+	    <p>string:</p>
+	    <input ng-model="ctrl.abc">
+	  </div>
+	  <div class="col-md-3">
+	    <p>obj:</p>
+	    <input ng-model="ctrl.bcd">
+	  </div>
+	  <div class="col-md-3">
+	    <p>arr:</p>
+	    <input ng-model="ctrl.edf">
+	  </div>
+	  <button ng-click="ctrl.printNodes()">打印nodes</button>
+	  <p ng-repeat="x in ctrl.nodes">{{x.name}}</p>
+	  <div class="col-md-6">
+	  	<ztree click="ctrl.click(event, treeId, treeNode)" ng-model="ctrl.nodes"></ztree>
+	  </div>
+	</div>
+</section>

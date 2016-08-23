@@ -1,0 +1,1 @@
+define(['dashboard/module', 'dashboard/router', 'dashboard/dashboardCtrl'], function() {});

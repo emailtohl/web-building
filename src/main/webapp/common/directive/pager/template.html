@@ -1,0 +1,18 @@
+<div class="col-sm-7" ng-if="isShow">
+  <div class="dataTables_paginate paging_simple_numbers">
+    <ul class="pagination">
+      <li class="paginate_button previous" ng-click="previous()" ng-class="{disabled : !previousBtn}">
+        <a href="javascript:void(0)" aria-controls="example2" data-dt-idx="0" tabindex="0">上一页</a>
+      </li>
+      <li class="paginate_button" ng-repeat="pageNum in pageNumArr" ng-click="click(pageNum)" ng-class="getClass(pageNum)">
+        <a href="javascript:void(0)" aria-controls="example2" data-dt-idx="{{pageNum}}" tabindex="0">{{pageNum}}</a>
+      </li>
+      <li class="paginate_button " ng-if="more" ng-click="clickMore()">
+        <a href="javascript:void(0)" aria-controls="example2" data-dt-idx="10" tabindex="0">……</a>
+      </li>
+      <li class="paginate_button next" ng-click="next()" ng-class="{disabled : !nextBtn}">
+        <a href="javascript:void(0)" aria-controls="example2" data-dt-idx="7" tabindex="0">下一页</a>
+      </li>
+    </ul>
+  </div>
+</div>

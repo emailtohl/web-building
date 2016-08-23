@@ -1,0 +1,38 @@
+<section class="content-header">
+  <h1>
+    TEST
+    <small>datetimepicker</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+    <li class="active">Here</li>
+  </ol>
+</section>
+
+<section class="content">
+  <div class="col-md-12">
+  
+    <div class="form-group">
+      <label for="exampleInputAge1">输入项</label>
+      <input type="text" ng-model="ctrl.date">
+    </div>
+	
+    <div class="form-group">
+      <label for="exampleInputAge1">datetimepicker</label>
+      <input type="text" datetimepicker id="datetimepicker" ng-model="ctrl.date">
+    </div>
+    
+    <div class="form-group">
+      <label for="exampleInputAge1">datepicker</label>
+      <input type="text" datepicker id="datepicker" ng-model="ctrl.date">
+    </div>
+	
+    <div class="form-group">
+      <daterangepicker from="ctrl.from" to="ctrl.to"></daterangepicker>
+      <div daterangepicker from="ctrl.from" to="ctrl.to"></daterangepicker>
+      from {{ctrl.from}}
+      to {{ctrl.to}}
+    </div>
+	
+  </div>
+</section>

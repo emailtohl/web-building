@@ -1,0 +1,87 @@
+<section class="content-header">
+  <h1>
+    TEST
+    <small>fileupload</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+    <li class="active">Here</li>
+  </ol>
+</section>
+
+<section class="content">
+  <div class="col-md-12">
+    <!-- general form elements -->
+    <div class="box box-primary">
+      <div class="box-header with-border">
+        <h3 class="box-title">文件与表单数据一并上传</h3>
+      </div>
+      <!-- /.box-header -->
+      <!-- form start -->
+      <form role="form" novalidate name="formName" upload upload-to="FileUploadServer" when-done="ctrl.callbackfun(msg)">
+        <div class="box-body">
+          <div class="form-group">
+            <label for="exampleInputText1">用户名</label>
+            <input type="text" class="form-control" placeholder="用户名" name="personname" ng-model="ctrl.form.personname" required>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputAge1">用户年龄</label>
+            <input type="number" class="form-control" max="100" placeholder="年龄" name="age" ng-model="ctrl.form.age" required>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputAge1">掌握语言</label>
+            <input type="text" class="form-control" placeholder="自动补全" name="hobby" ng-model="ctrl.form.lang" autocomplete list="ctrl.langList">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputFile">多文件上传</label>
+            <input type="file" id="exampleInputFile1" multiple="multiple" name="multiplefiles" ng-model="ctrl.form.multiple">
+
+            <p class="help-block">Example block-level help text here.</p>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputFile">单文件上传</label>
+            <input type="file" id="exampleInputFile2" name="singlefile" ng-model="ctrl.form.singlefile">
+            <p class="help-block">Example block-level help text here.</p>
+          </div>
+          
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" name="checkme" value="yes" ng-model="ctrl.form.checkme"> Check me out
+            </label>
+          </div>
+        </div>
+        <!-- /.box-body -->
+
+        <div class="box-footer">
+          <button type="submit" class="btn btn-primary" ng-disabled="formName.$invalid || ctrl.fileInvalid()">Submit</button>
+        </div>
+      </form>
+      <p>form: {{ctrl.form}} </p>
+      <p>formName.$invalid: {{formName.$invalid}}  </p>
+      <p>ctrl.fileInvalid() :{{ctrl.fileInvalid()}} </p>
+      <p>&& {{formName.$invalid && ctrl.fileInvalid()}} </p>
+      <p>modal: {{ctrl.modal}}  </p>
+      <modal modal-model="ctrl.modal"></modal>
+    </div>
+    <!-- /.box -->
+  </div>
+</section>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true" id="myModal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title">{{ctrl.modal.header}}</h4>
+			</div>
+			<div class="modal-body">{{ctrl.modal.body}}</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+				<button type="button" class="btn btn-primary" ng-click="ctrl.action()">提交更改</button>
+			</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
+	<!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+        http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+	version="2.1">
+	
+	<persistence-unit name="building-unit" transaction-type="RESOURCE_LOCAL">
+		<!-- 描述信息.(可选) -->
+		<description></description>
+
+		<!-- javax.persistence.PersistenceProvider接口的一个实现类(可选)
+		<provider></provider>
+		 -->
+
+		<!-- 声明orm.xml所在位置.(可选)
+		<mapping-file></mapping-file>
+		-->
+
+		<!-- 以包含persistence.xml的jar文件为基准的相对路径,添加额外的jar文件.(可选)
+		<jar-file></jar-file>
+		 -->
+  
+		<!-- 显式列出实体类,在Java SE 环境中应该显式列出.(可选)
+		<class>com.github.emailtohl.building.site.entities.Company</class>
+		<class>com.github.emailtohl.building.site.entities.Department</class>
+		<class>com.github.emailtohl.building.site.entities.Authority</class>
+		<class>com.github.emailtohl.building.site.entities.Role</class>
+		<class>com.github.emailtohl.building.site.entities.User</class>
+		<class>com.github.emailtohl.building.site.entities.Employee</class>
+		<class>com.github.emailtohl.building.site.entities.Manager</class>
+		 -->
+  
+		<!-- 声明是否扫描jar文件中标注了@Enity类加入到上下文.若不扫描,则如下:(可选)
+		<exclude-unlisted-classes/>
+		 -->
+		 
+	 	<!--   厂商专有属性(可选)   -->
+		<properties>
+<!-- 		
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" />
+			<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" />
+			<property name="hibernate.connection.username" value="root" />
+			<property name="hibernate.connection.password" value="123456" />
+			<property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/building" />
+			 -->
+			<property name="hibernate.connection.driver_class" value="org.postgresql.Driver" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
+			<!-- <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL94Dialect" /> -->
+			<property name="hibernate.connection.username" value="postgres" />
+			<property name="hibernate.connection.password" value="123456" />
+			<property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/building" />
+			
+			<property name="hibernate.max_fetch_depth" value="3" />
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+			<property name="hibernate.show_sql" value="true"/>
+			<property name="hibernate.format_sql" value="true"/>
+		</properties>
+	</persistence-unit>
+</persistence>
