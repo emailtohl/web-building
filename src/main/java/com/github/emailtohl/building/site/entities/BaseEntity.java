@@ -61,7 +61,7 @@ public abstract class BaseEntity implements Serializable {
 	@Id
 	// MySQL/SQLServer: @GeneratedValue(strategy = GenerationType.AUTO)
 	// Oracle: @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequenceGenerator")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	public Long getId() {
 		return id;
 	}

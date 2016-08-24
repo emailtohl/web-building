@@ -34,10 +34,10 @@ public class PersistenceData {
 
 	static {
 		String salt = BCrypt.gensalt(HASHING_ROUNDS, r);
-		add.setName("增加");
-		delete.setName("删除");
-		update.setName("修改");
-		query.setName("查询");
+		add.setName("add");
+		delete.setName("delete");
+		update.setName("update");
+		query.setName("query");
 		
 		admin.setName("ADMIN");
 		manager.setName("MANAGER");
