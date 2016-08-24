@@ -66,16 +66,6 @@ public class ContainerBootstrap implements WebApplicationInitializer {
 		registration.addMappingForUrlPatterns(null, false, "/*");
 		registration = container.addFilter("loggingFilter", new PreSecurityLoggingFilter());
 		registration.addMappingForUrlPatterns(null, false, "/*");
-		
-		/* 在Servlet容器中注册监听器 */
-		container.addListener(SessionListener.class);
-		
-		/* 在Servlet容器中注册过滤器 */
-		registration = container.addFilter("characterEncodingFilter", new CharacterEncodingFilter());
-		registration.addMappingForUrlPatterns(null, false, "/*");
-		registration = container.addFilter("loggingFilter", new PreSecurityLoggingFilter());
-		registration.addMappingForUrlPatterns(null, false, "/*");
-		
 	}
 
 }
