@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -35,6 +37,7 @@ import javax.validation.constraints.Pattern;
  */
 @Entity
 @Table(name = "t_user")
+@Access(AccessType.PROPERTY) // 实际上这就是默认的配置
 //指定继承的映射策略，所有继承树上的实体共用一张表：SINGLE_TABLE，这是默认值
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 //定义辨别者列的列名为“user_type”，列类型是字符串

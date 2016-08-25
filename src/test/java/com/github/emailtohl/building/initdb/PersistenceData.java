@@ -54,7 +54,7 @@ public class PersistenceData {
 		update.getRoles().addAll(Arrays.asList(admin, manager, employee));
 		query.getRoles().addAll(Arrays.asList(admin, manager, employee, user));
 		// 附属属性
-		Subsidiary s = new Subsidiary();
+		Subsidiary s;
 		/*
 		 * 下面是创建一对多对一数据模型
 		 */
@@ -77,6 +77,7 @@ public class PersistenceData {
 		emailtohl.setIcon(null);
 		emailtohl.setPassword(BCrypt.hashpw("123456", salt));
 		emailtohl.setDescription("developer");
+		s = new Subsidiary();
 		s.setCity("重庆");
 		s.setCountry("中国");
 		s.setProvince("重庆");
@@ -98,6 +99,7 @@ public class PersistenceData {
 		foo.setIcon(null);
 		foo.setPassword(BCrypt.hashpw("123456", salt));
 		foo.setDescription("test");
+		s = new Subsidiary();
 		s.setCity("西安");
 		s.setCountry("中国");
 		s.setProvince("陕西");
@@ -123,6 +125,7 @@ public class PersistenceData {
 		bar.setIcon(null);
 		bar.setPassword(BCrypt.hashpw("123456", salt));
 		bar.setDescription("test");
+		s = new Subsidiary();
 		s.setCity("昆明");
 		s.setCountry("中国");
 		s.setProvince("云南");
