@@ -24,6 +24,7 @@ public class UserRepositoryTest {
 	AnnotationConfigApplicationContext ctx = SpringUtils.ctx;
 	UserRepository userRepository = ctx.getBean(UserRepository.class);
 	SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD");
+	BCryptUtil bCryptUtil = ctx.getBean(BCryptUtil.class);
 	/**
 	 * 测试spring data中的命名方法
 	 */
@@ -51,7 +52,7 @@ public class UserRepositoryTest {
 		User u = new Manager();
 		u.setEmail("test");
 		u.setEmail("test@test.com");
-		u.setPassword(BCryptUtil.hash("123456"));
+		u.setPassword(bCryptUtil.hash("123456"));
 		userRepository.saveAndFlush(u);
 		Long id = u.getId();
 		assertNotNull(id);

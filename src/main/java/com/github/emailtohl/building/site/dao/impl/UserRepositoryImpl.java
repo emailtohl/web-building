@@ -2,8 +2,6 @@ package com.github.emailtohl.building.site.dao.impl;
 
 import javax.persistence.AccessType;
 
-import org.springframework.stereotype.Repository;
-
 import com.github.emailtohl.building.common.repository.jpa.BaseRepository;
 import com.github.emailtohl.building.common.repository.jpa.Pager;
 import com.github.emailtohl.building.site.dao.UserRepositoryCustomization;
@@ -17,7 +15,7 @@ import com.github.emailtohl.building.site.entities.User;
  * @author HeLei
  *
  */
-@Repository
+//@Repository 不由spring管理，而是由spring data管理
 public class UserRepositoryImpl extends BaseRepository<User> implements UserRepositoryCustomization {
 
 	@Override
