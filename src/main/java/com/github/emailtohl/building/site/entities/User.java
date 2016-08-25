@@ -25,6 +25,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -74,7 +75,7 @@ public class User extends BaseEntity {
 	protected transient byte[] pic;
 	protected String description;
 	protected Set<Role> roles = new HashSet<Role>();
-	protected Subsidiary subsidiary;
+	@Valid protected Subsidiary subsidiary;
 	
 	public String getName() {
 		return name;

@@ -17,10 +17,9 @@ public class ValidatorTest {
 	public void testValidate() {
 		User u = new Manager();
 		u.setEmail("test");
-		u.setEmail("test@test.com");
 		Set<ConstraintViolation<User>> violations = Validator.validate(u);
 		System.out.println(violations);
-		assertTrue(violations.size() == 0);
+		assertTrue(violations.size() > 0);
 	}
 
 }
