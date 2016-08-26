@@ -50,13 +50,13 @@ public class UserRepositoryTest {
 	@Test
 	public void testCRUD() {
 		User u = new Manager();
-		u.setEmail("test");
 		u.setEmail("test@test.com");
 		u.setPassword(bCryptUtil.hash("123456"));
 		userRepository.saveAndFlush(u);
 		Long id = u.getId();
 		assertNotNull(id);
-		User uu = userRepository.findOne(id);
+//		User uu = userRepository.findOne(id);
+		User uu = userRepository.get(id);
 		assertEquals(u, uu);
 		userRepository.delete(id);
 		assertFalse(userRepository.exists(id));

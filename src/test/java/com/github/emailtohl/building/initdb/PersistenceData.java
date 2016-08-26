@@ -1,5 +1,9 @@
 package com.github.emailtohl.building.initdb;
 
+import static com.github.emailtohl.building.site.entities.Authority.ADMIN;
+import static com.github.emailtohl.building.site.entities.Authority.MANAGER;
+import static com.github.emailtohl.building.site.entities.Authority.USER;
+
 import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -8,24 +12,18 @@ import java.util.HashSet;
 
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
-import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.Company;
 import com.github.emailtohl.building.site.entities.Department;
 import com.github.emailtohl.building.site.entities.Employee;
 import com.github.emailtohl.building.site.entities.Manager;
-import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.Subsidiary;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.entities.User.Gender;
-
 public class PersistenceData {
 	static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	static SecureRandom r = new SecureRandom();
 	static final int HASHING_ROUNDS = 10;
 	
-	public static final Authority add = new Authority(), delete = new Authority(), update = new Authority(),
-			query = new Authority();
-	public static final Role admin = new Role(), employee = new Role(), manager = new Role(), user = new Role();
 	public static final User emailtohl = new User();
 	public static final Manager foo = new Manager();
 	public static final Employee bar = new Employee();
@@ -34,25 +32,7 @@ public class PersistenceData {
 
 	static {
 		String salt = BCrypt.gensalt(HASHING_ROUNDS, r);
-		add.setName("add");
-		delete.setName("delete");
-		update.setName("update");
-		query.setName("query");
-		
-		admin.setName("ADMIN");
-		manager.setName("MANAGER");
-		employee.setName("EMPLOYEE");
-		user.setName("USER");
 
-		admin.getAuthorities().addAll(Arrays.asList(add, delete, update, query));
-		manager.getAuthorities().addAll(Arrays.asList(add, delete, update, query));
-		employee.getAuthorities().addAll(Arrays.asList(add, delete, query));
-		user.getAuthorities().addAll(Arrays.asList(query));
-
-		add.getRoles().addAll(Arrays.asList(admin, manager, employee));
-		delete.getRoles().addAll(Arrays.asList(admin, manager));
-		update.getRoles().addAll(Arrays.asList(admin, manager, employee));
-		query.getRoles().addAll(Arrays.asList(admin, manager, employee, user));
 		// 附属属性
 		Subsidiary s;
 		/*
@@ -85,7 +65,7 @@ public class PersistenceData {
 		s.setMobile("187******82");
 		emailtohl.setSubsidiary(s);
 		emailtohl.setGender(Gender.MALE);
-		emailtohl.getRoles().addAll(Arrays.asList(admin, user));
+		emailtohl.getAuthorities().addAll(Arrays.asList(ADMIN, USER));
 		try {
 			emailtohl.setBirthday(sdf.parse("1982-02-12"));
 		} catch (ParseException e) {
@@ -107,7 +87,7 @@ public class PersistenceData {
 		s.setMobile("139******11");
 		foo.setSubsidiary(s);
 		foo.setGender(Gender.MALE);
-		foo.getRoles().addAll(Arrays.asList(manager));
+		foo.getAuthorities().addAll(Arrays.asList(MANAGER));
 		try {
 			foo.setBirthday(sdf.parse("1990-12-13"));
 		} catch (ParseException e) {
@@ -133,7 +113,7 @@ public class PersistenceData {
 		s.setMobile("130******77");
 		bar.setSubsidiary(s);
 		bar.setGender(Gender.FEMALE);
-		bar.getRoles().addAll(Arrays.asList(user));
+		bar.getAuthorities().addAll(Arrays.asList(USER));
 		try {
 			bar.setBirthday(sdf.parse("1991-10-24"));
 		} catch (ParseException e) {
@@ -144,10 +124,6 @@ public class PersistenceData {
 		bar.setSalary(6000.00);
 		bar.setDepartment(qa);
 
-		admin.getUsers().addAll(Arrays.asList(emailtohl));
-		admin.getUsers().addAll(Arrays.asList(emailtohl));
-		user.getUsers().addAll(Arrays.asList(emailtohl, foo, bar));
-		
 		product.setEmployees(new HashSet<Employee>(Arrays.asList(foo)));
 		qa.setEmployees(new HashSet<Employee>(Arrays.asList(bar)));
 	}

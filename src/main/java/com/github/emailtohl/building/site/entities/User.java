@@ -1,16 +1,19 @@
 package com.github.emailtohl.building.site.entities;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
-import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -19,9 +22,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -31,9 +32,11 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 /**
  * Entity 用户
+ * javax校验的注解在field上，JPA约束的注解写在JavaBean属性上
  * @author Helei
  */
 @Entity
@@ -62,6 +65,7 @@ public class User extends BaseEntity {
 	protected String email;
 	protected String address;
 	protected String telephone;
+	@Size(min = 6)
 	@Pattern(regexp = "^[^\\s&\"<>]+$")
 	protected transient String password;
 	protected Boolean enabled;
@@ -69,13 +73,15 @@ public class User extends BaseEntity {
 	protected Date birthday;
 	protected String icon;
 	@Min(value = 1)
-	@Max(value = 150)
+	@Max(value = 120)
 	protected Integer age;
 	protected Gender gender;
+	@Valid
+	protected Subsidiary subsidiary;
 	protected transient byte[] pic;
+	@Size(max = 300)
 	protected String description;
-	protected Set<Role> roles = new HashSet<Role>();
-	@Valid protected Subsidiary subsidiary;
+	protected Set<Authority> authorities = new HashSet<Authority>();
 	
 	public String getName() {
 		return name;
@@ -144,6 +150,15 @@ public class User extends BaseEntity {
 	}
 	
 	public Integer getAge() {
+		Integer age;
+		if (this.birthday != null) {
+			Instant now = Instant.now();
+			Instant past = Instant.ofEpochMilli(this.birthday.getTime());
+			long daysBetween = ChronoUnit.DAYS.between(past, now);
+			age = (int) (daysBetween / 365);
+		} else {
+			age = this.age;
+		}
 		return age;
 	}
 	public void setAge(Integer age) {
@@ -157,6 +172,19 @@ public class User extends BaseEntity {
 	}
 	public void setGender(Gender gender) {
 		this.gender = gender;
+	}
+	
+	@Embedded
+	/*嵌入属性的映射可在嵌入实体中声明，不必要在此覆盖
+	@AttributeOverrides({
+		@AttributeOverride(name = "city", column = @Column(name = "subsidiary_city")),
+		@AttributeOverride(name = "province", column = @Column(name = "subsidiary_province"))
+	})*/
+	public Subsidiary getSubsidiary() {
+		return subsidiary;
+	}
+	public void setSubsidiary(Subsidiary subsidiary) {
+		this.subsidiary = subsidiary;
 	}
 	
 	@Lob
@@ -174,7 +202,23 @@ public class User extends BaseEntity {
 		this.description = description;
 	}
 	
-	@ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	// 此属性暂时为目前配置的spring security提供服务
+	@ElementCollection(targetClass = Authority.class, fetch = FetchType.EAGER)
+	// @CollectionTable是可选项，若不做注解，JPA提供者则会根据自动生成连接表的表名以及对应的列名
+	@CollectionTable(name = "t_user_authority"
+	, joinColumns = {
+			// 注意，这里定义的是对主键的引用，非主键不能写在这里，否则查询会异常
+			@JoinColumn(name = "user_id", referencedColumnName = "id")
+		})
+	@Enumerated(EnumType.STRING)// 若不指定此项，数据表中默认存储枚举的序号
+	@Column(name = "authority")// 若不加此项，连接表中默认为authorities
+	public Set<Authority> getAuthorities() {
+		return authorities;
+	}
+	public void setAuthorities(Set<Authority> authorities) {
+		this.authorities = authorities;
+	}
+/*	@ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "t_user_role"
 	, joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") }
 	, inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName = "id") })
@@ -183,27 +227,15 @@ public class User extends BaseEntity {
 	}
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
-	}
-	
-	@Embedded
-	/*嵌入属性的映射可在嵌入实体中声明，不必要在此覆盖
-	@AttributeOverrides({
-		@AttributeOverride(name = "city", column = @Column(name = "subsidiary_city")),
-		@AttributeOverride(name = "province", column = @Column(name = "subsidiary_province"))
-	})*/
-	public Subsidiary getSubsidiary() {
-		return subsidiary;
-	}
-	public void setSubsidiary(Subsidiary subsidiary) {
-		this.subsidiary = subsidiary;
-	}
+	}*/
 	
 	@Override
 	public String toString() {
 		return "User [name=" + name + ", username=" + username + ", email=" + email + ", address=" + address
 				+ ", telephone=" + telephone + ", enabled=" + enabled + ", birthday=" + birthday + ", icon=" + icon
-				+ ", age=" + age + ", gender=" + gender + ", description=" + description + ", roles=" + roles
-				+ ", subsidiary=" + subsidiary + ", id=" + id + ", createDate=" + createDate + ", modifyDate="
-				+ modifyDate + "]";
+				+ ", age=" + age + ", gender=" + gender + ", description=" + description + ", authorities="
+				+ authorities + ", subsidiary=" + subsidiary + ", id=" + id + ", createDate=" + createDate
+				+ ", modifyDate=" + modifyDate + "]";
 	}
+	
 }

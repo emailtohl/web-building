@@ -70,7 +70,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		
 		builder.jdbcAuthentication().dataSource(dataSource)
 				.usersByUsernameQuery("SELECT t.email as username, t.password, t.enabled FROM t_user AS t WHERE t.email = ?")
-				.authoritiesByUsernameQuery("SELECT a.name FROM t_authority a WHERE a.id IN (SELECT ra.authority_id FROM t_role_authority ra WHERE ra.role_id IN (SELECT ur.role_id FROM t_user_role ur WHERE ur.user_id = (SELECT u.id FROM t_user u WHERE u.email = ?)))")
+				.authoritiesByUsernameQuery("SELECT u.email AS username, ua.authority FROM t_user u INNER JOIN t_user_authority ua ON u.id = ua.user_id WHERE u.email = ?")
 				.passwordEncoder(new BCryptPasswordEncoder());
 		
 	}
