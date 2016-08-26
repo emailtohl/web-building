@@ -82,7 +82,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		security.ignoring().antMatchers("/lib/**");
 		security.ignoring().antMatchers("/common/**");
 		security.ignoring().antMatchers("/app/**");
-		security.ignoring().antMatchers("/downloadDir/**");
+		security.ignoring().antMatchers("/download/**");
 	}
 	/**
 	 * 细化各类路径的安全配置
@@ -90,14 +90,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity security) throws Exception {
 		security
-				// 这是与人而非与应用程序的沟通方式，基于表单的认证配置
 				.authorizeRequests()
 					.antMatchers("/", "/authentication", "/index.html", "/home.html", "/login.html", "/signup", "/about", "/policies", "/chat/**").permitAll()
-					.antMatchers("/secure/**").hasAuthority("ADMIN")
 					.antMatchers("/admin/**").hasAuthority("ADMIN")
-					.antMatchers(HttpMethod.DELETE, "/user/**").hasAuthority("ADMIN")
-					.antMatchers(HttpMethod.POST, "/user/**").hasAnyAuthority("ADMIN", "USER")
-					.antMatchers(HttpMethod.PUT, "/user/**").hasAnyAuthority("ADMIN", "USER")
+					.antMatchers("/secure/**").hasAnyAuthority("ADMIN", "MANAGER")
+					.antMatchers(HttpMethod.DELETE, "/user/**").hasAnyAuthority("ADMIN", "MANAGER")
+					.antMatchers(HttpMethod.POST, "/user/**").hasAnyAuthority("ADMIN", "MANAGER")
+					.antMatchers(HttpMethod.PUT, "/user/**").hasAnyAuthority("ADMIN", "MANAGER")
 					.anyRequest().authenticated()
 				// HTTP Basic Authentication是基于REST风格，通过HTTP状态码与访问它的应用程序进行沟通
 				/*.and().httpBasic()*/
@@ -118,8 +117,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.sessionRegistry(sessionRegistryImpl())
 				.and().and().csrf()/*.disable()*/.csrfTokenRepository(csrfTokenRepository())
 				.and().addFilterAfter(new CsrfHeaderFilter(), CsrfFilter.class)
-				// rememberMe默认的过期时间是2周，这里设为四周；默认的私钥名是SpringSecured，这里设为"myapp"
-				.rememberMe().tokenValiditySeconds(2419200).key("myapp");
+				// rememberMe默认的过期时间是2周，这里设为四周；默认的私钥名是SpringSecured，这里设为"building"
+				.rememberMe().tokenValiditySeconds(2419200).key("building");
 		
 	}
 	
