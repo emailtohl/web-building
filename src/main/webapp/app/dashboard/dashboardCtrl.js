@@ -12,7 +12,7 @@ define(['angular', 'dashboard/module', 'sparkline'], function(angular) {
 			if (!data || !data.username) {
 				return;
 			}
-			var url = 'ws://' + window.location.host + '/myapp/chat/' + data.username;
+			var url = 'ws://' + window.location.host + '/building/chat/' + data.username;
 			var connection = new WebSocket(url);
 			
 			connection.onopen = function() {
