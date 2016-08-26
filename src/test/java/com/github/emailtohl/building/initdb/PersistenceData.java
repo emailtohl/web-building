@@ -4,6 +4,8 @@ import static com.github.emailtohl.building.site.entities.Authority.ADMIN;
 import static com.github.emailtohl.building.site.entities.Authority.MANAGER;
 import static com.github.emailtohl.building.site.entities.Authority.USER;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,6 +34,9 @@ public class PersistenceData {
 
 	static {
 		String salt = BCrypt.gensalt(HASHING_ROUNDS, r);
+//		URL url = PersistenceData.class.getProtectionDomain().getCodeSource().getLocation();
+		ClassLoader cl = PersistenceData.class.getClassLoader();
+		byte[] icon;
 
 		// 附属属性
 		Subsidiary s;
@@ -66,11 +71,15 @@ public class PersistenceData {
 		emailtohl.setSubsidiary(s);
 		emailtohl.setGender(Gender.MALE);
 		emailtohl.getAuthorities().addAll(Arrays.asList(ADMIN, USER));
-		try {
+		try (InputStream is = cl.getResourceAsStream("img/icon-head-emailtohl.png")) {
 			emailtohl.setBirthday(sdf.parse("1982-02-12"));
-		} catch (ParseException e) {
+			icon = new byte[is.available()];
+			is.read(icon);
+			emailtohl.setIcon(icon);
+		} catch (ParseException | IOException e) {
 			e.printStackTrace();
 		}
+		emailtohl.setIconSrc("download/img/icon-head-emailtohl.png");
 
 		foo.setName("foo");
 		foo.setUsername("foo@test.com");
@@ -88,15 +97,19 @@ public class PersistenceData {
 		foo.setSubsidiary(s);
 		foo.setGender(Gender.MALE);
 		foo.getAuthorities().addAll(Arrays.asList(MANAGER));
-		try {
+		try (InputStream is = cl.getResourceAsStream("img/icon-head-foo.jpg")) {
 			foo.setBirthday(sdf.parse("1990-12-13"));
-		} catch (ParseException e) {
+			icon = new byte[is.available()];
+			is.read(icon);
+			foo.setIcon(icon);
+		} catch (ParseException | IOException e) {
 			e.printStackTrace();
 		}
 		foo.setDescription("foo的工作岗位");
 		foo.setPost("系统分析师");
 		foo.setSalary(10000.00);
 		foo.setDepartment(product);
+		foo.setIconSrc("download/img/icon-head-foo.jpg");
 		
 		bar.setName("bar");
 		bar.setUsername("bar@test.com");
@@ -114,16 +127,20 @@ public class PersistenceData {
 		bar.setSubsidiary(s);
 		bar.setGender(Gender.FEMALE);
 		bar.getAuthorities().addAll(Arrays.asList(USER));
-		try {
+		try (InputStream is = cl.getResourceAsStream("img/icon-head-bar.jpg")) {
 			bar.setBirthday(sdf.parse("1991-10-24"));
-		} catch (ParseException e) {
+			icon = new byte[is.available()];
+			is.read(icon);
+			bar.setIcon(icon);
+		} catch (ParseException | IOException e) {
 			e.printStackTrace();
 		}
 		bar.setDescription("bar的工作岗位");
 		bar.setPost("QA人员");
 		bar.setSalary(6000.00);
 		bar.setDepartment(qa);
-
+		bar.setIconSrc("download/img/icon-head-bar.jpg");
+		
 		product.setEmployees(new HashSet<Employee>(Arrays.asList(foo)));
 		qa.setEmployees(new HashSet<Employee>(Arrays.asList(bar)));
 	}

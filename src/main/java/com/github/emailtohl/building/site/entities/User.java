@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Basic;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -71,14 +72,15 @@ public class User extends BaseEntity {
 	protected Boolean enabled;
 	@Past// 校验，日期相对于当前较早
 	protected Date birthday;
-	protected String icon;
 	@Min(value = 1)
 	@Max(value = 120)
 	protected Integer age;
 	protected Gender gender;
 	@Valid
 	protected Subsidiary subsidiary;
-	protected transient byte[] pic;
+	@Size(max = 1048576)
+	protected transient byte[] icon;
+	protected String iconSrc;
 	@Size(max = 300)
 	protected String description;
 	protected Set<Authority> authorities = new HashSet<Authority>();
@@ -142,13 +144,6 @@ public class User extends BaseEntity {
 		this.birthday = birthday;
 	}
 	
-	public String getIcon() {
-		return icon;
-	}
-	public void setIcon(String icon) {
-		this.icon = icon;
-	}
-	
 	public Integer getAge() {
 		Integer age;
 		if (this.birthday != null) {
@@ -188,11 +183,19 @@ public class User extends BaseEntity {
 	}
 	
 	@Lob
-	public byte[] getPic() {
-		return pic;
+	@Basic(fetch = FetchType.LAZY)
+	public byte[] getIcon() {
+		return icon;
 	}
-	public void setPic(byte[] pic) {
-		this.pic = pic;
+	public void setIcon(byte[] icon) {
+		this.icon = icon;
+	}
+	
+	public String getIconSrc() {
+		return iconSrc;
+	}
+	public void setIconSrc(String iconSrc) {
+		this.iconSrc = iconSrc;
 	}
 	
 	public String getDescription() {
@@ -228,14 +231,12 @@ public class User extends BaseEntity {
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}*/
-	
 	@Override
 	public String toString() {
 		return "User [name=" + name + ", username=" + username + ", email=" + email + ", address=" + address
-				+ ", telephone=" + telephone + ", enabled=" + enabled + ", birthday=" + birthday + ", icon=" + icon
-				+ ", age=" + age + ", gender=" + gender + ", description=" + description + ", authorities="
-				+ authorities + ", subsidiary=" + subsidiary + ", id=" + id + ", createDate=" + createDate
+				+ ", telephone=" + telephone + ", enabled=" + enabled + ", birthday=" + birthday + ", age=" + age
+				+ ", gender=" + gender + ", subsidiary=" + subsidiary + ", iconSrc=" + iconSrc + ", description="
+				+ description + ", authorities=" + authorities + ", id=" + id + ", createDate=" + createDate
 				+ ", modifyDate=" + modifyDate + "]";
 	}
-	
 }
