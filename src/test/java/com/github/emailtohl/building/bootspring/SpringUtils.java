@@ -9,13 +9,13 @@ import com.github.emailtohl.building.config.RootContextConfiguration;
  *
  */
 public class SpringUtils {
-	public static final AnnotationConfigApplicationContext ctx;
+	public static final AnnotationConfigApplicationContext context;
 	
 	static {
-		ctx = new AnnotationConfigApplicationContext();
-		ctx.getEnvironment().setActiveProfiles("qa");
-		ctx.register(RootContextConfiguration.class);
-		ctx.refresh();
+		context = new AnnotationConfigApplicationContext();
+		context.getEnvironment().setActiveProfiles(RootContextConfiguration.PROFILE_QA);
+		context.register(RootContextConfiguration.class);
+		context.refresh();
 	}
 	
 	private SpringUtils() {
@@ -24,7 +24,7 @@ public class SpringUtils {
 	// 测试
 	public static void main(String[] args) {
 		@SuppressWarnings("unused")
-		AnnotationConfigApplicationContext ctx = SpringUtils.ctx;
+		AnnotationConfigApplicationContext ctx = SpringUtils.context;
 		System.exit(0);
 	}
 }

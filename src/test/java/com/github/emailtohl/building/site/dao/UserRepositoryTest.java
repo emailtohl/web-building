@@ -21,7 +21,7 @@ import com.github.emailtohl.building.site.entities.Manager;
 import com.github.emailtohl.building.site.entities.User;
 
 public class UserRepositoryTest {
-	AnnotationConfigApplicationContext ctx = SpringUtils.ctx;
+	AnnotationConfigApplicationContext ctx = SpringUtils.context;
 	UserRepository userRepository = ctx.getBean(UserRepository.class);
 	SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD");
 	BCryptUtil bCryptUtil = ctx.getBean(BCryptUtil.class);

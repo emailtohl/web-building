@@ -1,4 +1,7 @@
 package com.github.emailtohl.building.config;
+import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_DEVELPMENT;
+import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_PRODUCTION;
+import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_QA;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -25,7 +28,6 @@ import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import static com.github.emailtohl.building.config.RootContextConfiguration.*;
 
 /**
  * JPA的配置
@@ -68,7 +70,7 @@ public class JPAConfiguration {
 	 * 脱离容器环境下使用
 	 * @return
 	 */
-	@Profile({ "develpment", "qa" })
+	@Profile({ PROFILE_DEVELPMENT, PROFILE_QA })
 	@Bean(name = "entityManagerFactory")
 	public LocalEntityManagerFactoryBean entityManagerFactory() {
 		LocalEntityManagerFactoryBean emfb = new LocalEntityManagerFactoryBean();
@@ -77,10 +79,24 @@ public class JPAConfiguration {
 	}
 	
 	/**
+	 * @EnableTransactionManagement 启动了事务管理功能
+	 * 应该提供一个PlatformTransactionManager默认实现
+	 * 由LocalContainerEntityManagerFactoryBean构造出jpa的事务管理器
+	 * 
+	 * @return
+	 */
+	@Profile({ PROFILE_DEVELPMENT, PROFILE_QA })
+	@Bean(name = "jpaTransactionManager")
+	@Conditional(value = Develpment_QA_ProfileCondition.class)
+	public PlatformTransactionManager development_jpaTransactionManager() {
+		return new JpaTransactionManager(entityManagerFactory().getObject());
+	}
+	
+	/**
 	 * 使用容器提供的实体管理工厂，这样可以不用使用META-INFO/persistence.xml配置
 	 * @return
 	 */
-	@Profile("production")
+	@Profile(PROFILE_PRODUCTION)
 	@Bean(name = "entityManagerFactory")
 	public LocalContainerEntityManagerFactoryBean containerEntityManagerFactory() {
 		LocalContainerEntityManagerFactoryBean emfb = new LocalContainerEntityManagerFactoryBean();
@@ -91,23 +107,11 @@ public class JPAConfiguration {
 		return emfb;
 	}
 
-	/**
-	 * @EnableTransactionManagement 启动了事务管理功能
-	 * 应该提供一个PlatformTransactionManager默认实现
-	 * 由LocalContainerEntityManagerFactoryBean构造出jpa的事务管理器
-	 * 
-	 * @return
-	 */
-	@Bean(name = "jpaTransactionManager")
-	@Conditional(value = DevOrQAProfileCondition.class)
-	public PlatformTransactionManager development_jpaTransactionManager() {
-		return new JpaTransactionManager(entityManagerFactory().getObject());
-	}
-	
+	@Profile(PROFILE_PRODUCTION)
 	@Bean(name = "jpaTransactionManager")
 	@Conditional(value = ProductionProfileCondition.class)
-	public PlatformTransactionManager product_jpaTransactionManager2() {
-		return new JpaTransactionManager(entityManagerFactory().getObject());
+	public PlatformTransactionManager product_jpaTransactionManager() {
+		return new JpaTransactionManager(containerEntityManagerFactory().getObject());
 	}
 
 	/**
@@ -119,7 +123,7 @@ public class JPAConfiguration {
 		return new HibernateExceptionTranslator();
 	}
 	
-	public static class DevOrQAProfileCondition implements Condition {
+	public static class Develpment_QA_ProfileCondition implements Condition {
 		@Override
 		public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
 			String[] profiles = context.getEnvironment().getActiveProfiles();

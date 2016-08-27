@@ -19,7 +19,7 @@ import com.github.emailtohl.building.bootspring.SpringUtils;
 @Service
 @Transactional
 public class CreateTable2 {
-	private static AnnotationConfigApplicationContext ctx = SpringUtils.ctx;
+	private static AnnotationConfigApplicationContext ctx = SpringUtils.context;
 	@PersistenceContext
 	protected EntityManager entityManager;
 	

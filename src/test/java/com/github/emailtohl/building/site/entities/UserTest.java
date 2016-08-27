@@ -26,7 +26,7 @@ public class UserTest {
 	@Test
 	public void testGetIcon() throws FileNotFoundException, IOException {
 		ClassLoader cl = UserTest.class.getClassLoader();
-		AnnotationConfigApplicationContext ctx = SpringUtils.ctx;
+		AnnotationConfigApplicationContext ctx = SpringUtils.context;
 		UserRepository userRepository = ctx.getBean(UserRepository.class);
 		User u = userRepository.findByEmail("emailtohl@163.com");
 		try (InputStream is = cl.getResourceAsStream("img/icon-head-emailtohl.png")) {
