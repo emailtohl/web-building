@@ -43,7 +43,7 @@ public class UserCtrl {
 	@RequestMapping(value = "", method = OPTIONS)
 	public ResponseEntity<Void> discover() {
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("Allow", "OPTIONS,HEAD,GET,POST");
+		headers.add("Allow", "OPTIONS,HEAD,GET,POST,PUT,DELETE");
 		return new ResponseEntity<>(null, headers, HttpStatus.NO_CONTENT);
 	}
 	

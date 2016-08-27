@@ -1,4 +1,4 @@
-/*package com.github.emailtohl.building.common.repository.jpa;
+package com.github.emailtohl.building.common.repository.jpa;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -7,6 +7,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,15 +17,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 
-import javax.management.relation.Role;
 import javax.persistence.AccessType;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.security.core.userdetails.User;
 
 import com.github.emailtohl.building.bootspring.SpringUtils;
 import com.github.emailtohl.building.common.repository.jpa.BaseRepository.JpqlAndArgs;
@@ -31,11 +33,19 @@ import com.github.emailtohl.building.common.repository.jpa.BaseRepository.Predic
 import com.github.emailtohl.building.common.repository.jpa.relationEntities.Relation1;
 import com.github.emailtohl.building.common.repository.jpa.relationEntities.Relation2;
 import com.github.emailtohl.building.common.repository.jpa.relationEntities.TestRelationRepository;
+import com.github.emailtohl.building.site.dao.UserRepositoryCustomization;
+import com.github.emailtohl.building.site.dao.impl.UserRepositoryImpl;
+import com.github.emailtohl.building.site.entities.Authority;
+import com.github.emailtohl.building.site.entities.Employee;
+import com.github.emailtohl.building.site.entities.Subsidiary;
+import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.entities.User.Gender;
 
 public class BaseRepositoryTest {
-	AnnotationConfigApplicationContext ctx = SpringUtils.ctx;
 	private static final Logger logger = LogManager.getLogger();
+	AnnotationConfigApplicationContext context = SpringUtils.context;
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	User u = new TestUser();
 
 	class TestBaseRepository extends BaseRepository<User> {
 	}
@@ -56,7 +66,7 @@ public class BaseRepositoryTest {
 		}
 	}
 
-	class TestContact extends Contact {
+	class TestSubsidiary extends Subsidiary {
 		private static final long serialVersionUID = -4087260701365727981L;
 		String extendsPropery = "extendsPropery";
 
@@ -70,13 +80,35 @@ public class BaseRepositoryTest {
 	}
 
 	UserRepositoryCustomization userRepository;
-	EmployeeRepositoryCustomization employeeRepository;
 	TestBaseRepository baseRepository;
 
 	@Before
 	public void setUp() throws Exception {
-		userRepository = ctx.getBean(UserRepositoryImpl.class);
-		employeeRepository = ctx.getBean(EmployeeRepositoryImpl.class);
+		u.setAddress("四川路");
+		u.setAge(20);
+		u.setAuthorities(new HashSet<Authority>(Arrays.asList(Authority.EMPLOYEE, Authority.ADMIN)));
+		u.setBirthday(Date.from(Instant.now().minus(Duration.ofDays(10000))));
+		u.setDescription("test");
+		u.setEmail("test@test.com");
+		u.setEnabled(true);
+		u.setName("name");
+		u.setTelephone("123456789");
+		u.setUsername("username");
+		u.setGender(Gender.MALE);
+		TestSubsidiary c = new TestSubsidiary();
+		c.setCity("成都");
+		c.setCountry("中国");
+		c.setExtendsPropery("hello world");
+		c.setLanguage("zh");
+		c.setProvince("四川");
+		
+		try {
+			userRepository = context.getBean(UserRepositoryImpl.class, "userRepositoryImpl");
+		} catch (NoSuchBeanDefinitionException | BeanNotOfRequiredTypeException e) {
+			logger.debug(e.getMessage());
+			logger.debug("spring中管理的是bean是UserRepositoryImpl的动态代理：$Proxy101，而非UserRepositoryImpl.class类型");
+			userRepository = (UserRepositoryCustomization) context.getBean("userRepositoryImpl");
+		}
 		baseRepository = new TestBaseRepository();
 	}
 
@@ -100,7 +132,7 @@ public class BaseRepositoryTest {
 	public void testGetPagerStringObjectArrayLongInteger() throws ParseException {
 		Date d = sdf.parse("1982-02-12");
 		
-		 * 序列可以倒着写
+		//序列可以倒着写
 		 
 		String jpql = "select u from User u where u.enabled = ?2 and u.birthday = ?1";
 		Pager<User> pager = userRepository.getPager(jpql, new Object[] { d, true }, 1L, 10);
@@ -119,14 +151,14 @@ public class BaseRepositoryTest {
 	@Test
 	public void testGetPagerStringMapOfStringObjectLongInteger() {
 		
-		 * 使用命名方式传入参数
-		 * Collection集合作为一个参数
-		 * 对嵌入集合，一对多，多对多情况的JPQL写法
+//		使用命名方式传入参数
+//		Collection集合作为一个参数
+//		对嵌入集合，一对多，多对多情况的JPQL写法
 		 
-		String jpql = "SELECT DISTINCT u FROM User u JOIN u.authority a WHERE u.nickname LIKE :nickname AND a IN :authority";
+		String jpql = "SELECT DISTINCT u FROM User u JOIN u.authorities a WHERE u.email LIKE :email AND a IN :authorities";
 		Map<String, Object> args = new HashMap<String, Object>();
-		args.put("nickname", "foo");
-		args.put("authority", Arrays.asList("ADMIN", "USER"));
+		args.put("email", "emailtohl@163.com");
+		args.put("authorities", Arrays.asList(Authority.ADMIN, Authority.USER));
 		Pager<User> pager = userRepository.getPager(jpql, args, 1L, 10);
 		List<User> ls = pager.getDataList();
 		for (User u : ls) {
@@ -141,71 +173,18 @@ public class BaseRepositoryTest {
 
 	@Test
 	public void testGetPagerELongIntegerAccessType() {
-		TestUser u = new TestUser();
-		TestContact c = new TestContact();
-		c.setEmail("foo@test.com");
-		c.setAddress("重庆");
-		c.setTelephone("18702392680");
-
-		u.setName("foo");
-		u.setGender(Gender.MALE);
-		u.setContact(c);
-
-		Role r = new Role();
-		r.setName("ADMIN");
-
-		r.setUsers(new HashSet<User>(Arrays.asList(u)));
-		u.setRoles(new HashSet<Role>(Arrays.asList(r)));
-		
-		 * 将实体作为参数，查询出Pager
-		 * 此处实体类是基类，而派生类中的属性不会被分析出来，所以派生类可以放心地继承实体并作为DTO传输数据
+		//将实体作为参数，查询出Pager
+		//此处实体类是基类，而派生类中的属性不会被分析出来，所以派生类可以放心地继承实体并作为DTO传输数据
 		 
 		Pager<User> pu = userRepository.getPager(u, 1L, 20, AccessType.PROPERTY);
 		List<User> ls = pu.getDataList();
 		for (User user : ls) {
 			logger.debug(user);
 		}
-
-		
-		 * 下面是一对多对一关系，嵌入集合属性的查询
-		 
-		Employee emp = new Employee();
-		emp.setEmpNum(1);
-		emp.setContact(new Contact("重庆", "company@test.com", "18712345678"));
-		Company com = new Company();
-		com.setName("XXX注册公司");
-		Department d = new Department();
-		d.setCompany(com);
-		emp.setDepartment(d);
-		emp.setAuthority(new HashSet<String>(Arrays.asList("ADMIN", "USER")));
-		Pager<Employee> pe = employeeRepository.getPager(emp, 1L, 20, null);
-		List<Employee> le = pe.getDataList();
-		for (Employee e : le) {
-			logger.debug(e);
-		}
 	}
 
 	@Test
 	public void testJpqlAndArgsByPropety() {
-		TestUser u = new TestUser();
-		TestContact c = new TestContact();
-		c.setEmail("foo@test.com");
-		c.setAddress("重庆");
-		c.setTelephone("18702392680");
-
-		u.setName("foo");
-		u.setGender(Gender.MALE);
-		u.setContact(c);
-
-		Role r = new Role();
-		r.setName("ADMIN");
-
-		r.setUsers(new HashSet<User>(Arrays.asList(u)));
-		u.setRoles(new HashSet<Role>(Arrays.asList(r)));
-
-		
-		 * 通过JavaBean属性的方式访问实体对象
-		 
 		JpqlAndArgs jaa = baseRepository.jpqlAndArgsByPropety(u);
 		logger.debug(jaa.jpql);
 		logger.debug(jaa.args);
@@ -213,25 +192,6 @@ public class BaseRepositoryTest {
 
 	@Test
 	public void testJpqlAndArgsByField() {
-		TestUser u = new TestUser();
-		TestContact c = new TestContact();
-		c.setEmail("foo@test.com");
-		c.setAddress("重庆");
-		c.setTelephone("18702392680");
-
-		u.setName("foo");
-		u.setGender(Gender.MALE);
-		u.setContact(c);
-
-		Role r = new Role();
-		r.setName("ADMIN");
-
-		r.setUsers(new HashSet<User>(Arrays.asList(u)));
-		u.setRoles(new HashSet<Role>(Arrays.asList(r)));
-		
-		
-		 * 访问实体对象的Field字段
-		 
 		JpqlAndArgs jaa = baseRepository.jpqlAndArgsByField(u);
 		logger.debug(jaa.jpql);
 		logger.debug(jaa.args);
@@ -239,24 +199,6 @@ public class BaseRepositoryTest {
 
 	@Test
 	public void testPredicateAndArgsByProperty() {
-		TestUser u = new TestUser();
-		TestContact c = new TestContact();
-		c.setEmail("foo@test.com");
-		c.setAddress("重庆");
-		c.setTelephone("18702392680");
-
-		u.setName("foo");
-		u.setGender(Gender.MALE);
-		u.setContact(c);
-
-		Role r = new Role();
-		r.setName("ADMIN");
-
-		r.setUsers(new HashSet<User>(Arrays.asList(u)));
-		u.setRoles(new HashSet<Role>(Arrays.asList(r)));
-		
-		 * 访问实体对象，并返回WHERE子句和对应参数
-		 
 		PredicateAndArgs paa = baseRepository.predicateAndArgs(u, null);
 		logger.debug(paa.predicate);
 		logger.debug(paa.args);
@@ -264,9 +206,9 @@ public class BaseRepositoryTest {
 		logger.debug(paa.entityName);
 	}
 
-	*//**
+	/**
 	 * 下面是测试正则表达式是否匹配各种可能的JPQL形式
-	 *//*
+	 */
 	@Test
 	public void testJpqlPattern() {
 		String jpql;
@@ -546,4 +488,4 @@ public class BaseRepositoryTest {
 		assertFalse(jaa.jpql.contains("relation2"));
 	}
 	
-}*/
+}
