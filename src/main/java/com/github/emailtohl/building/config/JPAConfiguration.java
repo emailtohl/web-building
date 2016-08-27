@@ -123,6 +123,18 @@ public class JPAConfiguration {
 		return new HibernateExceptionTranslator();
 	}
 	
+	/**
+	 * From the ConditionContext, you can do the following:
+	 * Check for bean definitions via the BeanDefinitionRegistry returned from getRegistry(). 
+	 * Check for the presence of beans, and even dig into bean properties via the ConfigurableListableBeanFactory returned from getBeanFactory(). 
+	 * Check for the presence and values of environment variables via the Environment retrieved from getEnvironment(). 
+	 * Read and inspect the contents of resources loaded via the ResourceLoader returned from getResourceLoader().
+	 * Load and check for the presence of classes via the ClassLoader returned from getClassLoader().
+	 * 
+	 * As for the AnnotatedTypeMetadata, it offers you a chance to inspect annotations that may also be placed on the @Bean method.
+	 * Like ConditionContext, Annotated- TypeMetadata is an interface.
+	 * 
+	 */
 	public static class Develpment_QA_ProfileCondition implements Condition {
 		@Override
 		public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {

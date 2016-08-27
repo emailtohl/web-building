@@ -6,7 +6,7 @@
   <title>Log in</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <!-- Bootstrap 3.3.5 -->
+  <!-- Bootstrap 3.3.6 -->
   <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="lib/fonts/font-awesome.min.css">
@@ -53,7 +53,7 @@
 	     </div>
          <!-- <b style="color: red;">Login failed. Please try again.</b><br /><br /> -->
      </c:if>
-    <form action="/building/authenticate" method="post">
+    <form action="/building/login" method="post">
       <div class="form-group has-feedback">
         <input type="email" class="form-control" name="email" placeholder="your email">
         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>

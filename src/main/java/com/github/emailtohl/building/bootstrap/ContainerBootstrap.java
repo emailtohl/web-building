@@ -55,7 +55,7 @@ public class ContainerBootstrap implements WebApplicationInitializer {
 		/* 可以上传文件 */
 		dispatcher.setMultipartConfig(new MultipartConfigElement(null, 20_971_520L, 41_943_040L, 512_000));
 		dispatcher.addMapping("/");
-		// 激活spring配置中的profile
+		// 另一种激活spring配置中的profile的方式
 //		dispatcher.setInitParameter("spring.profiles.active", RootContextConfiguration.PROFILE_PRODUCTION);
 //		container.setInitParameter("spring.profiles.active", RootContextConfiguration.PROFILE_PRODUCTION);
 

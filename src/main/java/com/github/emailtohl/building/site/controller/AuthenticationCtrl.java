@@ -25,19 +25,8 @@ public class AuthenticationCtrl {
 	AuthenticationService authenticationService;
 	
 	/**
-	 * 校验用户名和密码，对用户进行认证
-	 * @param email
-	 * @param password
-	 * @return
-	 */
-	@RequestMapping(value = "authenticate", method = RequestMethod.POST)
-	@ResponseBody
-	public User authenticate(String email, String password) {
-		return authenticationService.authenticate(email, password);
-	}
-	
-	/**
-	 * 获取登录页面
+	 * GET方法获取登录页面
+	 * POST方法配置在Spring security中对用户进行认证
 	 * @param model
 	 * @return
 	 */
@@ -64,5 +53,14 @@ public class AuthenticationCtrl {
 			map.put("principal", authentication.getPrincipal());
 		}
 		return map;
+	}
+	
+	/**
+	 * 测试接口
+	 * @return
+	 */
+	@RequestMapping({ "secure" })
+	public String securePage() {
+		return "secure";
 	}
 }
