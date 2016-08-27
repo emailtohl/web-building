@@ -1,13 +1,15 @@
 package com.github.emailtohl.building.config;
-
+import static com.github.emailtohl.building.config.RootContextConfiguration.*;
 import javax.inject.Inject;
 import javax.sql.DataSource;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
@@ -51,10 +53,12 @@ public class DataSourceConfiguration {
 	}
 
 	/**
-	 * spring 提供的用于测试的简单数据源
+	 * 开发环境
+	 * 没有连接池
 	 * @return
 	 */
-	@Bean
+	@Profile(PROFILE_DEVELPMENT)
+	@Bean(name = "dev_dataSource")
 	public DataSource springTestDataSource() {
 		logger.info(env.getProperty("local.driverClassName"));
 		logger.info(env.getProperty("local.url"));
@@ -69,10 +73,33 @@ public class DataSourceConfiguration {
 	}
 	
 	/**
+	 * 开发或QA环境
+	 * tomcat的连接池
+	 * @return
+	 */
+	@Profile({ PROFILE_DEVELPMENT, PROFILE_QA })
+	@Bean(name = "dataSource")
+	public DataSource tomcatJdbc() {
+		// 创建连接池属性对象
+		PoolProperties poolProps = new PoolProperties();
+		poolProps.setUrl(url);
+		poolProps.setDriverClassName(driverClassName);
+		poolProps.setUsername(username);
+		poolProps.setPassword(password);
+		// 创建连接池, 使用了 tomcat 提供的的实现，它实现了 javax.sql.DataSource 接口
+		org.apache.tomcat.jdbc.pool.DataSource dataSource = new org.apache.tomcat.jdbc.pool.DataSource();
+		// 为连接池设置属性
+		dataSource.setPoolProperties(poolProps);
+		return dataSource;
+	}
+	
+	/**
+	 * 生产环境
 	 * 获取容器提供的数据源
 	 * @return
 	 */
-	@Bean
+	@Profile(PROFILE_PRODUCTION)
+	@Bean(name = "dataSource")
 	public DataSource jndiDataSource() {
 		JndiDataSourceLookup lookup = new JndiDataSourceLookup();
 		return lookup.getDataSource("jdbc/building");

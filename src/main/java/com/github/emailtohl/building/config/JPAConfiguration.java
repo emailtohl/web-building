@@ -6,19 +6,27 @@ import javax.sql.DataSource;
 
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Condition;
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
+import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.dao.support.PersistenceExceptionTranslator;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.hibernate5.HibernateExceptionTranslator;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import static com.github.emailtohl.building.config.RootContextConfiguration.*;
+
 /**
  * JPA的配置
  * @author HeLei
@@ -39,7 +47,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class JPAConfiguration {
 
 	@Inject
-	@Named("jndiDataSource")
+	@Named("dataSource")
 	DataSource dataSource;
 	
 	/**
@@ -57,11 +65,24 @@ public class JPAConfiguration {
 	}
 
 	/**
+	 * 脱离容器环境下使用
+	 * @return
+	 */
+	@Profile({ "develpment", "qa" })
+	@Bean(name = "entityManagerFactory")
+	public LocalEntityManagerFactoryBean entityManagerFactory() {
+		LocalEntityManagerFactoryBean emfb = new LocalEntityManagerFactoryBean();
+		emfb.setPersistenceUnitName("building-unit");
+		return emfb;
+	}
+	
+	/**
 	 * 使用容器提供的实体管理工厂，这样可以不用使用META-INFO/persistence.xml配置
 	 * @return
 	 */
-	@Bean
-	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+	@Profile("production")
+	@Bean(name = "entityManagerFactory")
+	public LocalContainerEntityManagerFactoryBean containerEntityManagerFactory() {
 		LocalContainerEntityManagerFactoryBean emfb = new LocalContainerEntityManagerFactoryBean();
 		emfb.setDataSource(dataSource);
 		emfb.setJpaVendorAdapter(jpaVendorAdapter());
@@ -77,8 +98,15 @@ public class JPAConfiguration {
 	 * 
 	 * @return
 	 */
-	@Bean
-	public PlatformTransactionManager jpaTransactionManager() {
+	@Bean(name = "jpaTransactionManager")
+	@Conditional(value = DevOrQAProfileCondition.class)
+	public PlatformTransactionManager development_jpaTransactionManager() {
+		return new JpaTransactionManager(entityManagerFactory().getObject());
+	}
+	
+	@Bean(name = "jpaTransactionManager")
+	@Conditional(value = ProductionProfileCondition.class)
+	public PlatformTransactionManager product_jpaTransactionManager2() {
 		return new JpaTransactionManager(entityManagerFactory().getObject());
 	}
 
@@ -90,4 +118,31 @@ public class JPAConfiguration {
 	public PersistenceExceptionTranslator persistenceExceptionTranslator() {
 		return new HibernateExceptionTranslator();
 	}
+	
+	public static class DevOrQAProfileCondition implements Condition {
+		@Override
+		public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+			String[] profiles = context.getEnvironment().getActiveProfiles();
+			for (int i = 0; i < profiles.length; i++) {
+				if (PROFILE_QA.equalsIgnoreCase(profiles[i]) || PROFILE_DEVELPMENT.equalsIgnoreCase(profiles[i])) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+	
+	public static class ProductionProfileCondition implements Condition {
+		@Override
+		public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+			String[] profiles = context.getEnvironment().getActiveProfiles();
+			for (int i = 0; i < profiles.length; i++) {
+				if (PROFILE_PRODUCTION.equalsIgnoreCase(profiles[i])) {
+					return true;
+				}
+			}
+			return false;
+		}
+	}
+	
 }

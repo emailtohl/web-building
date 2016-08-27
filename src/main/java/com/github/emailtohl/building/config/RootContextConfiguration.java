@@ -84,6 +84,10 @@ import com.google.gson.Gson;
 @Import({ DataSourceConfiguration.class, JPAConfiguration.class, SecurityConfiguration.class })
 public class RootContextConfiguration
 		implements AsyncConfigurer, SchedulingConfigurer, TransactionManagementConfigurer {
+	public static final String PROFILE_DEVELPMENT = "develpment";
+	public static final String PROFILE_QA = "qa";
+	public static final String PROFILE_PRODUCTION = "production";
+	
 	private static final Logger log = LogManager.getLogger();
 	private static final Logger schedulingLogger = LogManager.getLogger(log.getName() + ".[scheduling]");
 
@@ -91,7 +95,7 @@ public class RootContextConfiguration
 	Environment env;
 	
 	@Inject
-	@Named("jndiDataSource")
+	@Named("dataSource")
 	DataSource dataSource;
 	
 	@Inject

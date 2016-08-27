@@ -38,6 +38,7 @@ public class ContainerBootstrap implements WebApplicationInitializer {
 		/* 配置Spring根应用上下文 */
 		AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
 		/* 载入配置 */
+		rootContext.getEnvironment().setActiveProfiles("production");// 激活spring配置中的profile
 		rootContext.register(RootContextConfiguration.class);
 		container.addListener(new ContextLoaderListener(rootContext));
 
@@ -54,6 +55,9 @@ public class ContainerBootstrap implements WebApplicationInitializer {
 		/* 可以上传文件 */
 		dispatcher.setMultipartConfig(new MultipartConfigElement(null, 20_971_520L, 41_943_040L, 512_000));
 		dispatcher.addMapping("/");
+		// 激活spring配置中的profile
+//		dispatcher.setInitParameter("spring.profiles.active", "production");
+//		container.setInitParameter("spring.profiles.active", "production");
 
 		/* 在Servlet容器中注册监听器 */
 		container.addListener(SessionListener.class);

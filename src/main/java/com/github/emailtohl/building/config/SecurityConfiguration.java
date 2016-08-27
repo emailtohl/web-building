@@ -1,4 +1,5 @@
 package com.github.emailtohl.building.config;
+import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_PRODUCTION;
 
 import java.io.IOException;
 
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -38,13 +40,14 @@ import org.springframework.web.util.WebUtils;
  * spring security 的编程风格的配置，它依赖于数据源配置类
  * @author HeLei
  */
+@Profile(PROFILE_PRODUCTION)
 @Configuration
 // 启动安全过滤器
 @EnableWebSecurity
 @Import({ DataSourceConfiguration.class })
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Inject
-	@Named("jndiDataSource")
+	@Named("dataSource")
 	DataSource dataSource;
 	
 	/**

@@ -71,6 +71,7 @@ public class PersistenceData {
 		emailtohl.setSubsidiary(s);
 		emailtohl.setGender(Gender.MALE);
 		emailtohl.getAuthorities().addAll(Arrays.asList(ADMIN, USER));
+		// cl.getResourceAsStream方法返回的输入流已经是BufferedInputStream对象，无需再装饰
 		try (InputStream is = cl.getResourceAsStream("img/icon-head-emailtohl.png")) {
 			emailtohl.setBirthday(sdf.parse("1982-02-12"));
 			icon = new byte[is.available()];
