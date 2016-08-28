@@ -75,12 +75,12 @@ public abstract class BaseRepository<E extends Serializable> extends GenericJpaR
 	 * 参数是数组
 	 */
 	@Override
-	public Pager<E> getPager(String jpql, Object[] args, Long pageNum, Integer pageSize) {
+	public Pager<E> getPager(String jpql, Object[] args, Integer pageNum, Integer pageSize) {
 		Matcher m;
 		if (jpql == null || !(m = jpqlPattern.matcher(jpql)).find())
 			throw new IllegalArgumentException("JPQL可能是null，或者格式可能不对，也可能是正则表达式编写不对");
 		if (pageNum == null || pageNum < 1L)
-			pageNum = 1L;
+			pageNum = 1;
 		if (pageSize == null || pageSize < 1)
 			pageSize = 20;// 默认每页20条记录
 		String selectAlias, alias, from, distinct;
@@ -106,7 +106,7 @@ public abstract class BaseRepository<E extends Serializable> extends GenericJpaR
 			}
 		}
 		Long totalRows = countQuery.getSingleResult();
-		Long totalPage = (totalRows + pageSize - 1) / pageSize;
+		Integer totalPage = (int) ((totalRows + pageSize - 1) / pageSize);
 		TypedQuery<E> pagedQuery = entityManager.createQuery(jpql, entityClass);
 		if (args != null) {
 			for (int i = 0; i < args.length; i++) {
@@ -117,9 +117,8 @@ public abstract class BaseRepository<E extends Serializable> extends GenericJpaR
 				}
 			}
 		}
-		Long startRecordNumber = (pageNum - 1) * pageSize;
-		pagedQuery.setFirstResult(
-				startRecordNumber > Integer.MAX_VALUE ? Integer.MAX_VALUE : startRecordNumber.intValue());
+		Integer startRecordNumber = (pageNum - 1) * pageSize;
+		pagedQuery.setFirstResult(startRecordNumber.intValue());
 		pagedQuery.setMaxResults(pageSize);
 		logger.debug("SELECT Query: \n" + jpql + "\n" + "Arguments: \n" + Arrays.toString(args) + "\n"
 				+ "firstResult: \n" + startRecordNumber + "\n" + "maxResults: \n" + pageSize);
@@ -139,12 +138,12 @@ public abstract class BaseRepository<E extends Serializable> extends GenericJpaR
 	 * 参数是Map
 	 */
 	@Override
-	public Pager<E> getPager(String jpql, Map<String, Object> args, Long pageNum, Integer pageSize) {
+	public Pager<E> getPager(String jpql, Map<String, Object> args, Integer pageNum, Integer pageSize) {
 		Matcher m;
 		if (jpql == null || !(m = jpqlPattern.matcher(jpql)).find())
 			throw new IllegalArgumentException("JPQL可能是null，或者格式可能不对，也可能是正则表达式编写不对");
 		if (pageNum == null || pageNum < 1L)
-			pageNum = 1L;
+			pageNum = 1;
 		if (pageSize == null || pageSize < 1)
 			pageSize = 20;// 默认每页20条记录
 		String selectAlias, alias, from, distinct;
@@ -170,7 +169,7 @@ public abstract class BaseRepository<E extends Serializable> extends GenericJpaR
 			}
 		}
 		Long totalRows = countQuery.getSingleResult();
-		Long totalPage = (totalRows + pageSize - 1) / pageSize;
+		Integer totalPage = (int) ((totalRows + pageSize - 1) / pageSize);
 		TypedQuery<E> pagedQuery = entityManager.createQuery(jpql, entityClass);
 		if (args != null) {
 			for (Map.Entry<String, Object> entry : args.entrySet()) {
@@ -181,7 +180,7 @@ public abstract class BaseRepository<E extends Serializable> extends GenericJpaR
 				}
 			}
 		}
-		Long startRecordNumber = (pageNum - 1) * pageSize;
+		Integer startRecordNumber = (pageNum - 1) * pageSize;
 		pagedQuery.setFirstResult(
 				startRecordNumber > Integer.MAX_VALUE ? Integer.MAX_VALUE : startRecordNumber.intValue());
 		pagedQuery.setMaxResults(pageSize);
@@ -203,7 +202,7 @@ public abstract class BaseRepository<E extends Serializable> extends GenericJpaR
 	 * 参数是实体对象，程序会分析该实体对象哪些属性有值，然后生成一条查询的JPQL，如此实现动态查询
 	 */
 	@Override
-	public Pager<E> getPager(E entity, Long pageNum, Integer pageSize, AccessType type) {
+	public Pager<E> getPager(E entity, Integer pageNum, Integer pageSize, AccessType type) {
 		JpqlAndArgs jaa;
 		if (AccessType.FIELD == type) {
 			jaa = jpqlAndArgsByField(entity);
@@ -212,7 +211,7 @@ public abstract class BaseRepository<E extends Serializable> extends GenericJpaR
 		}
 		return getPager(jaa.jpql, jaa.args, pageNum, pageSize);
 	}
-
+	
 	/**
 	 * 对实体对象的JavaBean属性进行分析，获取到JPQL 注意，实体不能继承非实体的类，否则将会把非实体类中的属性分析出来
 	 * 

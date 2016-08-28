@@ -2,6 +2,9 @@ package com.github.emailtohl.building.site.dao.impl;
 
 import javax.persistence.AccessType;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.github.emailtohl.building.common.repository.jpa.BaseRepository;
@@ -21,8 +24,18 @@ import com.github.emailtohl.building.site.entities.User;
 public class UserRepositoryImpl extends BaseRepository<User> implements UserRepositoryCustomization {
 
 	@Override
-	public Pager<User> dynamicQuery(User user, Long pageNum) {
+	public Pager<User> dynamicQuery(User user, Integer pageNum) {
 		return super.getPager(user, pageNum, PAGE_SIZE, AccessType.PROPERTY);
 	}
 
+	/**
+	 * 使用spring data使用的page对象，暂不支持Pageable中的排序功能
+	 * 默认使用JavaBean属性获取查询条件
+	 */
+	@Override
+	public Page<User> getPage(User user, Pageable pageable) {
+		Pager<User> myPager = getPager(user, pageable.getPageNumber(), pageable.getPageSize(), AccessType.PROPERTY);
+		Page<User> springPage = new PageImpl<User>(myPager.getDataList(), pageable, myPager.getTotalRow());
+		return springPage;
+	}
 }

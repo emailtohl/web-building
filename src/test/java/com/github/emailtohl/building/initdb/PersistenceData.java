@@ -21,6 +21,10 @@ import com.github.emailtohl.building.site.entities.Manager;
 import com.github.emailtohl.building.site.entities.Subsidiary;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.entities.User.Gender;
+/**
+ * 初始化数据库使用的测试数据
+ * @author HeLei
+ */
 public class PersistenceData {
 	static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	static SecureRandom r = new SecureRandom();

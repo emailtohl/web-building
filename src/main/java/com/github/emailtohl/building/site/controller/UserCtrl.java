@@ -43,7 +43,7 @@ public class UserCtrl {
 	@RequestMapping(value = "", method = OPTIONS)
 	public ResponseEntity<Void> discover() {
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("Allow", "OPTIONS,HEAD,GET,POST,PUT,DELETE");
+		headers.add("Allow", "OPTIONS,HEAD,GET");
 		return new ResponseEntity<>(null, headers, HttpStatus.NO_CONTENT);
 	}
 	
@@ -60,7 +60,11 @@ public class UserCtrl {
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	public User getUser(@PathVariable("id") Long id) {
-		return userService.getUser(id);
+		User u = userService.getUser(id);
+		if (u == null) {
+			throw new ResourceNotFoundException();
+		}
+		return u;
 	}
 	
 	@RequestMapping(value = "pager", method = GET)

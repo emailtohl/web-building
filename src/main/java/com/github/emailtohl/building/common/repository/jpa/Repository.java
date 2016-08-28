@@ -12,7 +12,7 @@ import com.github.emailtohl.building.common.repository.generic.GenericRepository
  * @param <E>
  */
 public interface Repository<E extends Serializable> extends GenericRepository<Long, E> {
-	Pager<E> getPager(String jpql, Object[] args, Long pageNum, Integer pageSize);
-	Pager<E> getPager(String jpql, Map<String, Object> args, Long pageNum, Integer pageSize);
-	Pager<E> getPager(E entity, Long pageNum, Integer pageSize, AccessType type);
+	Pager<E> getPager(String jpql, Object[] args, Integer pageNum, Integer pageSize);
+	Pager<E> getPager(String jpql, Map<String, Object> args, Integer pageNum, Integer pageSize);
+	Pager<E> getPager(E entity, Integer pageNum, Integer pageSize, AccessType type);
 }

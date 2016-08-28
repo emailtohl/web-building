@@ -3,6 +3,7 @@ package com.github.emailtohl.building.common.repository.generic;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.transaction.Transactional;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.validation.annotation.Validated;
@@ -14,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
  * @param <E>
  */
 @Validated
+@Transactional
 public interface GenericRepository<I extends Serializable, E extends Serializable> {
 	@NotNull
 	Iterable<E> getAll();
@@ -29,5 +31,7 @@ public interface GenericRepository<I extends Serializable, E extends Serializabl
 	void remove(@NotNull E entity);
 
 	void removeById(@NotNull I id);
+	
+	void flush();
 	
 }

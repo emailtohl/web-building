@@ -13,10 +13,10 @@ import java.util.List;
 public class Pager<T> implements Serializable {
 	private static final long serialVersionUID = -5098353318676033935L;
 	private Long totalRow;// 总行数
-	private Long totalPage;// 总页面数
-	private Long pageNum;// 当前页码
+	private Integer totalPage;// 总页面数
+	private Integer pageNum;// 当前页码
 	private Integer pageSize;// 每页最大行数
-	private Long startRecordNumber;// 返回结果从此行开始
+	private Integer startRecordNumber;// 返回结果从此行开始
 	private List<T> dataList;// 存储查询结果
 	
 	public Long getTotalRow() {
@@ -25,16 +25,16 @@ public class Pager<T> implements Serializable {
 	public void setTotalRow(Long totalRow) {
 		this.totalRow = totalRow;
 	}
-	public Long getTotalPage() {
+	public Integer getTotalPage() {
 		return totalPage;
 	}
-	public void setTotalPage(Long totalPage) {
+	public void setTotalPage(Integer totalPage) {
 		this.totalPage = totalPage;
 	}
-	public Long getPageNum() {
+	public Integer getPageNum() {
 		return pageNum;
 	}
-	public void setPageNum(Long pageNum) {
+	public void setPageNum(Integer pageNum) {
 		this.pageNum = pageNum;
 	}
 	public Integer getPageSize() {
@@ -43,10 +43,10 @@ public class Pager<T> implements Serializable {
 	public void setPageSize(Integer pageSize) {
 		this.pageSize = pageSize;
 	}
-	public Long getStartRecordNumber() {
+	public Integer getStartRecordNumber() {
 		return startRecordNumber;
 	}
-	public void setStartRecordNumber(Long startRecordNumber) {
+	public void setStartRecordNumber(Integer startRecordNumber) {
 		this.startRecordNumber = startRecordNumber;
 	}
 	public List<T> getDataList() {

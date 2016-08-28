@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Pager<User> getUserPager(User u, Pageable pageable) {
-		return userRepository.getPager(u, (long)pageable.getPageNumber(), pageable.getPageSize(), AccessType.PROPERTY);
+		return userRepository.getPager(u, pageable.getPageNumber(), pageable.getPageSize(), AccessType.PROPERTY);
 	}
 
 	private void updateUser(User updateObj, User persistStatus) {

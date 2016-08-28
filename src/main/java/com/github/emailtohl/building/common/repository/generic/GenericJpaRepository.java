@@ -49,6 +49,10 @@ public abstract class GenericJpaRepository<I extends Serializable, E extends Ser
 		this.entityManager.flush();
 	}
 
+	/**
+	 * merge方法，如果实体有id则保存，否则新增
+	 * 注意：保存时，若实体有null，merge不会忽略null，而是把null写进数据库
+	 */
 	@Override
 	public void update(E entity) {
 		this.entityManager.merge(entity);
@@ -71,4 +75,11 @@ public abstract class GenericJpaRepository<I extends Serializable, E extends Ser
 				.executeUpdate();
 	}
 	
+	/**
+	 * 数据刷新
+	 */
+	@Override
+	public void flush() {
+		entityManager.flush();
+	}
 }

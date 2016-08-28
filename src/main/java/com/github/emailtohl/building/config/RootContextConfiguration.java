@@ -51,6 +51,8 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -310,5 +312,15 @@ public class RootContextConfiguration
 		RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory);
 		reInitMessageConverter(restTemplate);
 		return restTemplate;
+	}
+	
+	@Bean
+	public JavaMailSender mailSender() {
+		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+		mailSender.setHost(env.getProperty("mailserver.host"));
+		mailSender.setPort(Integer.valueOf(env.getProperty("mailserver.port")));
+		mailSender.setUsername(env.getProperty("mailserver.username"));
+		mailSender.setPassword(env.getProperty("mailserver.password"));
+		return mailSender;
 	}
 }

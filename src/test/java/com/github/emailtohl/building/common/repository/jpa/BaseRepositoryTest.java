@@ -39,8 +39,7 @@ import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.Employee;
 import com.github.emailtohl.building.site.entities.Subsidiary;
 import com.github.emailtohl.building.site.entities.User;
-import com.github.emailtohl.building.site.entities.User.Gender;
-
+import com.github.emailtohl.building.site.entities.User.Gender; 
 public class BaseRepositoryTest {
 	private static final Logger logger = LogManager.getLogger();
 	AnnotationConfigApplicationContext context = SpringUtils.context;
@@ -106,7 +105,7 @@ public class BaseRepositoryTest {
 			userRepository = context.getBean(UserRepositoryImpl.class, "userRepositoryImpl");
 		} catch (NoSuchBeanDefinitionException | BeanNotOfRequiredTypeException e) {
 			logger.debug(e.getMessage());
-			logger.debug("spring中管理的是bean是UserRepositoryImpl的动态代理：$Proxy101，而非UserRepositoryImpl.class类型");
+			logger.debug("spring中管理的是bean是UserRepositoryImpl已经被代理过了，而非UserRepositoryImpl.class类型");
 			userRepository = (UserRepositoryCustomization) context.getBean("userRepositoryImpl");
 		}
 		baseRepository = new TestBaseRepository();
@@ -131,11 +130,9 @@ public class BaseRepositoryTest {
 	@Test
 	public void testGetPagerStringObjectArrayLongInteger() throws ParseException {
 		Date d = sdf.parse("1982-02-12");
-		
 		//序列可以倒着写
-		 
 		String jpql = "select u from User u where u.enabled = ?2 and u.birthday = ?1";
-		Pager<User> pager = userRepository.getPager(jpql, new Object[] { d, true }, 1L, 10);
+		Pager<User> pager = userRepository.getPager(jpql, new Object[] { d, true }, 1, 10);
 		List<User> ls = pager.getDataList();
 		for (User u : ls) {
 			logger.debug(u);
@@ -150,16 +147,14 @@ public class BaseRepositoryTest {
 
 	@Test
 	public void testGetPagerStringMapOfStringObjectLongInteger() {
-		
 //		使用命名方式传入参数
 //		Collection集合作为一个参数
 //		对嵌入集合，一对多，多对多情况的JPQL写法
-		 
 		String jpql = "SELECT DISTINCT u FROM User u JOIN u.authorities a WHERE u.email LIKE :email AND a IN :authorities";
 		Map<String, Object> args = new HashMap<String, Object>();
 		args.put("email", "emailtohl@163.com");
 		args.put("authorities", Arrays.asList(Authority.ADMIN, Authority.USER));
-		Pager<User> pager = userRepository.getPager(jpql, args, 1L, 10);
+		Pager<User> pager = userRepository.getPager(jpql, args, 1, 10);
 		List<User> ls = pager.getDataList();
 		for (User u : ls) {
 			logger.debug(u);
@@ -175,14 +170,13 @@ public class BaseRepositoryTest {
 	public void testGetPagerELongIntegerAccessType() {
 		//将实体作为参数，查询出Pager
 		//此处实体类是基类，而派生类中的属性不会被分析出来，所以派生类可以放心地继承实体并作为DTO传输数据
-		 
-		Pager<User> pu = userRepository.getPager(u, 1L, 20, AccessType.PROPERTY);
+		Pager<User> pu = userRepository.getPager(u, 1, 20, AccessType.PROPERTY);
 		List<User> ls = pu.getDataList();
 		for (User user : ls) {
 			logger.debug(user);
 		}
 	}
-
+	
 	@Test
 	public void testJpqlAndArgsByPropety() {
 		JpqlAndArgs jaa = baseRepository.jpqlAndArgsByPropety(u);
