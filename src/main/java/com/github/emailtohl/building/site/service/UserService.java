@@ -37,11 +37,11 @@ public interface UserService {
 	void updateUser(@Min(value = 1L) Long id, User u);
 	
 	/**
-	 * 修改密码，限制只能本人才能修改
+	 * 修改密码，限制只能本人或管理员（管理员是否能修改值得商榷）才能修改
 	 * @param id
 	 * @param newPassword
 	 */
-	@PreAuthorize("principal.id.equals(#id)")
+	@PreAuthorize("#id == authentication.principal.userId or hasAuthority('ADMIN')")
 	void changePassword(@Min(value = 1L) Long id, @Pattern(regexp = "^[^\\s&\"<>]+$") String newPassword);
 	
 	/**

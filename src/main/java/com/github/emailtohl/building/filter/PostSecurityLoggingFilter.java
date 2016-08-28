@@ -21,7 +21,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
  * Servlet Filter implementation class PostSecurityLoggingFilter
  */
 //@WebFilter("/*")
-@SuppressWarnings("unused")
 public class PostSecurityLoggingFilter implements Filter {
 	public static final Logger logger = LogManager.getLogger(PostSecurityLoggingFilter.class);
 	/**
@@ -51,7 +50,6 @@ public class PostSecurityLoggingFilter implements Filter {
 				logger.debug("Credentials: " + authentication.getCredentials());
 				logger.debug("Details: " + authentication.getDetails());
 				logger.debug("Principal: " + authentication.getPrincipal());
-				Object o = authentication.getPrincipal();
 				Collection<? extends GrantedAuthority> grantedAuthorities = authentication.getAuthorities();
 				int i = 1;
 				for (GrantedAuthority g : grantedAuthorities) {

@@ -21,8 +21,6 @@ public class UserServiceImpl implements UserService {
 	
 	@Inject
 	UserRepository userRepository;
-	@Inject
-	BCryptUtil BCryptUtil;
 
 	@Override
 	public Long addUser(User u) {

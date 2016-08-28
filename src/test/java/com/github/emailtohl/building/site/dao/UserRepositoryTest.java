@@ -26,7 +26,6 @@ import org.springframework.transaction.TransactionSystemException;
 
 import com.github.emailtohl.building.bootspring.SpringUtils;
 import com.github.emailtohl.building.common.repository.jpa.Pager;
-import com.github.emailtohl.building.common.utils.BCryptUtil;
 import com.github.emailtohl.building.common.utils.Validator;
 import com.github.emailtohl.building.initdb.PersistenceData;
 import com.github.emailtohl.building.site.entities.Authority;
@@ -39,7 +38,6 @@ public class UserRepositoryTest {
 	AnnotationConfigApplicationContext ctx = SpringUtils.context;
 	UserRepository userRepository = ctx.getBean(UserRepository.class);
 	SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD");
-	BCryptUtil bCryptUtil = ctx.getBean(BCryptUtil.class);
 	static final Logger logger = LogManager.getLogger();
 	
 	/**
