@@ -2,13 +2,11 @@ package com.github.emailtohl.building.site.mail;
 
 import javax.mail.MessagingException;
 
-import org.junit.Test;
-
 import com.github.emailtohl.building.bootspring.SpringUtils;
 
 public class EmailServiceTest {
 
-	@Test
+//	@Test
 	public void testSendChangePasswordEmail() throws MessagingException {
 		EmailService service = SpringUtils.context.getBean(EmailService.class);
 		String subject = "Test Subject";
