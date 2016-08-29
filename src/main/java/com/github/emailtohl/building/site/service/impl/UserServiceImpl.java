@@ -1,5 +1,7 @@
 package com.github.emailtohl.building.site.service.impl;
 
+import java.util.Set;
+
 import javax.inject.Inject;
 import javax.persistence.AccessType;
 
@@ -13,6 +15,7 @@ import com.github.emailtohl.building.common.repository.jpa.Pager;
 import com.github.emailtohl.building.common.utils.BCryptUtil;
 import com.github.emailtohl.building.common.utils.JavaBeanTools;
 import com.github.emailtohl.building.site.dao.UserRepository;
+import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
 
@@ -30,6 +33,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Long addUser(User u) {
+		// 确保添加新用户时，没有授予任何权限，没有启动等
+		u.getAuthorities().clear();
+		u.setEnabled(false);
 		String hashPw = BCryptUtil.hash(u.getPassword());
 		u.setPassword(hashPw);
 		userRepository.save(u);
@@ -47,6 +53,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public void grantedAuthority(Long id, Set<Authority> authorities) {
+		userRepository.findOne(id).setAuthorities(authorities);
+	}
+	
+	@Override
 	public void changePassword(String email, String newPassword) {
 		String hashPw = BCryptUtil.hash(newPassword);
 		User u = userRepository.findByEmail(email);
@@ -54,8 +65,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void updateUser(Long id, User u) {
-		User persistStatus = userRepository.findOne(id);
+	public void updateUser(User u) {
+		User persistStatus = userRepository.findOne(u.getId());
+		// 是否启动，授权，不走此接口
+		u.setEnabled(null);
+		u.setAuthorities(null);
 		JavaBeanTools.merge(persistStatus, u);
 		userRepository.save(persistStatus);
 	}
@@ -63,6 +77,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void deleteUser(Long id) {
 		User persistStatus = userRepository.findOne(id);
+		// 先删除外联关系
 		persistStatus.setAuthorities(null);
 		userRepository.delete(persistStatus);
 	}
@@ -91,4 +106,5 @@ public class UserServiceImpl implements UserService {
 		logger.debug("User {} successfully authenticated.", email);
 		return u;
 	}
+
 }

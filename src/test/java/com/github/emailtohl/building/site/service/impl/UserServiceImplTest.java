@@ -66,9 +66,10 @@ public class UserServiceImplTest {
 		assertEquals(u, qu);
 		// test update
 		User uu = new User();
+		uu.setId(id);
 		uu.setAuthorities(null);
 		uu.setDescription("已修改");
-		userService.updateUser(id, uu);
+		userService.updateUser(uu);
 		qu = userService.getUser(id);
 		assertEquals("已修改", qu.getDescription());
 		// test enable
