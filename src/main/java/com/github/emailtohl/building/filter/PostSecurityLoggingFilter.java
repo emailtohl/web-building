@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 
 /**
  * Servlet Filter implementation class PostSecurityLoggingFilter
@@ -49,12 +50,18 @@ public class PostSecurityLoggingFilter implements Filter {
 				logger.debug("username: " + authentication.getName());
 				logger.debug("Credentials: " + authentication.getCredentials());
 				logger.debug("Details: " + authentication.getDetails());
-				logger.debug("Principal: " + authentication.getPrincipal());
 				Collection<? extends GrantedAuthority> grantedAuthorities = authentication.getAuthorities();
 				int i = 1;
 				for (GrantedAuthority g : grantedAuthorities) {
 					logger.debug("authority " + i + ": " + g.getAuthority());
 					i++;
+				}
+				Object principal = authentication.getPrincipal();
+				if (principal instanceof User) {
+					User u = (User) principal;
+					logger.debug("username: " + u.getUsername());
+				} else {
+					logger.debug("Principal: " + principal);
 				}
 			}
 			request.setAttribute("authentication", authentication);

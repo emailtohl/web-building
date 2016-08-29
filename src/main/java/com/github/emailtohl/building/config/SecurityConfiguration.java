@@ -18,6 +18,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -36,6 +38,8 @@ import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
+
+import com.github.emailtohl.building.site.service.UserPermissionEvaluator;
 /**
  * spring security 的编程风格的配置，它依赖于数据源配置类
  * @author HeLei
@@ -178,6 +182,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	 */
 	@Configuration
 	@EnableGlobalMethodSecurity(prePostEnabled = true, order = 0, mode = AdviceMode.PROXY, proxyTargetClass = false)
-	public static class AuthorizationConfiguration extends GlobalMethodSecurityConfiguration {}
+	public static class AuthorizationConfiguration extends GlobalMethodSecurityConfiguration {
+		/**
+		 * 自定义访问许可，需要实现PermissionEvaluator接口
+		 * 然后在@PreAuthorize注解中可以调用PermissionEvaluator接口中的方法：
+		 * hasPermission(Authentication authentication, Object targetDomainObject, Object permission)
+		 * hasPermission(Authentication authentication, Serializable targetId, String targetType, Object permission)
+		 */
+		@Override
+		public MethodSecurityExpressionHandler createExpressionHandler() {
+			DefaultMethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler();
+			handler.setPermissionEvaluator(new UserPermissionEvaluator());
+			return handler;
+		}
+	}
 	
 }

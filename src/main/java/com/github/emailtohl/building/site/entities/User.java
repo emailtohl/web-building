@@ -69,7 +69,7 @@ public class User extends BaseEntity {
 	@Size(min = 6)
 	@Pattern(regexp = "^[^\\s&\"<>]+$")
 	protected transient String password;
-	protected Boolean enabled;
+	protected Boolean enabled = false;
 	@Past// 校验，日期相对于当前较早
 	protected Date birthday;
 	@Min(value = 1)
