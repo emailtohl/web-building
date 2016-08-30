@@ -15,4 +15,6 @@ public interface Repository<E extends Serializable> extends GenericRepository<Lo
 	Pager<E> getPager(String jpql, Object[] args, Integer pageNum, Integer pageSize);
 	Pager<E> getPager(String jpql, Map<String, Object> args, Integer pageNum, Integer pageSize);
 	Pager<E> getPager(E entity, Integer pageNum, Integer pageSize, AccessType type);
+	void flush();
+	void close();
 }

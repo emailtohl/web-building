@@ -32,6 +32,4 @@ public interface GenericRepository<I extends Serializable, E extends Serializabl
 
 	void removeById(@NotNull I id);
 	
-	void flush();
-	
 }

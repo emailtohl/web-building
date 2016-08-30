@@ -18,6 +18,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import com.github.emailtohl.building.bootspring.SpringUtils;
 import com.github.emailtohl.building.common.utils.Validator;
@@ -60,31 +62,46 @@ public class UserServiceImplTest {
 	public void testCRUD() {
 		userService.addUser(u);
 		Long id = u.getId();
-		assertNotNull(id);
-		// test query
-		User qu = userService.getUser(id);
-		assertEquals(u, qu);
-		// test update
-		User uu = new User();
-		uu.setId(id);
-		uu.setAuthorities(null);
-		uu.setDescription("已修改");
-		userService.updateUser(uu);
-		qu = userService.getUser(id);
-		assertEquals("已修改", qu.getDescription());
-		// test enable
-		userService.enableUser(id);
-		qu = userService.getUser(id);
-		assertTrue(qu.getEnabled());
-		// test disable
-		userService.disableUser(id);
-		qu = userService.getUser(id);
-		assertFalse(qu.getEnabled());
-		// test change password
-		userService.changePassword("test@test.com", "987654321");
-		qu = userService.getUser(id);
-		assertNotNull(userService.authenticate("test@test.com", "987654321"));
-		userService.deleteUser(id);
+		try {
+			assertNotNull(id);
+			// test query
+			User qu = userService.getUser(id);
+			assertEquals(u, qu);
+			// test update
+			User uu = new User();
+			uu.setAuthorities(null);
+			uu.setDescription("已修改");
+			userService.mergeUser(id, uu);
+			qu = userService.getUser(id);
+			assertEquals("已修改", qu.getDescription());
+			// test enable
+			userService.enableUser(id);
+			qu = userService.getUser(id);
+			assertTrue(qu.getEnabled());
+			// test disable
+			userService.disableUser(id);
+			qu = userService.getUser(id);
+			assertFalse(qu.getEnabled());
+			// test grantedAuthority
+			userService.grantedAuthority(id, new HashSet<Authority>(Arrays.asList(Authority.EMPLOYEE, Authority.USER)));
+			qu = userService.getUser(id);
+//			assertTrue(qu.getAuthorities().containsAll(Arrays.asList(Authority.EMPLOYEE, Authority.USER)));
+			// test change password
+			userService.changePassword("test@test.com", "987654321");
+			qu = userService.getUser(id);
+			assertNotNull(userService.authenticate("test@test.com", "987654321"));
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			userService.deleteUser(id);
+		}
 	}
 
+	@Test
+	public void testGetUserPager() {
+		User u = new User();
+		u.setEmail("foo@test.com");
+		Page<User> p = userService.getUserPager(u, new PageRequest(1, 20));
+		assertTrue(p.getContent().size() > 0);
+	}
 }

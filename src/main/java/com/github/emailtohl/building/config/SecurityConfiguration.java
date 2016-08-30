@@ -70,9 +70,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	protected void configure(AuthenticationManagerBuilder builder) throws Exception {
 		/*
 		builder.inMemoryAuthentication().withUser("emailtohl@163.com").password("123456").authorities("USER", "ADMIN")
-				.and().withUser("test").password("1").authorities("USER", "ADMIN")
-				.and().withUser("foo@test.com").password("123456").authorities("USER")
-				.and().withUser("bar@test.com").password("123456").authorities("USER");
+				.and().withUser("foo@test.com").password("123456").authorities("MANAGER")
+				.and().withUser("bar@test.com").password("123456").authorities("EMPLOYEE");
 		*/
 		
 		builder.jdbcAuthentication().dataSource(dataSource)

@@ -514,4 +514,18 @@ public abstract class BaseRepository<E extends Serializable> extends GenericJpaR
 		return new PredicateAndArgs(predicate, args, entityName, alias);
 	}
 
+	/**
+	 * 数据刷新
+	 */
+	@Override
+	public void flush() {
+		entityManager.flush();
+	}
+	
+	/**
+	 * 关闭entityManager
+	 */
+	public void close() {
+		entityManager.close();
+	}
 }

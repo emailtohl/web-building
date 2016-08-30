@@ -8,6 +8,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import javax.inject.Inject;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.github.emailtohl.building.common.repository.jpa.Pager;
 import com.github.emailtohl.building.exception.ResourceNotFoundException;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
@@ -70,7 +70,7 @@ public class UserCtrl {
 	@RequestMapping(value = "pager", method = GET)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	public Pager<User> getUserPager(@RequestBody User u, Pageable pageable) {
+	public Page<User> getUserPager(@RequestBody User u, Pageable pageable) {
 		return userService.getUserPager(u, pageable);
 	}
 	
@@ -88,7 +88,7 @@ public class UserCtrl {
 	@RequestMapping(value = "{id}", method = PUT)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void update(@PathVariable("id") long id, @RequestBody User user) {
-		userService.updateUser(id, user);
+		userService.mergeUser(id, user);
 	}
 	
 	@RequestMapping(value = "{id}", method = DELETE)

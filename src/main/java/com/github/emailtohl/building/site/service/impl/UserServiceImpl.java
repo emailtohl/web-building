@@ -1,12 +1,16 @@
 package com.github.emailtohl.building.site.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.persistence.AccessType;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
@@ -34,7 +38,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Long addUser(User u) {
 		// 确保添加新用户时，没有授予任何权限，没有启动等
-		u.getAuthorities().clear();
+		if (u.getAuthorities() != null) {
+			u.getAuthorities().clear();
+		}
 		u.setEnabled(false);
 		String hashPw = BCryptUtil.hash(u.getPassword());
 		u.setPassword(hashPw);
@@ -65,9 +71,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void updateUser(User u) {
-		User persistStatus = userRepository.findOne(u.getId());
-		// 是否启动，授权，不走此接口
+	public void mergeUser(Long id, User u) {
+		User persistStatus = userRepository.findOne(id);
+		// 是否启动，授权，不走此接口，所以在调用merge方法前，先将其设置为null
 		u.setEnabled(null);
 		u.setAuthorities(null);
 		JavaBeanTools.merge(persistStatus, u);
@@ -84,12 +90,16 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getUser(Long id) {
-		return userRepository.findOne(id);
+		return filter(userRepository.findOne(id));
 	}
 
 	@Override
-	public Pager<User> getUserPager(User u, Pageable pageable) {
-		return userRepository.getPager(u, pageable.getPageNumber(), pageable.getPageSize(), AccessType.PROPERTY);
+	public Page<User> getUserPager(User u, Pageable pageable) {
+		// 直接从中获取Page<User>，不能对其中的List进行过滤，所以还是先获取自定义的Pager对象，然后再做过滤与封装
+		Pager<User> p = userRepository.dynamicQuery(u, pageable.getPageNumber());
+		List<User> ls = filter(p.getDataList());
+		p.setDataList(ls);
+		return new PageImpl<User>(ls, pageable, p.getTotalRow());
 	}
 
 	@Override
@@ -104,7 +114,22 @@ public class UserServiceImpl implements UserService {
 			return null;
 		}
 		logger.debug("User {} successfully authenticated.", email);
-		return u;
+		return filter(u);
 	}
 
+	private List<User> filter(List<User> users) {
+		List<User> ls = new ArrayList<User>();
+		for (User u : users) {
+			User nu = new User();
+			BeanUtils.copyProperties(u, nu, "password", "authorities");
+			ls.add(nu);
+		}
+		return ls;
+	}
+
+	private User filter(User user) {
+		User nu = new User();
+		BeanUtils.copyProperties(user, nu, "password", "authorities");
+		return nu;
+	}
 }

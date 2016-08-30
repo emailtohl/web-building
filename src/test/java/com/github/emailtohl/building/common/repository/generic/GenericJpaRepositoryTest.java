@@ -58,7 +58,6 @@ public class GenericJpaRepositoryTest {
 		qu.setDescription("已修改");
 		qu.setAuthorities(null);
 		dao.update(qu);
-		dao.flush();
 		qu = dao.get(id);
 		assertEquals("已修改", qu.getDescription());
 		dao.removeById(id);

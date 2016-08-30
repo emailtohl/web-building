@@ -3,9 +3,6 @@ package com.github.emailtohl.building.site.dao;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.github.emailtohl.building.site.entities.User;
@@ -17,9 +14,5 @@ import com.github.emailtohl.building.site.entities.User;
  */
 public interface UserRepository extends JpaRepository<User, Long>, UserRepositoryCustomization {
 	User findByEmail(String email);
-	List<User> findByBirthdayBetween(Date start, Date end);@Override
-	default <S extends User> Page<S> findAll(Example<S> example, Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	List<User> findByBirthdayBetween(Date start, Date end);
 }

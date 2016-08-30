@@ -87,17 +87,22 @@ public class UserRepositoryTest {
 		// test add
 		userRepository.save(u);
 		Long id = u.getId();
-		assertNotNull(id);
-		// test query
-		User qu = userRepository.get(id);
-		assertEquals(u, qu);
-		// test update
-		qu.setDescription("已修改");
-		userRepository.save(qu);
-		userRepository.flush();
-		qu = userRepository.get(id);
-		assertEquals("已修改", qu.getDescription());
-		userRepository.delete(id);
+		try {
+			assertNotNull(id);
+			// test query
+			User qu = userRepository.get(id);
+			assertEquals(u, qu);
+			// test update
+			qu.setDescription("已修改");
+			userRepository.save(qu);
+			userRepository.flush();
+			qu = userRepository.get(id);
+			assertEquals("已修改", qu.getDescription());
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			userRepository.delete(id);
+		}
 		assertFalse(userRepository.exists(id));
 	}
 

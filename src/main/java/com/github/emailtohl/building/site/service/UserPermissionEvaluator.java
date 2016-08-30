@@ -23,8 +23,8 @@ public class UserPermissionEvaluator implements PermissionEvaluator {
 		logger.info(authentication.getAuthorities());
 		logger.info(targetDomainObject);
 		logger.info(permission);
-		boolean flag = false;
-		if (targetDomainObject instanceof User && permission instanceof String) {
+		boolean flag = true;
+/*		if (targetDomainObject instanceof User && permission instanceof String) {
 			User u = (User) targetDomainObject;
 			Collection<Authority> set = u.getAuthorities();
 			switch ((String) permission) {
@@ -73,15 +73,19 @@ public class UserPermissionEvaluator implements PermissionEvaluator {
 				
 				break;
 			}
-		}
+		}*/
 		return flag;
 	}
 
 	@Override
 	public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType,
 			Object permission) {
-		// TODO Auto-generated method stub
-		return false;
+		logger.info(authentication.getAuthorities());
+		logger.info(targetId);
+		logger.info(targetType);
+		logger.info(permission);
+		boolean flag = true;
+		return flag;
 	}
 
 }

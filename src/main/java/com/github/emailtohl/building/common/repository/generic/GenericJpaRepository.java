@@ -75,11 +75,4 @@ public abstract class GenericJpaRepository<I extends Serializable, E extends Ser
 				.executeUpdate();
 	}
 	
-	/**
-	 * 数据刷新
-	 */
-	@Override
-	public void flush() {
-		entityManager.flush();
-	}
 }

@@ -38,4 +38,5 @@ public class UserRepositoryImpl extends BaseRepository<User> implements UserRepo
 		Page<User> springPage = new PageImpl<User>(myPager.getDataList(), pageable, myPager.getTotalRow());
 		return springPage;
 	}
+	
 }
