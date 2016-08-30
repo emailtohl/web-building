@@ -9,23 +9,58 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.service.UserPermissionEvaluator;
 import com.github.emailtohl.building.site.service.UserService;
-
+/**
+ * 为测试spring security注解在方法级别的配置
+ * @author Helei
+ */
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class Config extends GlobalMethodSecurityConfiguration {
+public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
+	
+	/**
+	 * 使用示例
+	 */
+	@SuppressWarnings("resource")
+	public static void main(String[] args) {
+		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SecurityTestConfig.class);
+		AuthenticationManager authenticationManager = context.getBean(AuthenticationManager.class);
+		String name = "emailtohl@163.com";
+		String password = "123456";
+		// (1)将用户名、密码封装成一个token
+		Authentication token = new UsernamePasswordAuthenticationToken(name, password);
+		try {
+			// (2)将token传给AuthenticationManager进行身份认证
+			// (3)认证完毕，返回一个认证后的身份：
+			Authentication result = authenticationManager.authenticate(token);
+			// (4)认证后，存储到SecurityContext里
+			SecurityContextHolder.getContext().setAuthentication(result);
+			System.out.println("认证成功，认证消息添加到安全上下文中");
+			System.out.println(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+		} catch (BadCredentialsException e) {
+			System.err.println("认证失败");
+		}
+	}
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder builder) throws Exception {
@@ -41,6 +76,19 @@ public class Config extends GlobalMethodSecurityConfiguration {
 	@Override
 	public AuthenticationManager authenticationManager() throws Exception {
 		return super.authenticationManager();
+	}
+	
+	/**
+	 * 自定义访问许可，需要实现PermissionEvaluator接口
+	 * 然后在@PreAuthorize注解中可以调用PermissionEvaluator接口中的方法：
+	 * hasPermission(Authentication authentication, Object targetDomainObject, Object permission)
+	 * hasPermission(Authentication authentication, Serializable targetId, String targetType, Object permission)
+	 */
+	@Override
+	public MethodSecurityExpressionHandler createExpressionHandler() {
+		DefaultMethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler();
+		handler.setPermissionEvaluator(new UserPermissionEvaluator());
+		return handler;
 	}
 	
 	@Bean
@@ -87,7 +135,11 @@ public class Config extends GlobalMethodSecurityConfiguration {
 			@Override
 			public User getUser(Long id) {
 				logger.debug("getUser invoked");
-				return emailtohl;
+				if (id == 1000L) {
+					return emailtohl;
+				} else {
+					return bar;
+				}
 			}
 
 			@Override
@@ -104,4 +156,5 @@ public class Config extends GlobalMethodSecurityConfiguration {
 			
 		};
 	}
+
 }

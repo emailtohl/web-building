@@ -106,6 +106,7 @@ public interface UserService {
 	 * @return
 	 */
 	@NotNull
+	@PreAuthorize("isAuthenticated()")
 	Page<User> getUserPager(User u, Pageable pageable);
 	
 	/**

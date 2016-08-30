@@ -41,3 +41,17 @@ mvn cobertura:clean
 mvn cobertura:check      
 
 在target文件夹下出现了一个site目录，下面是一个静态站点，里面就是单元测试的覆盖率报告。
+
+## 四、关于Spring Security內建表达式说明
+|             表达式                              |                说明                                                                                             |
+| ------------------------- |:------------------------------------------------:|
+| hasRole([role])           | 返回 true 如果当前主体拥有特定角色。                                                                      |
+| hasAnyRole([role1,role2]) |返回 true 如果当前主体拥有任何一个提供的角色 （使用逗号分隔的字符串队列）|
+| principal                 | 允许直接访问主体对象，表示当前用户                                                                              |
+| authentication            | 允许直接访问当前 Authentication对象从SecurityContext中获得  |
+| permitAll                 | 一直返回true                                       |
+| denyAll                   | 一直返回false                                      |
+| isAnonymous()             | 如果用户是一个匿名登录的用户 就会返回 true                    |
+| isRememberMe()            | 如果用户是通过remember-me 登录的用户 就会返回 true           |
+| isAuthenticated()         | 如果用户不是匿名用户就会返回true                          |
+| isFullyAuthenticated()    | 如果用户不是通过匿名也不是通过remember-me登录的用户时， 就会返回true|
