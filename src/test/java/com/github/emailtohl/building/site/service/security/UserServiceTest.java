@@ -1,11 +1,5 @@
 package com.github.emailtohl.building.site.service.security;
 
-import static com.github.emailtohl.building.site.entities.Authority.*;
-import static org.junit.Assert.fail;
-
-import java.util.Arrays;
-import java.util.HashSet;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -16,7 +10,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
 /**
@@ -89,22 +82,25 @@ public class UserServiceTest {
 		userService.deleteUser(1000L);
 	}
 
-//	@Test
-	public void testGrantedAuthority() {
-		SecurityContextHolder.clearContext();
-		try {
-			userService.grantedAuthority(1000L, new HashSet<Authority>(Arrays.asList(ADMIN, MANAGER)));
-		} catch (AuthenticationCredentialsNotFoundException e) {
-			System.out.println("grantedAuthority 调用被拒绝，符合预期");
-		}
-		setEmailtohl();
-		userService.grantedAuthority(1000L, new HashSet<Authority>(Arrays.asList(ADMIN, MANAGER)));
-	}
-
-//	@Test
+	@Test
 	public void testMergeUser() {
 		SecurityContextHolder.clearContext();
-		fail("Not yet implemented");
+		User u = new User();
+		try {
+			userService.mergeUser(1000L, u);
+		} catch (AuthenticationCredentialsNotFoundException e) {
+			System.out.println("mergeUser 调用被拒绝，符合预期");
+		}
+		setBar();
+		try {
+			userService.mergeUser(1000L, u);
+		} catch (AccessDeniedException e) {
+			System.out.println("mergeUser 调用被拒绝，符合预期");
+		}
+		u.setEmail("bar@test.com");
+		userService.mergeUser(1000L, u);
+		setEmailtohl();
+		userService.mergeUser(1000L, u);
 	}
 	
 	@Test
@@ -157,6 +153,24 @@ public class UserServiceTest {
 		setEmailtohl();
 		userService.getUser(1000L);
 	}
+	
+	@Test
+	public void testGetUserByEmail() {
+		SecurityContextHolder.clearContext();
+		try {
+			userService.getUserByEmail("emailtohl@163.com");
+		} catch (AuthenticationCredentialsNotFoundException e) {
+			System.out.println("getUserByEmail 调用被拒绝，符合预期");
+		}
+		setFoo();
+		try {
+			userService.getUserByEmail("emailtohl@163.com");
+		} catch (AccessDeniedException e) {
+			System.out.println("getUserByEmail 调用被拒绝，符合预期");
+		}
+		setEmailtohl();
+		userService.getUserByEmail("emailtohl@163.com");
+	}
 
 	@Test
 	public void testGetUserPager() {
@@ -168,12 +182,6 @@ public class UserServiceTest {
 		}
 		setBar();
 		userService.getUserPager(null, null);
-	}
-
-	@Test
-	public void testAuthenticate() {
-		SecurityContextHolder.clearContext();
-		userService.authenticate(null, null);
 	}
 
 }

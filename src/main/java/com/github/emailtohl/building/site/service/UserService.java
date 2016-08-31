@@ -1,7 +1,5 @@
 package com.github.emailtohl.building.site.service;
 
-import java.util.Set;
-
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -14,7 +12,6 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 
-import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.User;
 
 /**
@@ -22,11 +19,14 @@ import com.github.emailtohl.building.site.entities.User;
  * 
  * User类中，有的属性，如authorities是需要有权限才能调用的。
  * 所以新增User时，不会添加该属性，更新User时，也不会更新这些属性
+ * 关于授权，需要在涉及权限的接口中定义
+ * 
  * @author Helei
  */
 @Transactional
 @Validated
 public interface UserService {
+
 	/**
 	 * 添加用户
 	 * 新增用户时，不设置authorities属性，且enable属性为false
@@ -50,17 +50,6 @@ public interface UserService {
 	void disableUser(@Min(value = 1L) Long id);
 	
 	/**
-	 * 为用户授权
-	 * 如果是ADMIN则都允许，如果是MANAGER则只能授权EMPLOYEE和USER
-	 * hassPermission()是spring security的PermissionEvaluator的接口，可在其中定义计算逻辑
-	 * targetObject是spring security提供的另外一个值，它代表了要进行计算的当前列表元素
-	 * @param id
-	 * @param authorities
-	 */
-	@PreAuthorize("hassPermission(targetObject, 'grantedAuthority')")
-	void grantedAuthority(@Min(value = 1L) Long id, @NotNull Set<Authority> authorities);
-	
-	/**
 	 * 修改用户
 	 * 这里的方法名使用的是merge，传入的User参数只存储需要更新的属性，不更新的属性值为null
 	 * 
@@ -68,7 +57,7 @@ public interface UserService {
 	 * 
 	 * @param u中的id不能为null， u中属性不为null的值为修改项
 	 */
-	@PreAuthorize("hassPermission(targetId, targetType, 'mergeUser')")
+	@PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER') || #u.email == authentication.principal.username")
 	void mergeUser(@Min(value = 1L) Long id, User u);
 	
 	/**
@@ -97,6 +86,15 @@ public interface UserService {
 	User getUser(@Min(value = 1L) Long id);
 	
 	/**
+	 * 通过邮箱名查询用户，通过认证的均可调用
+	 * 
+	 * @param email
+	 * @return
+	 */
+	@PostAuthorize("hasAnyAuthority('ADMIN', 'MANAGER') || #email == principal.username")
+	User getUserByEmail(@NotNull String email);
+	
+	/**
 	 * 获取用户Page
 	 * 
 	 * 实现类中要对Pager中返回的List中敏感信息进行过滤
@@ -109,12 +107,4 @@ public interface UserService {
 	@PreAuthorize("isAuthenticated()")
 	Page<User> getUserPager(User u, Pageable pageable);
 	
-	/**
-	 * 认证用户，由于要返回用户信息，所以只有本人才能调用。
-	 * 事实上认证功能已经交给spring security框架完成
-	 * @param email
-	 * @param password
-	 * @return
-	 */
-	User authenticate(String email, String password);
 }

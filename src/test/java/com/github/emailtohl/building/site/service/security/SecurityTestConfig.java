@@ -28,6 +28,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserPermissionEvaluator;
 import com.github.emailtohl.building.site.service.UserService;
 /**
@@ -92,7 +93,7 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 	}
 	
 	@Bean
-	public UserService userService() {
+	public UserService userService() throws Exception {
 		return new UserService() {
 			private final Logger logger = LogManager.getLogger();
 			
@@ -110,11 +111,6 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 			@Override
 			public void disableUser(Long id) {
 				logger.debug("disableUser invoked");
-			}
-
-			@Override
-			public void grantedAuthority(Long id, Set<Authority> authorities) {
-				logger.debug("grantedAuthority invoked");
 			}
 
 			@Override
@@ -149,12 +145,29 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 			}
 
 			@Override
-			public User authenticate(String email, String password) {
-				logger.debug("authenticate invoked");
+			public User getUserByEmail(String email) {
 				return emailtohl;
 			}
 			
 		};
 	}
 
+	@Bean
+	public AuthenticationService authenticationService() throws Exception {
+		AuthenticationManager authenticationManager = authenticationManager();
+		return new AuthenticationService() {
+			private final Logger logger = LogManager.getLogger();
+			@Override
+			public Authentication authenticate(String email, String password) {
+				logger.debug("authenticate invoked");
+				Authentication token = new UsernamePasswordAuthenticationToken(email, password);
+				return authenticationManager.authenticate(token);
+			}
+
+			@Override
+			public void grantedAuthority(Long id, Set<Authority> authorities) {
+				logger.debug("grantedAuthority invoked");
+			}
+		};
+	}
 }

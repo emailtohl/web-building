@@ -1,8 +1,6 @@
 package com.github.emailtohl.building.site.service.impl;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -12,14 +10,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import com.github.emailtohl.building.common.repository.jpa.Pager;
 import com.github.emailtohl.building.common.utils.BCryptUtil;
 import com.github.emailtohl.building.common.utils.JavaBeanTools;
 import com.github.emailtohl.building.site.dao.UserRepository;
-import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
 
@@ -30,11 +26,12 @@ import com.github.emailtohl.building.site.service.UserService;
  */
 @Service
 public class UserServiceImpl implements UserService {
+	@SuppressWarnings("unused")
 	private static final Logger logger = LogManager.getLogger();
-	
+
 	@Inject
 	UserRepository userRepository;
-
+	
 	@Override
 	public Long addUser(User u) {
 		// 确保添加新用户时，没有授予任何权限，没有启动等
@@ -56,11 +53,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void disableUser(Long id) {
 		userRepository.findOne(id).setEnabled(false);
-	}
-
-	@Override
-	public void grantedAuthority(Long id, Set<Authority> authorities) {
-		userRepository.findOne(id).setAuthorities(authorities);
 	}
 	
 	@Override
@@ -103,18 +95,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User authenticate(String email, String password) {
-		User u = userRepository.findByEmail(email);
-		if (u == null) {
-			logger.warn("Authentication failed for non-existent user {}.", email);
-			return null;
-		}
-		if (!BCrypt.checkpw(password, u.getPassword())) {
-			logger.warn("Authentication failed for user {}.", email);
-			return null;
-		}
-		logger.debug("User {} successfully authenticated.", email);
-		return filter(u);
+	public User getUserByEmail(String email) {
+		return userRepository.findByEmail(email);
 	}
 
 	private List<User> filter(List<User> users) {
@@ -132,4 +114,5 @@ public class UserServiceImpl implements UserService {
 		BeanUtils.copyProperties(user, nu, "password", "authorities");
 		return nu;
 	}
+
 }

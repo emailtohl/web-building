@@ -82,14 +82,9 @@ public class UserServiceImplTest {
 			userService.disableUser(id);
 			qu = userService.getUser(id);
 			assertFalse(qu.getEnabled());
-			// test grantedAuthority
-			userService.grantedAuthority(id, new HashSet<Authority>(Arrays.asList(Authority.EMPLOYEE, Authority.USER)));
-			qu = userService.getUser(id);
-//			assertTrue(qu.getAuthorities().containsAll(Arrays.asList(Authority.EMPLOYEE, Authority.USER)));
 			// test change password
 			userService.changePassword("test@test.com", "987654321");
 			qu = userService.getUser(id);
-			assertNotNull(userService.authenticate("test@test.com", "987654321"));
 		} catch (Exception e) {
 			throw e;
 		} finally {
@@ -104,4 +99,5 @@ public class UserServiceImplTest {
 		Page<User> p = userService.getUserPager(u, new PageRequest(1, 20));
 		assertTrue(p.getContent().size() > 0);
 	}
+	
 }
