@@ -21,6 +21,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
@@ -48,11 +49,17 @@ import com.github.emailtohl.building.site.service.UserPermissionEvaluator;
 @Configuration
 // 启动安全过滤器
 @EnableWebSecurity
-@Import({ DataSourceConfiguration.class })
+@Import({ DataSourceConfiguration.class, JPAConfiguration.class })
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Inject
 	@Named("dataSource")
 	DataSource dataSource;
+	/**
+	 * 来自于RootContextConfiguration扫描包时，实例化的
+	 * com.github.emailtohl.building.site.service.impl.AuthenticationServiceImpl
+	 */
+	@Inject
+	AuthenticationProvider authenticationProvider;
 	
 	/**
 	 * 外部可以使用它，从而获取到身份信息
@@ -64,20 +71,27 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	}
 
 	/**
-	 * 配置用户、角色、权限的来源
+	 * 创建认证管理器：AuthenticationManager，它是spring security的核心
+	 * 在这里的配置中，可以直接告诉AuthenticationManager如何获取用户名、密码、授权
+	 * 也可以先创建一个AuthenticationProvider，然后再传递给它
 	 */
 	@Override
 	protected void configure(AuthenticationManagerBuilder builder) throws Exception {
-		/*
+		/* 基于内存的简单配置
 		builder.inMemoryAuthentication().withUser("emailtohl@163.com").password("123456").authorities("USER", "ADMIN")
 				.and().withUser("foo@test.com").password("123456").authorities("MANAGER")
 				.and().withUser("bar@test.com").password("123456").authorities("EMPLOYEE");
 		*/
 		
+		/* 自定义的AuthenticationProvider，作为示例，只具备基本验证，最好使用Spring Security自带的
+		builder.authenticationProvider(authenticationProvider); */
+		
+		/* 基于数据库的配置 */
 		builder.jdbcAuthentication().dataSource(dataSource)
 				.usersByUsernameQuery("SELECT t.email as username, t.password, t.enabled FROM t_user AS t WHERE t.email = ?")
 				.authoritiesByUsernameQuery("SELECT u.email AS username, ua.authority FROM t_user u INNER JOIN t_user_authority ua ON u.id = ua.user_id WHERE u.email = ?")
 				.passwordEncoder(new BCryptPasswordEncoder());
+		
 		
 	}
 	/**

@@ -7,6 +7,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 
@@ -19,7 +20,7 @@ import com.github.emailtohl.building.site.entities.Authority;
  */
 @Validated
 @Transactional
-public interface AuthenticationService {
+public interface AuthenticationService extends AuthenticationProvider {
 	/**
 	 * 认证用户，由于要返回用户信息，所以只有本人才能调用。
 	 * 事实上认证功能已经交给spring security框架完成

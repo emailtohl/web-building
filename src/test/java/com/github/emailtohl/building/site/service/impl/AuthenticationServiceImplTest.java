@@ -5,6 +5,7 @@ import static com.github.emailtohl.building.site.entities.Authority.EMPLOYEE;
 import static com.github.emailtohl.building.site.entities.Authority.MANAGER;
 import static org.junit.Assert.assertEquals;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -14,6 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 
 import com.github.emailtohl.building.bootspring.SpringUtils;
+import com.github.emailtohl.building.common.utils.JavaBeanTools;
 import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
@@ -33,9 +35,11 @@ public class AuthenticationServiceImplTest {
 	}
 	
 	@Test
-	public void testAuthenticate() {
+	public void testAuthenticate() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Authentication auth = authenticationService.authenticate("emailtohl@163.com", "123456");
-		assertEquals("emailtohl@163.com", auth.getPrincipal());
+		Object o = auth.getPrincipal();
+		String actual = JavaBeanTools.propertyMap(o).get("username").getReadMethod().invoke(o, new Object[]{}).toString();
+		assertEquals("emailtohl@163.com", actual);
 	}
 	
 //	需要在安全上下文中验证，这里不容易单元测试

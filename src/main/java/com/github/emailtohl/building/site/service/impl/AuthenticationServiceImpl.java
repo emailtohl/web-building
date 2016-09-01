@@ -13,7 +13,9 @@ import javax.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -75,7 +77,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 				 */
 				return u.getId();
 			}
-
 			@Override
 			public Object getPrincipal() {
 				/*
@@ -84,7 +85,32 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 				 * this would be the username. Callers are expected to populate
 				 * the principal for an authentication request.
 				 */
-				return u.getEmail();
+				class Principal {
+					Long id;
+					String username;
+					@SuppressWarnings("unused")
+					public Long getId() {
+						return id;
+					}
+					public void setId(Long id) {
+						this.id = id;
+					}
+					@SuppressWarnings("unused")
+					public String getUsername() {
+						return username;
+					}
+					public void setUsername(String username) {
+						this.username = username;
+					}
+					@Override
+					public String toString() {
+						return "Principal [id=" + id + ", username=" + username + "]";
+					}
+				}
+				Principal p = new Principal();
+				p.setId(u.getId());
+				p.setUsername(u.getEmail());
+				return p;
 			}
 
 			private boolean isAuthenticated = true;
@@ -124,5 +150,22 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			set.add(g.getAuthority());
 		}
 		return set;
+	}
+
+	@Override
+	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+		UsernamePasswordAuthenticationToken credentials = (UsernamePasswordAuthenticationToken) authentication;
+		String email = credentials.getPrincipal().toString();
+		String password = credentials.getCredentials().toString();
+		return this.authenticate(email, password);
+	}
+
+	/**
+	 * 保证传入public Authentication authenticate(Authentication authentication) throws AuthenticationException
+	 * 方法中的认证模型一定是UsernamePasswordAuthenticationToken
+	 */
+	@Override
+	public boolean supports(Class<?> authentication) {
+		return authentication == UsernamePasswordAuthenticationToken.class;
 	}
 }

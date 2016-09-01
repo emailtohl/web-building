@@ -24,6 +24,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.github.emailtohl.building.site.entities.Authority;
@@ -167,6 +168,19 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 			@Override
 			public void grantedAuthority(Long id, Set<Authority> authorities) {
 				logger.debug("grantedAuthority invoked");
+			}
+
+			@Override
+			public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+				UsernamePasswordAuthenticationToken credentials = (UsernamePasswordAuthenticationToken) authentication;
+				String email = credentials.getPrincipal().toString();
+				String password = credentials.getCredentials().toString();
+				return this.authenticate(email, password);
+			}
+
+			@Override
+			public boolean supports(Class<?> authentication) {
+				return authentication == UsernamePasswordAuthenticationToken.class;
 			}
 		};
 	}
