@@ -47,13 +47,43 @@ public final class JavaBeanTools {
 	private JavaBeanTools() {}
 
 	/**
-	 * 本方法分析对象bean，将其属性名和属性值转存到map中
+	 * 本方法分析对象bean，将其Field名和Field转存到map中
+	 * 注意，若导出类覆盖了基类的属性，则只存储导出类的属性，此外包括静态属性
+	 * 
+	 * @param bean 被分析的对象
+	 * @return 一个map，key是bean的Field名，value是bean的Field
+	 */
+	public static Map<String, Field> getFieldMap(Object bean) {
+		Map<String, Field> map = new HashMap<String, Field>();
+		Class<?> clz = bean.getClass();
+		while (clz != Object.class) {
+			Field[] fields = clz.getDeclaredFields();
+			for (int i = 0; i < fields.length; i++) {
+				if (fields[i].isSynthetic())// 若是内部类连接外围类的引用，则忽略
+					continue;
+				fields[i].setAccessible(true);
+				String name = fields[i].getName();
+				if (map.containsKey(name)) // 若导出类覆盖了基类属性，只取导出类的值
+					continue;
+				try {
+					map.put(name, fields[i]);
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				}
+			}
+			clz = clz.getSuperclass();
+		}
+		return map;
+	}
+	
+	/**
+	 * 本方法分析对象bean，将其字段名和字段值转存到map中
 	 * 注意，若导出类覆盖了基类的属性，则只存储导出类的属性，此外包括静态属性
 	 * 
 	 * @param bean 被分析的对象
 	 * @return 一个map，key是bean的属性名，value是bean的属性值
 	 */
-	public static Map<String, Object> getFieldMap(Object bean) {
+	public static Map<String, Object> getFieldNameValueMap(Object bean) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		Class<?> clz = bean.getClass();
 		while (clz != Object.class) {
@@ -77,14 +107,14 @@ public final class JavaBeanTools {
 	}
 	
 	/**
-	 * 本方法分析对象bean，将其Property名和PropertyDescriptor转存到map中
-	 * @param bean 遵循JavaBean的对象
+	 * 本方法分析JavaBean规范的对象，将其Property名和PropertyDescriptor转存到map中
+	 * @param javabean 遵循JavaBean的对象
 	 * @return 一个Map，key是Property名，value是JavaBean的PropertyDescriptor
 	 */
-	public static Map<String, PropertyDescriptor> propertyMap(Object bean) {
+	public static Map<String, PropertyDescriptor> getPropertyMap(Object javabean) {
 		Map<String, PropertyDescriptor> map = new HashMap<String, PropertyDescriptor>();
 		try {
-			for (PropertyDescriptor prop : Introspector.getBeanInfo(bean.getClass(), Object.class)
+			for (PropertyDescriptor prop : Introspector.getBeanInfo(javabean.getClass(), Object.class)
 					.getPropertyDescriptors()) {
 				map.put(prop.getName(), prop);
 			}
@@ -93,35 +123,24 @@ public final class JavaBeanTools {
 		}
 		return map;
 	}
-
+	
 	/**
-	 * 本方法分析对象bean，将其Field名和Field转存到map中
-	 * 注意，若导出类覆盖了基类的属性，则只存储导出类的属性，此外包括静态属性
-	 * 
-	 * @param bean 被分析的对象
-	 * @return 一个map，key是bean的Field名，value是bean的Field
+	 * 本方法分析JavaBean规范的对象，将其Property名和Property值转存到map中
+	 * @param bean 遵循JavaBean的对象
+	 * @return 一个Map，key是Property名，value是JavaBean的PropertyDescriptor
 	 */
-	public static Map<String, Field> fieldMap(Object bean) {
-		Map<String, Field> map = new HashMap<String, Field>();
-		Class<?> clz = bean.getClass();
-		while (clz != Object.class) {
-			Field[] fields = clz.getDeclaredFields();
-			for (int i = 0; i < fields.length; i++) {
-				if (fields[i].isSynthetic())// 若是内部类连接外围类的引用，则忽略
-					continue;
-				fields[i].setAccessible(true);
-				String name = fields[i].getName();
-				if (map.containsKey(name)) // 若导出类覆盖了基类属性，只取导出类的值
-					continue;
-				try {
-					map.put(name, fields[i]);
-				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
-				}
+	public static Map<String, Object> getPropertyNameValueMap(Object javabean) {
+		Map<String, PropertyDescriptor> pmap = getPropertyMap(javabean);
+		Map<String, Object> nvmap = new HashMap<String, Object>();
+		for (Entry<String, PropertyDescriptor> e : pmap.entrySet()) {
+			try {
+				Object value = e.getValue().getReadMethod().invoke(javabean, new Object[] {});
+				nvmap.put(e.getKey(), value);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
+				logger.warn("getter访问失败", e);
 			}
-			clz = clz.getSuperclass();
 		}
-		return map;
+		return nvmap;
 	}
 
 	/**
@@ -169,7 +188,7 @@ public final class JavaBeanTools {
 	public static <S, T> T copyProperties(S srcBean, Class<T> targetObjectClass) {
 		if (targetObjectClass == null || srcBean == null)
 			return null;
-		Map<String, Object> map = getFieldMap(srcBean);
+		Map<String, Object> map = getFieldNameValueMap(srcBean);
 		T obj = null;
 		try {
 			obj = targetObjectClass.newInstance();
@@ -246,8 +265,8 @@ public final class JavaBeanTools {
 		if (preObj == null || afterObj == null)
 			throw new IllegalArgumentException("比较对象为null");
 		Map<String, Object> map = new LinkedHashMap<String, Object>();
-		Map<String, Object> preMap = getFieldMap(preObj);
-		Map<String, Object> afterMap = getFieldMap(afterObj);
+		Map<String, Object> preMap = getFieldNameValueMap(preObj);
+		Map<String, Object> afterMap = getFieldNameValueMap(afterObj);
 		for (Entry<String, Object> entry : afterMap.entrySet()) {// 一般应用于操作记录，所以以更改后的为准
 			String key = entry.getKey();
 			Object afterValue = entry.getValue();
@@ -622,9 +641,9 @@ public final class JavaBeanTools {
 	 */
 	@SafeVarargs
 	public static <T> T merge(T dest, Object... srcs) {
-		Map<String, PropertyDescriptor> destMap = propertyMap(dest);
+		Map<String, PropertyDescriptor> destMap = getPropertyMap(dest);
 		for (Object t : srcs) {
-			Map<String, PropertyDescriptor> srcMap = propertyMap(t);
+			Map<String, PropertyDescriptor> srcMap = getPropertyMap(t);
 			for (Entry<String, PropertyDescriptor> entry : srcMap.entrySet()) {
 				String name = entry.getKey();
 				Class<?> type = null;
@@ -746,7 +765,7 @@ public final class JavaBeanTools {
 		if (baseObj == null || comparePropertyNames == null || relativelyObj == null)
 			throw new IllegalArgumentException("做比较的对象是null");// NullPointerException一般由虚拟机抛出，IllegalArgumentException定位问题更清晰
 		List<String> list = Arrays.asList(comparePropertyNames);
-		Map<String, Object> map = getFieldMap(baseObj);
+		Map<String, Object> map = getFieldNameValueMap(baseObj);
 		Set<String> set = map.keySet();
 		set.retainAll(list);// 只保留需要做比较的属性
 		boolean flag = true;

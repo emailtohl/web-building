@@ -4,16 +4,17 @@ import static com.github.emailtohl.building.common.utils.JavaBeanTools.comparePr
 import static com.github.emailtohl.building.common.utils.JavaBeanTools.copyList;
 import static com.github.emailtohl.building.common.utils.JavaBeanTools.copyProperties;
 import static com.github.emailtohl.building.common.utils.JavaBeanTools.deepCopy;
-import static com.github.emailtohl.building.common.utils.JavaBeanTools.fieldMap;
 import static com.github.emailtohl.building.common.utils.JavaBeanTools.getDeclaredField;
 import static com.github.emailtohl.building.common.utils.JavaBeanTools.getFieldMap;
+import static com.github.emailtohl.building.common.utils.JavaBeanTools.getFieldNameValueMap;
 import static com.github.emailtohl.building.common.utils.JavaBeanTools.getGenericClass;
 import static com.github.emailtohl.building.common.utils.JavaBeanTools.getModifiedField;
+import static com.github.emailtohl.building.common.utils.JavaBeanTools.getPropertyMap;
+import static com.github.emailtohl.building.common.utils.JavaBeanTools.getPropertyNameValueMap;
 import static com.github.emailtohl.building.common.utils.JavaBeanTools.injectField;
 import static com.github.emailtohl.building.common.utils.JavaBeanTools.injectFieldWithString;
 import static com.github.emailtohl.building.common.utils.JavaBeanTools.injectPropertyWithString;
 import static com.github.emailtohl.building.common.utils.JavaBeanTools.merge;
-import static com.github.emailtohl.building.common.utils.JavaBeanTools.propertyMap;
 import static com.github.emailtohl.building.common.utils.JavaBeanTools.saveListToMap;
 import static com.github.emailtohl.building.initdb.PersistenceData.bar;
 import static com.github.emailtohl.building.initdb.PersistenceData.emailtohl;
@@ -56,8 +57,8 @@ public class JavaBeanToolsTest {
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
 	@Test
-	public void testGetFieldMap() {
-		Map<String, Object> map = getFieldMap(emailtohl);
+	public void testGetFieldNameValueMap() {
+		Map<String, Object> map = getFieldNameValueMap(emailtohl);
 		logger.debug(map);
 		assertTrue((boolean) map.get("enabled"));
 		assertEquals("emailtohl@163.com", map.get("email"));
@@ -67,7 +68,7 @@ public class JavaBeanToolsTest {
 	
 	@Test
 	public void testPropertyMap() {
-		Map<String, PropertyDescriptor> map = propertyMap(emailtohl);
+		Map<String, PropertyDescriptor> map = getPropertyMap(emailtohl);
 		logger.debug(map.keySet());
 		assertNotNull(map.get("id"));
 	}
@@ -75,7 +76,7 @@ public class JavaBeanToolsTest {
 	@Test
 	public void testFieldMap() {
 		Pattern p = Pattern.compile("<(\\w+(\\.\\w+)*)>");
-		Map<String, Field> map = fieldMap(emailtohl);
+		Map<String, Field> map = getFieldMap(emailtohl);
 		Field f = map.get("authorities");
 		Type t = f.getGenericType();
 		logger.debug(t);
@@ -91,6 +92,13 @@ public class JavaBeanToolsTest {
 		
 		m = p.matcher(t.toString());
 		assertFalse(m.find());
+	}
+	
+	@Test
+	public void testGetPropertyNameValueMap() {
+		Map<String, Object> map = getPropertyNameValueMap(emailtohl);
+		System.out.println(map);
+		assertEquals("hl", map.get("name"));
 	}
 
 	@Test
@@ -161,7 +169,7 @@ public class JavaBeanToolsTest {
 			}
 		}
 		TestBean t = new TestBean();
-		Map<String, Field> map = fieldMap(t);
+		Map<String, Field> map = getFieldMap(t);
 		injectField(map.get("i"), t, 2);
 		injectField(map.get("b1"), t, false);
 		injectField(map.get("b2"), t, false);
@@ -195,7 +203,7 @@ public class JavaBeanToolsTest {
 			}
 		}
 		TestBean t = new TestBean();
-		Map<String, Field> map = fieldMap(t);
+		Map<String, Field> map = getFieldMap(t);
 		injectFieldWithString(map.get("i"), t, "2");
 		injectFieldWithString(map.get("b"), t, "false");
 		injectFieldWithString(map.get("by"), t, "2");

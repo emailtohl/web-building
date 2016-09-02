@@ -38,7 +38,7 @@ public class AuthenticationServiceImplTest {
 	public void testAuthenticate() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Authentication auth = authenticationService.authenticate("emailtohl@163.com", "123456");
 		Object o = auth.getPrincipal();
-		String actual = JavaBeanTools.propertyMap(o).get("username").getReadMethod().invoke(o, new Object[]{}).toString();
+		String actual = JavaBeanTools.getPropertyMap(o).get("username").getReadMethod().invoke(o, new Object[]{}).toString();
 		assertEquals("emailtohl@163.com", actual);
 	}
 	
