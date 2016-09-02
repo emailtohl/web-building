@@ -5,7 +5,10 @@ import static com.github.emailtohl.building.site.entities.Authority.MANAGER;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -19,6 +22,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -29,12 +35,12 @@ import com.github.emailtohl.building.site.service.AuthenticationService;
 
 /**
  * 认证服务的实现类
- * 
+ * 主要是为了实践自定义的AuthenticationProvider，用于spring security的配置中
  * @author Helei
  */
 @Service
 @Transactional
-public class AuthenticationServiceImpl implements AuthenticationService {
+public class AuthenticationServiceImpl implements AuthenticationService, UserDetailsService {
 	private static final Logger logger = LogManager.getLogger();
 	@Inject UserRepository userRepository;
 
@@ -84,10 +90,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 				 * case of an authentication request with username and password,
 				 * this would be the username. Callers are expected to populate
 				 * the principal for an authentication request.
+				 * 按照描述，getPrincipal()返回的应该是某种形式的用户名
+				 * 但是spring security需要在这个返回中获取更多的用户信息，所以创建了一个实体类
 				 */
 				class Principal {
 					Long id;
 					String username;
+					Set<GrantedAuthority> authorities;
+					boolean enabled;
 					@SuppressWarnings("unused")
 					public Long getId() {
 						return id;
@@ -102,14 +112,33 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 					public void setUsername(String username) {
 						this.username = username;
 					}
+					@SuppressWarnings("unused")
+					public Set<GrantedAuthority> getAuthorities() {
+						return authorities;
+					}
+					public void setAuthorities(Set<GrantedAuthority> authorities) {
+						this.authorities = authorities;
+					}
+					@SuppressWarnings("unused")
+					public boolean isEnabled() {
+						return enabled;
+					}
+					public void setEnabled(boolean enabled) {
+						this.enabled = enabled;
+					}
 					@Override
 					public String toString() {
-						return "Principal [id=" + id + ", username=" + username + "]";
+						return "Principal [id=" + id + ", username=" + username + ", authorities=" + authorities
+								+ ", enabled=" + enabled + "]";
 					}
 				}
 				Principal p = new Principal();
 				p.setId(u.getId());
 				p.setUsername(u.getEmail());
+				p.setEnabled(u.getEnabled());
+				String[] roles = Authority.toStringArray(u.getAuthorities());
+				List<GrantedAuthority> ls = AuthorityUtils.createAuthorityList(roles);
+				p.setAuthorities(new HashSet<GrantedAuthority>(ls));
 				return p;
 			}
 
@@ -152,20 +181,83 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		return set;
 	}
 
+	/**
+	 * 实现AuthenticationProvider
+	 */
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		UsernamePasswordAuthenticationToken credentials = (UsernamePasswordAuthenticationToken) authentication;
 		String email = credentials.getPrincipal().toString();
 		String password = credentials.getCredentials().toString();
+		// 用户名和密码用完后，记得擦除
+		credentials.eraseCredentials();
 		return this.authenticate(email, password);
 	}
 
 	/**
+	 * 实现AuthenticationProvider
 	 * 保证传入public Authentication authenticate(Authentication authentication) throws AuthenticationException
 	 * 方法中的认证模型一定是UsernamePasswordAuthenticationToken
 	 */
 	@Override
 	public boolean supports(Class<?> authentication) {
 		return authentication == UsernamePasswordAuthenticationToken.class;
+	}
+
+	/**
+	 * 实现UserDetailsService
+	 * @param username
+	 * @return
+	 * @throws UsernameNotFoundException
+	 */
+	private Pattern p = Pattern.compile("username=([a-z0-9`!#$%^&*'{}?/+=|_~-]+(\\.[a-z0-9`!#$%^&*'{}?/+=|_~-]+)*@([a-z0-9]([a-z0-9-]*[a-z0-9])?)+(\\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*)");
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		Matcher m = p.matcher(username);
+		if (!m.find()) {
+			return null;
+		}
+		String email = m.group(1);
+		final User u = userRepository.findByEmail(email);
+		return new UserDetails() {
+			private static final long serialVersionUID = -1260132390884896961L;
+
+			@Override
+			public Collection<? extends GrantedAuthority> getAuthorities() {
+				String[] roles = Authority.toStringArray(u.getAuthorities());
+				return AuthorityUtils.createAuthorityList(roles);
+			}
+
+			@Override
+			public String getPassword() {
+				return u.getPassword();
+			}
+
+			@Override
+			public String getUsername() {
+				return u.getEmail();
+			}
+
+			@Override
+			public boolean isAccountNonExpired() {
+				return true;
+			}
+
+			@Override
+			public boolean isAccountNonLocked() {
+				return true;
+			}
+
+			@Override
+			public boolean isCredentialsNonExpired() {
+				return true;
+			}
+
+			@Override
+			public boolean isEnabled() {
+				return u.getEnabled();
+			}
+			
+		};
 	}
 }

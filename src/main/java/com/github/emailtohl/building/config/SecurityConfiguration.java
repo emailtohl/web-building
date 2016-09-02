@@ -31,6 +31,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfToken;
@@ -55,11 +56,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Named("dataSource")
 	DataSource dataSource;
 	/**
-	 * 来自于RootContextConfiguration扫描包时，实例化的
+	 * 这是自定义AuthenticationProvider时所需要的依赖
+	 * 它来自于RootContextConfiguration扫描包时，实例化的
 	 * com.github.emailtohl.building.site.service.impl.AuthenticationServiceImpl
 	 */
 	@Inject
 	AuthenticationProvider authenticationProvider;
+	/**
+	 * 这也是自定义AuthenticationProvider时所需要的依赖
+	 * 它同样是来自于RootContextConfiguration扫描包时，实例化的
+	 * com.github.emailtohl.building.site.service.impl.AuthenticationServiceImpl
+	 * 这个实现类同时实现了AuthenticationProvider和UserDetailsService
+	 */
+	@Inject
+	UserDetailsService userDetailsService;
 	
 	/**
 	 * 外部可以使用它，从而获取到身份信息
@@ -83,15 +93,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.and().withUser("bar@test.com").password("123456").authorities("EMPLOYEE");
 		*/
 		
-		/* 自定义的AuthenticationProvider，作为示例，只具备基本验证，最好使用Spring Security自带的
-		builder.authenticationProvider(authenticationProvider); */
+//		自定义的AuthenticationProvider，作为摸索的示例，最好还是使用Spring Security自带的AuthenticationProvider
+//		builder.authenticationProvider(authenticationProvider)
+//				.userDetailsService(userDetailsService);
 		
 		/* 基于数据库的配置 */
 		builder.jdbcAuthentication().dataSource(dataSource)
 				.usersByUsernameQuery("SELECT t.email as username, t.password, t.enabled FROM t_user AS t WHERE t.email = ?")
 				.authoritiesByUsernameQuery("SELECT u.email AS username, ua.authority FROM t_user u INNER JOIN t_user_authority ua ON u.id = ua.user_id WHERE u.email = ?")
 				.passwordEncoder(new BCryptPasswordEncoder());
-		
 		
 	}
 	/**
