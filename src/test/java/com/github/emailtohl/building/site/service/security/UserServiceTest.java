@@ -64,122 +64,128 @@ public class UserServiceTest {
 		userService.enableUser(1000L);
 	}
 
-	@Test
-	public void testDisableUser() {
+	@Test(expected = AuthenticationCredentialsNotFoundException.class)
+	public void testDisableUser1() {
 		SecurityContextHolder.clearContext();
-		try {
-			userService.deleteUser(1000L);
-		} catch (AuthenticationCredentialsNotFoundException e) {
-			System.out.println("deleteUser 调用被拒绝，符合预期");
-		}
+		userService.deleteUser(1000L);
+	}
+	
+	@Test(expected = AccessDeniedException.class)
+	public void testDisableUser2() {
 		setBar();
-		try {
-			userService.deleteUser(1000L);
-		} catch (AccessDeniedException e) {
-			System.out.println("deleteUser 调用被拒绝，符合预期");
-		}
-		setEmailtohl();
 		userService.deleteUser(1000L);
 	}
 
 	@Test
-	public void testMergeUser() {
+	public void testDisableUser3() {
+		setEmailtohl();
+		userService.deleteUser(1000L);
+	}
+
+	@Test(expected = AuthenticationCredentialsNotFoundException.class)
+	public void testMergeUser1() {
 		SecurityContextHolder.clearContext();
 		User u = new User();
-		try {
-			userService.mergeUser(1000L, u);
-		} catch (AuthenticationCredentialsNotFoundException e) {
-			System.out.println("mergeUser 调用被拒绝，符合预期");
-		}
-		setBar();
-		try {
-			userService.mergeUser(1000L, u);
-		} catch (AccessDeniedException e) {
-			System.out.println("mergeUser 调用被拒绝，符合预期");
-		}
-		u.setEmail("bar@test.com");
 		userService.mergeUser(1000L, u);
-		setEmailtohl();
+	}
+	
+	@Test(expected = AccessDeniedException.class)
+	public void testMergeUser2() {
+		setBar();
+		User u = new User();
 		userService.mergeUser(1000L, u);
 	}
 	
 	@Test
-	public void testChangePassword() {
+	public void testMergeUser3() {
 		setEmailtohl();
-		System.out.println(SecurityContextHolder.getContext().getAuthentication());
-		userService.changePassword("emailtohl@163.com", "987654321");
-		try {
-			userService.changePassword("foo@test.com", "987654321");
-		} catch (AccessDeniedException e) {
-			System.out.println("changePassword 调用被拒绝，符合预期");
-		}
+		User u = new User();
+		u.setEmail("bar@test.com");
+		userService.mergeUser(1000L, u);
 	}
-
+	
 	@Test
-	public void testDeleteUser() {
+	public void testChangePassword1() {
+		setEmailtohl();
+		userService.changePassword("emailtohl@163.com", "987654321");
+	}
+	
+	@Test(expected = AccessDeniedException.class)
+	public void testChangePassword2() {
+		setEmailtohl();
+		userService.changePassword("foo@test.com", "987654321");
+	}
+	
+	@Test(expected = AuthenticationCredentialsNotFoundException.class)
+	public void testDeleteUser1() {
 		SecurityContextHolder.clearContext();
-		try {
-			userService.deleteUser(1000L);
-		} catch (AuthenticationCredentialsNotFoundException e) {
-			System.out.println("deleteUser 调用被拒绝，符合预期");
-		}
+		userService.deleteUser(1000L);
+	}
+	
+	@Test(expected = AccessDeniedException.class)
+	public void testDeleteUser2() {
 		setFoo();
-		try {
-			userService.deleteUser(1000L);
-		} catch (AccessDeniedException e) {
-			System.out.println("deleteUser 调用被拒绝，符合预期");
-		}
+		userService.deleteUser(1000L);
+	}
+	
+	@Test
+	public void testDeleteUser3() {
 		setEmailtohl();
 		userService.deleteUser(1000L);
 	}
 
-	@Test
-	public void testGetUser() {
+	@Test(expected = AuthenticationCredentialsNotFoundException.class)
+	public void testGetUser1() {
 		SecurityContextHolder.clearContext();
-		try {
-			userService.getUser(1000L);
-		} catch (AuthenticationCredentialsNotFoundException e) {
-			System.out.println("getUser 调用被拒绝，符合预期");
-		}
+		userService.getUser(1000L);
+	}
+	
+	@Test(expected = AccessDeniedException.class)
+	public void testGetUser2() {
 		setBar();
-		try {
-			userService.getUser(1000L);
-		} catch (AccessDeniedException e) {
-			System.out.println("getUser 调用被拒绝，符合预期");
-		}
+		userService.getUser(1000L);
+	}
+	
+	@Test
+	public void testGetUser3() {
+		setBar();
 		userService.getUser(2000L);
+	}
+	
+	@Test
+	public void testGetUser4() {
 		setFoo();
 		userService.getUser(1000L);
 		setEmailtohl();
 		userService.getUser(1000L);
 	}
 	
-	@Test
-	public void testGetUserByEmail() {
+	@Test(expected = AuthenticationCredentialsNotFoundException.class)
+	public void testGetUserByEmail1() {
 		SecurityContextHolder.clearContext();
-		try {
-			userService.getUserByEmail("emailtohl@163.com");
-		} catch (AuthenticationCredentialsNotFoundException e) {
-			System.out.println("getUserByEmail 调用被拒绝，符合预期");
-		}
-		setFoo();
-		try {
-			userService.getUserByEmail("emailtohl@163.com");
-		} catch (AccessDeniedException e) {
-			System.out.println("getUserByEmail 调用被拒绝，符合预期");
-		}
+		userService.getUserByEmail("emailtohl@163.com");
+	}
+	
+	@Test(expected = AccessDeniedException.class)
+	public void testGetUserByEmail2() {
+		setBar();
+		userService.getUserByEmail("emailtohl@163.com");
+	}
+	
+	@Test
+	public void testGetUserByEmail3() {
 		setEmailtohl();
 		userService.getUserByEmail("emailtohl@163.com");
 	}
 
-	@Test
-	public void testGetUserPager() {
+	@Test(expected = AuthenticationCredentialsNotFoundException.class)
+	public void testGetUserPager1() {
 		SecurityContextHolder.clearContext();
-		try {
-			userService.getUserPager(null, null);
-		} catch (AuthenticationCredentialsNotFoundException e) {
-			System.out.println("getUser 调用被拒绝，符合预期");
-		}
+		userService.getUserPager(null, null);
+	}
+	
+	@Test
+	public void testGetUserPager2() {
 		setBar();
 		userService.getUserPager(null, null);
 	}

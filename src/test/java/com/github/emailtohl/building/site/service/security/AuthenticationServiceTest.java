@@ -38,30 +38,31 @@ public class AuthenticationServiceTest {
 	public void testAuthenticate() {
 		Authentication auth = authenticationService.authenticate("foo@test.com", "123456");
 		assertTrue(auth.isAuthenticated());
-		
+	}
+	
+	@Test(expected = AuthenticationCredentialsNotFoundException.class)
+	public void testGrantedAuthority1() {
+		SecurityContextHolder.clearContext();
+		authenticationService.grantedAuthority(1000L, new HashSet<Authority>(Arrays.asList(ADMIN, MANAGER)));
+	}
+	
+	@Test(expected = AccessDeniedException.class)
+	public void testGrantedAuthority2() {
+		User u = new User();
+		setBar();
+		userService.mergeUser(1000L, u);
 	}
 	
 	@Test
-	public void testGrantedAuthority() {
-		SecurityContextHolder.clearContext();
+	public void testGrantedAuthority3() {
 		User u = new User();
-		try {
-			authenticationService.grantedAuthority(1000L, new HashSet<Authority>(Arrays.asList(ADMIN, MANAGER)));
-		} catch (AuthenticationCredentialsNotFoundException e) {
-			System.out.println("grantedAuthority 调用被拒绝，符合预期");
-		}
-		setBar();
-		try {
-			userService.mergeUser(1000L, u);
-		} catch (AccessDeniedException e) {
-			System.out.println("grantedAuthority 调用被拒绝，符合预期");
-		}
 		setFoo();
-		try {
-			userService.mergeUser(1000L, u);
-		} catch (AccessDeniedException e) {
-			System.out.println("grantedAuthority 调用被拒绝，符合预期");
-		}
+		userService.mergeUser(1000L, u);
+	}
+	
+	@Test
+	public void testGrantedAuthority4() {
+		User u = new User();
 		setEmailtohl();
 		userService.mergeUser(1000L, u);
 	}
