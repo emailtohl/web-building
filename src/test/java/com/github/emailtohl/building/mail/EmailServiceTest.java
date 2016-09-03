@@ -1,8 +1,9 @@
-package com.github.emailtohl.building.site.mail;
+package com.github.emailtohl.building.mail;
 
 import javax.mail.MessagingException;
 
 import com.github.emailtohl.building.bootspring.SpringUtils;
+import com.github.emailtohl.building.mail.EmailService;
 
 public class EmailServiceTest {
 

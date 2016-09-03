@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.site.mail;
+package com.github.emailtohl.building.mail;
 
 import javax.inject.Inject;
 import javax.mail.MessagingException;

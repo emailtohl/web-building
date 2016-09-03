@@ -35,6 +35,8 @@ import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import com.github.emailtohl.building.common.Constant;
+
 /**
  * Entity 用户
  * javax校验的注解在field上，JPA约束的注解写在JavaBean属性上
@@ -58,9 +60,7 @@ public class User extends BaseEntity {
 	protected String username;
 	@NotNull// 校验
 	@Pattern(// 校验
-		regexp = "^[a-z0-9`!#$%^&*'{}?/+=|_~-]+(\\.[a-z0-9`!#$%^&*'{}?/+=" +
-		"|_~-]+)*@([a-z0-9]([a-z0-9-]*[a-z0-9])?)+(\\.[a-z0-9]" +
-		"([a-z0-9-]*[a-z0-9])?)*$",
+		regexp = Constant.PATTERN_EMAIL,
 		flags = {Pattern.Flag.CASE_INSENSITIVE}
 	)
 	protected String email;

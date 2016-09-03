@@ -43,7 +43,7 @@ import org.springframework.web.util.WebUtils;
 
 import com.github.emailtohl.building.site.service.UserPermissionEvaluator;
 /**
- * spring security 的编程风格的配置，它依赖于数据源配置类
+ * spring security 的编程风格的配置，它不仅被RootContextConfiguration导入，并且也依赖于RootContextConfiguration中的Bean
  * @author HeLei
  */
 @Profile(PROFILE_PRODUCTION)
@@ -93,7 +93,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.and().withUser("bar@test.com").password("123456").authorities("EMPLOYEE");
 		*/
 		
-//		自定义的AuthenticationProvider，作为摸索的示例，最好还是使用Spring Security自带的AuthenticationProvider
+//		自定义的AuthenticationProvider，作为摸索的示例，还有很多认证信息不完善，最好还是使用Spring Security自带的AuthenticationProvider
 //		builder.authenticationProvider(authenticationProvider)
 //				.userDetailsService(userDetailsService);
 		

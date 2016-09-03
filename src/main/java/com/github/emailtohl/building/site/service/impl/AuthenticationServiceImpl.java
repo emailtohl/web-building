@@ -28,6 +28,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import com.github.emailtohl.building.common.Constant;
 import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.User;
@@ -210,7 +211,7 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 	 * @return
 	 * @throws UsernameNotFoundException
 	 */
-	private Pattern p = Pattern.compile("username=([a-z0-9`!#$%^&*'{}?/+=|_~-]+(\\.[a-z0-9`!#$%^&*'{}?/+=|_~-]+)*@([a-z0-9]([a-z0-9-]*[a-z0-9])?)+(\\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*)");
+	private Pattern p = Pattern.compile("username=(" + Constant.PATTERN_EMAIL.substring(1, Constant.PATTERN_EMAIL.length() - 1) + ')');
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Matcher m = p.matcher(username);
