@@ -94,53 +94,7 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 				 * 按照描述，getPrincipal()返回的应该是某种形式的用户名
 				 * 但是spring security需要在这个返回中获取更多的用户信息，所以创建了一个实体类
 				 */
-				class Principal {
-					Long id;
-					String username;
-					Set<GrantedAuthority> authorities;
-					boolean enabled;
-					@SuppressWarnings("unused")
-					public Long getId() {
-						return id;
-					}
-					public void setId(Long id) {
-						this.id = id;
-					}
-					@SuppressWarnings("unused")
-					public String getUsername() {
-						return username;
-					}
-					public void setUsername(String username) {
-						this.username = username;
-					}
-					@SuppressWarnings("unused")
-					public Set<GrantedAuthority> getAuthorities() {
-						return authorities;
-					}
-					public void setAuthorities(Set<GrantedAuthority> authorities) {
-						this.authorities = authorities;
-					}
-					@SuppressWarnings("unused")
-					public boolean isEnabled() {
-						return enabled;
-					}
-					public void setEnabled(boolean enabled) {
-						this.enabled = enabled;
-					}
-					@Override
-					public String toString() {
-						return "Principal [id=" + id + ", username=" + username + ", authorities=" + authorities
-								+ ", enabled=" + enabled + "]";
-					}
-				}
-				Principal p = new Principal();
-				p.setId(u.getId());
-				p.setUsername(u.getEmail());
-				p.setEnabled(u.getEnabled());
-				String[] roles = Authority.toStringArray(u.getAuthorities());
-				List<GrantedAuthority> ls = AuthorityUtils.createAuthorityList(roles);
-				p.setAuthorities(new HashSet<GrantedAuthority>(ls));
-				return p;
+				return new UserDetailsImpl(u);
 			}
 
 			private boolean isAuthenticated = true;
@@ -220,45 +174,93 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 		}
 		String email = m.group(1);
 		final User u = userRepository.findByEmail(email);
-		return new UserDetails() {
-			private static final long serialVersionUID = -1260132390884896961L;
-
-			@Override
-			public Collection<? extends GrantedAuthority> getAuthorities() {
-				String[] roles = Authority.toStringArray(u.getAuthorities());
-				return AuthorityUtils.createAuthorityList(roles);
-			}
-
-			@Override
-			public String getPassword() {
-				return u.getPassword();
-			}
-
-			@Override
-			public String getUsername() {
-				return u.getEmail();
-			}
-
-			@Override
-			public boolean isAccountNonExpired() {
-				return true;
-			}
-
-			@Override
-			public boolean isAccountNonLocked() {
-				return true;
-			}
-
-			@Override
-			public boolean isCredentialsNonExpired() {
-				return true;
-			}
-
-			@Override
-			public boolean isEnabled() {
-				return u.getEnabled();
-			}
+		return new UserDetailsImpl(u);
+	}
+	
+	/**
+	 * 自定义UserDetails的实现，这是Spring Security认证管理器要访问的数据结构
+	 * 本实现提供的getter方法符合JavaBean规范，所以认证管理器就能获知其属性
+	 * 例如getUsername()代表该JavaBean的属性是“username”，值是执行后的结果
+	 * @author HeLei
+	 *
+	 */
+	class UserDetailsImpl implements UserDetails {
+		private static final long serialVersionUID = -1260132390884896961L;
+		private User u;
+		private Long id;
+		private String username;
+		private boolean enabled;
+		private String email;
+		private List<GrantedAuthority> authorities;
+		private String iconSrc;
+		
+		UserDetailsImpl(User u) {
+			this.u = u;
+			this.id = u.getId();
+			this.email = u.getEmail();
+			this.username = this.email;
+			this.enabled = u.getEnabled();
+			this.iconSrc = u.getIconSrc();
+			String[] roles = Authority.toStringArray(u.getAuthorities());
+			this.authorities = AuthorityUtils.createAuthorityList(roles);
 			
-		};
+		}
+		/**
+		 * 新增一个id属性
+		 * @return
+		 */
+		public Long getId() {
+			return this.id;
+		}
+		
+		/**
+		 * 新增一个图片地址属性
+		 */
+		public String getIconSrc() {
+			return this.iconSrc;
+		}
+		
+		/**
+		 * 新增一个email属性
+		 */
+		public String getEmail() {
+			return this.email;
+		}
+		
+		@Override
+		public Collection<? extends GrantedAuthority> getAuthorities() {
+			return this.authorities;
+		}
+
+		@Override
+		public String getPassword() {
+			return u.getPassword();
+		}
+
+		@Override
+		public String getUsername() {
+			return this.username;
+		}
+
+		@Override
+		public boolean isAccountNonExpired() {
+			return true;
+		}
+
+		@Override
+		public boolean isAccountNonLocked() {
+			return true;
+		}
+
+		@Override
+		public boolean isCredentialsNonExpired() {
+			return true;
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return this.enabled;
+		}
+		
 	}
 }
