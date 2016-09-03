@@ -15,7 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 
 import com.github.emailtohl.building.bootspring.SpringUtils;
-import com.github.emailtohl.building.common.utils.JavaBeanTools;
+import com.github.emailtohl.building.common.utils.BeanTools;
 import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
@@ -38,7 +38,7 @@ public class AuthenticationServiceImplTest {
 	public void testAuthenticate() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Authentication auth = authenticationService.authenticate("emailtohl@163.com", "123456");
 		Object o = auth.getPrincipal();
-		String actual = JavaBeanTools.getPropertyMap(o).get("username").getReadMethod().invoke(o, new Object[]{}).toString();
+		String actual = BeanTools.getPropertyNameValueMap(o).get("username").toString();
 		assertEquals("emailtohl@163.com", actual);
 	}
 	

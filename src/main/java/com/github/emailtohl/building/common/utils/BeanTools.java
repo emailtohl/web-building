@@ -42,9 +42,9 @@ import org.apache.logging.log4j.Logger;
  * 未归类的方法
  * @author Helei
  */
-public final class JavaBeanTools {
+public final class BeanTools {
 	private static final Logger logger = LogManager.getLogger();
-	private JavaBeanTools() {}
+	private BeanTools() {}
 
 	/**
 	 * 本方法分析对象bean，将其Field名和Field转存到map中
@@ -134,7 +134,9 @@ public final class JavaBeanTools {
 		Map<String, Object> nvmap = new HashMap<String, Object>();
 		for (Entry<String, PropertyDescriptor> e : pmap.entrySet()) {
 			try {
-				Object value = e.getValue().getReadMethod().invoke(javabean, new Object[] {});
+				Method m = e.getValue().getReadMethod();
+				m.setAccessible(true);
+				Object value = m.invoke(javabean, new Object[] {});
 				nvmap.put(e.getKey(), value);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
 				logger.warn("getter访问失败", e);
