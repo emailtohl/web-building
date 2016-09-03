@@ -1,5 +1,5 @@
-define([ 'auth/module', 'mine' ], function(authModule) {
-	return authModule.factory('userService', [ '$http', function($http) {
+define([ 'user/module', 'mine' ], function(userModule) {
+	return userModule.factory('authorityService', [ '$http', function($http) {
 		userService = {
 			getPager : function(user) {
 				return $http.get('user/pager?' + mine.encodeFormData(user));

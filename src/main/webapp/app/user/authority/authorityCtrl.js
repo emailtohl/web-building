@@ -1,7 +1,7 @@
-define(['auth/module'], function(authModule) {
-	return authModule
-	.controller('AuthoritiesCtrl', ['$scope', '$http', '$state', 'userService', 'PAGE_BTN_NUM', 'PAGE_SIZE',
-	                                function($scope, $http, $state, userService, pageBtnNum, pageSize) {
+define(['user/module'], function(userModule) {
+	return userModule
+	.controller('AuthorityCtrl', ['$scope', '$http', '$state', 'authorityService', 'PAGE_BTN_NUM', 'PAGE_SIZE',
+	                                function($scope, $http, $state, authorityService, pageBtnNum, pageSize) {
 		var self = this;
 		self.pager = {
 			pageSize : pageSize

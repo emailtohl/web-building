@@ -13,8 +13,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,16 +39,28 @@ public class UserCtrl {
 	UserService userService;
 	
 	public String getCurrentUsername() {
-		return SecurityContextHolder.getContext().getAuthentication().getName();
+		String username = null;
+		Authentication a = SecurityContextHolder.getContext().getAuthentication();
+		if (a != null) {
+			username = a.getName();
+		}
+		return username;
 	}
-	
+	/**
+	 * 查询user资源下提供哪些方法
+	 * @return
+	 */
 	@RequestMapping(value = "", method = OPTIONS)
 	public ResponseEntity<Void> discover() {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Allow", "OPTIONS,HEAD,GET");
 		return new ResponseEntity<>(null, headers, HttpStatus.NO_CONTENT);
 	}
-	
+	/**
+	 * 查询user/id下支持哪些方法
+	 * @param id
+	 * @return
+	 */
 	@RequestMapping(value = "{id}", method = OPTIONS)
 	public ResponseEntity<Void> discover(@PathVariable("id") long id) {
 		if (userService.getUser(id) == null)
@@ -55,27 +69,54 @@ public class UserCtrl {
 		headers.add("Allow", "OPTIONS,HEAD,GET,PUT,DELETE");
 		return new ResponseEntity<>(null, headers, HttpStatus.NO_CONTENT);
 	}
-	
+	/**
+	 * 通过id获取User
+	 * @param id
+	 * @return
+	 */
 	@RequestMapping(value = "{id}", method = GET)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	public User getUser(@PathVariable("id") Long id) {
+	public User getUserById(@PathVariable("id") Long id) {
 		User u = userService.getUser(id);
 		if (u == null) {
 			throw new ResourceNotFoundException();
 		}
 		return u;
 	}
-	
+	/**
+	 * 通过email获取User
+	 * @param email
+	 * @return
+	 */
+	@RequestMapping(value = "{email}", method = GET)
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	public User getUserByEmail(@PathVariable("email") String email) {
+		User u = userService.getUserByEmail(email);
+		if (u == null) {
+			throw new ResourceNotFoundException();
+		}
+		return u;
+	}
+	/**
+	 * 获取分页对象
+	 * @param u
+	 * @param pageable
+	 * @return
+	 */
 	@RequestMapping(value = "pager", method = GET)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	public Page<User> getUserPager(@RequestBody User u, Pageable pageable) {
+	public Page<User> getUserPager(@ModelAttribute User u, Pageable pageable) {
 		return userService.getUserPager(u, pageable);
 	}
-	
+	/**
+	 * 新增一个User
+	 * @param u
+	 * @return
+	 */
 	@RequestMapping(value = "", method = POST)
-	@ResponseBody
 	public ResponseEntity<User> addUser(@RequestBody User u) {
 		Long id = userService.addUser(u);
 		String uri = ServletUriComponentsBuilder.fromCurrentServletMapping().path("/user/{id}")
@@ -84,13 +125,20 @@ public class UserCtrl {
 		headers.add("Location", uri);
 		return new ResponseEntity<>(u, headers, HttpStatus.CREATED);
 	}
-	
+	/**
+	 * 修改一个User
+	 * @param id
+	 * @param user
+	 */
 	@RequestMapping(value = "{id}", method = PUT)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void update(@PathVariable("id") long id, @RequestBody User user) {
 		userService.mergeUser(id, user);
 	}
-	
+	/**
+	 * 删除一个User
+	 * @param id
+	 */
 	@RequestMapping(value = "{id}", method = DELETE)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void delete(@PathVariable("id") long id) {

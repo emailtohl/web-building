@@ -1,6 +1,6 @@
-define(['auth/module', "auth/user/userService"], function(authModule) {
-	return authModule
-	.controller('UserCtrl', ['$scope', '$http', '$state', 'userService', 'PAGE_BTN_NUM', 'PAGE_SIZE'
+define(['user/module', 'user/manager/service'], function(userModule) {
+	return userModule
+	.controller('UserListCtrl', ['$scope', '$http', '$state', 'userService', 'PAGE_BTN_NUM', 'PAGE_SIZE'
 	                         , function($scope, $http, $state, userService, pageBtnNum, pageSize) {
 		var self = this;
 		self.pager = {
@@ -49,18 +49,6 @@ define(['auth/module', "auth/user/userService"], function(authModule) {
 		self.reset = function() {
 			self.condition.name = '';
 			self.condition.nickname = '';
-		};
-		self.getDetail = function(id) {
-			$http.get('user/detail/' + id).success(function(data, status, fun, obj) {
-				console.log(data);
-/*				if (typeof data == 'string' && data.startsWith('<!DOCTYPE html>')) {
-					location.replace('login');
-				}*/
-			})
-			.error(function(data, status, fun, obj) {
-				console.log(data);
-//				location.replace('login');
-			});
 		};
 	}]);
 });
