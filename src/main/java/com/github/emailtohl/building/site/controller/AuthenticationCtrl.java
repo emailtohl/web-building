@@ -40,7 +40,6 @@ public class AuthenticationCtrl {
 			map = new HashMap<String, Object>();
 			Authentication authentication = context.getAuthentication();
 			map.put("username", authentication.getName());
-			map.put("credentials", authentication.getCredentials());
 			map.put("details", authentication.getDetails());
 			map.put("principal", authentication.getPrincipal());
 		}
