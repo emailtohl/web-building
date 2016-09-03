@@ -102,7 +102,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.usersByUsernameQuery("SELECT t.email as username, t.password, t.enabled FROM t_user AS t WHERE t.email = ?")
 				.authoritiesByUsernameQuery("SELECT u.email AS username, ua.authority FROM t_user u INNER JOIN t_user_authority ua ON u.id = ua.user_id WHERE u.email = ?")
 				.passwordEncoder(new BCryptPasswordEncoder());
-		
 	}
 	/**
 	 * 默认忽略的路径
