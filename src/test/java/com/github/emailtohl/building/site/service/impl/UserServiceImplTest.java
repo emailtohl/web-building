@@ -66,7 +66,7 @@ public class UserServiceImplTest {
 			assertNotNull(id);
 			// test query
 			User qu = userService.getUser(id);
-			assertEquals(u.getId(), qu.getId());
+			assertEquals(u, qu);
 			// test update
 			User uu = new User();
 			uu.setAuthorities(null);

@@ -30,6 +30,7 @@ import com.github.emailtohl.building.common.repository.jpa.Pager;
 import com.github.emailtohl.building.exception.ResourceNotFoundException;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
+import com.google.gson.Gson;
 
 /**
  * 用户管理的控制器
@@ -40,6 +41,8 @@ import com.github.emailtohl.building.site.service.UserService;
 public class UserCtrl {
 	@Inject
 	UserService userService;
+	@Inject
+	Gson gson;
 	
 	public String getCurrentUsername() {
 		String username = null;
@@ -74,33 +77,37 @@ public class UserCtrl {
 	}
 	/**
 	 * 通过id获取User
+	 * 注意，userService获取的User对象，可能是一个普通的User，也可能是继承User的Employ或Manager
+	 * 如果控制器返回一个User，由于没有相关的getter方法，Spring MVC调用的序列化方法不会将Employ或Manager中的属性解析
+	 * 这里的解决方案是先序列化为JSON，然后以字符串形式返回到前端
 	 * @param id
 	 * @return
 	 */
-	@RequestMapping(value = "id/{id}", method = GET)
+	@RequestMapping(value = "id/{id}", method = GET, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	public User getUserById(@PathVariable("id") Long id) {
+	public String getUserById(@PathVariable("id") Long id) {
 		User u = userService.getUser(id);
 		if (u == null) {
 			throw new ResourceNotFoundException();
 		}
-		return u;
+		return gson.toJson(u);
 	}
 	/**
 	 * 通过email获取User
+	 * 同getUserById中的注释一样，这里也是以字符串形式返回到前端
 	 * @param email
 	 * @return
 	 */
-	@RequestMapping(value = "email/{email}", method = GET)
+	@RequestMapping(value = "email/{email}", method = GET, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	public User getUserByEmail(@PathVariable("email") String email) {
+	public String getUserByEmail(@PathVariable("email") String email) {
 		User u = userService.getUserByEmail(email);
 		if (u == null) {
 			throw new ResourceNotFoundException();
 		}
-		return u;
+		return gson.toJson(u);
 	}
 	/**
 	 * 获取分页对象

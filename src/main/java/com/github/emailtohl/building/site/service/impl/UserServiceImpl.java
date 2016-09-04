@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import com.github.emailtohl.building.common.repository.jpa.Pager;
 import com.github.emailtohl.building.common.utils.BCryptUtil;
 import com.github.emailtohl.building.common.utils.BeanTools;
-import com.github.emailtohl.building.site.dao.EmployRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.entities.Manager;
 import com.github.emailtohl.building.site.entities.User;
@@ -31,8 +30,6 @@ public class UserServiceImpl implements UserService {
 
 	@Inject
 	UserRepository userRepository;
-	@Inject
-	EmployRepository employRepository;
 	
 	@Override
 	public Long addUser(User u) {

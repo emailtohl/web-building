@@ -130,7 +130,9 @@ public abstract class BaseEntity implements Serializable {
 			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		Class<?> thisClass = getClass(), otherClass = obj.getClass();
+		// 两者都不在同一继承结构上
+		if (!(thisClass.isAssignableFrom(otherClass) || otherClass.isAssignableFrom(thisClass)))
 			return false;
 		BaseEntity other = (BaseEntity) obj;
 		if (id == null) {
