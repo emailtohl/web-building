@@ -6,14 +6,18 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 		self.params = {
 			page : 1,
 			size : 20,
-			email : 'foo@test.com',
-			name : 'foo',
 		};
 		self.query = function() {
 			userService.getUserPager(self.params).success(function(data) {
 				console.log(data);
 				self.pager = data;
 			});
+		};
+		self.reset = function() {
+			self.params = {
+				page : 1,
+				size : 20,
+			};
 		};
 		self.btnClick = function(pageNum) {
 			self.params.page = pageNum;
@@ -64,9 +68,6 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 				self.query();
 			});
 		};
-		self.reset = function() {
-			self.condition.name = '';
-			self.condition.nickname = '';
-		};*/
+		*/
 	}]);
 });

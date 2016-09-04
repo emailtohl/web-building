@@ -16,7 +16,7 @@ define(['user/module',
 			controller : 'UserListCtrl as ctrl'
 		})
 		.state('user.detail', {
-			url : '/detail',
+			url : '/detail/{id}',
 			templateUrl : 'app/user/manager/detail.html',
 			controller : 'UserDetailCtrl as ctrl'
 		})

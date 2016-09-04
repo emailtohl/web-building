@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import com.github.emailtohl.building.common.repository.jpa.Pager;
 import com.github.emailtohl.building.common.utils.BCryptUtil;
 import com.github.emailtohl.building.common.utils.BeanTools;
+import com.github.emailtohl.building.site.dao.EmployRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
+import com.github.emailtohl.building.site.entities.Manager;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
 
@@ -29,6 +31,8 @@ public class UserServiceImpl implements UserService {
 
 	@Inject
 	UserRepository userRepository;
+	@Inject
+	EmployRepository employRepository;
 	
 	@Override
 	public Long addUser(User u) {
@@ -61,16 +65,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void mergeUser(Long id, User u) {
-		User persistStatus = userRepository.findOne(id);
-		// 是否启动，授权，不走此接口，所以在调用merge方法前，先将其设置为null
-		u.setEnabled(null);
-		u.setAuthorities(null);
-		BeanTools.merge(persistStatus, u);
-		userRepository.save(persistStatus);
-	}
-
-	@Override
 	public void deleteUser(Long id) {
 		User persistStatus = userRepository.findOne(id);
 		// 先删除外联关系
@@ -79,17 +73,16 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User getUser(Long id) {
-		return filter(userRepository.findOne(id));
-	}
-
-	@Override
 	public Pager<User> getUserPager(User u, Pageable pageable) {
-		// 直接从中获取Page<User>，不能对其中的List进行过滤，所以还是先获取自定义的Pager对象，然后再做过滤与封装
 		Pager<User> p = userRepository.dynamicQuery(u, pageable.getPageNumber());
 		List<User> ls = filter(p.getDataList());
 		p.setDataList(ls);
 		return p;
+	}
+	
+	@Override
+	public User getUser(Long id) {
+		return filter(userRepository.findOne(id));
 	}
 
 	@Override
@@ -97,19 +90,41 @@ public class UserServiceImpl implements UserService {
 		return userRepository.findByEmail(email);
 	}
 
-	private List<User> filter(List<User> users) {
+	@Override
+	public void mergeUser(Long id, User u) {
+		User persistStatus = userRepository.findOne(id);
+		// 是否启动，授权，不走此接口，所以在调用merge方法前，先将其设置为null
+		u.setEnabled(null);
+		u.setAuthorities(null);
+		BeanTools.merge(persistStatus, u);
+		userRepository.save(persistStatus);
+	}
+	
+	/**
+	 * JPA提供者能根据用户的类型确定到底是User、Employ还是Manager
+	 * @param users
+	 * @return
+	 */
+	private List<User> filter(List<? extends User> users) {
 		List<User> ls = new ArrayList<User>();
 		for (User u : users) {
-			User nu = new User();
+			// Manager对象能获取最完整的信息
+			Manager nu = new Manager();
 			BeanUtils.copyProperties(u, nu, "password", "authorities");
 			ls.add(nu);
 		}
 		return ls;
 	}
 
+	/**
+	 * JPA提供者能根据用户的类型确定到底是User、Employ还是Manager
+	 * @param users
+	 * @return
+	 */
 	private User filter(User user) {
-		User nu = new User();
-		BeanUtils.copyProperties(user, nu, "password", "authorities");
+		// Manager对象能获取最完整的信息
+		Manager nu = new Manager();
+		BeanUtils.copyProperties(user, nu, "password");
 		return nu;
 	}
 

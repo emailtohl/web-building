@@ -14,7 +14,6 @@ import javax.persistence.Table;
 @Table(name = "t_Department")
 public class Department extends BaseEntity {
 	private static final long serialVersionUID = -4263959308837757530L;
-	private Short id;
 	private String name;
 	private String description;
 	private transient Set<Employee> employees;

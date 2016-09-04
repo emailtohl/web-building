@@ -77,7 +77,7 @@ public class UserCtrl {
 	 * @param id
 	 * @return
 	 */
-	@RequestMapping(value = "{id}", method = GET)
+	@RequestMapping(value = "id/{id}", method = GET)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	public User getUserById(@PathVariable("id") Long id) {
@@ -92,7 +92,7 @@ public class UserCtrl {
 	 * @param email
 	 * @return
 	 */
-	@RequestMapping(value = "{email}", method = GET)
+	@RequestMapping(value = "email/{email}", method = GET)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	public User getUserByEmail(@PathVariable("email") String email) {

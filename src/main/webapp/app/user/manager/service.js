@@ -2,10 +2,10 @@ define([ 'user/module', 'mine' ], function(userModule) {
 	return userModule.factory('userService', [ '$http', function($http) {
 		return {
 			getUserById : function(id) {
-				return $http.get('user/' + id);
+				return $http.get('user/id/' + id);
 			},	
 			getUserEmail : function(email) {
-				return $http.get('user/' + email);
+				return $http.get('user/email/' + email);
 			},
 			/**
 			 * query对象中含有查询页码：pageNumber，pageSize

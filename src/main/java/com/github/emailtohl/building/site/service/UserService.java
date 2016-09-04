@@ -50,17 +50,6 @@ public interface UserService {
 	void disableUser(@Min(value = 1L) Long id);
 	
 	/**
-	 * 修改用户
-	 * 这里的方法名使用的是merge，传入的User参数只存储需要更新的属性，不更新的属性值为null
-	 * 
-	 * 修改用户时，不设置authorities和enable属性
-	 * 
-	 * @param u中的id不能为null， u中属性不为null的值为修改项
-	 */
-	@PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER') || #u.email == authentication.principal.username")
-	void mergeUser(@Min(value = 1L) Long id, User u);
-	
-	/**
 	 * 修改密码，限制只能本人才能修改
 	 * authentication是直接从SecurityContextHolder中获取的对象
 	 * @param id
@@ -93,6 +82,17 @@ public interface UserService {
 	 */
 	@PostAuthorize("hasAnyAuthority('ADMIN', 'MANAGER') || #email == principal.username")
 	User getUserByEmail(@NotNull String email);
+	
+	/**
+	 * 修改用户
+	 * 这里的方法名使用的是merge，传入的User参数只存储需要更新的属性，不更新的属性值为null
+	 * 
+	 * 修改用户时，不设置authorities和enable属性
+	 * 
+	 * @param u中的id不能为null， u中属性不为null的值为修改项
+	 */
+	@PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER') || #u.email == authentication.principal.username")
+	void mergeUser(@Min(value = 1L) Long id, User u);
 	
 	/**
 	 * 获取用户Pager

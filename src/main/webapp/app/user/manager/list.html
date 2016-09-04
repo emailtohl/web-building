@@ -30,7 +30,7 @@
 			  <div class="form-group col-md-6" ng-init="ctrl.params.enabled = ''">
                   <div class="radio">
                     <label>
-                      <input type="radio" name="enabled" value="" ng-model="ctrl.params.enabled" checked>
+                      <input type="radio" name="enabled" value="" ng-model="ctrl.params.enabled">
                       	全部
                     </label>
                   </div>
@@ -47,12 +47,6 @@
                     </label>
                   </div>
                 </div>
-
-
-<!-- 	          <div class="form-group col-md-6">
-	            <label for="exampleInputEmail1">用户名</label>
-	            <input type="text" class="form-control" ng-model="ctrl.params.nickname" placeholder="可模糊查询">
-	          </div> -->
 	        </div>
 	        <!-- /.box-body -->
 	
@@ -75,9 +69,9 @@
                 <thead>
                 <tr>
                   <th class="col-md-2">姓名</th>
-                  <th class="col-md-2">用户名</th>
-                  <th class="col-md-2">电话</th>
                   <th class="col-md-2">邮箱</th>
+                  <th class="col-md-2">电话</th>
+                  <th class="col-md-2">是否启动</th>
                   <th class="col-md-2">描述</th>
                   <th class="col-md-2">操作</th>
                 </tr>
@@ -85,13 +79,13 @@
                 <tbody>
                 <tr ng-repeat="x in ctrl.pager.dataList">
                   <td ng-bind="x.name" class="col-md-2"></td>
-                  <td ng-bind="x.nickname" class="col-md-2"></td>
-                  <td ng-bind="x.contact.telephone" class="col-md-2"></td>
-                  <td ng-bind="x.contact.email" class="col-md-2"></td>
+                  <td ng-bind="x.email" class="col-md-2"></td>
+                  <td ng-bind="x.subsidiary.mobile" class="col-md-2"></td>
+                  <td ng-bind="x.enabled ? '是' : '否'" class="col-md-2"></td>
                   <td ng-bind="x.description" class="col-md-2"></td>
                   <td class="col-md-2" ng-if="hasAuthority('ADMIN') || x.nickname == authentication.username">
                     <div class="btn-group">
-                      <button type="button" class="btn btn-default" ng-click="ctrl.openEditDialog(x.id)">编辑</button>
+                      <button type="button" class="btn btn-default" ui-sref="user.detail({id : x.id})">编辑</button>
                       <button type="button" class="btn btn-default" ng-click="ctrl.delete(x.id)" ng-if="hasAuthority('ADMIN')">删除</button>
                     </div>
                   </td>
