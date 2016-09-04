@@ -123,6 +123,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.antMatchers("/"/* 首页 */, "login"/* 获取登录页面 */, "/authenticate"/* 登录时的认证 */, "/authentication"/* 获取认证信息 */, "/index.html", "/home.html", "/signup", "/about", "/chat/**").permitAll()
 					.antMatchers("/admin/**").hasAuthority("ADMIN")
 					.antMatchers("/secure/**").hasAnyAuthority("ADMIN", "MANAGER")
+					.antMatchers("/user/**").fullyAuthenticated()
 					.antMatchers(HttpMethod.DELETE, "/user/**").hasAnyAuthority("ADMIN", "MANAGER")
 					.antMatchers(HttpMethod.POST, "/user/**").hasAnyAuthority("ADMIN", "MANAGER")
 					.antMatchers(HttpMethod.PUT, "/user/**").hasAnyAuthority("ADMIN", "MANAGER")

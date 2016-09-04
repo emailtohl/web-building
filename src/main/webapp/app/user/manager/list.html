@@ -23,13 +23,36 @@
 	      <form role="form">
 	        <div class="box-body">
 	          <div class="form-group col-md-6">
-	            <label for="exampleInputEmail1">姓名</label>
-	            <input type="text" class="form-control" ng-model="ctrl.condition.name" placeholder="可模糊查询">
+	            <label for="exampleInputEmail1">邮箱</label>
+	            <input type="text" class="form-control" ng-model="ctrl.params.email" placeholder="可模糊查询">
 	          </div>
-	          <div class="form-group col-md-6">
+
+			  <div class="form-group col-md-6" ng-init="ctrl.params.enabled = ''">
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="enabled" value="" ng-model="ctrl.params.enabled" checked>
+                      	全部
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="enabled" value="true" ng-model="ctrl.params.enabled">
+                      	已启用
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="enabled" value="false" ng-model="ctrl.params.enabled" >
+                      	未启用
+                    </label>
+                  </div>
+                </div>
+
+
+<!-- 	          <div class="form-group col-md-6">
 	            <label for="exampleInputEmail1">用户名</label>
-	            <input type="text" class="form-control" ng-model="ctrl.condition.nickname" placeholder="可模糊查询">
-	          </div>
+	            <input type="text" class="form-control" ng-model="ctrl.params.nickname" placeholder="可模糊查询">
+	          </div> -->
 	        </div>
 	        <!-- /.box-body -->
 	
