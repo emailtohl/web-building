@@ -270,8 +270,8 @@ desired effect
         <li class="treeview" ng-class="{active: $state.includes('user')}">
           <a href="#"><i class="fa fa-envelope"></i> <span>用户管理</span> <i class="fa fa-angle-left pull-right"></i></a>
           <ul class="treeview-menu">
-            <li ng-class="{active: $state.includes('auth.user')}"><a ui-sref="auth.user" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>账户管理</a></li>
-            <li ng-class="{active: $state.includes('auth.authorities')}"><a ui-sref="auth.authorities" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>权限管理</a></li>
+            <li ng-class="{active: $state.includes('user.list') || $state.includes('user.detail')}"><a ui-sref="user.list" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>账户管理</a></li>
+            <li ng-class="{active: $state.includes('user.authority')}"><a ui-sref="auth.authority" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>权限管理</a></li>
             <li><a href="secure" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>security测试</a></li>
           </ul>
         </li>

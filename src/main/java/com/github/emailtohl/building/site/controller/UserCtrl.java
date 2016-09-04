@@ -7,8 +7,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.github.emailtohl.building.common.repository.jpa.Pager;
 import com.github.emailtohl.building.exception.ResourceNotFoundException;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
@@ -108,7 +111,7 @@ public class UserCtrl {
 	@RequestMapping(value = "pager", method = GET)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	public Page<User> getUserPager(@ModelAttribute User u, Pageable pageable) {
+	public Pager<User> getUserPager(@ModelAttribute User u, Pageable pageable) {
 		return userService.getUserPager(u, pageable);
 	}
 	/**
@@ -117,7 +120,10 @@ public class UserCtrl {
 	 * @return
 	 */
 	@RequestMapping(value = "", method = POST)
-	public ResponseEntity<User> addUser(@RequestBody User u) {
+	public ResponseEntity<?> addUser(@RequestBody @Valid User u, Errors e) {
+		if (e.hasErrors()) {
+			return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+		}
 		Long id = userService.addUser(u);
 		String uri = ServletUriComponentsBuilder.fromCurrentServletMapping().path("/user/{id}")
 				.buildAndExpand(id).toString();
@@ -131,9 +137,12 @@ public class UserCtrl {
 	 * @param user
 	 */
 	@RequestMapping(value = "{id}", method = PUT)
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void update(@PathVariable("id") long id, @RequestBody User user) {
+	public ResponseEntity<?> update(@PathVariable("id") @Min(1L) long id, @Valid @RequestBody User user, Errors e) {
+		if (e.hasErrors()) {
+			return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+		}
 		userService.mergeUser(id, user);
+		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
 	/**
 	 * 删除一个User

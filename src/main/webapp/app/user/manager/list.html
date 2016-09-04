@@ -85,7 +85,7 @@
                 </tr>
                 </tfoot>
               </table>
-              <pager pager-model="ctrl.pager" condition="ctrl.condition" get="ctrl.query()">
+              <pager page-num="ctrl.pager.pageNum" total-page="ctrl.pager.totalPage" page-btn-num="5" on-click="ctrl.btnClick(pageNum)">
             </div>
             <!-- /.box-body -->
           </div>

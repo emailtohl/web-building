@@ -6,12 +6,12 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 
+import com.github.emailtohl.building.common.repository.jpa.Pager;
 import com.github.emailtohl.building.site.entities.User;
 
 /**
@@ -95,7 +95,7 @@ public interface UserService {
 	User getUserByEmail(@NotNull String email);
 	
 	/**
-	 * 获取用户Page
+	 * 获取用户Pager
 	 * 
 	 * 实现类中要对Pager中返回的List中敏感信息进行过滤
 	 * 
@@ -105,6 +105,6 @@ public interface UserService {
 	 */
 	@NotNull
 	@PreAuthorize("isAuthenticated()")
-	Page<User> getUserPager(User u, Pageable pageable);
+	Pager<User> getUserPager(User u, Pageable pageable);
 	
 }

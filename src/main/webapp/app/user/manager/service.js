@@ -8,10 +8,10 @@ define([ 'user/module', 'mine' ], function(userModule) {
 				return $http.get('user/' + email);
 			},
 			/**
-			 * user对象中含有查询页码：pageNumber，pageSize
+			 * query对象中含有查询页码：pageNumber，pageSize
 			 */
-			getUserPager : function(user) {
-				return $http.get('user/pager?' + mine.encodeUrlParams(user));
+			getUserPager : function(params) {
+				return $http.get('user/pager?' + mine.encodeUrlParams(params));
 			},
 			addUser : function(user) {
 				return $http.post('user', user);

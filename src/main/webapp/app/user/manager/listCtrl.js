@@ -1,9 +1,27 @@
 define(['user/module', 'user/manager/service'], function(userModule) {
 	return userModule
-	.controller('UserListCtrl', ['$scope', '$http', '$state', 'userService', 'PAGE_BTN_NUM', 'PAGE_SIZE'
-	                         , function($scope, $http, $state, userService, pageBtnNum, pageSize) {
+	.controller('UserListCtrl', ['$scope', '$http', '$state', 'userService'
+	                         , function($scope, $http, $state, userService) {
 		var self = this;
-		self.pager = {
+		self.params = {
+			page : 1,
+			size : 20,
+			email : 'foo@test.com',
+			name : 'foo',
+		};
+		self.query = function() {
+			userService.getUserPager(self.params).success(function(data) {
+				console.log(data);
+				self.pager = data;
+			});
+		};
+		self.btnClick = function(pageNum) {
+			self.params.page = pageNum;
+			self.query();
+		};
+		self.query();
+		
+		/*self.pager = {
 			pageSize : pageSize
 		};
 		self.condition = {};
@@ -49,6 +67,6 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 		self.reset = function() {
 			self.condition.name = '';
 			self.condition.nickname = '';
-		};
+		};*/
 	}]);
 });

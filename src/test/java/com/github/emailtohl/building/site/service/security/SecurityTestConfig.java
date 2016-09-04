@@ -12,8 +12,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
@@ -27,6 +25,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.github.emailtohl.building.common.repository.jpa.Pager;
 import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.AuthenticationService;
@@ -140,9 +139,11 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 			}
 
 			@Override
-			public Page<User> getUserPager(User u, Pageable pageable) {
+			public Pager<User> getUserPager(User u, Pageable pageable) {
 				logger.debug("getUserPager invoked");
-				return new PageImpl<User>(Arrays.asList(emailtohl, foo, bar));
+				Pager<User> p = new Pager<User>();
+				p.setDataList(Arrays.asList(emailtohl, foo, bar));
+				return p;
 			}
 
 			@Override

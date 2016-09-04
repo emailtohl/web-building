@@ -1,63 +1,80 @@
 /**
- * pagerModel的属性：
- * totalRow;// 总行数
- * totalPage;// 总页面数
- * pageNum;// 当前页码
- * pageSize;// 每页最大行数
- * startRecordNumber;// 返回结果从此行开始
- * dataList;// 存储查询结果
- * author helei
+ * 分页组件：生成页码按钮
+ * 实际上生成页码按钮，必要信息只有当前页和总页数，可以通过代码一次性生成，例如mine中提供的createPageItems方法
+ * 不过这是静态的，但是当点击页码按钮后，查询结果会更新，这就需要重新生成页码按钮，这不符合angular的编程风格
+ * 定义angular的指令后，只需监控当前页pageNum和总页数totalPage，指令会自动更新页码按钮
+ * 
+ * @author Helei
  */
 define([ 'common/module' ], function(common) {
 	common
-	.constant('PAGE_BTN_NUM', 5)// 显示多少个item供点击
-	.constant('PAGE_SIZE', 20)// 每页显示的行数
-	.directive('pager', [ 'PAGE_BTN_NUM', 'PAGE_SIZE', function(pageBtnNum, pageSize) {
+	.directive('pager', function() {
+		function init($scope) {
+			if (!$scope.pageNum || $scope.pageNum < 1) {
+				$scope.pageNum = 1;
+			}
+			if (!$scope.totalPage || $scope.totalPage < 1) {
+				$scope.totalPage = 1;
+			}
+			if (!$scope.pageBtnNum || $scope.pageBtnNum < 1) {
+				$scope.pageBtnNum = 5;
+			}
+		}
 		return {
 			restrict : 'EA',
 			templateUrl : 'common/directive/pager/template.html',
 			scope : {
-				pagerModel : '=',
-				condition : '=',
-				get : '&'
+				pageNum : '=',
+				totalPage : '=',
+				pageBtnNum : '@',// 显示多少个按钮，默认5个
+				onClick : '&'
 			},
+			/**
+			 * 链接时，只定义初始化数据和处理方法，数据变化的维护在controller中
+			 */
 			link : function($scope, $element, $attrs) {
-				if (!$scope.condition) {
-					$scope.condition = {};
-				}
+				init($scope);
 				$scope.click = function(selectPageNum) {
-					$scope.condition.pageNum = selectPageNum;
-					$scope.condition.pageSize = pageSize;
-					$scope.get();
+					$scope.pageNum = selectPageNum;
+					$scope.onClick({pageNum : selectPageNum});
 				};
 				$scope.previous = function() {
-					if ($scope.condition.pageNum > 1) {
-						$scope.click($scope.condition.pageNum - 1);
+					if ($scope.pageNum > 1) {
+						$scope.click($scope.pageNum - 1);
 					}
 				};
 				$scope.next = function() {
-					if ($scope.condition.pageNum < $scope.pagerModel.totalPage) {
-						$scope.click($scope.condition.pageNum + 1);
+					if ($scope.pageNum < $scope.totalPage) {
+						$scope.click($scope.pageNum + 1);
 					}
 				};
 				$scope.clickMore = function() {
 					// $scope.pageNumArr被初始化为空数组，其值是在controller而非link处维护
 					var arr = $scope.pageNumArr || [];
-					if (arr && arr.length > 0) {
+					if (arr.length > 0) {
 						$scope.click(arr[arr.length - 1] + 1);
 					}
 				};
 				$scope.getClass = function(pageNum) {
-					return $scope.condition.pageNum === pageNum ? 'active' : '';
+					return $scope.pageNum === pageNum ? 'active' : '';
 				};
-				
 			},
+			/**
+			 * 数据变化的维护在controller中
+			 */
 			controller : function($scope) {
-				$scope.$watch('pagerModel', function(newVal, oldVal){
-					var i, j, startItem,
-					totalPage = $scope.pagerModel && $scope.pagerModel.totalPage,
-					pageNum = $scope.pagerModel && $scope.pagerModel.pageNum;
-					$scope.condition.pageNum = pageNum;
+				$scope.$watch('pageNum', function(newVal, oldVal){
+					refresh();
+				});
+				$scope.$watch('totalPage', function(newVal, oldVal){
+					refresh();
+				});
+				function refresh() {
+					var i, j, startItem, totalPage, pageNum, pageBtnNum;
+					init($scope);
+					totalPage = $scope.totalPage;
+					pageNum = $scope.pageNum;
+					pageBtnNum = $scope.pageBtnNum;
 					if (totalPage) {
 						$scope.isShow = true;
 					} else {
@@ -90,8 +107,8 @@ define([ 'common/module' ], function(common) {
 							$scope.pageNumArr.push(i);
 						}
 					}
-				});
+				}
 			}
 		};
-	} ]);
+	} );
 });

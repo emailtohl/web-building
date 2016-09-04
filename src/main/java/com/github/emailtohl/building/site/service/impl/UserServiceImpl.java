@@ -7,8 +7,6 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -86,12 +84,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Page<User> getUserPager(User u, Pageable pageable) {
+	public Pager<User> getUserPager(User u, Pageable pageable) {
 		// 直接从中获取Page<User>，不能对其中的List进行过滤，所以还是先获取自定义的Pager对象，然后再做过滤与封装
 		Pager<User> p = userRepository.dynamicQuery(u, pageable.getPageNumber());
 		List<User> ls = filter(p.getDataList());
 		p.setDataList(ls);
-		return new PageImpl<User>(ls, pageable, p.getTotalRow());
+		return p;
 	}
 
 	@Override

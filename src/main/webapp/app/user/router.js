@@ -1,7 +1,7 @@
 define(['user/module',
         'user/manager/listCtrl',
         'user/manager/detailCtrl',
-        'user/authorities/authoritiesCtrl'
+        'user/authority/authorityCtrl'
         ], function(userModule) {
 	return userModule.config(function($stateProvider) {
 		$stateProvider

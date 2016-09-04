@@ -59,12 +59,14 @@ define(['angular', 'test/module'], function(angular) {
 		}
 		self.langList = ["ActionScript", "AppleScript", "Asp", "BASIC", "C", "C++", "Clojure", "COBOL", "ColdFusion", "Erlang", "Fortran", "Groovy", "Haskell", "Java", "JavaScript", "Lisp", "Perl", "PHP", "Python", "Ruby", "Scala", "Scheme"];
 	}])
-	.controller('TestPagerCtrl', ['$scope', '$http', '$state', 'PAGE_BTN_NUM', 'PAGE_SIZE', function($scope, $http, $state, pageBtnNum, pageSize) {
+	.controller('TestPagerCtrl', ['$scope', '$http', '$state', function($scope, $http, $state) {
 		var self = this;
-		self.condition = {'foo' : 'foo', 'bar' : 'bar'};
-		var items;
-		self.query = function() {
-			console.log(self.condition);
+		var pageBtnNum = 5, pageSize = 20;
+		self.params = {'foo' : 'foo', 'bar' : 'bar'};
+		self.query = function(pageNum) {
+			self.params.pageNum = pageNum;
+			console.log('当前查询条件：');
+			console.log(self.params);
 			self.pager = getPager();
 			console.log(self.pager);
 		}
