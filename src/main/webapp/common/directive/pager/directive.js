@@ -10,12 +10,15 @@ define([ 'common/module' ], function(common) {
 	common
 	.directive('pager', function() {
 		function init($scope) {
+			// 查询页码，默认查询第一页
 			if (!$scope.pageNum || $scope.pageNum < 1) {
 				$scope.pageNum = 1;
 			}
-			if (!$scope.totalPage || $scope.totalPage < 1) {
-				$scope.totalPage = 1;
+			// 查询之后，如果没有查询到结果，总页数可能为0
+			if ($scope.totalPage == null || $scope.totalPage < 0) {
+				$scope.totalPage = 0;
 			}
+			// 显示的item数，默认显示5个
 			if (!$scope.pageBtnNum || $scope.pageBtnNum < 1) {
 				$scope.pageBtnNum = 5;
 			}
@@ -35,6 +38,10 @@ define([ 'common/module' ], function(common) {
 			link : function($scope, $element, $attrs) {
 				init($scope);
 				$scope.click = function(selectPageNum) {
+					if (selectPageNum < 1 || selectPageNum > $scope.totalPage
+							|| selectPageNum == $scope.pageNum) {
+						return;
+					}
 					$scope.pageNum = selectPageNum;
 					$scope.onClick({pageNum : selectPageNum});
 				};
@@ -66,16 +73,16 @@ define([ 'common/module' ], function(common) {
 				$scope.$watch('pageNum', function(newVal, oldVal){
 					refresh();
 				});
-				$scope.$watch('totalPage', function(newVal, oldVal){
-					refresh();
-				});
+//				$scope.$watch('totalPage', function(newVal, oldVal){
+//					refresh();
+//				});
 				function refresh() {
 					var i, j, startItem, totalPage, pageNum, pageBtnNum;
 					init($scope);
 					totalPage = $scope.totalPage;
 					pageNum = $scope.pageNum;
 					pageBtnNum = $scope.pageBtnNum;
-					if (totalPage) {
+					if (totalPage) {// 总页数为空或为0，都会计算为false
 						$scope.isShow = true;
 					} else {
 						$scope.isShow = false;
