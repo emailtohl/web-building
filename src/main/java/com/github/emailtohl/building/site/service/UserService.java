@@ -6,6 +6,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -106,5 +107,18 @@ public interface UserService {
 	@NotNull
 	@PreAuthorize("isAuthenticated()")
 	Pager<User> getUserPager(User u, Pageable pageable);
+	
+	/**
+	 * 获取用户Page,这里的Page是Spring Data提供的数据结构
+	 * 
+	 * 实现类中要对Pager中返回的List中敏感信息进行过滤
+	 * 
+	 * @param u
+	 * @param pageable
+	 * @return
+	 */
+	@NotNull
+	@PreAuthorize("isAuthenticated()")
+	Page<User> getUserPage(User u, Pageable pageable);
 	
 }

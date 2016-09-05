@@ -3,6 +3,7 @@ package com.github.emailtohl.building.site.service.security;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -187,7 +188,19 @@ public class UserServiceTest {
 	@Test
 	public void testGetUserPager2() {
 		setBar();
-		userService.getUserPager(null, null);
+		userService.getUserPager(new User(), new PageRequest(10, 20));
+	}
+	
+	@Test(expected = AuthenticationCredentialsNotFoundException.class)
+	public void testGetUserPage1() {
+		SecurityContextHolder.clearContext();
+		userService.getUserPage(new User(), new PageRequest(10, 20));
+	}
+	
+	@Test
+	public void testGetUserPage2() {
+		setBar();
+		userService.getUserPage(new User(), new PageRequest(10, 20));
 	}
 
 }

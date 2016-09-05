@@ -18,6 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import com.github.emailtohl.building.bootspring.SpringUtils;
@@ -98,6 +99,14 @@ public class UserServiceImplTest {
 		u.setEmail("foo@test.com");
 		Pager<User> p = userService.getUserPager(u, new PageRequest(1, 20));
 		assertTrue(p.getDataList().size() > 0);
+	}
+	
+	@Test
+	public void testGetUserPage() {
+		User u = new User();
+		u.setEmail("foo@test.com");
+		Page<User> p = userService.getUserPage(u, new PageRequest(1, 20));
+		assertTrue(p.getContent().size() > 0);
 	}
 	
 }

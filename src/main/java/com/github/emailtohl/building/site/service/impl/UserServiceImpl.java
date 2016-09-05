@@ -7,6 +7,8 @@ import javax.inject.Inject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -75,6 +77,12 @@ public class UserServiceImpl implements UserService {
 		List<User> ls = filter(p.getDataList());
 		p.setDataList(ls);
 		return p;
+	}
+
+	@Override
+	public Page<User> getUserPage(User u, Pageable pageable) {
+		Pager<User> p = this.getUserPager(u, pageable);
+		return new PageImpl<User>(p.getDataList(), pageable, p.getTotalRow());
 	}
 	
 	@Override

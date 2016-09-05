@@ -12,6 +12,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
@@ -143,14 +145,28 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 				logger.debug("getUserPager invoked");
 				Pager<User> p = new Pager<User>();
 				p.setDataList(Arrays.asList(emailtohl, foo, bar));
+				int pageSize = 20;
+				long totalRows = 100L;
+				int totalPage = (int) ((totalRows + pageSize - 1) / pageSize);
+				p.setPageNum(pageable.getPageNumber());
+				p.setPageSize(pageSize);
+				p.setTotalRow(totalRows);
+				p.setTotalPage(totalPage);
 				return p;
+			}
+
+			@Override
+			public Page<User> getUserPage(User u, Pageable pageable) {
+				logger.debug("getUserPage invoked");
+				Pager<User> p = this.getUserPager(u, pageable);
+				return new PageImpl<User>(p.getDataList(), pageable, p.getTotalRow());
 			}
 
 			@Override
 			public User getUserByEmail(String email) {
 				return emailtohl;
 			}
-			
+
 		};
 	}
 

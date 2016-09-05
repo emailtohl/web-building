@@ -111,6 +111,8 @@ public class UserCtrl {
 	}
 	/**
 	 * 获取分页对象
+	 * 这里返回的对象没有使用org.springframework.data.domain.Page<E>
+	 * 主要是因为该对象在Spring MVC中不能序列化并传到前端
 	 * @param u
 	 * @param pageable
 	 * @return

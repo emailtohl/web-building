@@ -523,6 +523,31 @@ public abstract class BaseRepository<E extends Serializable> extends GenericJpaR
 	}
 	
 	/**
+	 * 刷新实体对象
+	 * @param entity 实体对象
+	 */
+	public void refresh(E entity) {
+		entityManager.refresh(entity);
+	}
+	
+	/**
+	 * 设置为游离状态
+	 * @param entity 实体对象
+	 */
+	public void detach(E entity) {
+		entityManager.detach(entity);
+	}
+	
+	/**
+	 * 判断实体是否处于持久化状态
+	 * @param entity 实体对象
+	 * @return 是否为托管状态
+	 */
+	public boolean isManaged(E entity) {
+		return entityManager.contains(entity);
+	}
+	
+	/**
 	 * 关闭entityManager
 	 */
 	public void close() {
