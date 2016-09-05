@@ -4,10 +4,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.github.emailtohl.building.common.repository.jpa.Pager;
-import com.github.emailtohl.building.common.repository.jpa.Repository;
+import com.github.emailtohl.building.common.repository.jpa.JpaRepository;
 import com.github.emailtohl.building.site.entities.User;
 
-public interface UserRepositoryCustomization extends Repository<User> {
+public interface UserRepositoryCustomization extends JpaRepository<User> {
 	Integer PAGE_SIZE = 20;
 	
 	Pager<User> dynamicQuery(User user, Integer pageNum);

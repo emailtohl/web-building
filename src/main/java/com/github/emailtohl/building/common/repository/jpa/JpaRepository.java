@@ -5,13 +5,17 @@ import java.util.Map;
 
 import javax.persistence.AccessType;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import com.github.emailtohl.building.common.repository.JpaCriterionQuery.SearchCriteria;
 import com.github.emailtohl.building.common.repository.generic.GenericRepository;
 /**
  * 业务代码的数据仓库接口，可除了继承的增删改查以外，新增获取Pager对象的接口
  * @author HeLei
  * @param <E>
  */
-public interface Repository<E extends Serializable> extends GenericRepository<Long, E> {
+public interface JpaRepository<E extends Serializable> extends GenericRepository<Long, E> {
 	/**
 	 * 动态查询一个Pager对象
 	 * @param jpql 传入的JPQL查询语句
@@ -42,6 +46,14 @@ public interface Repository<E extends Serializable> extends GenericRepository<Lo
 	 */
 	Pager<E> getPager(E entity, Integer pageNum, Integer pageSize, AccessType type);
 
+	/**
+	 * 标准查询接口，根据传入的条件List得到一个Page对象
+	 * @param criteria 一个条件List
+	 * @param pageable 分页对象
+	 * @return
+	 */
+	Page<E> search(SearchCriteria searchCriteria, Pageable pageable);
+	
 	/**
 	 * 同步数据
 	 */

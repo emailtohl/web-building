@@ -1,4 +1,5 @@
 package com.github.emailtohl.building.common.repository.jpa;
+import static org.springframework.data.jpa.repository.query.QueryUtils.toOrders;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -31,10 +32,19 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
+import com.github.emailtohl.building.common.repository.JpaCriterionQuery.Criterion;
+import com.github.emailtohl.building.common.repository.JpaCriterionQuery.SearchCriteria;
 import com.github.emailtohl.building.common.repository.generic.GenericJpaRepository;
 
 /**
@@ -45,8 +55,8 @@ import com.github.emailtohl.building.common.repository.generic.GenericJpaReposit
  * @Date 2016.04.29
  * @param <E> 实体类，ID统一为Long型
  */
-public abstract class BaseRepository<E extends Serializable> extends GenericJpaRepository<Long, E>
-		implements Repository<E> {
+public abstract class JpaBaseRepository<E extends Serializable> extends GenericJpaRepository<Long, E>
+		implements JpaRepository<E> {
 	private static final Logger logger = LogManager.getLogger();
 	/**
 	 * 匹配JPQL的正则式
@@ -62,11 +72,11 @@ public abstract class BaseRepository<E extends Serializable> extends GenericJpaR
 	protected final short predicateIndex = 19;
 	protected final short entityNameIndex = 9;
 
-	protected BaseRepository() {
+	protected JpaBaseRepository() {
 		super();
 	}
 
-	protected BaseRepository(Class<E> entityClass) {
+	protected JpaBaseRepository(Class<E> entityClass) {
 		super(Long.class, entityClass);
 	}
 
@@ -512,6 +522,51 @@ public abstract class BaseRepository<E extends Serializable> extends GenericJpaR
 		String entityName = m.group(entityNameIndex).trim();
 		String alias = m.group(aliasIndex).trim();
 		return new PredicateAndArgs(predicate, args, entityName, alias);
+	}
+	
+	/**
+	 * 标准查询接口，根据传入的条件List得到一个Page对象
+	 * @param criteria 一个条件List
+	 * @param pageable 分页对象
+	 * @return
+	 */
+	@Override
+	public Page<E> search(SearchCriteria criteria, Pageable pageable) {
+//		int offset = pageable.getOffset();
+		int offset = (pageable.getPageNumber() - 1) * pageable.getPageSize();
+		logger.debug(offset);
+		logger.debug(pageable.getOffset());
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+
+		CriteriaQuery<Long> countCriteria = builder.createQuery(Long.class);
+		Root<E> countRoot = countCriteria.from(entityClass);
+		long total = entityManager.createQuery(
+				countCriteria.select(builder.count(countRoot)).where(toPredicates(criteria, countRoot, builder)))
+				.getSingleResult();
+
+		CriteriaQuery<E> pageCriteria = builder.createQuery(entityClass);
+		Root<E> pageRoot = pageCriteria.from(entityClass);
+		List<E> list = entityManager
+				.createQuery(pageCriteria.select(pageRoot).where(toPredicates(criteria, pageRoot, builder))
+						.orderBy(toOrders(pageable.getSort(), pageRoot, builder)))
+				.setFirstResult(offset).setMaxResults(pageable.getPageSize()).getResultList();
+
+		return new PageImpl<>(new ArrayList<>(list), pageable, total);
+	}
+
+	/**
+	 * 将条件List转成标准查询的“谓词”，即where的参数
+	 * @param criteria 查询List
+	 * @param root 查询的根
+	 * @param builder 标准语句构造器
+	 * @return
+	 */
+	private static Predicate[] toPredicates(SearchCriteria criteria, Root<?> root, CriteriaBuilder builder) {
+		Predicate[] predicates = new Predicate[criteria.size()];
+		int i = 0;
+		for (Criterion c : criteria)
+			predicates[i++] = c.getOperator().toPredicate(c, root, builder);
+		return predicates;
 	}
 
 	/**

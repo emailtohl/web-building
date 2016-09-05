@@ -26,10 +26,16 @@ import org.junit.Test;
 import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import com.github.emailtohl.building.bootspring.SpringUtils;
-import com.github.emailtohl.building.common.repository.jpa.BaseRepository.JpqlAndArgs;
-import com.github.emailtohl.building.common.repository.jpa.BaseRepository.PredicateAndArgs;
+import com.github.emailtohl.building.common.repository.JpaCriterionQuery.Criterion;
+import com.github.emailtohl.building.common.repository.JpaCriterionQuery.SearchCriteria;
+import com.github.emailtohl.building.common.repository.jpa.JpaBaseRepository.JpqlAndArgs;
+import com.github.emailtohl.building.common.repository.jpa.JpaBaseRepository.PredicateAndArgs;
 import com.github.emailtohl.building.common.repository.jpa.relationEntities.Relation1;
 import com.github.emailtohl.building.common.repository.jpa.relationEntities.Relation2;
 import com.github.emailtohl.building.common.repository.jpa.relationEntities.TestRelationRepository;
@@ -40,16 +46,16 @@ import com.github.emailtohl.building.site.entities.Employee;
 import com.github.emailtohl.building.site.entities.Subsidiary;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.entities.User.Gender; 
-public class BaseRepositoryTest {
+public class JpaBaseRepositoryTest {
 	private static final Logger logger = LogManager.getLogger();
 	AnnotationConfigApplicationContext context = SpringUtils.context;
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	User u = new TestUser();
 
-	class TestBaseRepository extends BaseRepository<User> {
+	class TestBaseRepository extends JpaBaseRepository<User> {
 	}
 
-	class TestEmployeeRepository extends BaseRepository<Employee> {
+	class TestEmployeeRepository extends JpaBaseRepository<Employee> {
 	}
 
 	class TestUser extends User {
@@ -113,7 +119,7 @@ public class BaseRepositoryTest {
 
 	@Test
 	public void testBaseRepository() {
-		BaseRepository<User> bru = new BaseRepository<User>() {
+		JpaBaseRepository<User> bru = new JpaBaseRepository<User>() {
 		};
 		TestBaseRepository tbr = new TestBaseRepository();
 		logger.trace(bru);
@@ -122,7 +128,7 @@ public class BaseRepositoryTest {
 
 	@Test
 	public void testBaseRepositoryClassOfLongClassOfE() {
-		BaseRepository<User> br = new BaseRepository<User>(User.class) {
+		JpaBaseRepository<User> br = new JpaBaseRepository<User>(User.class) {
 		};
 		logger.trace(br);
 	}
@@ -476,10 +482,25 @@ public class BaseRepositoryTest {
 		r2.setId((short) 2);
 		r1.setRelation2(r2);
 		r2.setRelation1(r1);
-		BaseRepository<Relation1> relationRepository = new TestRelationRepository();
+		JpaBaseRepository<Relation1> relationRepository = new TestRelationRepository();
 		JpqlAndArgs jaa = relationRepository.jpqlAndArgsByPropety(r1);
 		logger.info(jaa.jpql);
 		assertFalse(jaa.jpql.contains("relation2"));
 	}
 	
+	@Test
+	public void testSearch() {
+		Sort sort = new Sort(Sort.Direction.DESC, "createDate")
+				 .and(new Sort(Sort.Direction.ASC, "id"));
+		Pageable p = new PageRequest(1, 20, sort);
+		SearchCriteria sc = SearchCriteria.Builder.create();
+		Criterion c1, c2;
+		c1 = new Criterion("email", Criterion.Operator.EQ, "emailtohl@163.com");
+		c2 = new Criterion("age", Criterion.Operator.GT, 20);
+		sc.add(c1);
+		sc.add(c2);
+		Page<User> page = userRepository.search(sc, p);
+		System.out.println(page.getContent());
+		assertFalse(page.getContent().isEmpty());
+	}
 }

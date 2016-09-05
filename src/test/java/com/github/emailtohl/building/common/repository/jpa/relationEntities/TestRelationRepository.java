@@ -1,6 +1,6 @@
 package com.github.emailtohl.building.common.repository.jpa.relationEntities;
 
-import com.github.emailtohl.building.common.repository.jpa.BaseRepository;
+import com.github.emailtohl.building.common.repository.jpa.JpaBaseRepository;
 
-public class TestRelationRepository extends BaseRepository<Relation1> {
+public class TestRelationRepository extends JpaBaseRepository<Relation1> {
 }
