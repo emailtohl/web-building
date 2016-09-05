@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
  */
 public interface SearchableRepository<E> {
 	/**
-	 * 注意，从0页开始
+	 * 注意，Pageable的查询是从第0页开始
 	 */
 	Page<E> search(SearchCriteria searchCriteria, Pageable pageable);
 }

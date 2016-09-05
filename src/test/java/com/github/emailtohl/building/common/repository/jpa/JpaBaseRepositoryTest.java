@@ -34,8 +34,8 @@ import org.springframework.data.domain.Sort;
 import com.github.emailtohl.building.bootspring.SpringUtils;
 import com.github.emailtohl.building.common.repository.JpaCriterionQuery.Criterion;
 import com.github.emailtohl.building.common.repository.JpaCriterionQuery.SearchCriteria;
-import com.github.emailtohl.building.common.repository.jpa.JpaBaseRepository.JpqlAndArgs;
-import com.github.emailtohl.building.common.repository.jpa.JpaBaseRepository.PredicateAndArgs;
+import com.github.emailtohl.building.common.repository.jpa.JpaRepositoryImpl.JpqlAndArgs;
+import com.github.emailtohl.building.common.repository.jpa.JpaRepositoryImpl.PredicateAndArgs;
 import com.github.emailtohl.building.common.repository.jpa.relationEntities.Relation1;
 import com.github.emailtohl.building.common.repository.jpa.relationEntities.Relation2;
 import com.github.emailtohl.building.common.repository.jpa.relationEntities.TestRelationRepository;
@@ -52,10 +52,10 @@ public class JpaBaseRepositoryTest {
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	User u = new TestUser();
 
-	class TestBaseRepository extends JpaBaseRepository<User> {
+	class TestBaseRepository extends JpaRepositoryImpl<User> {
 	}
 
-	class TestEmployeeRepository extends JpaBaseRepository<Employee> {
+	class TestEmployeeRepository extends JpaRepositoryImpl<Employee> {
 	}
 
 	class TestUser extends User {
@@ -119,7 +119,7 @@ public class JpaBaseRepositoryTest {
 
 	@Test
 	public void testBaseRepository() {
-		JpaBaseRepository<User> bru = new JpaBaseRepository<User>() {
+		JpaRepositoryImpl<User> bru = new JpaRepositoryImpl<User>() {
 		};
 		TestBaseRepository tbr = new TestBaseRepository();
 		logger.trace(bru);
@@ -128,7 +128,7 @@ public class JpaBaseRepositoryTest {
 
 	@Test
 	public void testBaseRepositoryClassOfLongClassOfE() {
-		JpaBaseRepository<User> br = new JpaBaseRepository<User>(User.class) {
+		JpaRepositoryImpl<User> br = new JpaRepositoryImpl<User>(User.class) {
 		};
 		logger.trace(br);
 	}
@@ -482,7 +482,7 @@ public class JpaBaseRepositoryTest {
 		r2.setId((short) 2);
 		r1.setRelation2(r2);
 		r2.setRelation1(r1);
-		JpaBaseRepository<Relation1> relationRepository = new TestRelationRepository();
+		JpaRepositoryImpl<Relation1> relationRepository = new TestRelationRepository();
 		JpqlAndArgs jaa = relationRepository.jpqlAndArgsByPropety(r1);
 		logger.info(jaa.jpql);
 		assertFalse(jaa.jpql.contains("relation2"));

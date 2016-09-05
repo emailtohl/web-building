@@ -52,10 +52,11 @@ import com.github.emailtohl.building.common.repository.generic.GenericJpaReposit
  * getGenericSuperclass()
  * 
  * @author HeLei
- * @Date 2016.04.29
+ * @Date 2016.04.29 完成JPQL动态生成功能
+ * @Date 2016.09.05 继承标准查询功能
  * @param <E> 实体类，ID统一为Long型
  */
-public abstract class JpaBaseRepository<E extends Serializable> extends GenericJpaRepository<Long, E>
+public abstract class JpaRepositoryImpl<E extends Serializable> extends GenericJpaRepository<Long, E>
 		implements JpaRepository<E> {
 	private static final Logger logger = LogManager.getLogger();
 	/**
@@ -72,11 +73,11 @@ public abstract class JpaBaseRepository<E extends Serializable> extends GenericJ
 	protected final short predicateIndex = 19;
 	protected final short entityNameIndex = 9;
 
-	protected JpaBaseRepository() {
+	protected JpaRepositoryImpl() {
 		super();
 	}
 
-	protected JpaBaseRepository(Class<E> entityClass) {
+	protected JpaRepositoryImpl(Class<E> entityClass) {
 		super(Long.class, entityClass);
 	}
 

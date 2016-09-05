@@ -46,7 +46,7 @@ public abstract class AbstractSearchableJpaRepository<E> implements SearchableRe
 		this.entityClass = (Class<E>) arguments[0];
 	}
 	/**
-	 * 注意，第0页开始
+	 * 注意，Pageable的查询是从第0页开始
 	 */
 	@Override
 	public Page<E> search(SearchCriteria criteria, Pageable pageable) {
