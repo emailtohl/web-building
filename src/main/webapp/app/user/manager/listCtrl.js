@@ -4,7 +4,7 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 	                         , function($scope, $http, $state, userService) {
 		var self = this;
 		self.params = {
-			page : 0,
+			page : 1,
 			size : 20,
 		};
 		self.query = function() {
@@ -15,12 +15,12 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 		};
 		self.reset = function() {
 			self.params = {
-				page : 0,
+				page : 1,
 				size : 20,
 			};
 		};
-		self.btnClick = function(pageNum) {
-			self.params.page = pageNum - 1;// 后台默认从第0页开始
+		self.btnClick = function(pageNumber) {
+			self.params.page = pageNumber;
 			self.query();
 		};
 		self.query();

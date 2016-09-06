@@ -3,6 +3,7 @@
  * 1. 日志功能
  * 2. 调用错误的统一处理
  * 3. 在ajax请求的头信息中添加CSRF的token
+ * 4. 前端的页码是从第1页开始，而后端为了跟Spring data统一，页码从第0页开始，发送请求前和发送请求后进行统一转换
  * author helei
  */
 define([ 'common/module' ], function(commonModule) {
@@ -76,9 +77,37 @@ define([ 'common/module' ], function(commonModule) {
 			}
 		};
 	}])
+	.factory('pagerInterceptor', [ '$q', function($q) {
+		var p = /page=(\d+)/;
+		return {
+			request : function(config) {
+				var url, matches, page;
+				url = config.url;
+				matches = url.match(p);
+				if (matches && matches.length === 2) {
+					page = parseInt(matches[1]);
+					if (page > 0) {
+						page--;
+						config.url = url.replace(p, 'page=' + page);
+					}
+				}
+//				console.log('Request made with ', config);
+				return config;
+			},
+			response : function(response) {
+				if (response.data.pageNumber != null) {
+					response.data.pageNumber++;
+				}
+//				console.log('Response from server', response);
+				// Return a promise
+				return response || $q.when(response);
+			},
+		};
+	} ])
 	.config([ '$httpProvider', function($httpProvider) {
 		$httpProvider.interceptors.push('LoggingInterceptor');
 		$httpProvider.interceptors.push('ErrorInterceptor');
 		$httpProvider.interceptors.push('csrfTokenInterceptor');
+		$httpProvider.interceptors.push('pagerInterceptor');
 	} ]);
 });

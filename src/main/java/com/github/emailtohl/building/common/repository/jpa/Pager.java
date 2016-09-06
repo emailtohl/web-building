@@ -13,30 +13,34 @@ import java.util.List;
 public class Pager<T> implements Serializable {
 	private static final long serialVersionUID = -5098353318676033935L;
 	/**
+	 * 存储查询结果
+	 */
+	private List<T> content;
+	
+	/**
 	 * 总记录数
-	 * 设置为基本类型，表示该值一定不为null
 	 */
 	private long totalElements;
-	/**
-	 * 总页面数
-	 */
-	private Integer totalPages;
-	/**
-	 * 当前页码，默认第0页开始
-	 */
-	private Integer pageNumber;
+	
 	/**
 	 * 每页最大行数，默认20条
 	 */
 	private int pageSize;
+	
+	/**
+	 * 总页面数
+	 */
+	private int totalPages;
+	
+	/**
+	 * 当前页码，默认第0页开始
+	 */
+	private int pageNumber;
+	
 	/**
 	 * 偏移量，返回的结果从此行开始
 	 */
-	private Integer offset;
-	/**
-	 * 存储查询结果
-	 */
-	private List<T> content;
+	private int offset;
 
 	public Pager(List<T> content) {
 		this(content, content.size());
@@ -51,55 +55,64 @@ public class Pager<T> implements Serializable {
 		this.content = content;
 		this.totalElements = totalElements;
 		this.pageSize = pageSize;
+		this.totalPages = (int) ((this.totalElements + this.pageSize - 1) / this.pageSize);
 	}
-
-	public Long getTotalElements() {
-		return totalElements;
-	}
-	public void setTotalElements(Long totalElements) {
-		this.totalElements = totalElements;
-	}
-	public Integer getTotalPages() {
-		if (totalPages == null) {// 如果没有手动设置总页数，则根据总元素和每页大小进行推算
-			return (int) ((totalElements + pageSize - 1) / pageSize);
-		} else {
-			return totalPages;
-		}
-	}
-	public void setTotalPages(Integer totalPages) {
-		this.totalPages = totalPages;
-	}
-	public Integer getPageNumber() {
-		return pageNumber;
-	}
-	public void setPageNumber(Integer pageNumber) {
-		this.pageNumber = pageNumber;
-	}
-	public int getPageSize() {
-		return pageSize;
-	}
-	public void setPageSize(int pageSize) {
-		this.pageSize = pageSize;
-	}
-	public Integer getOffset() {
-		if (pageNumber != null) {// 如果存在当前页，则可以推算出偏移量
-//			这是页码从第1页开始的计算方式
-//			return (pageNumber - 1) * pageSize;
-//			这是页码从第0页开始的计算方式
-			return pageNumber * pageSize;
-		} else {
-			return offset;
-		}
-	}
-	public void setOffset(Integer offset) {
-		this.offset = offset;
-	}
+	
 	public List<T> getContent() {
 		return content;
 	}
 	public void setContent(List<T> content) {
 		this.content = content;
 	}
+	
+	/**
+	 * 总元素构造时完成，不提供写方法
+	 * @return
+	 */
+	public long getTotalElements() {
+		return totalElements;
+	}
+	
+	/**
+	 * 页面尺寸构造时完成，不提供写方法
+	 * @return
+	 */
+	public int getPageSize() {
+		return pageSize;
+	}
+	
+	/**
+	 * 总页数在构造时根据总元素和页面尺寸计算获得，不提供写方法
+	 * @return
+	 */
+	public int getTotalPages() {
+		return totalPages;
+	}
+	
+	/**
+	 * 存储查询时的页码数，从第0页开始
+	 * @return
+	 */
+	public int getPageNumber() {
+		return pageNumber;
+	}
+	public void setPageNumber(int pageNumber) {
+		this.pageNumber = pageNumber;
+		this.offset = pageNumber * this.pageSize;
+	}
+	
+	/**
+	 * 存储查询页码时，计算获得
+	 * @return
+	 */
+	public int getOffset() {
+		return offset;
+	}
+	public void setOffset(int offset) {
+		this.offset = offset;
+		this.pageNumber = offset / this.pageSize;
+	}
+
 	@Override
 	public String toString() {
 		return "Pager [totalElements=" + totalElements + ", totalPages=" + totalPages + ", pageNumber=" + pageNumber

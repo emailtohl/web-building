@@ -2,7 +2,7 @@
  * 分页组件：生成页码按钮
  * 实际上生成页码按钮，必要信息只有当前页和总页数，可以通过代码一次性生成，例如mine中提供的createPageItems方法
  * 不过这是静态的，但是当点击页码按钮后，查询结果会更新，这就需要重新生成页码按钮，这不符合angular的编程风格
- * 定义angular的指令后，只需监控当前页pageNum和总页数totalPage，指令会自动更新页码按钮
+ * 定义angular的指令后，只需监控当前页pageNumber和总页数totalPages，指令会自动更新页码按钮
  * 
  * @author Helei
  */
@@ -11,25 +11,25 @@ define([ 'common/module' ], function(common) {
 	.directive('pager', function() {
 		function init($scope) {
 			// 查询页码，默认查询第一页
-			if (!$scope.pageNum || $scope.pageNum < 1) {
-				$scope.pageNum = 1;
+			if (!$scope.pageNumber || $scope.pageNumber < 1) {
+				$scope.pageNumber = 1;
 			}
 			// 查询之后，如果没有查询到结果，总页数可能为0
-			if ($scope.totalPage == null || $scope.totalPage < 0) {
-				$scope.totalPage = 0;
+			if ($scope.totalPages == null || $scope.totalPages < 0) {
+				$scope.totalPages = 0;
 			}
 			// 显示的item数，默认显示5个
-			if (!$scope.pageBtnNum || $scope.pageBtnNum < 1) {
-				$scope.pageBtnNum = 5;
+			if (!$scope.buttonCount || $scope.buttonCount < 1) {
+				$scope.buttonCount = 5;
 			}
 		}
 		return {
 			restrict : 'EA',
 			templateUrl : 'common/directive/pager/template.html',
 			scope : {
-				pageNum : '=',
-				totalPage : '=',
-				pageBtnNum : '@',// 显示多少个按钮，默认5个
+				pageNumber : '=',
+				totalPages : '=',
+				buttonCount : '@',// 显示多少个按钮，默认5个
 				onClick : '&'
 			},
 			/**
@@ -38,21 +38,21 @@ define([ 'common/module' ], function(common) {
 			link : function($scope, $element, $attrs) {
 				init($scope);
 				$scope.click = function(selectPageNum) {
-					if (selectPageNum < 1 || selectPageNum > $scope.totalPage
-							|| selectPageNum == $scope.pageNum) {
+					if (selectPageNum < 1 || selectPageNum > $scope.totalPages
+							|| selectPageNum == $scope.pageNumber) {
 						return;
 					}
-					$scope.pageNum = selectPageNum;
-					$scope.onClick({pageNum : selectPageNum});
+					$scope.pageNumber = selectPageNum;
+					$scope.onClick({pageNumber : selectPageNum});
 				};
 				$scope.previous = function() {
-					if ($scope.pageNum > 1) {
-						$scope.click($scope.pageNum - 1);
+					if ($scope.pageNumber > 1) {
+						$scope.click($scope.pageNumber - 1);
 					}
 				};
 				$scope.next = function() {
-					if ($scope.pageNum < $scope.totalPage) {
-						$scope.click($scope.pageNum + 1);
+					if ($scope.pageNumber < $scope.totalPages) {
+						$scope.click($scope.pageNumber + 1);
 					}
 				};
 				$scope.clickMore = function() {
@@ -62,55 +62,55 @@ define([ 'common/module' ], function(common) {
 						$scope.click(arr[arr.length - 1] + 1);
 					}
 				};
-				$scope.getClass = function(pageNum) {
-					return $scope.pageNum === pageNum ? 'active' : '';
+				$scope.getClass = function(pageNumber) {
+					return $scope.pageNumber === pageNumber ? 'active' : '';
 				};
 			},
 			/**
 			 * 数据变化的维护在controller中
 			 */
 			controller : function($scope) {
-				$scope.$watch('pageNum', function(newVal, oldVal){
+				$scope.$watch('pageNumber', function(newVal, oldVal){
 					refresh();
 				});
-//				$scope.$watch('totalPage', function(newVal, oldVal){
-//					refresh();
-//				});
+				$scope.$watch('totalPages', function(newVal, oldVal){
+					refresh();
+				});
 				function refresh() {
-					var i, j, startItem, totalPage, pageNum, pageBtnNum;
+					var i, j, startItem, totalPages, pageNumber, buttonCount;
 					init($scope);
-					totalPage = $scope.totalPage;
-					pageNum = $scope.pageNum;
-					pageBtnNum = $scope.pageBtnNum;
-					if (totalPage) {// 总页数为空或为0，都会计算为false
+					totalPages = $scope.totalPages;
+					pageNumber = $scope.pageNumber;
+					buttonCount = $scope.buttonCount;
+					if (totalPages) {// 总页数为空或为0，都会计算为false
 						$scope.isShow = true;
 					} else {
 						$scope.isShow = false;
 						return;
 					}
-					if (pageNum > 1) {
+					if (pageNumber > 1) {
 						$scope.previousBtn = true;
 					} else {
 						$scope.previousBtn = false;
 					}
-					if (pageNum < totalPage) {
+					if (pageNumber < totalPages) {
 						$scope.nextBtn = true;
 					} else {
 						$scope.nextBtn = false;
 					}
 					$scope.pageNumArr = [];
-					if (totalPage - pageNum + 1 > pageBtnNum) {
+					if (totalPages - pageNumber + 1 > buttonCount) {
 						$scope.more = true;
-						for (i = pageNum, j = 0; j < pageBtnNum; i++, j++) {
+						for (i = pageNumber, j = 0; j < buttonCount; i++, j++) {
 							$scope.pageNumArr.push(i);
 						}
 					} else {
 						$scope.more = false;
-						startItem = totalPage - pageBtnNum + 1;
+						startItem = totalPages - buttonCount + 1;
 						if (startItem < 1) {
 							startItem = 1;
 						}
-						for (i = startItem; i <= totalPage; i++) {
+						for (i = startItem; i <= totalPages; i++) {
 							$scope.pageNumArr.push(i);
 						}
 					}

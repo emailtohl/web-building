@@ -17,8 +17,10 @@ import javax.persistence.criteria.Root;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+
 /**
  * 提供标准查询的基类
+ * 
  * @param <E> 实体类
  */
 public abstract class AbstractSearchableJpaRepository<E> implements SearchableRepository<E> {
@@ -46,7 +48,11 @@ public abstract class AbstractSearchableJpaRepository<E> implements SearchableRe
 		this.entityClass = (Class<E>) arguments[0];
 	}
 	/**
+	 * 标准查询接口，根据传入的条件List得到一个Page对象
 	 * 注意，Pageable的查询是从第0页开始
+	 * @param criteria 一个条件List
+	 * @param pageable 分页对象
+	 * @return
 	 */
 	@Override
 	public Page<E> search(SearchCriteria criteria, Pageable pageable) {

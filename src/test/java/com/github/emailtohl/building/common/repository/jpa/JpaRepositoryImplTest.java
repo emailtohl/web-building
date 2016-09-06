@@ -26,14 +26,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 import com.github.emailtohl.building.bootspring.SpringUtils;
-import com.github.emailtohl.building.common.repository.JpaCriterionQuery.Criterion;
-import com.github.emailtohl.building.common.repository.JpaCriterionQuery.SearchCriteria;
 import com.github.emailtohl.building.common.repository.jpa.JpaRepositoryImpl.JpqlAndArgs;
 import com.github.emailtohl.building.common.repository.jpa.JpaRepositoryImpl.PredicateAndArgs;
 import com.github.emailtohl.building.common.repository.jpa.relationEntities.Relation1;
@@ -487,25 +481,5 @@ public class JpaRepositoryImplTest {
 		logger.info(jaa.jpql);
 		assertFalse(jaa.jpql.contains("relation2"));
 	}
-	
-	@Test
-	public void testSearch() {
-		Sort sort = new Sort(Sort.Direction.DESC, "createDate")
-				 .and(new Sort(Sort.Direction.ASC, "id"));
-		Pageable p = new PageRequest(1, 20, sort);
-		SearchCriteria sc = SearchCriteria.Builder.create();
-		Criterion c1, c2;
-		c1 = new Criterion("email", Criterion.Operator.EQ, "emailtohl@163.com");
-		c2 = new Criterion("age", Criterion.Operator.GT, 20);
-		sc.add(c1);
-		sc.add(c2);
-		Page<User> page = userRepository.search(sc, p);
-		logger.debug(page.getContent());
-		logger.debug(page.getNumber());
-		logger.debug(page.getNumberOfElements());
-		logger.debug(page.getSize());
-		logger.debug(page.getTotalElements());
-		logger.debug(page.getSort());
-		assertFalse(page.getContent().isEmpty());
-	}
+
 }

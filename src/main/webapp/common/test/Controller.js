@@ -61,10 +61,10 @@ define(['angular', 'test/module'], function(angular) {
 	}])
 	.controller('TestPagerCtrl', ['$scope', '$http', '$state', function($scope, $http, $state) {
 		var self = this;
-		var pageBtnNum = 5, pageSize = 20;
+		var buttonCount = 5, pageSize = 20;
 		self.params = {'foo' : 'foo', 'bar' : 'bar'};
-		self.query = function(pageNum) {
-			self.params.pageNum = pageNum;
+		self.query = function(pageNumber) {
+			self.params.pageNumber = pageNumber;
 			console.log('当前查询条件：');
 			console.log(self.params);
 			self.pager = getPager();
@@ -91,11 +91,11 @@ define(['angular', 'test/module'], function(angular) {
 				dataList.push(obj);
 			}
 			return {
-				totalRow : totalRowNum,// 总行数
-				totalPage : totalPageNum,// 总页数
-				pageNum : currentPage,// 当前页码
+				totalElements : totalRowNum,// 总行数
+				totalPages : totalPageNum,// 总页数
+				pageNumber : currentPage,// 当前页码
 				pageSize : pageSize,// 每页最大行数
-				dataList : dataList// 存储查询结果
+				content : dataList// 存储查询结果
 			};
 		}
 	}])

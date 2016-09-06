@@ -33,7 +33,7 @@
               </tr>
               </thead>
               <tbody>
-              <tr ng-repeat="x in ctrl.pager.dataList track by $index">
+              <tr ng-repeat="x in ctrl.pager.content track by $index">
                 <td>{{x['Rendering engine']}}</td>
                 <td>{{x['Browser']}}</td>
                 <td>{{x['Platform']}}</td>
@@ -51,7 +51,7 @@
               </tr>
               </tfoot>
             </table>
-            <pager page-num="ctrl.pager.pageNum" total-page="ctrl.pager.totalPage" page-btn-num="5" on-click="ctrl.query(pageNum)">
+            <pager page-number="ctrl.pager.pageNumber" total-pages="ctrl.pager.totalPages" button-count="5" on-click="ctrl.query(pageNumber)">
           </div>
           <!-- /.box-body -->
         </div>

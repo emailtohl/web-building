@@ -77,7 +77,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="x in ctrl.pager.dataList">
+                <tr ng-repeat="x in ctrl.pager.content">
                   <td ng-bind="x.name" class="col-md-2"></td>
                   <td ng-bind="x.email" class="col-md-2"></td>
                   <td ng-bind="x.subsidiary.mobile" class="col-md-2"></td>
@@ -102,7 +102,7 @@
                 </tr>
                 </tfoot>
               </table>
-              <pager page-num="ctrl.pager.pageNum" total-page="ctrl.pager.totalPage" page-btn-num="5" on-click="ctrl.btnClick(pageNum)">
+              <pager page-number="ctrl.pager.pageNumber" total-pages="ctrl.pager.totalPages" button-count="5" on-click="ctrl.btnClick(pageNumber)">
             </div>
             <!-- /.box-body -->
           </div>
