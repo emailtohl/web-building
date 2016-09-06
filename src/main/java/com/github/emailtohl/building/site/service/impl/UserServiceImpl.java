@@ -74,15 +74,15 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Pager<User> getUserPager(User u, Pageable pageable) {
 		Pager<User> p = userRepository.dynamicQuery(u, pageable.getPageNumber());
-		List<User> ls = filter(p.getDataList());
-		p.setDataList(ls);
+		List<User> ls = filter(p.getContent());
+		p.setContent(ls);
 		return p;
 	}
 
 	@Override
 	public Page<User> getUserPage(User u, Pageable pageable) {
 		Pager<User> p = this.getUserPager(u, pageable);
-		return new PageImpl<User>(p.getDataList(), pageable, p.getTotalRow());
+		return new PageImpl<User>(p.getContent(), pageable, p.getTotalElements());
 	}
 	
 	@Override

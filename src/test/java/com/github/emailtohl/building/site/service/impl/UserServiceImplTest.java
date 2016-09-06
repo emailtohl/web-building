@@ -97,15 +97,17 @@ public class UserServiceImplTest {
 	public void testGetUserPager() {
 		User u = new User();
 		u.setEmail("foo@test.com");
-		Pager<User> p = userService.getUserPager(u, new PageRequest(1, 20));
-		assertTrue(p.getDataList().size() > 0);
+		// 查询页从第0页开始
+		Pager<User> p = userService.getUserPager(u, new PageRequest(0, 20));
+		assertTrue(p.getContent().size() > 0);
 	}
 	
 	@Test
 	public void testGetUserPage() {
 		User u = new User();
 		u.setEmail("foo@test.com");
-		Page<User> p = userService.getUserPage(u, new PageRequest(1, 20));
+		// 查询页从第0页开始
+		Page<User> p = userService.getUserPage(u, new PageRequest(0, 20));
 		assertTrue(p.getContent().size() > 0);
 	}
 	

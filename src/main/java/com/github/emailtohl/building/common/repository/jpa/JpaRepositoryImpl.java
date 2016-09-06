@@ -87,12 +87,13 @@ public abstract class JpaRepositoryImpl<E extends Serializable> extends GenericJ
 	 * 参数是数组
 	 */
 	@Override
-	public Pager<E> getPager(String jpql, Object[] args, Integer pageNum, Integer pageSize) {
+	public Pager<E> getPager(String jpql, Object[] args, Integer pageNumber, Integer pageSize) {
 		Matcher m;
 		if (jpql == null || !(m = jpqlPattern.matcher(jpql)).find())
 			throw new IllegalArgumentException("JPQL可能是null，或者格式可能不对，也可能是正则表达式编写不对");
-		if (pageNum == null || pageNum < 1L)
-			pageNum = 1;
+		// 从第0页开始
+		if (pageNumber == null || pageNumber < 0L)
+			pageNumber = 0;
 		if (pageSize == null || pageSize < 1)
 			pageSize = 20;// 默认每页20条记录
 		String selectAlias, alias, from, distinct;
@@ -117,8 +118,7 @@ public abstract class JpaRepositoryImpl<E extends Serializable> extends GenericJ
 				}
 			}
 		}
-		Long totalRows = countQuery.getSingleResult();
-		Integer totalPage = (int) ((totalRows + pageSize - 1) / pageSize);
+		Long totalElements = countQuery.getSingleResult();
 		TypedQuery<E> pagedQuery = entityManager.createQuery(jpql, entityClass);
 		if (args != null) {
 			for (int i = 0; i < args.length; i++) {
@@ -129,19 +129,16 @@ public abstract class JpaRepositoryImpl<E extends Serializable> extends GenericJ
 				}
 			}
 		}
-		Integer startRecordNumber = (pageNum - 1) * pageSize;
-		pagedQuery.setFirstResult(startRecordNumber.intValue());
+//		 这是从第1页起的计算方式
+//		Integer startPosition = (pageNumber - 1) * pageSize;
+//		 这是从第0页起的计算方式
+		Integer startPosition = pageNumber * pageSize;
+		pagedQuery.setFirstResult(startPosition.intValue());
 		pagedQuery.setMaxResults(pageSize);
 		logger.debug("SELECT Query: \n" + jpql + "\n" + "Arguments: \n" + Arrays.toString(args) + "\n"
-				+ "firstResult: \n" + startRecordNumber + "\n" + "maxResults: \n" + pageSize);
+				+ "firstResult: \n" + startPosition + "\n" + "maxResults: \n" + pageSize);
 		List<E> singlePage = pagedQuery.getResultList();
-		Pager<E> p = new Pager<E>();
-		p.setDataList(singlePage);
-		p.setStartRecordNumber(startRecordNumber);
-		p.setPageNum(pageNum);
-		p.setTotalPage(totalPage);
-		p.setTotalRow(totalRows);
-		p.setPageSize(pageSize);
+		Pager<E> p = new Pager<E>(singlePage, totalElements, pageSize);
 		return p;
 	}
 
@@ -150,12 +147,13 @@ public abstract class JpaRepositoryImpl<E extends Serializable> extends GenericJ
 	 * 参数是Map
 	 */
 	@Override
-	public Pager<E> getPager(String jpql, Map<String, Object> args, Integer pageNum, Integer pageSize) {
+	public Pager<E> getPager(String jpql, Map<String, Object> args, Integer pageNumber, Integer pageSize) {
 		Matcher m;
 		if (jpql == null || !(m = jpqlPattern.matcher(jpql)).find())
 			throw new IllegalArgumentException("JPQL可能是null，或者格式可能不对，也可能是正则表达式编写不对");
-		if (pageNum == null || pageNum < 1L)
-			pageNum = 1;
+		// 从第0页开始
+		if (pageNumber == null || pageNumber < 0L)
+			pageNumber = 1;
 		if (pageSize == null || pageSize < 1)
 			pageSize = 20;// 默认每页20条记录
 		String selectAlias, alias, from, distinct;
@@ -180,8 +178,7 @@ public abstract class JpaRepositoryImpl<E extends Serializable> extends GenericJ
 				}
 			}
 		}
-		Long totalRows = countQuery.getSingleResult();
-		Integer totalPage = (int) ((totalRows + pageSize - 1) / pageSize);
+		Long totalElements = countQuery.getSingleResult();
 		TypedQuery<E> pagedQuery = entityManager.createQuery(jpql, entityClass);
 		if (args != null) {
 			for (Map.Entry<String, Object> entry : args.entrySet()) {
@@ -192,20 +189,15 @@ public abstract class JpaRepositoryImpl<E extends Serializable> extends GenericJ
 				}
 			}
 		}
-		Integer startRecordNumber = (pageNum - 1) * pageSize;
-		pagedQuery.setFirstResult(
-				startRecordNumber > Integer.MAX_VALUE ? Integer.MAX_VALUE : startRecordNumber.intValue());
+//		 这是从第1页起的计算方式
+//		Integer startPosition = (pageNumber - 1) * pageSize;
+//		 这是从第0页起的计算方式
+		Integer startPosition = pageNumber * pageSize;
 		pagedQuery.setMaxResults(pageSize);
 		logger.debug("SELECT Query: \n" + jpql + "\n" + "Arguments: \n" + args + "\n" + "firstResult: \n"
-				+ startRecordNumber + "\n" + "maxResults: \n" + pageSize);
+				+ startPosition + "\n" + "maxResults: \n" + pageSize);
 		List<E> singlePage = pagedQuery.getResultList();
-		Pager<E> p = new Pager<E>();
-		p.setDataList(singlePage);
-		p.setStartRecordNumber(startRecordNumber);
-		p.setPageNum(pageNum);
-		p.setTotalPage(totalPage);
-		p.setTotalRow(totalRows);
-		p.setPageSize(pageSize);
+		Pager<E> p = new Pager<E>(singlePage, totalElements, pageSize);
 		return p;
 	}
 	

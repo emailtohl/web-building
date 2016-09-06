@@ -12,48 +12,98 @@ import java.util.List;
  */
 public class Pager<T> implements Serializable {
 	private static final long serialVersionUID = -5098353318676033935L;
-	private Long totalRow;// 总行数
-	private Integer totalPage;// 总页面数
-	private Integer pageNum;// 当前页码
-	private Integer pageSize;// 每页最大行数
-	private Integer startRecordNumber;// 返回结果从此行开始
-	private List<T> dataList;// 存储查询结果
+	/**
+	 * 总记录数
+	 * 设置为基本类型，表示该值一定不为null
+	 */
+	private long totalElements;
+	/**
+	 * 总页面数
+	 */
+	private Integer totalPages;
+	/**
+	 * 当前页码，默认第0页开始
+	 */
+	private Integer pageNumber;
+	/**
+	 * 每页最大行数，默认20条
+	 */
+	private int pageSize;
+	/**
+	 * 偏移量，返回的结果从此行开始
+	 */
+	private Integer offset;
+	/**
+	 * 存储查询结果
+	 */
+	private List<T> content;
+
+	public Pager(List<T> content) {
+		this(content, content.size());
+	}
 	
-	public Long getTotalRow() {
-		return totalRow;
+	public Pager(List<T> content, long totalElements) {
+		// 默认每页20条
+		this(content, totalElements, 20);
 	}
-	public void setTotalRow(Long totalRow) {
-		this.totalRow = totalRow;
-	}
-	public Integer getTotalPage() {
-		return totalPage;
-	}
-	public void setTotalPage(Integer totalPage) {
-		this.totalPage = totalPage;
-	}
-	public Integer getPageNum() {
-		return pageNum;
-	}
-	public void setPageNum(Integer pageNum) {
-		this.pageNum = pageNum;
-	}
-	public Integer getPageSize() {
-		return pageSize;
-	}
-	public void setPageSize(Integer pageSize) {
+	
+	public Pager(List<T> content, long totalElements, int pageSize) {
+		this.content = content;
+		this.totalElements = totalElements;
 		this.pageSize = pageSize;
 	}
-	public Integer getStartRecordNumber() {
-		return startRecordNumber;
+
+	public Long getTotalElements() {
+		return totalElements;
 	}
-	public void setStartRecordNumber(Integer startRecordNumber) {
-		this.startRecordNumber = startRecordNumber;
+	public void setTotalElements(Long totalElements) {
+		this.totalElements = totalElements;
 	}
-	public List<T> getDataList() {
-		return dataList;
+	public Integer getTotalPages() {
+		if (totalPages == null) {// 如果没有手动设置总页数，则根据总元素和每页大小进行推算
+			return (int) ((totalElements + pageSize - 1) / pageSize);
+		} else {
+			return totalPages;
+		}
 	}
-	public void setDataList(List<T> dataList) {
-		this.dataList = dataList;
+	public void setTotalPages(Integer totalPages) {
+		this.totalPages = totalPages;
+	}
+	public Integer getPageNumber() {
+		return pageNumber;
+	}
+	public void setPageNumber(Integer pageNumber) {
+		this.pageNumber = pageNumber;
+	}
+	public int getPageSize() {
+		return pageSize;
+	}
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+	public Integer getOffset() {
+		if (pageNumber != null) {// 如果存在当前页，则可以推算出偏移量
+//			这是页码从第1页开始的计算方式
+//			return (pageNumber - 1) * pageSize;
+//			这是页码从第0页开始的计算方式
+			return pageNumber * pageSize;
+		} else {
+			return offset;
+		}
+	}
+	public void setOffset(Integer offset) {
+		this.offset = offset;
+	}
+	public List<T> getContent() {
+		return content;
+	}
+	public void setContent(List<T> content) {
+		this.content = content;
+	}
+	@Override
+	public String toString() {
+		return "Pager [totalElements=" + totalElements + ", totalPages=" + totalPages + ", pageNumber=" + pageNumber
+				+ ", pageSize=" + pageSize + ", offset=" + offset + ", content=" + content + "]";
 	}
 
 }

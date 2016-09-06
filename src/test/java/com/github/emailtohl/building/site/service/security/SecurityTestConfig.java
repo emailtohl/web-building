@@ -143,15 +143,7 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 			@Override
 			public Pager<User> getUserPager(User u, Pageable pageable) {
 				logger.debug("getUserPager invoked");
-				Pager<User> p = new Pager<User>();
-				p.setDataList(Arrays.asList(emailtohl, foo, bar));
-				int pageSize = 20;
-				long totalRows = 100L;
-				int totalPage = (int) ((totalRows + pageSize - 1) / pageSize);
-				p.setPageNum(pageable.getPageNumber());
-				p.setPageSize(pageSize);
-				p.setTotalRow(totalRows);
-				p.setTotalPage(totalPage);
+				Pager<User> p = new Pager<User>(Arrays.asList(emailtohl, foo, bar), 100L);
 				return p;
 			}
 
@@ -159,7 +151,7 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 			public Page<User> getUserPage(User u, Pageable pageable) {
 				logger.debug("getUserPage invoked");
 				Pager<User> p = this.getUserPager(u, pageable);
-				return new PageImpl<User>(p.getDataList(), pageable, p.getTotalRow());
+				return new PageImpl<User>(p.getContent(), pageable, p.getTotalElements());
 			}
 
 			@Override

@@ -11,20 +11,14 @@ import com.github.emailtohl.building.common.repository.jpa.Pager;
  */
 public final class PageUtil {
 	public static <T> Pager<T> toPager(Page<T> p) {
-		Pager<T> pager = new Pager<T>();
-		pager.setDataList(p.getContent());
-		pager.setPageNum(p.getNumber() + 1);
-		pager.setPageSize(p.getSize());
-		pager.setTotalPage(p.getTotalPages());
-		pager.setTotalRow(p.getTotalElements());
-		return pager;
+		return new Pager<T>(p.getContent(), p.getTotalElements(), p.getSize());
 	}
 	
 	public static <T> Page<T> toPage(Pager<T> p) {
-		return new PageImpl<T>(p.getDataList());
+		return new PageImpl<T>(p.getContent());
 	}
 	
 	public static <T> Page<T> toPage(Pager<T> p, Pageable pageable, long total) {
-		return new PageImpl<T>(p.getDataList(), pageable, total);
+		return new PageImpl<T>(p.getContent(), pageable, total);
 	}
 }

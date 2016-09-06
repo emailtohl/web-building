@@ -139,15 +139,15 @@ public class JpaRepositoryImplTest {
 		//序列可以倒着写
 		String jpql = "select u from User u where u.enabled = ?2 and u.birthday = ?1";
 		Pager<User> pager = userRepository.getPager(jpql, new Object[] { d, true }, 1, 10);
-		List<User> ls = pager.getDataList();
+		List<User> ls = pager.getContent();
 		for (User u : ls) {
 			logger.debug(u);
 		}
-		logger.debug(pager.getPageNum());
+		logger.debug(pager.getPageNumber());
 		logger.debug(pager.getPageSize());
-		logger.debug(pager.getStartRecordNumber());
-		logger.debug(pager.getTotalPage());
-		logger.debug(pager.getTotalRow());
+		logger.debug(pager.getOffset());
+		logger.debug(pager.getTotalPages());
+		logger.debug(pager.getTotalElements());
 		
 	}
 
@@ -161,15 +161,15 @@ public class JpaRepositoryImplTest {
 		args.put("email", "emailtohl@163.com");
 		args.put("authorities", Arrays.asList(Authority.ADMIN, Authority.USER));
 		Pager<User> pager = userRepository.getPager(jpql, args, 1, 10);
-		List<User> ls = pager.getDataList();
+		List<User> ls = pager.getContent();
 		for (User u : ls) {
 			logger.debug(u);
 		}
-		logger.debug(pager.getPageNum());
+		logger.debug(pager.getPageNumber());
 		logger.debug(pager.getPageSize());
-		logger.debug(pager.getStartRecordNumber());
-		logger.debug(pager.getTotalPage());
-		logger.debug(pager.getTotalRow());
+		logger.debug(pager.getOffset());
+		logger.debug(pager.getTotalPages());
+		logger.debug(pager.getTotalElements());
 	}
 
 	@Test
@@ -177,7 +177,7 @@ public class JpaRepositoryImplTest {
 		//将实体作为参数，查询出Pager
 		//此处实体类是基类，而派生类中的属性不会被分析出来，所以派生类可以放心地继承实体并作为DTO传输数据
 		Pager<User> pu = userRepository.getPager(u, 1, 20, AccessType.PROPERTY);
-		List<User> ls = pu.getDataList();
+		List<User> ls = pu.getContent();
 		for (User user : ls) {
 			logger.debug(user);
 		}

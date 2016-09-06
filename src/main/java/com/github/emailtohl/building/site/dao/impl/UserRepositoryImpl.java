@@ -35,7 +35,7 @@ public class UserRepositoryImpl extends JpaRepositoryImpl<User> implements UserR
 	@Override
 	public Page<User> getPage(User user, Pageable pageable) {
 		Pager<User> myPager = getPager(user, pageable.getPageNumber(), pageable.getPageSize(), AccessType.PROPERTY);
-		Page<User> springPage = new PageImpl<User>(myPager.getDataList(), pageable, myPager.getTotalRow());
+		Page<User> springPage = new PageImpl<User>(myPager.getContent(), pageable, myPager.getTotalElements());
 		return springPage;
 	}
 	

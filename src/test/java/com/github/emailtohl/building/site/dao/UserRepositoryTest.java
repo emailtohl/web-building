@@ -112,8 +112,8 @@ public class UserRepositoryTest {
 	@Test
 	public void testDynamicQuery() {
 		Pager<User> p = userRepository.dynamicQuery(PersistenceData.foo, 1);
-		System.out.println(p.getDataList());
-		assertNotNull(p.getDataList());
+		System.out.println(p.getContent());
+		assertNotNull(p.getContent());
 	}
 	
 	/**
