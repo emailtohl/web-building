@@ -46,7 +46,7 @@ import com.github.emailtohl.building.site.entities.Employee;
 import com.github.emailtohl.building.site.entities.Subsidiary;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.entities.User.Gender; 
-public class JpaBaseRepositoryTest {
+public class JpaRepositoryImplTest {
 	private static final Logger logger = LogManager.getLogger();
 	AnnotationConfigApplicationContext context = SpringUtils.context;
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -500,7 +500,12 @@ public class JpaBaseRepositoryTest {
 		sc.add(c1);
 		sc.add(c2);
 		Page<User> page = userRepository.search(sc, p);
-		System.out.println(page.getContent());
+		logger.debug(page.getContent());
+		logger.debug(page.getNumber());
+		logger.debug(page.getNumberOfElements());
+		logger.debug(page.getSize());
+		logger.debug(page.getTotalElements());
+		logger.debug(page.getSort());
 		assertFalse(page.getContent().isEmpty());
 	}
 }

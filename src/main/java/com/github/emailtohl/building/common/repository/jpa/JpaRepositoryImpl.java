@@ -51,10 +51,11 @@ import com.github.emailtohl.building.common.repository.generic.GenericJpaReposit
  * BaseRepository必须抽象化，它只能被继承，这是因为要获取实际泛型参数的值，只能靠导出类传递，并在基类中获取：
  * getGenericSuperclass()
  * 
+ * @param <E> 实体类，ID统一为Long型
+ * 
  * @author HeLei
  * @Date 2016.04.29 完成JPQL动态生成功能
  * @Date 2016.09.05 继承标准查询功能
- * @param <E> 实体类，ID统一为Long型
  */
 public abstract class JpaRepositoryImpl<E extends Serializable> extends GenericJpaRepository<Long, E>
 		implements JpaRepository<E> {
