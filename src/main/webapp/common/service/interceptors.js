@@ -89,6 +89,7 @@ define([ 'common/module' ], function(commonModule) {
 					if (page > 0) {
 						page--;
 						config.url = url.replace(p, 'page=' + page);
+						console.log('page由 ' + matches[1] + ' 改为 ', page);
 					}
 				}
 //				console.log('Request made with ', config);
@@ -97,6 +98,7 @@ define([ 'common/module' ], function(commonModule) {
 			response : function(response) {
 				if (response.data.pageNumber != null) {
 					response.data.pageNumber++;
+					console.log('pageNumber由 ' + (response.data.pageNumber - 1) + ' 改为 ' + response.data.pageNumber);
 				}
 //				console.log('Response from server', response);
 				// Return a promise
