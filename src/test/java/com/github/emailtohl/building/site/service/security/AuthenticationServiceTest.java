@@ -1,38 +1,38 @@
 package com.github.emailtohl.building.site.service.security;
-import static org.junit.Assert.*;
-import static com.github.emailtohl.building.site.entities.Authority.*;
+import static com.github.emailtohl.building.site.entities.Authority.ADMIN;
+import static com.github.emailtohl.building.site.entities.Authority.MANAGER;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.junit.Before;
+import javax.inject.Inject;
+
 import org.junit.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.junit.runner.RunWith;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = SecurityTestConfig.class)
 public class AuthenticationServiceTest {
+	@Inject
 	UserService userService;
+	@Inject
 	AuthenticationService authenticationService;
+	@Inject
 	AuthenticationManager authenticationManager;
-	
-	@SuppressWarnings("resource")
-	@Before
-	public void setUp() {
-		// SecurityTestConfig 中的配置，没有扫描包下的Bean，而是直接使用注册在里面的Bean
-		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SecurityTestConfig.class);
-		userService = context.getBean(UserService.class);
-		authenticationService = context.getBean(AuthenticationService.class);
-		authenticationManager = context.getBean(AuthenticationManager.class);
-	}
 	
 	@Test
 	public void testAuthenticate() {

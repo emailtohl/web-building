@@ -30,6 +30,22 @@ public abstract class GenericJpaRepository<I extends Serializable, E extends Ser
 	protected GenericJpaRepository(Class<I> idClass, Class<E> entityClass) {
 		super(idClass, entityClass);
 	}
+	
+	protected EntityManager getEntityManager() {
+		return entityManager;
+	}
+
+	protected void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
+	}
+
+	protected EntityManagerFactory getEmf() {
+		return emf;
+	}
+
+	protected void setEmf(EntityManagerFactory emf) {
+		this.emf = emf;
+	}
 
 	@Override
 	public Iterable<E> getAll() {

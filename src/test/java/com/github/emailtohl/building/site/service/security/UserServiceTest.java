@@ -1,8 +1,9 @@
 package com.github.emailtohl.building.site.service.security;
 
-import org.junit.Before;
+import javax.inject.Inject;
+
 import org.junit.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.junit.runner.RunWith;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
@@ -10,6 +11,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
@@ -17,18 +20,13 @@ import com.github.emailtohl.building.site.service.UserService;
  * 测试spring security的配置
  * @author Helei
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = SecurityTestConfig.class)
 public class UserServiceTest {
+	@Inject
 	UserService userService;
+	@Inject
 	AuthenticationManager authenticationManager;
-	
-	
-	@SuppressWarnings("resource")
-	@Before
-	public void setUp() {
-		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SecurityTestConfig.class);
-		userService = context.getBean(UserService.class);
-		authenticationManager = context.getBean(AuthenticationManager.class);
-	}
 
 	private void setEmailtohl() {
 		SecurityContextHolder.clearContext();
