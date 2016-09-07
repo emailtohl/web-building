@@ -1,5 +1,6 @@
 package com.github.emailtohl.building.common.utils;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -32,6 +33,8 @@ public final class SearchCriteriaUtil {
 				if (!s.isEmpty()) {// 如果是空字符串，则忽略该条件
 					sc.add(new Criterion(e.getKey(), Operator.LIKE, s));
 				}
+			} else if (value instanceof Collection) {
+				sc.add(new Criterion(e.getKey(), Operator.IN, value));
 			} else {
 				sc.add(new Criterion(e.getKey(), Operator.EQ, value));
 			}
