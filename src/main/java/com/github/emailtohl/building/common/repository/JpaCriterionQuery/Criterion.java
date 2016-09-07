@@ -147,4 +147,10 @@ public class Criterion {
 			return (String) c.getCompareTo();
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "Criterion [propertyName=" + propertyName + ", operator=" + operator + ", compareTo=" + compareTo + "]";
+	}
+	
 }
