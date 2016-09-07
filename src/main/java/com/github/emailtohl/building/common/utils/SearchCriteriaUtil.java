@@ -27,8 +27,11 @@ public final class SearchCriteriaUtil {
 			if (value == null) {
 				continue;
 			}
-			if (value instanceof String) {
-				sc.add(new Criterion(e.getKey(), Operator.LIKE, ((String) value).trim()));
+			if (value instanceof String) {// 如果是字符串查询，就模糊查询
+				String s = ((String) value).trim();
+				if (!s.isEmpty()) {// 如果是空字符串，则忽略该条件
+					sc.add(new Criterion(e.getKey(), Operator.LIKE, s));
+				}
 			} else {
 				sc.add(new Criterion(e.getKey(), Operator.EQ, value));
 			}
