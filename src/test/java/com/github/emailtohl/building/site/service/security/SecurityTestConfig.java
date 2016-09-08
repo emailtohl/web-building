@@ -148,6 +148,12 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 			}
 
 			@Override
+			public Pager<User> getPageByAuthorities(User user, Pageable pageable) {
+				logger.debug("getUserPage invoked");
+				return this.getUserPager(user, pageable);
+			}
+
+			@Override
 			public Page<User> getUserPage(User u, Pageable pageable) {
 				logger.debug("getUserPage invoked");
 				Pager<User> p = this.getUserPager(u, pageable);
@@ -158,7 +164,6 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 			public User getUserByEmail(String email) {
 				return emailtohl;
 			}
-
 		};
 	}
 

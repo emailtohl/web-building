@@ -190,6 +190,28 @@ public class UserServiceTest {
 	}
 	
 	@Test(expected = AuthenticationCredentialsNotFoundException.class)
+	public void testGetPageByAuthorities1() {
+		SecurityContextHolder.clearContext();
+		User u = new User();
+		userService.getPageByAuthorities(u, new PageRequest(0, 20));
+	}
+	
+	@Test(expected = AccessDeniedException.class)
+	public void testGetPageByAuthorities2() {
+		setBar();
+		User u = new User();
+		userService.getPageByAuthorities(u, new PageRequest(0, 20));
+	}
+	
+	@Test
+	public void testGetPageByAuthorities3() {
+		setEmailtohl();
+		User u = new User();
+		u.setEmail("bar@test.com");
+		userService.getPageByAuthorities(u, new PageRequest(0, 20));
+	}
+	
+	@Test(expected = AuthenticationCredentialsNotFoundException.class)
 	public void testGetUserPage1() {
 		SecurityContextHolder.clearContext();
 		userService.getUserPage(new User(), new PageRequest(10, 20));

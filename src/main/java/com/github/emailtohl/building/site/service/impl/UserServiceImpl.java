@@ -80,6 +80,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public Pager<User> getPageByAuthorities(User user, Pageable pageable) {
+		return userRepository.getPageByAuthorities(user, pageable);
+	}
+	
+	@Override
 	public Page<User> getUserPage(User u, Pageable pageable) {
 		Pager<User> p = this.getUserPager(u, pageable);
 		return new PageImpl<User>(p.getContent(), pageable, p.getTotalElements());

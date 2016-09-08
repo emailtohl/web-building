@@ -1,49 +1,26 @@
 define(['user/module'], function(userModule) {
 	return userModule
-	.controller('AuthorityCtrl', ['$scope', '$http', '$state', 'authorityService', 'PAGE_BTN_NUM', 'PAGE_SIZE',
-	                                function($scope, $http, $state, authorityService, pageBtnNum, pageSize) {
+	.controller('AuthorityCtrl', ['$scope', '$http', '$state', 'authorityService',
+	                                function($scope, $http, $state, authorityService) {
 		var self = this;
-		self.pager = {
-			pageSize : pageSize
+		self.params = {
+			page : 1,
+			pageSize : 20	
 		};
-		self.condition = {};
 		self.query = function() {
-			var user = {
-				nickname : self.condition.nickname,
-				authority : [self.condition.authority],
-				page : self.condition.pageNum - 1,
-				size : self.condition.pageSize
-			};
-			userService.nicknameAndAuthority(user).success(function(data, status, fun, obj) {
+			authorityService.getPagerByAuthories(self.params).success(function(data, status, fun, obj) {
 				self.pager = data;
+				console.log(data);
 			});
 		}
 		self.query();
-		self.authorizeModal = function(id) {
-			userService.getDetail(id).success(function(data, status, fun, obj) {
-				self.user = data;
-				self.user.birthday = null;
-				$('#dialog_edit').dialog({
-					autoOpen : true,
-					modal : true,
-					width : 800,
-					buttons : {
-						"Save" : function() {
-							userService.authorize(self.user).success(function(data, status, fun, obj) {
-								self.query();
-							});
-							$(this).dialog("close");
-						},
-						"Cancel" : function() {
-							$(this).dialog("close");
-						}
-					}
-				});
-			});
+		self.btnClick = function(pageNumber) {
+			self.params.page = pageNumber;
+			self.query();
 		};
 		self.reset = function() {
-			self.condition.nickname = '';
-			self.condition.authority = [];
+			self.params.nickname = '';
+			self.params.authority = [];
 		};
 	}]);
 });

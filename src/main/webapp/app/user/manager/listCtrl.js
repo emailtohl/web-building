@@ -17,6 +17,7 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 			self.params = {
 				page : 1,
 				size : 20,
+				enabled : '',
 			};
 		};
 		self.btnClick = function(pageNumber) {

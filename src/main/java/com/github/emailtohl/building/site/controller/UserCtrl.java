@@ -11,6 +11,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +53,7 @@ public class UserCtrl {
 		}
 		return username;
 	}
+	
 	/**
 	 * 查询user资源下提供哪些方法
 	 * @return
@@ -62,6 +64,7 @@ public class UserCtrl {
 		headers.add("Allow", "OPTIONS,HEAD,GET");
 		return new ResponseEntity<>(null, headers, HttpStatus.NO_CONTENT);
 	}
+	
 	/**
 	 * 查询user/id下支持哪些方法
 	 * @param id
@@ -75,6 +78,7 @@ public class UserCtrl {
 		headers.add("Allow", "OPTIONS,HEAD,GET,PUT,DELETE");
 		return new ResponseEntity<>(null, headers, HttpStatus.NO_CONTENT);
 	}
+	
 	/**
 	 * 通过id获取User
 	 * 注意，userService获取的User对象，可能是一个普通的User，也可能是继承User的Employ或Manager
@@ -93,6 +97,7 @@ public class UserCtrl {
 		}
 		return gson.toJson(u);
 	}
+	
 	/**
 	 * 通过email获取User
 	 * 同getUserById中的注释一样，这里也是以字符串形式返回到前端
@@ -109,6 +114,7 @@ public class UserCtrl {
 		}
 		return gson.toJson(u);
 	}
+	
 	/**
 	 * 获取分页对象
 	 * 这里返回的对象没有使用org.springframework.data.domain.Page<E>
@@ -120,9 +126,23 @@ public class UserCtrl {
 	@RequestMapping(value = "pager", method = GET)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	public Pager<User> getUserPager(@ModelAttribute User u, Pageable pageable) {
+	public Pager<User> getUserPager(@ModelAttribute User u, @PageableDefault(sort = "id=desc") Pageable pageable) {
 		return userService.getUserPager(u, pageable);
 	}
+	
+	/**
+	 * 获取用户权限列表
+	 * @param u
+	 * @param pageable
+	 * @return
+	 */
+	@RequestMapping(value = "authoritiesPage", method = GET)
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	public Pager<User> getPageByAuthorities(@ModelAttribute User u, @PageableDefault(sort = "id=desc") Pageable pageable) {
+		return userService.getPageByAuthorities(u, pageable);
+	}
+	
 	/**
 	 * 新增一个User
 	 * @param u
@@ -140,6 +160,7 @@ public class UserCtrl {
 		headers.add("Location", uri);
 		return new ResponseEntity<>(u, headers, HttpStatus.CREATED);
 	}
+	
 	/**
 	 * 修改一个User
 	 * @param id
@@ -153,6 +174,7 @@ public class UserCtrl {
 		userService.mergeUser(id, user);
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
+	
 	/**
 	 * 删除一个User
 	 * @param id

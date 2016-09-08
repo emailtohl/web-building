@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.CriteriaQueries;
+import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.SearchCriteria;
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.Criterion;
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.Criterion.Operator;
 
@@ -16,12 +16,14 @@ import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.Criterion.Oper
 public final class SearchCriteriaUtil {
 	/**
 	 * 根据查询对象，分析其JavaBean属性，对于不为null的属性将生成组合查询条件
+	 * 注意，SearchCriteria中的属性不能是嵌套实体对象，即联表查询的情况
+	 * 
 	 * @param javaBean
 	 * @param pageable
 	 * @return
 	 */
-	public static CriteriaQueries get(Object javaBean) {
-		CriteriaQueries sc = CriteriaQueries.Builder.create();
+	public static SearchCriteria get(Object javaBean) {
+		SearchCriteria sc = SearchCriteria.Builder.create();
 		Map<String, Object> map = BeanTools.getPropertyNameValueMap(javaBean);
 		for (Entry<String, Object> e : map.entrySet()) {
 			Object value = e.getValue();

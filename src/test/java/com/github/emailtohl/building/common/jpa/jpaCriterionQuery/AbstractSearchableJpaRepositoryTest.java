@@ -14,7 +14,7 @@ import org.springframework.data.domain.Sort;
 
 import com.github.emailtohl.building.bootspring.SpringUtils;
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.AbstractCriterionQueryRepository;
-import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.CriteriaQueries;
+import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.SearchCriteria;
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.Criterion;
 import com.github.emailtohl.building.site.entities.User;
 
@@ -35,7 +35,7 @@ public class AbstractSearchableJpaRepositoryTest {
 		Sort sort = new Sort(Sort.Direction.DESC, "createDate")
 				 .and(new Sort(Sort.Direction.ASC, "id"));
 		Pageable p = new PageRequest(0, 20, sort);
-		CriteriaQueries sc = CriteriaQueries.Builder.create();
+		SearchCriteria sc = SearchCriteria.Builder.create();
 		Criterion c1, c2;
 		c1 = new Criterion("email", Criterion.Operator.EQ, "emailtohl@163.com");
 		c2 = new Criterion("age", Criterion.Operator.GT, 20);
