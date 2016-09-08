@@ -32,7 +32,7 @@ public abstract class AbstractCriterionQueryRepository<E extends Serializable> e
 	 * @return
 	 */
 	@Override
-	public Page<E> search(CriteriaList criteria, Pageable pageable) {
+	public Page<E> search(CriteriaQueries criteria, Pageable pageable) {
 		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
 
 		CriteriaQuery<Long> countCriteria = builder.createQuery(Long.class);
@@ -51,7 +51,7 @@ public abstract class AbstractCriterionQueryRepository<E extends Serializable> e
 		return new PageImpl<>(new ArrayList<>(list), pageable, total);
 	}
 
-	private static Predicate[] toPredicates(CriteriaList criteria, Root<?> root, CriteriaBuilder builder) {
+	private static Predicate[] toPredicates(CriteriaQueries criteria, Root<?> root, CriteriaBuilder builder) {
 		Predicate[] predicates = new Predicate[criteria.size()];
 		int i = 0;
 		for (Criterion c : criteria)

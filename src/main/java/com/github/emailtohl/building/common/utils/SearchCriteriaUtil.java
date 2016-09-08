@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.CriteriaList;
+import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.CriteriaQueries;
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.Criterion;
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.Criterion.Operator;
 
@@ -20,8 +20,8 @@ public final class SearchCriteriaUtil {
 	 * @param pageable
 	 * @return
 	 */
-	public static CriteriaList get(Object javaBean) {
-		CriteriaList sc = CriteriaList.Builder.create();
+	public static CriteriaQueries get(Object javaBean) {
+		CriteriaQueries sc = CriteriaQueries.Builder.create();
 		Map<String, Object> map = BeanTools.getPropertyNameValueMap(javaBean);
 		for (Entry<String, Object> e : map.entrySet()) {
 			Object value = e.getValue();
