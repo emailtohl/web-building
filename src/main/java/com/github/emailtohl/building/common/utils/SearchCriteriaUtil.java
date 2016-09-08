@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.github.emailtohl.building.common.repository.JpaCriterionQuery.Criterion;
-import com.github.emailtohl.building.common.repository.JpaCriterionQuery.CriteriaList;
-import com.github.emailtohl.building.common.repository.JpaCriterionQuery.Criterion.Operator;
+import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.CriteriaList;
+import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.Criterion;
+import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.Criterion.Operator;
 
 /**
  * 前端传入的可能是一个对象，对象里面各个属性值，作为AND的组合条件查询，这时候不需要每个属性去探测是否为null

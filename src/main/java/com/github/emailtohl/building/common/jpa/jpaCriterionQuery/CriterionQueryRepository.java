@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.common.repository.JpaCriterionQuery;
+package com.github.emailtohl.building.common.jpa.jpaCriterionQuery;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

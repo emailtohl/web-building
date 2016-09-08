@@ -13,9 +13,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import com.github.emailtohl.building.bootspring.SpringUtils;
-import com.github.emailtohl.building.common.repository.JpaCriterionQuery.AbstractCriterionQueryRepository;
-import com.github.emailtohl.building.common.repository.JpaCriterionQuery.CriteriaList;
-import com.github.emailtohl.building.common.repository.JpaCriterionQuery.Criterion;
+import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.AbstractCriterionQueryRepository;
+import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.CriteriaList;
+import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.Criterion;
 import com.github.emailtohl.building.site.entities.User;
 
 public class AbstractSearchableJpaRepositoryTest {

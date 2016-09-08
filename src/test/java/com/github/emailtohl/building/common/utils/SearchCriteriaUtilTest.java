@@ -6,8 +6,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 
-import com.github.emailtohl.building.common.repository.JpaCriterionQuery.Criterion;
-import com.github.emailtohl.building.common.repository.JpaCriterionQuery.CriteriaList;
+import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.CriteriaList;
+import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.Criterion;
 import com.github.emailtohl.building.initdb.PersistenceData;
 
 public class SearchCriteriaUtilTest {

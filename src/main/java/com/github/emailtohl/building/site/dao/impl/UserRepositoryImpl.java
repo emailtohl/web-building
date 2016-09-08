@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.github.emailtohl.building.common.jpa.Pager;
-import com.github.emailtohl.building.common.repository.JpaCriterionQuery.AbstractCriterionQueryRepository;
+import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.AbstractCriterionQueryRepository;
 import com.github.emailtohl.building.site.dao.UserRepositoryCustomization;
 import com.github.emailtohl.building.site.entities.User;
 
