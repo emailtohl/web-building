@@ -1,7 +1,5 @@
 package com.github.emailtohl.building.common.jpa.jpaCriterionQuery;
 
-import static org.springframework.data.jpa.repository.query.QueryUtils.toOrders;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +12,7 @@ import javax.persistence.criteria.Root;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.query.QueryUtils;
 
 import com.github.emailtohl.building.common.jpa.AbstractDynamicQueryRepository;
 
@@ -46,7 +45,7 @@ public abstract class AbstractCriterionQueryRepository<E extends Serializable> e
 		Root<E> pageRoot = pageCriteria.from(this.entityClass);
 		List<E> list = this.entityManager
 				.createQuery(pageCriteria.select(pageRoot).where(toPredicates(criteria, pageRoot, builder))
-						.orderBy(toOrders(pageable.getSort(), pageRoot, builder)))
+						.orderBy(QueryUtils.toOrders(pageable.getSort(), pageRoot, builder)))
 				.setFirstResult(pageable.getOffset()).setMaxResults(pageable.getPageSize()).getResultList();
 
 		return new PageImpl<>(new ArrayList<>(list), pageable, total);

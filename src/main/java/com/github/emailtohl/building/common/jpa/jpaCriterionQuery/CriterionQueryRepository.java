@@ -20,5 +20,5 @@ public interface CriterionQueryRepository<E extends Serializable> extends Dynami
 	 * @param pageable 分页对象
 	 * @return
 	 */
-	Page<E> search(CriteriaList searchCriteria, Pageable pageable);
+	Page<E> search(CriteriaList criteriaList, Pageable pageable);
 }

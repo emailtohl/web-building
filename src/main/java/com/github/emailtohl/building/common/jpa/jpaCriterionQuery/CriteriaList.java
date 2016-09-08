@@ -9,10 +9,10 @@ import java.util.List;
 public interface CriteriaList extends List<Criterion> {
 	public static class Builder {
 		public static CriteriaList create() {
-			return new SearchCriteriaImpl();
+			return new CriteriaListImpl();
 		}
 
-		private static class SearchCriteriaImpl extends ArrayList<Criterion> implements CriteriaList {
+		private static class CriteriaListImpl extends ArrayList<Criterion> implements CriteriaList {
 			private static final long serialVersionUID = 7453919407619881505L;
 
 		}
