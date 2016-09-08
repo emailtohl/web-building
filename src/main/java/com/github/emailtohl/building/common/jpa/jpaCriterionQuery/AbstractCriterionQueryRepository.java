@@ -19,6 +19,7 @@ import com.github.emailtohl.building.common.jpa.AbstractDynamicQueryRepository;
 
 /**
  * 提供标准查询的基类
+ * 本实现依赖Spring data，所以让其继承AbstractDynamicQueryRepository
  * @param <E> 实体类
  * @author Nick Williams
  */

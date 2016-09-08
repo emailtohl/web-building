@@ -36,7 +36,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * JPA的实体管理器entityManager已经提供了简便的增、删、改功能，所以主要提供自定义的动态查询解决方案
+ * JPA的实体管理器entityManager已经提供了简便的增、删、改功能，所以很容易封装，这里主要提供自定义的动态查询解决方案
+ * 应用程序既可以直接继承以Spring data的提供的JpaRepository作为BaseRepository，也可以自定义BaseRepository
  * 本方案基于JPQL，提供分页查询功能
  * @param <E> 实体类，ID统一为Long型
  * @author Helei
