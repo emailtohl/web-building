@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 /**
  * 由List组成的查询条件
- *
+ * @author Nick Williams
  */
-public interface SearchCriteria extends List<Criterion> {
+public interface CriteriaList extends List<Criterion> {
 	public static class Builder {
-		public static SearchCriteria create() {
+		public static CriteriaList create() {
 			return new SearchCriteriaImpl();
 		}
 
-		private static class SearchCriteriaImpl extends ArrayList<Criterion> implements SearchCriteria {
+		private static class SearchCriteriaImpl extends ArrayList<Criterion> implements CriteriaList {
 			private static final long serialVersionUID = 7453919407619881505L;
 
 		}

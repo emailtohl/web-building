@@ -7,8 +7,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import com.github.emailtohl.building.common.repository.jpa.JpaRepositoryImpl;
-import com.github.emailtohl.building.common.repository.jpa.Pager;
+import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.common.repository.JpaCriterionQuery.AbstractCriterionQueryRepository;
 import com.github.emailtohl.building.site.dao.UserRepositoryCustomization;
 import com.github.emailtohl.building.site.entities.User;
 
@@ -21,7 +21,7 @@ import com.github.emailtohl.building.site.entities.User;
  *
  */
 @Repository //不由spring管理，而是由spring data管理
-public class UserRepositoryImpl extends JpaRepositoryImpl<User> implements UserRepositoryCustomization {
+public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> implements UserRepositoryCustomization {
 
 	@Override
 	public Pager<User> dynamicQuery(User user, Integer pageNum) {

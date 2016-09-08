@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.common.repository.jpa;
+package com.github.emailtohl.building.common.jpa;
 
 import java.io.Serializable;
 import java.util.List;

@@ -1,19 +1,16 @@
-package com.github.emailtohl.building.common.repository.generic;
+package com.github.emailtohl.building.common.jpa;
 
 import java.io.Serializable;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
-public class GenericBaseRepositoryTest {
+import com.github.emailtohl.building.common.jpa.AbstractJpaRepository;
 
-	@Before
-	public void setUp() throws Exception {
-	}
+public class AbstractJpaRepositoryTest {
 
 	@Test
-	public void testGenericBaseRepository() {
+	public void testAbstractJpaRepository() {
 		Left l = new Left();
 		Assert.assertSame(Long.class, l.idClass);
 		Assert.assertSame(String.class, l.entityClass);
@@ -29,6 +26,7 @@ public class GenericBaseRepositoryTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testSpecific() {
+		// 要获取类的泛型参数，必须在其导出类中获取，在本层次中获取不了泛型参数，所以下列情况都会出现异常
 		SpecificLeftDefined<String> s1 = new SpecificLeftDefined<String>();
 		Assert.assertSame(Long.class, s1.idClass);
 		Assert.assertNull(s1.entityClass);
@@ -44,13 +42,14 @@ public class GenericBaseRepositoryTest {
 
 }
 
-abstract class LeftDefined<A extends Serializable> extends GenericJpaRepository<Long, A> {
+
+abstract class LeftDefined<A extends Serializable> extends AbstractJpaRepository<Long, A> {
 }
 
-abstract class RightDefined<B extends Serializable> extends GenericJpaRepository<B, String> {
+abstract class RightDefined<B extends Serializable> extends AbstractJpaRepository<B, String> {
 }
 
-abstract class PairDefined extends GenericJpaRepository<Long, String> {
+abstract class PairDefined extends AbstractJpaRepository<Long, String> {
 }
 
 class Left extends LeftDefined<String> {
@@ -62,11 +61,11 @@ class Right extends RightDefined<Long> {
 class Pair extends PairDefined {
 }
 
-class SpecificLeftDefined<A extends Serializable> extends GenericJpaRepository<Long, A> {
+class SpecificLeftDefined<A extends Serializable> extends AbstractJpaRepository<Long, A> {
 }
 
-class SpecificRightDefined<B extends Serializable> extends GenericJpaRepository<B, String> {
+class SpecificRightDefined<B extends Serializable> extends AbstractJpaRepository<B, String> {
 }
 
-class SpecificPairDefined<A extends Serializable, B extends Serializable> extends GenericJpaRepository<A, B> {
+class SpecificPairDefined<A extends Serializable, B extends Serializable> extends AbstractJpaRepository<A, B> {
 }

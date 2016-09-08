@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.common.repository.jpa.relationEntities;
+package com.github.emailtohl.building.common.jpa.relationEntities;
 
 import java.io.Serializable;
 

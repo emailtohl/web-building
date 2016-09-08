@@ -1,37 +1,40 @@
-package com.github.emailtohl.building.common.repository.generic;
+package com.github.emailtohl.building.common.jpa;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 /**
- * 通用数据仓库
- * @author HeLei
- *
- * @param <I> ID
- * @param <E> 实体类
+ * 管理JPA资源的基础仓库，包括：
+ * 实体管理器工厂（EntityManagerFactory）、实体管理器（EntityManager） 、
+ * id的class以及实体class的管理和初始化。
+ * @author Helei
+ * @date 2016.09.08
  */
-public abstract class GenericBaseRepository<I extends Serializable, E extends Serializable>
-		implements GenericRepository<I, E> {
+public abstract class AbstractJpaRepository<I extends Serializable, E extends Serializable> {
 	private static final Logger logger = LogManager.getLogger();
 	protected final Class<I> idClass;
 	protected final Class<E> entityClass;
-
-	/**
-	 * 通过传入的泛型获取ID和实体的类
-	 */
+	@PersistenceUnit
+	protected EntityManagerFactory entityManagerFactory;
+	@PersistenceContext
+	protected EntityManager entityManager;
+	
 	@SuppressWarnings("unchecked")
-	protected GenericBaseRepository() {
+	protected AbstractJpaRepository() {
 		super();
 		Class<? extends Serializable>[] classes = new Class[2];
 		Class<? extends Serializable> tempClass = null;
 		Class<?> clz = this.getClass();
-		while (clz != GenericBaseRepository.class) {
+		while (clz != AbstractJpaRepository.class) {
 			Type genericSuperclass = clz.getGenericSuperclass();
 			if (genericSuperclass instanceof ParameterizedType) {
 				ParameterizedType type = (ParameterizedType) genericSuperclass;
@@ -73,38 +76,28 @@ public abstract class GenericBaseRepository<I extends Serializable, E extends Se
 		logger.debug(idClass);
 		logger.debug(entityClass);
 	}
-	
+
 	/**
 	 * 若通过泛型分析ID和实体的class失败，可以使用构造方法传入
 	 * @param idClass
 	 * @param entityClass
 	 */
-	protected GenericBaseRepository(Class<I> idClass, Class<E> entityClass) {
+	public AbstractJpaRepository(Class<I> idClass, Class<E> entityClass) {
 		super();
 		this.idClass = idClass;
 		this.entityClass = entityClass;
-		if (idClass == null) {
-			logger.debug("初始化： " + this.getClass() + " 时，idClass == null");
-			throw new IllegalStateException("初始化： " + this.getClass() + " 时，idClass == null");
-		}
-		if (entityClass == null) {
-			logger.debug("初始化： " + this.getClass() + " 时，entityClass == null");
-			throw new IllegalStateException("初始化： " + this.getClass() + " 时，entityClass == null");
-		}
 	}
 
-	@Override
-	public List<E> entities() {
-		Iterable<E> iterable = getAll();
-		List<E> l = new ArrayList<E>();
-		if (iterable == null) {
-			return l;
-		}
-		Iterator<E> i = iterable.iterator();
-		while (i.hasNext()) {
-			l.add(i.next());
-		}
-		return l;
+	public EntityManagerFactory getEntityManagerFactory() {
+		return entityManagerFactory;
+	}
+
+	/**
+	 * 若实体管理器或实体管理工厂不是由Spring注入，则提供接口让应用程序写入EntityManagerFactory
+	 * @param entityManagerFactory
+	 */
+	public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
+		this.entityManagerFactory = entityManagerFactory;
 	}
 
 }

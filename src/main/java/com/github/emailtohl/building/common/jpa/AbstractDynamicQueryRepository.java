@@ -1,4 +1,5 @@
-package com.github.emailtohl.building.common.repository.jpa;
+package com.github.emailtohl.building.common.jpa;
+
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -34,20 +35,14 @@ import javax.persistence.TypedQuery;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.github.emailtohl.building.common.repository.generic.GenericJpaRepository;
-
 /**
- * BaseRepository必须抽象化，它只能被继承，这是因为要获取实际泛型参数的值，只能靠导出类传递，并在基类中获取：
- * getGenericSuperclass()
- * 
+ * JPA的实体管理器entityManager已经提供了简便的增、删、改功能，所以主要提供自定义的动态查询解决方案
+ * 本方案基于JPQL，提供分页查询功能
  * @param <E> 实体类，ID统一为Long型
- * 
- * @author HeLei
- * @Date 2016.04.29 完成JPQL动态生成功能
- * @Date 2016.09.05 继承标准查询功能
+ * @author Helei
+ * @date 2016.09.08
  */
-public abstract class JpaRepositoryImpl<E extends Serializable> extends GenericJpaRepository<Long, E>
-		implements JpaRepository<E> {
+public abstract class AbstractDynamicQueryRepository<E extends Serializable> extends AbstractJpaRepository<Long, E> implements DynamicQueryRepository<E> {
 	private static final Logger logger = LogManager.getLogger();
 	/**
 	 * 匹配JPQL的正则式
@@ -63,11 +58,11 @@ public abstract class JpaRepositoryImpl<E extends Serializable> extends GenericJ
 	protected final short predicateIndex = 19;
 	protected final short entityNameIndex = 9;
 
-	protected JpaRepositoryImpl() {
+	protected AbstractDynamicQueryRepository() {
 		super();
 	}
 
-	protected JpaRepositoryImpl(Class<E> entityClass) {
+	protected AbstractDynamicQueryRepository(Class<E> entityClass) {
 		super(Long.class, entityClass);
 	}
 
@@ -450,7 +445,7 @@ public abstract class JpaRepositoryImpl<E extends Serializable> extends GenericJ
 	/**
 	 * 将实体对象分析成JPQL和对应的参数数组 支持普通嵌入类型、一对一、多对一，但不支持多对多，嵌入集合等复杂数据
 	 * 
-	 * @author helei
+	 * @author Helei
 	 */
 	protected static class JpqlAndArgs {
 		public final String jpql;
@@ -460,6 +455,11 @@ public abstract class JpaRepositoryImpl<E extends Serializable> extends GenericJ
 			super();
 			this.jpql = jpql;
 			this.args = args;
+		}
+
+		@Override
+		public String toString() {
+			return "JpqlAndArgs [jpql=" + jpql + ", args=" + Arrays.toString(args) + "]";
 		}
 	}
 
@@ -481,6 +481,12 @@ public abstract class JpaRepositoryImpl<E extends Serializable> extends GenericJ
 			this.args = args;
 			this.entityName = entityName;
 			this.alias = alias;
+		}
+
+		@Override
+		public String toString() {
+			return "PredicateAndArgs [predicate=" + predicate + ", args=" + Arrays.toString(args) + ", entityName="
+					+ entityName + ", alias=" + alias + "]";
 		}
 	}
 
@@ -507,45 +513,5 @@ public abstract class JpaRepositoryImpl<E extends Serializable> extends GenericJ
 		String entityName = m.group(entityNameIndex).trim();
 		String alias = m.group(aliasIndex).trim();
 		return new PredicateAndArgs(predicate, args, entityName, alias);
-	}
-	
-	/**
-	 * 数据刷新
-	 */
-	@Override
-	public void flush() {
-		entityManager.flush();
-	}
-	
-	/**
-	 * 刷新实体对象
-	 * @param entity 实体对象
-	 */
-	public void refresh(E entity) {
-		entityManager.refresh(entity);
-	}
-	
-	/**
-	 * 设置为游离状态
-	 * @param entity 实体对象
-	 */
-	public void detach(E entity) {
-		entityManager.detach(entity);
-	}
-	
-	/**
-	 * 判断实体是否处于持久化状态
-	 * @param entity 实体对象
-	 * @return 是否为托管状态
-	 */
-	public boolean isManaged(E entity) {
-		return entityManager.contains(entity);
-	}
-	
-	/**
-	 * 关闭entityManager
-	 */
-	public void close() {
-		entityManager.close();
 	}
 }

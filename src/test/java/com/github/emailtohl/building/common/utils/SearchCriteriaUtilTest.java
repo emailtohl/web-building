@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Test;
 
 import com.github.emailtohl.building.common.repository.JpaCriterionQuery.Criterion;
-import com.github.emailtohl.building.common.repository.JpaCriterionQuery.SearchCriteria;
+import com.github.emailtohl.building.common.repository.JpaCriterionQuery.CriteriaList;
 import com.github.emailtohl.building.initdb.PersistenceData;
 
 public class SearchCriteriaUtilTest {
@@ -15,7 +15,7 @@ public class SearchCriteriaUtilTest {
 
 	@Test
 	public void testGet() {
-		SearchCriteria sc = SearchCriteriaUtil.get(PersistenceData.foo);
+		CriteriaList sc = SearchCriteriaUtil.get(PersistenceData.foo);
 		assertFalse(sc.isEmpty());
 		for (Criterion c : sc) {
 			logger.debug(c);

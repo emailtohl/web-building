@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.github.emailtohl.building.common.repository.JpaCriterionQuery.Criterion;
+import com.github.emailtohl.building.common.repository.JpaCriterionQuery.CriteriaList;
 import com.github.emailtohl.building.common.repository.JpaCriterionQuery.Criterion.Operator;
-import com.github.emailtohl.building.common.repository.JpaCriterionQuery.SearchCriteria;
 
 /**
  * 前端传入的可能是一个对象，对象里面各个属性值，作为AND的组合条件查询，这时候不需要每个属性去探测是否为null
@@ -20,8 +20,8 @@ public final class SearchCriteriaUtil {
 	 * @param pageable
 	 * @return
 	 */
-	public static SearchCriteria get(Object javaBean) {
-		SearchCriteria sc = SearchCriteria.Builder.create();
+	public static CriteriaList get(Object javaBean) {
+		CriteriaList sc = CriteriaList.Builder.create();
 		Map<String, Object> map = BeanTools.getPropertyNameValueMap(javaBean);
 		for (Entry<String, Object> e : map.entrySet()) {
 			Object value = e.getValue();

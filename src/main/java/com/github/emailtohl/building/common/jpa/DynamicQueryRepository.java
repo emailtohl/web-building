@@ -1,17 +1,11 @@
-package com.github.emailtohl.building.common.repository.jpa;
+package com.github.emailtohl.building.common.jpa;
 
 import java.io.Serializable;
 import java.util.Map;
 
 import javax.persistence.AccessType;
 
-import com.github.emailtohl.building.common.repository.generic.GenericRepository;
-/**
- * 业务代码的数据仓库接口，可除了继承的增删改查以外，新增获取Pager对象的接口
- * @author HeLei
- * @param <E>
- */
-public interface JpaRepository<E extends Serializable> extends GenericRepository<Long, E> {
+public interface DynamicQueryRepository<E extends Serializable> {
 	/**
 	 * 动态查询一个Pager对象
 	 * @param jpql 传入的JPQL查询语句
@@ -41,33 +35,4 @@ public interface JpaRepository<E extends Serializable> extends GenericRepository
 	 * @return 一个Pager对象，包含查询结果的列表、当前页、最大页、最大行等信息
 	 */
 	Pager<E> getPager(E entity, Integer pageNum, Integer pageSize, AccessType type);
-	
-	/**
-	 * 同步数据
-	 */
-	void flush();
-
-	/**
-	 * 刷新实体对象
-	 * @param entity 实体对象
-	 */
-	void refresh(E entity);
-
-	/**
-	 * 设置为游离状态
-	 * @param entity 实体对象
-	 */
-	void detach(E entity);
-	
-	/**
-	 * 判断实体是否处于持久化状态
-	 * @param entity 实体对象
-	 * @return 是否为托管状态
-	 */
-	boolean isManaged(E entity);
-
-	/**
-	 * 关闭entityManager
-	 */
-	void close();
 }

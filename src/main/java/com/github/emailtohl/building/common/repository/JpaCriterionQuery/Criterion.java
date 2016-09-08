@@ -7,7 +7,8 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 /**
- * 标准查询接口
+ * 标准查询的条件
+ * @author Nick Williams
  */
 public class Criterion {
 	private final String propertyName;

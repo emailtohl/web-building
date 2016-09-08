@@ -12,7 +12,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.github.emailtohl.building.common.repository.jpa.Pager;
+import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.BCryptUtil;
 import com.github.emailtohl.building.common.utils.BeanTools;
 import com.github.emailtohl.building.site.dao.UserRepository;

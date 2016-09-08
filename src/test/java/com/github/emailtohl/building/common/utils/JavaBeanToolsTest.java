@@ -47,8 +47,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.github.emailtohl.building.common.repository.jpa.relationEntities.Relation1;
-import com.github.emailtohl.building.common.repository.jpa.relationEntities.Relation2;
+import com.github.emailtohl.building.common.jpa.relationEntities.Relation1;
+import com.github.emailtohl.building.common.jpa.relationEntities.Relation2;
 import com.github.emailtohl.building.site.entities.Subsidiary;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.entities.User.Gender;

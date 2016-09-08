@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.common.repository.JpaCriterionQuery;
+package com.github.emailtohl.building.common.jpa.jpaCriterionQuery;
 
 import static org.junit.Assert.*;
 
@@ -13,11 +13,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import com.github.emailtohl.building.bootspring.SpringUtils;
+import com.github.emailtohl.building.common.repository.JpaCriterionQuery.AbstractCriterionQueryRepository;
+import com.github.emailtohl.building.common.repository.JpaCriterionQuery.CriteriaList;
+import com.github.emailtohl.building.common.repository.JpaCriterionQuery.Criterion;
 import com.github.emailtohl.building.site.entities.User;
 
 public class AbstractSearchableJpaRepositoryTest {
 	private static final Logger logger = LogManager.getLogger();
-	class Concrete extends AbstractSearchableJpaRepository<User> {}
+	class Concrete extends AbstractCriterionQueryRepository<User> {}
 	Concrete concrete;
 	@Before
 	public void setUp() {
@@ -25,14 +28,6 @@ public class AbstractSearchableJpaRepositoryTest {
 		AutowireCapableBeanFactory factory = SpringUtils.context.getAutowireCapableBeanFactory();
 		factory.autowireBeanProperties(concrete, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
 		factory.initializeBean(concrete, "concreteSearchableJpaRepository");
-		// 将对象注册到Spring中，即可获得该对象所需的依赖
-		logger.debug(concrete.entityManager);
-	}
-	
-	@Test
-	public void testAbstractSearchableJpaRepository() {
-		assertNotNull(concrete.entityManager);
-		assertTrue(concrete.entityClass == User.class);
 	}
 	
 	@Test
@@ -40,7 +35,7 @@ public class AbstractSearchableJpaRepositoryTest {
 		Sort sort = new Sort(Sort.Direction.DESC, "createDate")
 				 .and(new Sort(Sort.Direction.ASC, "id"));
 		Pageable p = new PageRequest(0, 20, sort);
-		SearchCriteria sc = SearchCriteria.Builder.create();
+		CriteriaList sc = CriteriaList.Builder.create();
 		Criterion c1, c2;
 		c1 = new Criterion("email", Criterion.Operator.EQ, "emailtohl@163.com");
 		c2 = new Criterion("age", Criterion.Operator.GT, 20);
