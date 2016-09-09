@@ -30,8 +30,8 @@
 	            <label for="exampleInputPassword1">权限名</label>
 	            <select class="form-control select2" multiple="multiple" data-placeholder="Select a State" style="width: 100%;" select2 ng-model="ctrl.params.authorities">
 			        <option value="">无</option>
-			        <option value="ADMIN">管理员</option>
-			        <option value="MANAGER">经理</option>
+			        <option value="ADMIN" ng-if="hasAuthority('ADMIN')">管理员</option>
+			        <option value="MANAGER" ng-if="hasAuthority('ADMIN') || hasAuthority('MANAGER')">经理</option>
 			        <option value="EMPLOYEE">职员</option>
 			        <option value="USER">用户</option>
 		        </select>
@@ -60,9 +60,8 @@
                   <th class="col-md-2">姓名</th>
                   <th class="col-md-2">邮箱</th>
                   <th class="col-md-2">是否启用</th>
-                  <th class="col-md-2">权限</th>
                   <th class="col-md-2">描述</th>
-                  <th class="col-md-2" ng-if="hasAuthority('ADMIN')">操作</th>
+                  <th class="col-md-4">授权</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -70,11 +69,16 @@
                   <td ng-bind="x.name" class="col-md-2"></td>
                   <td ng-bind="x.email" class="col-md-2"></td>
                   <td ng-bind="x.enabled ? '是' : '否'" class="col-md-2"></td>
-                  <td ng-bind="x.authorities" class="col-md-2"></td>
                   <td ng-bind="x.description" class="col-md-2"></td>
-                  <td class="col-md-2" ng-if="hasAuthority('ADMIN')">
-                    <div class="btn-group">
-                      <button type="button" class="btn btn-default" ng-click="ctrl.authorizeModal(x.id)">授权</button>
+                  <td class="col-md-4">
+                    <div class="form-group">
+                      <select multiple="multiple" select2 ng-model="x.authorities" on-change="ctrl.onChange(x.id, value)">
+				        <option value="ADMIN" ng-if="hasAuthority('ADMIN')">管理员</option>
+				        <option value="MANAGER" ng-if="hasAuthority('ADMIN') || hasAuthority('MANAGER')">经理</option>
+				        <option value="EMPLOYEE">职员</option>
+				        <option value="USER">用户</option>
+                      </select>
+                      <!-- <button type="button" class="btn btn-default" ng-click="ctrl.authorizeModal(x.id)">授权</button> -->
                     </div>
                   </td>
                 </tr>
@@ -84,9 +88,8 @@
                   <th class="col-md-2">用户名</th>
                   <th class="col-md-2">邮箱</th>
                   <th class="col-md-2">是否启用</th>
-                  <th class="col-md-2">权限</th>
                   <th class="col-md-2">描述</th>
-                  <th class="col-md-2" ng-if="hasAuthority('ADMIN')">操作</th>
+                  <th class="col-md-4">授权</th>
                 </tr>
                 </tfoot>
               </table>
@@ -98,35 +101,6 @@
 
         </div>
         <!-- /.col -->
-        <div id="dialog_edit" title="编辑用户" class="ui-dialog-content ui-widget-content" style="width: auto; min-height: 19px; max-height: none; height: auto; display:none">
-          <div class="box box-primary">
-            <!-- /.box-header -->
-            <!-- form start -->
-            <form role="form">
-              <div class="box-body">
-                <div class="form-group">
-                  <label for="">用户名</label>
-                  <input disabled="disabled" type="text" class="form-control" placeholder="用户名" ng-model="ctrl.user.name">
-                </div>
-                <div class="form-group">
-                  <label for="exampleInputFile">权限</label>
-                  <select class="form-control select2" multiple="multiple" data-placeholder="Select a State" style="width: 100%;" select2 ng-model="ctrl.user.authority">
-			        <option value="">无</option>
-			        <option value="ADMIN">ADMIN</option>
-			        <option value="USER">USER</option>
-			      </select>
-                  <p class="help-block">Example block-level help text here.</p>
-                </div>
-                <div class="checkbox">
-                  <label>
-                    <input type="checkbox" ng-model="ctrl.user.enabled" ng-true-value="true" ng-false-value="false"> 是否启动
-                  </label>
-                </div>
-              </div>
-              <!-- /.box-body -->
-            </form>
-          </div>
-        </div>
     </div>
     <!-- /.row -->
 </section>

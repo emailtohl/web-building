@@ -19,6 +19,9 @@ define(['angular', 'test/module'], function(angular) {
 		self.strvalMultiple = ['bcd', 'efg', 'hij'];
 		self.objval = {a:3,b:4};
 		self.objs = [{a:1,b:2}, {a:5,b:6}];
+		self.onChange = function(value) {
+			console.log('select值改为：' + value);
+		};
 	}])
 	.controller('TestFileuploadCtrl', ['$rootScope', '$scope', '$http', '$state', function($rootScope, $scope, $http, $state) {
 		var self = this;

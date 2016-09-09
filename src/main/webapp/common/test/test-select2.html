@@ -14,7 +14,7 @@
 	  <div class="col-md-6">
 	    <div class="form-group">
 	      <label>Minimal</label>
-	      <select class="form-control select2" style="width: 100%;" select2 ng-model="ctrl.strval">
+	      <select class="form-control select2" style="width: 100%;" select2 ng-model="ctrl.strval" on-change="ctrl.onChange(value)">
 	        <option value="">请选择</option>
 			<option ng-repeat="x in ctrl.stringList" value="{{x}}">{{x}}</option>
 	      </select>
@@ -25,7 +25,7 @@
 	    <!-- /.form-group -->
    	    <div class="form-group">
 	      <label>Multiple</label>
-	      <select class="form-control select2" multiple="multiple" data-placeholder="Select a State" style="width: 100%;" select2 ng-model="ctrl.strvalMultiple">
+	      <select class="form-control select2" multiple="multiple" data-placeholder="Select a State" style="width: 100%;" select2 ng-model="ctrl.strvalMultiple" on-change="ctrl.onChange(value)">
 	        <option value="">请选择</option>
 	        <option ng-repeat="x in ctrl.stringList" value="{{x}}">{{x}}</option>
 	      </select>
@@ -40,7 +40,7 @@
 	    <!-- /.form-group -->
 	    <div class="form-group">
 	      <label>选择对象</label>
-	      <select class="form-control select2" style="width: 100%;" select2 id="objList" ng-model="ctrl.objval">
+	      <select class="form-control select2" style="width: 100%;" select2 id="objList" ng-model="ctrl.objval" on-change="ctrl.onChange(value)">
 	        <option value="">请选择</option>
 			<option ng-repeat="x in ctrl.objList" value="{{x}}">{{x.b}}</option>
 	      </select>
@@ -50,7 +50,7 @@
 	    <!-- /.form-group -->
    	    <div class="form-group">
 	      <label>多选对象</label>
-	      <select class="form-control select2" select2 multiple="multiple" style="width: 100%;" ng-model="ctrl.objs">
+	      <select class="form-control select2" select2 multiple="multiple" style="width: 100%;" ng-model="ctrl.objs" on-change="ctrl.onChange(value)">
 	        <option value="">请选择</option>
 	        <option ng-repeat="x in ctrl.objList" value="{{x}}">{{x.b}}</option>
 	      </select>

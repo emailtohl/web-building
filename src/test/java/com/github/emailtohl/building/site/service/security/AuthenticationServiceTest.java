@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,6 +34,29 @@ public class AuthenticationServiceTest {
 	AuthenticationService authenticationService;
 	@Inject
 	AuthenticationManager authenticationManager;
+	
+	
+	@Test(expected = AuthenticationCredentialsNotFoundException.class)
+	public void testGetPageByAuthorities1() {
+		SecurityContextHolder.clearContext();
+		User u = new User();
+		authenticationService.getPageByAuthorities(u, new PageRequest(0, 20));
+	}
+	
+	@Test(expected = AccessDeniedException.class)
+	public void testGetPageByAuthorities2() {
+		setBar();
+		User u = new User();
+		authenticationService.getPageByAuthorities(u, new PageRequest(0, 20));
+	}
+	
+	@Test
+	public void testGetPageByAuthorities3() {
+		setEmailtohl();
+		User u = new User();
+		u.setEmail("bar@test.com");
+		authenticationService.getPageByAuthorities(u, new PageRequest(0, 20));
+	}
 	
 	@Test
 	public void testAuthenticate() {

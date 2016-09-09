@@ -1,1 +1,0 @@
-define(['goods/module', 'goods/router', 'goods/list/goodsListCtrl', 'goods/detail/goodsDetailCtrl'], function() {});

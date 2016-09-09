@@ -3,6 +3,7 @@ package com.github.emailtohl.building.site.service.impl;
 import static com.github.emailtohl.building.site.entities.Authority.ADMIN;
 import static com.github.emailtohl.building.site.entities.Authority.MANAGER;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +16,8 @@ import javax.transaction.Transactional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,6 +32,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import com.github.emailtohl.building.common.Constant;
+import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.User;
@@ -116,6 +120,57 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 		};
 	}
 
+	/**
+	 * 查询用户权限，根据用户权限过滤信息
+	 */
+	@Override
+	public Pager<User> getPageByAuthorities(User user, Pageable pageable) {
+		Pager<User> p = userRepository.getPageByAuthorities(user, pageable);
+		List<User> src = p.getContent();
+		List<User> nl = new ArrayList<User>();
+
+		Set<String> roles = getGrantedAuthoritySet(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+		// 如果是管理员的情况
+		if (roles.contains("ADMIN")) {
+			for (User u : src) {
+				User target = new User();
+				BeanUtils.copyProperties(u, target, "password", "icon", "subsidiary", "iconSrc");
+				nl.add(target);
+			}
+			p.setContent(nl);
+			return p;
+		}
+		// 如果是经理的情况
+		if (roles.contains("MANAGER")) {
+			for (User u : src) {
+				// 过滤管理员的信息
+				if (u.getAuthorities().contains(Authority.ADMIN)) {
+					continue;
+				}
+				User target = new User();
+				BeanUtils.copyProperties(u, target, "password", "icon", "subsidiary", "iconSrc");
+				nl.add(target);
+			}
+			p.setContent(nl);
+			return p;
+		} else {// 其他情况
+			for (User u : src) {
+				// 过滤管理员的信息
+				if (u.getAuthorities().contains(Authority.ADMIN) || u.getAuthorities().contains(Authority.MANAGER)) {
+					continue;
+				}
+				User target = new User();
+				BeanUtils.copyProperties(u, target, "password", "icon", "subsidiary", "iconSrc");
+				nl.add(target);
+			}
+			p.setContent(nl);
+			return p;
+		}
+	}
+	
+	/**
+	 * 给用户授权
+	 */
 	@Override
 	public void grantedAuthority(Long id, Set<Authority> authorities) {
 		Set<String> roles = getGrantedAuthoritySet(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
@@ -261,6 +316,6 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 		public boolean isEnabled() {
 			return this.enabled;
 		}
-		
 	}
+
 }

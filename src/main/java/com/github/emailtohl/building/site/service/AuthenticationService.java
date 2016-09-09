@@ -6,12 +6,15 @@ import javax.transaction.Transactional;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 
+import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.entities.Authority;
+import com.github.emailtohl.building.site.entities.User;
 
 /**
  * 认证和授权服务
@@ -29,6 +32,16 @@ public interface AuthenticationService extends AuthenticationProvider {
 	 * @return Authentication 代表用户身份的对象
 	 */
 	Authentication authenticate(String email, String password);
+
+	/**
+	 * 获取用户权限，需要管理员或MANAGER权限
+	 * @param user
+	 * @param pageable
+	 * @return
+	 */
+	@NotNull
+	@PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
+	Pager<User> getPageByAuthorities(User user, Pageable pageable);
 	
 	/**
 	 * 为用户授权

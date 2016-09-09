@@ -4,6 +4,7 @@ import static com.github.emailtohl.building.site.entities.Authority.ADMIN;
 import static com.github.emailtohl.building.site.entities.Authority.EMPLOYEE;
 import static com.github.emailtohl.building.site.entities.Authority.MANAGER;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -11,12 +12,15 @@ import java.util.HashSet;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 
 import com.github.emailtohl.building.bootspring.SpringUtils;
+import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.BeanTools;
 import com.github.emailtohl.building.site.entities.Authority;
+import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
 /**
@@ -40,6 +44,16 @@ public class AuthenticationServiceImplTest {
 		Object o = auth.getPrincipal();
 		String actual = BeanTools.getPropertyNameValueMap(o).get("username").toString();
 		assertEquals("emailtohl@163.com", actual);
+	}
+	
+//	需要在安全上下文中验证，这里不容易单元测试
+//	@Test
+	public void testGetPageByAuthorities() {
+		User u = new User();
+		u.setEmail("foo@test.com");
+		// 查询页从第0页开始
+		Pager<User> p = authenticationService.getPageByAuthorities(u, new PageRequest(0, 20));
+		assertTrue(p.getContent().size() > 0);
 	}
 	
 //	需要在安全上下文中验证，这里不容易单元测试

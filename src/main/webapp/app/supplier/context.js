@@ -1,1 +1,0 @@
-define(['supplier/module', 'supplier/router', 'supplier/supplierCtrl'], function() {});

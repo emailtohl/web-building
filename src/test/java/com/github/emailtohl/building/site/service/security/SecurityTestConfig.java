@@ -148,12 +148,6 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 			}
 
 			@Override
-			public Pager<User> getPageByAuthorities(User user, Pageable pageable) {
-				logger.debug("getUserPage invoked");
-				return this.getUserPager(user, pageable);
-			}
-
-			@Override
 			public Page<User> getUserPage(User u, Pageable pageable) {
 				logger.debug("getUserPage invoked");
 				Pager<User> p = this.getUserPager(u, pageable);
@@ -195,6 +189,13 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 			@Override
 			public boolean supports(Class<?> authentication) {
 				return authentication == UsernamePasswordAuthenticationToken.class;
+			}
+
+			@Override
+			public Pager<User> getPageByAuthorities(User user, Pageable pageable) {
+				logger.debug("getUserPager invoked");
+				Pager<User> p = new Pager<User>(Arrays.asList(emailtohl, foo, bar), 100L);
+				return p;
 			}
 		};
 	}

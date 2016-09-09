@@ -271,7 +271,7 @@ desired effect
           <a href="#"><i class="fa fa-envelope"></i> <span>用户管理</span> <i class="fa fa-angle-left pull-right"></i></a>
           <ul class="treeview-menu">
             <li ng-class="{active: $state.includes('user.list') || $state.includes('user.detail')}"><a ui-sref="user.list" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>账户管理</a></li>
-            <li ng-class="{active: $state.includes('user.authority')}"><a ui-sref="user.authority" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>权限管理</a></li>
+            <li ng-class="{active: $state.includes('user.authority')}" ng-if="hasAuthority('ADMIN') || hasAuthority('MANAGER')"><a ui-sref="user.authority" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>权限管理</a></li>
             <li><a href="secure" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>security测试</a></li>
           </ul>
         </li>

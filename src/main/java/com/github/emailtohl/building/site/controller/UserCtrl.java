@@ -131,19 +131,6 @@ public class UserCtrl {
 	}
 	
 	/**
-	 * 获取用户权限列表
-	 * @param u
-	 * @param pageable
-	 * @return
-	 */
-	@RequestMapping(value = "authoritiesPage", method = GET)
-	@ResponseBody
-	@ResponseStatus(HttpStatus.OK)
-	public Pager<User> getPageByAuthorities(@ModelAttribute User u, @PageableDefault(sort = "id=desc") Pageable pageable) {
-		return userService.getPageByAuthorities(u, pageable);
-	}
-	
-	/**
 	 * 新增一个User
 	 * @param u
 	 * @return

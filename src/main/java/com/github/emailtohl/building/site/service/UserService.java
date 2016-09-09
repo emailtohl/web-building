@@ -109,16 +109,6 @@ public interface UserService {
 	Pager<User> getUserPager(User u, Pageable pageable);
 	
 	/**
-	 * 获取用户权限，需要管理员或MANAGER权限
-	 * @param user
-	 * @param pageable
-	 * @return
-	 */
-	@NotNull
-	@PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
-	Pager<User> getPageByAuthorities(User user, Pageable pageable);
-	
-	/**
 	 * 获取用户Page,这里的Page是Spring Data提供的数据结构
 	 * 
 	 * 实现类中要对Pager中返回的List中敏感信息进行过滤

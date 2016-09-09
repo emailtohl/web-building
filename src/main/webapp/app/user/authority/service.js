@@ -2,10 +2,10 @@ define([ 'user/module', 'mine' ], function(userModule) {
 	return userModule.factory('authorityService', [ '$http', function($http) {
 		return {
 			getPagerByAuthories : function(params) {
-				return $http.get('user/authoritiesPage?' + mine.encodeUrlParams(params));
+				return $http.get('authentication/page?' + mine.encodeUrlParams(params));
 			},
-			authorize : function(user) {
-				return $http.put('user/authorize', user);
+			authorize : function(id, authorities) {
+				return $http.put('authentication/authorize/' + id, authorities);
 			},
 		};
 	}]);

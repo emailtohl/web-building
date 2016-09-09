@@ -22,5 +22,9 @@ define(['user/module'], function(userModule) {
 			self.params.email = '';
 			self.params.authority = [];
 		};
+		
+		self.onChange = function(id, value) {
+			authorityService.authorize(id, value);
+		};
 	}]);
 });
