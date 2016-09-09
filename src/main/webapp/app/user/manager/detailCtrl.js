@@ -6,6 +6,7 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 		self.getDetail = function(id) {
 			userService.getUserById(id).success(function(data, status, fun, obj) {
 				console.log(data);
+				self.detail = data;
 			})
 			.error(function(data, status, fun, obj) {
 				console.log(data);
