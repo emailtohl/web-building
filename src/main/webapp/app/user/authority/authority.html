@@ -23,15 +23,17 @@
 	      <form role="form">
 	        <div class="box-body">
 	          <div class="form-group col-md-6">
-	            <label for="exampleInputEmail1">用户名</label>
-	            <input type="text" class="form-control" ng-model="ctrl.condition.nickname" placeholder="可模糊查询">
+	            <label for="exampleInputEmail1">邮箱</label>
+	            <input type="text" class="form-control" ng-model="ctrl.params.email" placeholder="可模糊查询">
 	          </div>
 	          <div class="form-group col-md-6">
 	            <label for="exampleInputPassword1">权限名</label>
-	            <select class="form-control select2" multiple="multiple" data-placeholder="Select a State" style="width: 100%;" select2 ng-model="ctrl.condition.authority">
+	            <select class="form-control select2" multiple="multiple" data-placeholder="Select a State" style="width: 100%;" select2 ng-model="ctrl.params.authorities">
 			        <option value="">无</option>
-			        <option value="ADMIN">ADMIN</option>
-			        <option value="USER">USER</option>
+			        <option value="ADMIN">管理员</option>
+			        <option value="MANAGER">经理</option>
+			        <option value="EMPLOYEE">职员</option>
+			        <option value="USER">用户</option>
 		        </select>
 	          </div>
 	        </div>

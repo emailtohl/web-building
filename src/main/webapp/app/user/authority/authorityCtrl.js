@@ -19,7 +19,7 @@ define(['user/module'], function(userModule) {
 			self.query();
 		};
 		self.reset = function() {
-			self.params.nickname = '';
+			self.params.email = '';
 			self.params.authority = [];
 		};
 	}]);
