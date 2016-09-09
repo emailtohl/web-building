@@ -1,9 +1,9 @@
 # web-building项目
 
-**Java JavaScript 业务框架 spring springmvc springsecurity springdata JPA angularjs1.×**
+**Java JavaScript 业务框架 spring springmvc springsecurity springdata JPA Hibernate angularjs1.×**
 
 ## 一、 说明
-此项目被称为“building”，意指“不断完善”的项目，我将日常学习、工作中使用的或自己开发的工具、框架整合在一起，不仅是一个总结。同时也可以在此整合的框架上开发业务项目。本项目中主要用到的技术有：
+此项目被称为“building”，意指“不断完善”的项目，我将日常学习、工作中使用的或自己开发的工具、框架整合在一起，不仅是一个总结。同时也可以在此整合的框架上开发业务项目。技术选型上尽量符合业界标准，本项目中主要用到的技术有：
 #### Java
  - 容器：spring、spring mvc
  - 安全：spring security
@@ -83,15 +83,19 @@ angular组织代码时，一般由3个文件组成：
 
 系统设计关键在于接口，是service包中不仅定义了接口功能，作为契约，接口还定义了校验、安全等切面功能，他们都由spring提供支持。
 
-### 2 前端
+### 2. 前端
 前端的lib存放第三方框架或工具，common中是我基于angular1.×编写的框架。
 其中，directive中定义了日常开发中最常使用的分页Pager、select、文件上传、日期选择等指令，可以在模板页面中通用，具体可以在common/test中见使用方法。
 
-common/service里面主要提到interceptors.js，这是一个面向切面的拦截器，它提供统一的CSRF令牌，前后端页码转换，日志等功能。
+common/service里面主要提到interceptors.js，这是一个面向切面的拦截器，在提交AJAX请求时，它提供统一的CSRF令牌，前后端页码转换，日志等功能。
 
 前端的app文件夹下存放业务代码，它们根据模块进行划分，至于模块如何加载，它们依靠RequireJS的依赖关系，分别定义在每个模块下的context.js文件中，至于module.js和router.js它们分别是angular创建逻辑模块以及路由关系配置的文件。
 
+### 3. 详情
+README仅简述了项目概况，该项目是我学习所用，如何配置和运行的都详细注释在源文件中，可在项目中查看项目运行实际情况。
 
 ## 五、 持续开发
-目前只是将框架搭建以及基础组件以及创建完毕：如User实体建模，基础数据访问仓库，通用工具，通用过滤器，通用组件等，前端的拦截器、分页、select2等指令。
+目前只是将框架搭建以及基础组件以及创建完毕：如对用户、授权的实体建模，基础数据访问仓库，通用工具，通用过滤器，通用组件等，前端的拦截器、分页、select2等指令也都已齐备。
+
+业务代码持续开发中……
 添加了简单的用户管理业务代码，项目持续进行中……
