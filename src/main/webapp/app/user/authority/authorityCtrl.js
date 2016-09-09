@@ -5,7 +5,9 @@ define(['user/module'], function(userModule) {
 		var self = this;
 		self.params = {
 			page : 1,
-			pageSize : 20	
+			pageSize : 20,
+			email : '',
+			authorities : []
 		};
 		self.query = function() {
 			authorityService.getPagerByAuthories(self.params).success(function(data, status, fun, obj) {
@@ -20,7 +22,7 @@ define(['user/module'], function(userModule) {
 		};
 		self.reset = function() {
 			self.params.email = '';
-			self.params.authority = [];
+			self.params.authorities.length = 0;
 		};
 		
 		self.onChange = function(id, value) {

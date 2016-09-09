@@ -72,7 +72,7 @@
                   <td ng-bind="x.description" class="col-md-2"></td>
                   <td class="col-md-4">
                     <div class="form-group">
-                      <select multiple="multiple" select2 ng-model="x.authorities" on-change="ctrl.onChange(x.id, value)">
+                      <select class="form-control select2 select2-hidden-accessible" multiple="multiple" select2 ng-model="x.authorities" on-change="ctrl.onChange(x.id, value)">
 				        <option value="ADMIN" ng-if="hasAuthority('ADMIN')">管理员</option>
 				        <option value="MANAGER" ng-if="hasAuthority('ADMIN') || hasAuthority('MANAGER')">经理</option>
 				        <option value="EMPLOYEE">职员</option>
