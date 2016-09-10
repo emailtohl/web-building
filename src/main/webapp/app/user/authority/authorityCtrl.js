@@ -3,6 +3,7 @@ define(['user/module'], function(userModule) {
 	.controller('AuthorityCtrl', ['$scope', '$http', '$state', 'authorityService',
 	                                function($scope, $http, $state, authorityService) {
 		var self = this;
+		$scope.getAuthentication();
 		self.params = {
 			page : 1,
 			pageSize : 20,
@@ -26,7 +27,11 @@ define(['user/module'], function(userModule) {
 		};
 		
 		self.onChange = function(id, value) {
-			authorityService.authorize(id, value);
+			authorityService.authorize(id, value).then(function(respose) {
+				alert('修改成功');
+			}, function(respose) {
+				alert('修改失败');
+			});
 		};
 	}]);
 });

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -62,7 +63,7 @@ public class UserCtrl {
 	public ResponseEntity<Void> discover() {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Allow", "OPTIONS,HEAD,GET");
-		return new ResponseEntity<>(null, headers, HttpStatus.NO_CONTENT);
+		return new ResponseEntity<Void>(null, headers, HttpStatus.NO_CONTENT);
 	}
 	
 	/**
@@ -76,7 +77,7 @@ public class UserCtrl {
 			throw new ResourceNotFoundException();
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Allow", "OPTIONS,HEAD,GET,PUT,DELETE");
-		return new ResponseEntity<>(null, headers, HttpStatus.NO_CONTENT);
+		return new ResponseEntity<Void>(null, headers, HttpStatus.NO_CONTENT);
 	}
 	
 	/**
@@ -101,13 +102,16 @@ public class UserCtrl {
 	/**
 	 * 通过email获取User
 	 * 同getUserById中的注释一样，这里也是以字符串形式返回到前端
+	 * 
+	 * 这里不用@PathVariable从路径中获取ip地址，因为小数点后面的内容会被截取
+	 * 
 	 * @param email
 	 * @return
 	 */
-	@RequestMapping(value = "email/{email}", method = GET, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "email", method = GET, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	public String getUserByEmail(@PathVariable("email") String email) {
+	public String getUserByEmail(@RequestParam String email) {
 		User u = userService.getUserByEmail(email);
 		if (u == null) {
 			throw new ResourceNotFoundException();
@@ -138,7 +142,7 @@ public class UserCtrl {
 	@RequestMapping(value = "", method = POST)
 	public ResponseEntity<?> addUser(@RequestBody @Valid User u, Errors e) {
 		if (e.hasErrors()) {
-			return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		Long id = userService.addUser(u);
 		String uri = ServletUriComponentsBuilder.fromCurrentServletMapping().path("/user/{id}")
@@ -154,9 +158,9 @@ public class UserCtrl {
 	 * @param user
 	 */
 	@RequestMapping(value = "{id}", method = PUT)
-	public ResponseEntity<?> update(@PathVariable("id") @Min(1L) long id, @Valid @RequestBody User user, Errors e) {
+	public ResponseEntity<Void> update(@PathVariable("id") @Min(1L) long id, @Valid @RequestBody User user, Errors e) {
 		if (e.hasErrors()) {
-			return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
 		}
 		userService.mergeUser(id, user);
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
@@ -168,7 +172,16 @@ public class UserCtrl {
 	 */
 	@RequestMapping(value = "{id}", method = DELETE)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void delete(@PathVariable("id") long id) {
+	public void delete(@PathVariable("id") @Min(1L) long id) {
 		userService.deleteUser(id);
 	}
+
+	public void setUserService(UserService userService) {
+		this.userService = userService;
+	}
+
+	public void setGson(Gson gson) {
+		this.gson = gson;
+	}
+	
 }
