@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.validation.constraints.Min;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -57,11 +58,13 @@ public class AuthenticationCtrl {
 		Map<String, Object> map = null;
 		SecurityContext context = SecurityContextHolder.getContext();
 		if (context != null) {
-			map = new HashMap<String, Object>();
 			Authentication authentication = context.getAuthentication();
-			map.put("username", authentication.getName());
-			map.put("details", authentication.getDetails());
-			map.put("principal", authentication.getPrincipal());
+			if (authentication != null) {
+				map = new HashMap<String, Object>();
+				map.put("username", authentication.getName());
+				map.put("details", authentication.getDetails());
+				map.put("principal", authentication.getPrincipal());
+			}
 		}
 		return map;
 	}
@@ -86,7 +89,7 @@ public class AuthenticationCtrl {
 	 */
 	@RequestMapping(value = "authentication/authorize/{id}", method = RequestMethod.PUT)
 	@ResponseBody
-	public void authorize(@PathVariable Long id, @RequestBody Set<Authority> authorities) {
+	public void authorize(@PathVariable @Min(1L) Long id, @RequestBody Set<Authority> authorities) {
 		authenticationService.grantedAuthority(id, authorities);
 	}
 	
@@ -98,4 +101,9 @@ public class AuthenticationCtrl {
 	public String securePage() {
 		return "secure";
 	}
+
+	public void setAuthenticationService(AuthenticationService authenticationService) {
+		this.authenticationService = authenticationService;
+	}
+	
 }
