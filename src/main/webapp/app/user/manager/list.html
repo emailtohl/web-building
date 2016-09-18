@@ -83,7 +83,7 @@
                   <td ng-bind="x.subsidiary.mobile" class="col-md-2"></td>
                   <td ng-bind="x.enabled ? '是' : '否'" class="col-md-2"></td>
                   <td ng-bind="x.description" class="col-md-2"></td>
-                  <td class="col-md-2" ng-if="hasAuthority('ADMIN') || x.nickname == authentication.username">
+                  <td class="col-md-2" ng-if="hasAuthority('ADMIN') || x.email == authentication.username">
                     <div class="btn-group">
                       <button type="button" class="btn btn-default" ui-sref="user.detail({id : x.id})">编辑</button>
                       <button type="button" class="btn btn-default" ng-click="ctrl.delete(x.id)" ng-if="hasAuthority('ADMIN')">删除</button>
