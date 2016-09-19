@@ -93,6 +93,13 @@ public class AuthenticationCtrlTest {
 		.andExpect(status().isOk())
 		.andExpect(view().name("login"));
 	}
+	
+	@Test
+	public void testRegister() throws Exception {
+		mockMvc.perform(get("/register"))
+		.andExpect(status().isOk())
+		.andExpect(view().name("register"));
+	}
 
 	@Test
 	public void testAuthentication() throws Exception {

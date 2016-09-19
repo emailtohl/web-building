@@ -44,8 +44,18 @@ public class AuthenticationCtrl {
 	 * @return
 	 */
 	@RequestMapping(value = "login", method = RequestMethod.GET)
-	public String login(Map<String, Object> model) {
+	public String login() {
 		return "login";
+	}
+	
+	/**
+	 * GET方法获取注册页面
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "register", method = RequestMethod.GET)
+	public String register() {
+		return "register";
 	}
 
 	/**
