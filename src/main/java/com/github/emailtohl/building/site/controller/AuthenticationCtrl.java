@@ -2,7 +2,9 @@ package com.github.emailtohl.building.site.controller;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -72,13 +74,13 @@ public class AuthenticationCtrl {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "register", method = RequestMethod.POST)
+	@RequestMapping(value = "register", method = RequestMethod.POST, produces = {"text/html;charset=UTF-8"})
 	public String register(HttpServletRequest requet, @Valid User u, org.springframework.validation.Errors e) {
 		if (e.hasErrors()) {
 			throw new VerifyFailure();
 		}
 		long id = userService.addUser(u);
-		String htmlText = "<a href=\"" + requet.getScheme() + "://" + requet.getServerName() + ":" + requet.getServerPort() + "/" + requet.getContextPath() + "/enable?id=" + id + "\">点击此链接激活账号</a>";
+		String htmlText = "<html><head><meta charset=\"utf-8\"></head><body><a href=\"" + requet.getScheme() + "://" + requet.getServerName() + ":" + requet.getServerPort() + requet.getContextPath() + "/enable?id=" + id + "\">点击此链接激活账号</a></body></html>";
 		emailService.sendMail(u.getEmail(), "激活账号", htmlText);
 		return "login";
 	}
@@ -88,9 +90,11 @@ public class AuthenticationCtrl {
 	 * @param id
 	 */
 	@RequestMapping(value = "enable", method = RequestMethod.GET)
-	@ResponseBody
-	public void enable(long id) {
+	public String enable(long id) {
 		userService.enableUser(id);
+		// 注意，若未给用户授权，则spring security自带的认证器会认为认证失败，所以初始化时必须给予一定权限
+		authenticationService.grantedAuthority(id, new HashSet<Authority>(Arrays.asList(Authority.USER)));
+		return "login";
 	}
 
 	/**

@@ -2,12 +2,7 @@ package com.github.emailtohl.building.site.service.security;
 
 import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_DEVELPMENT;
 import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_QA;
-import static com.github.emailtohl.building.site.entities.Authority.ADMIN;
-import static com.github.emailtohl.building.site.entities.Authority.MANAGER;
 import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.HashSet;
 
 import javax.inject.Inject;
 
@@ -24,7 +19,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
@@ -67,13 +61,13 @@ public class AuthenticationServiceTest {
 		Authentication auth = authenticationService.authenticate("foo@test.com", "123456");
 		assertTrue(auth.isAuthenticated());
 	}
-
+/*	注册用户时需要开通基本授权，所以策略发生变化，完全由代码控制
 	@Test(expected = AuthenticationCredentialsNotFoundException.class)
 	public void testGrantedAuthority1() {
 		SecurityContextHolder.clearContext();
-		authenticationService.grantedAuthority(1000L, new HashSet<Authority>(Arrays.asList(ADMIN, MANAGER)));
+		authenticationService.grantedAuthority(1000L, new HashSet<Authority>(Arrays.asList(Authority.ADMIN, Authority.MANAGER)));
 	}
-
+*/
 	@Test(expected = AccessDeniedException.class)
 	public void testGrantedAuthority2() {
 		User u = new User();

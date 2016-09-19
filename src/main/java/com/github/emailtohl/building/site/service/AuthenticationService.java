@@ -51,6 +51,6 @@ public interface AuthenticationService extends AuthenticationProvider {
 	 * @param id
 	 * @param authorities
 	 */
-	@PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
+//	@PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
 	void grantedAuthority(@Min(value = 1L) Long id, @NotNull Set<Authority> authorities);
 }
