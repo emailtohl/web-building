@@ -136,6 +136,8 @@ public class UserCtrl {
 	
 	/**
 	 * 新增一个User
+	 * 适用于管理员操作，或RestFull风格的调用，受安全策略保护
+	 * 若注册页面中新增一个用户，可用/register，POST添加
 	 * @param u
 	 * @return
 	 */

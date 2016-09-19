@@ -120,14 +120,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity security) throws Exception {
 		security
 				.authorizeRequests()
-					.antMatchers("/"/* 首页 */, "/register"/* 获取注册页面 */, "/authenticate"/* 登录时的认证 */, "/authentication"/* 获取认证信息 */, "/index.html", "/home.html", "/signup", "/about", "/chat/**").permitAll()
+					.antMatchers("/"/* 首页 */, "/register"/* 获取注册页面 */, "/enable"/* 激活账号 */, "/authenticate"/* 登录时的认证 */, "/authentication"/* 获取认证信息 */, "/index.html", "/home.html", "/signup", "/about", "/chat/**").permitAll()
 					.antMatchers("/admin/**").hasAuthority("ADMIN")
 					.antMatchers("/secure/**").hasAnyAuthority("ADMIN", "MANAGER")
 					.antMatchers("/user/**").fullyAuthenticated()
 					.antMatchers("/authentication/**").fullyAuthenticated()
 					.antMatchers(HttpMethod.DELETE, "/user/**").hasAnyAuthority("ADMIN", "MANAGER")
-					.antMatchers(HttpMethod.POST, "/user").permitAll()// 注册账号时，需要开通该接口
-//					.antMatchers(HttpMethod.POST, "/user/**").hasAnyAuthority("ADMIN", "MANAGER")
+					.antMatchers(HttpMethod.POST, "/user/**").hasAnyAuthority("ADMIN", "MANAGER")
 					.antMatchers(HttpMethod.PUT, "/user/**").hasAnyAuthority("ADMIN", "MANAGER")
 					.anyRequest().authenticated()
 				// HTTP Basic Authentication是基于REST风格，通过HTTP状态码与访问它的应用程序进行沟通

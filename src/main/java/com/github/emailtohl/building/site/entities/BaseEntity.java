@@ -53,7 +53,7 @@ public abstract class BaseEntity implements Serializable {
 	 * 修改日期
 	 */
 	protected Date modifyDate;
-
+	
 	/**
 	 * 获取ID
 	 * @return ID

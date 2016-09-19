@@ -22,9 +22,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.mail.EmailService;
 import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.AuthenticationService;
+import com.github.emailtohl.building.site.service.UserService;
 import com.google.gson.Gson;
 
 public class AuthenticationCtrlTest {
@@ -82,8 +84,18 @@ public class AuthenticationCtrlTest {
         viewResolver.setPrefix("/WEB-INF/jsp/view/");
         viewResolver.setSuffix(".jsp");
 		
+		
+		UserService userService = mock(UserService.class);
+		when(userService.addUser(foo)).thenReturn(100L);
+		doAnswer(answer).when(userService).enableUser(100L);
+		
+		EmailService emailService = mock(EmailService.class);
+		doAnswer(answer).when(emailService).sendMail(foo.getEmail(), "test", "test");
+		
 		AuthenticationCtrl authenticationCtrl = new AuthenticationCtrl();
 		authenticationCtrl.setAuthenticationService(authenticationService);
+		authenticationCtrl.setUserService(userService);
+		authenticationCtrl.setEmailService(emailService);
 		mockMvc = standaloneSetup(authenticationCtrl).setViewResolvers(viewResolver).build();
 	}
 
@@ -95,10 +107,21 @@ public class AuthenticationCtrlTest {
 	}
 	
 	@Test
-	public void testRegister() throws Exception {
+	public void testGetRegisterPage() throws Exception {
 		mockMvc.perform(get("/register"))
 		.andExpect(status().isOk())
 		.andExpect(view().name("register"));
+	}
+	
+	@Test
+	public void testRegister() throws Exception {
+		mockMvc.perform(post("/register")
+				.param("email", foo.getEmail())
+				.param("name", foo.getName())
+				.param("password", "123456")
+				)
+		.andExpect(status().isOk())
+		.andExpect(view().name("login"));
 	}
 
 	@Test

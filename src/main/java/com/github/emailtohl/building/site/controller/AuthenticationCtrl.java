@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
 import org.springframework.data.domain.Pageable;
@@ -25,9 +27,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.exception.VerifyFailure;
+import com.github.emailtohl.building.mail.EmailService;
 import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.AuthenticationService;
+import com.github.emailtohl.building.site.service.UserService;
 /**
  * 认证控制器
  * @author Helei
@@ -36,6 +41,10 @@ import com.github.emailtohl.building.site.service.AuthenticationService;
 public class AuthenticationCtrl {
 	@Inject
 	AuthenticationService authenticationService;
+	@Inject
+	UserService userService;
+	@Inject
+	EmailService emailService;
 	
 	/**
 	 * GET方法获取登录页面
@@ -56,6 +65,32 @@ public class AuthenticationCtrl {
 	@RequestMapping(value = "register", method = RequestMethod.GET)
 	public String register() {
 		return "register";
+	}
+	
+	/**
+	 * POST方法注册一个账号，如果成功，则返回到登录页面
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "register", method = RequestMethod.POST)
+	public String register(HttpServletRequest requet, @Valid User u, org.springframework.validation.Errors e) {
+		if (e.hasErrors()) {
+			throw new VerifyFailure();
+		}
+		long id = userService.addUser(u);
+		String htmlText = "<a href=\"" + requet.getScheme() + "://" + requet.getServerName() + ":" + requet.getServerPort() + "/" + requet.getContextPath() + "/enable?id=" + id + "\">点击此链接激活账号</a>";
+		emailService.sendMail(u.getEmail(), "激活账号", htmlText);
+		return "login";
+	}
+	
+	/**
+	 * 激活账号
+	 * @param id
+	 */
+	@RequestMapping(value = "enable", method = RequestMethod.GET)
+	@ResponseBody
+	public void enable(long id) {
+		userService.enableUser(id);
 	}
 
 	/**
@@ -78,6 +113,7 @@ public class AuthenticationCtrl {
 		}
 		return map;
 	}
+	
 	
 	/**
 	 * 获取用户权限列表
@@ -114,6 +150,14 @@ public class AuthenticationCtrl {
 
 	public void setAuthenticationService(AuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
+	}
+
+	public void setUserService(UserService userService) {
+		this.userService = userService;
+	}
+
+	public void setEmailService(EmailService emailService) {
+		this.emailService = emailService;
 	}
 	
 }
