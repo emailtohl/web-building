@@ -83,7 +83,7 @@
         Google+</a>
     </div>
 
-    <a href="login.html" class="text-center">I already have a membership</a>
+    <a href="login" class="text-center">I already have a membership</a>
   </div>
   <!-- /.form-box -->
 </div>
