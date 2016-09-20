@@ -39,7 +39,13 @@
 
   <div class="register-box-body">
     <p class="login-box-msg">Register a new membership</p>
-
+    <c:if test="${param.containsKey('error')}">
+     <div class="callout callout-danger">
+       <h4>Warning!</h4>
+       <p>Register failed. <c:out value="${param.error}"></c:out>.</p>
+     </div>
+        <!-- <b style="color: red;">Login failed. Please try again.</b><br /><br /> -->
+    </c:if>
     <form action="register" method="post">
       <div class="form-group has-feedback">
         <input type="text" class="form-control" placeholder="Full name" name="name">
@@ -89,8 +95,30 @@
 </div>
 <!-- /.register-box -->
 
+
+<div class="modal modal-danger">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">输入无效</h4>
+      </div>
+      <div class="modal-body">
+        <p id="content"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+
 <!-- jQuery 2.2.3 -->
 <script src="lib/jquery/jquery-2.2.3.min.js"></script>
+<script src="lib/jqueryui/jquery-ui.min.js"></script>
 <!-- Bootstrap 3.3.6 -->
 <script src="lib/bootstrap/js/bootstrap.min.js"></script>
 <!-- iCheck -->
@@ -104,6 +132,14 @@
     });
   });
   
+  function tip(content) {
+	  var div = $('div.modal');
+	  div.find('#content').text(content);
+	  div.modal();                      // initialized with defaults
+	  div.modal({ keyboard: false });   // initialized with no keyboard
+	  div.modal('show');                // initializes and invokes show immediately
+  }
+  
   $('form').on('submit', function(e) {
 	  var name, email, password, retypePassword;
 	  name = $('input[name="name"]').val();
@@ -112,12 +148,13 @@
 	  retypePassword = $('input[name="retype-password"]').val();
 	  //e.preventDefault();
 	  if (!(name && email && password && retypePassword)) {
+		  tip('输入框不能为空');
 		  return false;
 	  }
 	  if (password != retypePassword) {
+		  tip('密码不一致');
 		  return false;
 	  }
-	  
   });
   
   

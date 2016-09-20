@@ -2,6 +2,8 @@ package com.github.emailtohl.building.site.controller;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,6 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -20,6 +24,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,7 +34,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.github.emailtohl.building.common.jpa.Pager;
-import com.github.emailtohl.building.exception.VerifyFailure;
 import com.github.emailtohl.building.mail.EmailService;
 import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.User;
@@ -41,6 +45,7 @@ import com.github.emailtohl.building.site.service.UserService;
  */
 @Controller
 public class AuthenticationCtrl {
+	private static final Logger logger = LogManager.getLogger();
 	@Inject
 	AuthenticationService authenticationService;
 	@Inject
@@ -73,16 +78,42 @@ public class AuthenticationCtrl {
 	 * POST方法注册一个账号，如果成功，则返回到登录页面
 	 * @param model
 	 * @return
+	 * @throws UnsupportedEncodingException 
 	 */
 	@RequestMapping(value = "register", method = RequestMethod.POST, produces = {"text/html;charset=UTF-8"})
 	public String register(HttpServletRequest requet, @Valid User u, org.springframework.validation.Errors e) {
 		if (e.hasErrors()) {
-			throw new VerifyFailure();
+			StringBuilder s = new StringBuilder();
+			for (ObjectError oe : e.getAllErrors()) {
+				logger.info(oe);
+				s.append(oe.getDefaultMessage());
+			}
+//			throw new VerifyFailure(e.toString());
+			return "redirect:register?error=" + encode(s.toString());
 		}
-		long id = userService.addUser(u);
-		String htmlText = "<html><head><meta charset=\"utf-8\"></head><body><a href=\"" + requet.getScheme() + "://" + requet.getServerName() + ":" + requet.getServerPort() + requet.getContextPath() + "/enable?id=" + id + "\">点击此链接激活账号</a></body></html>";
-		emailService.sendMail(u.getEmail(), "激活账号", htmlText);
-		return "login";
+		try {
+			long id = userService.addUser(u);
+			String htmlText = "<html><head><meta charset=\"utf-8\"></head><body><a href=\"" + requet.getScheme() + "://" + requet.getServerName() + ":" + requet.getServerPort() + requet.getContextPath() + "/enable?id=" + id + "\">点击此链接激活账号</a></body></html>";
+			emailService.sendMail(u.getEmail(), "激活账号", htmlText);
+			return "login";
+		} catch (RuntimeException e1) {
+			return "redirect:register?error=" + encode("邮箱重复");
+		}
+	}
+	
+	/**
+	 * 另立一个私有方法处理URLEncoder.encode的检查型异常
+	 * @param s
+	 * @return
+	 */
+	private String encode(String s) {
+		String res = null;
+		try {
+			res = URLEncoder.encode(s.toString(), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return res;
 	}
 	
 	/**

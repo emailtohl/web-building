@@ -10,6 +10,8 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,6 +44,7 @@ import com.google.gson.Gson;
 @Controller
 @RequestMapping("user")
 public class UserCtrl {
+	private static final Logger logger = LogManager.getLogger();
 	@Inject
 	UserService userService;
 	@Inject
@@ -74,7 +78,7 @@ public class UserCtrl {
 	@RequestMapping(value = "{id}", method = OPTIONS)
 	public ResponseEntity<Void> discover(@PathVariable("id") long id) {
 		if (userService.getUser(id) == null)
-			throw new ResourceNotFoundException();
+			throw new ResourceNotFoundException("未找到此资源");
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Allow", "OPTIONS,HEAD,GET,PUT,DELETE");
 		return new ResponseEntity<Void>(null, headers, HttpStatus.NO_CONTENT);
@@ -94,7 +98,7 @@ public class UserCtrl {
 	public String getUserById(@PathVariable("id") Long id) {
 		User u = userService.getUser(id);
 		if (u == null) {
-			throw new ResourceNotFoundException();
+			throw new ResourceNotFoundException("未找到此资源");
 		}
 		return gson.toJson(u);
 	}
@@ -144,6 +148,9 @@ public class UserCtrl {
 	@RequestMapping(value = "", method = POST)
 	public ResponseEntity<?> addUser(@RequestBody @Valid User u, Errors e) {
 		if (e.hasErrors()) {
+			for (ObjectError oe : e.getAllErrors()) {
+				logger.info(oe);
+			}
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		Long id = userService.addUser(u);
@@ -162,6 +169,9 @@ public class UserCtrl {
 	@RequestMapping(value = "{id}", method = PUT)
 	public ResponseEntity<Void> update(@PathVariable("id") @Min(1L) long id, @Valid @RequestBody User user, Errors e) {
 		if (e.hasErrors()) {
+			for (ObjectError oe : e.getAllErrors()) {
+				logger.info(oe);
+			}
 			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
 		}
 		userService.mergeUser(id, user);
