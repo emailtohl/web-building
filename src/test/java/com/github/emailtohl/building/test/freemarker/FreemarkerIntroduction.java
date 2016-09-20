@@ -9,6 +9,8 @@ import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.util.ResourceUtils;
+
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
@@ -22,6 +24,7 @@ public class FreemarkerIntroduction {
 		Configuration cfg = new Configuration(version);
 		cfg.setClassForTemplateLoading(FreemarkerIntroduction.class, "ftl");
 		System.out.println(new File("ftl").getAbsolutePath());
+		System.out.println(ResourceUtils.getFile("classpath:config.properties"));
 //		cfg.setDirectoryForTemplateLoading(new File("ftl"));
 		cfg.setObjectWrapper(new DefaultObjectWrapper(version));
 		cfg.setDefaultEncoding("UTF-8");

@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.mail;
+package com.github.emailtohl.building.site.mail;
 
 import javax.inject.Inject;
 import javax.mail.MessagingException;
@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+
+import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapper;
+import freemarker.template.Version;
 /**
  * 邮件服务service
  * @author HeLei
@@ -21,6 +25,17 @@ public class EmailServiceImpl implements EmailService {
 	JavaMailSender mailSender;
 	@Value("${mail.from}")
 	String from;
+	Configuration configuration;
+	
+	public EmailServiceImpl() {
+		super();
+		Version version = new Version(2, 3, 23);
+		configuration = new Configuration(version);
+		configuration.setClassForTemplateLoading(EmailService.class, "ftl");
+		configuration.setObjectWrapper(new DefaultObjectWrapper(version));
+		configuration.setDefaultEncoding("UTF-8");
+		configuration.setClassicCompatible(true);// 处理空值为空字符串
+	}
 
 	public void sendMail(String to, String subject, String htmlText) {
 		try {
@@ -35,4 +50,15 @@ public class EmailServiceImpl implements EmailService {
 			logger.warn("Faild to send mail.", e);
 		}
 	}
+
+	@Override
+	public void enableUser(String url, String email, long id) {
+		
+	}
+
+	@Override
+	public void forgetPassword(String url, String email, String _csrf) {
+		
+	}
+	
 }
