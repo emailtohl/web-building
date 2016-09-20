@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 
 import com.github.emailtohl.building.common.Constant;
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.mail.EmailService;
 import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.User;
@@ -49,7 +50,8 @@ import com.github.emailtohl.building.site.service.AuthenticationService;
 public class AuthenticationServiceImpl implements AuthenticationService, UserDetailsService {
 	private static final Logger logger = LogManager.getLogger();
 	@Inject UserRepository userRepository;
-
+	@Inject EmailService emailService;
+	
 	@Override
 	public Authentication authenticate(String email, String password) {
 		User u = userRepository.findByEmail(email);

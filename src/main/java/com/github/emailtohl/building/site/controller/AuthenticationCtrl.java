@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.exception.ResourceNotFoundException;
 import com.github.emailtohl.building.mail.EmailService;
 import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.User;
@@ -114,6 +115,31 @@ public class AuthenticationCtrl {
 			e.printStackTrace();
 		}
 		return res;
+	}
+	
+	/**
+	 * 通过电子邮箱发送忘记密码的页面
+	 * @return
+	 */
+	@RequestMapping(value = "forgetPassword", method = RequestMethod.POST)
+	public void forgetPassword(HttpServletRequest requet, String email, String _csrf) {
+		User u = userService.getUserByEmail(email);
+		if (u == null || u.getId() == null) {
+			throw new ResourceNotFoundException();
+		}
+		Long id = u.getId();
+		String htmlText = "<html><head><meta charset=\"utf-8\"></head><body><a href=\"" + requet.getScheme() + "://" + requet.getServerName() + ":" + requet.getServerPort() + requet.getContextPath() + "/enable?id=" + id + "\">点击此链接激活账号</a></body></html>";
+		emailService.sendMail(email, "更改密码", htmlText);
+	}
+	/**
+	 * 重置密码，用于忘记密码处
+	 * @param id
+	 * @param newPassword
+	 * @return
+	 */
+	@RequestMapping(value = "resetPassword", method = RequestMethod.POST)
+	public String resetPassword(long id, String newPassword) {
+		return "login";
 	}
 	
 	/**

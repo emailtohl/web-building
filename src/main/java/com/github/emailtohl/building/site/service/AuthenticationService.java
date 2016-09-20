@@ -18,6 +18,7 @@ import com.github.emailtohl.building.site.entities.User;
 
 /**
  * 认证和授权服务
+ * 本接口还声明了那些复杂的权限逻辑，例如授权，这些逻辑的安全权限不能简单地在接口中声明，只能放在实现类中
  * 
  * @author Helei
  */
@@ -53,4 +54,5 @@ public interface AuthenticationService extends AuthenticationProvider {
 	 */
 //	@PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
 	void grantedAuthority(@Min(value = 1L) Long id, @NotNull Set<Authority> authorities);
+
 }

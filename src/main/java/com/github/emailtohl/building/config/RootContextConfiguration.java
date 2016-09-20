@@ -323,4 +323,5 @@ public class RootContextConfiguration
 		mailSender.setPassword(env.getProperty("mailserver.password"));
 		return mailSender;
 	}
+	
 }

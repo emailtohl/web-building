@@ -52,6 +52,7 @@ public interface UserService {
 	
 	/**
 	 * 修改密码，限制只能本人才能修改
+	 * 登录页面中通过邮箱方式修改密码在AuthenticationService接口中
 	 * authentication是直接从SecurityContextHolder中获取的对象
 	 * @param id
 	 * @param newPassword

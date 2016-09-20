@@ -89,13 +89,33 @@
     </div>
     <!-- /.social-auth-links -->
 
-    <a href="#">I forgot my password</a><br>
+    <a id="forgot" href="javascript:void(0)">I forgot my password</a><br>
     <a href="register" class="text-center">Register a new membership</a>
 
   </div>
   <!-- /.login-box-body -->
 </div>
 <!-- /.login-box -->
+
+<div class="modal modal-danger">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">tip</h4>
+      </div>
+      <div class="modal-body">
+        <p id="content"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
 
 <!-- jquery-2.2.3.min.js -->
 <script src="lib/jquery/jquery-2.2.3.min.js"></script>
@@ -111,6 +131,31 @@
       increaseArea: '20%' // optional
     });
   });
+  
+  function tip(content) {
+	  var div = $('div.modal');
+	  div.find('#content').text(content);
+	  div.modal();                      // initialized with defaults
+	  div.modal({ keyboard: false });   // initialized with no keyboard
+	  div.modal('show');                // initializes and invokes show immediately
+  }
+  
+  $('a#forgot').on('click', function() {
+	  var email, _csrf;
+	  email = $('input[name="email"]').val();
+	  _csrf = $('input[name="_csrf"]').val();
+	  if (!email) {
+		  tip('请正确填写你的邮箱地址');
+		  return false;
+	  }
+	  $.post('forgetPassword', {
+		  email : email,
+		  _csrf : _csrf
+	  }, function() {
+		  tip('请检查邮件，重置密码');
+	  });
+  });
+  
 </script>
 </body>
 </html>

@@ -197,6 +197,7 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 				Pager<User> p = new Pager<User>(Arrays.asList(emailtohl, foo, bar), 100L);
 				return p;
 			}
+
 		};
 	}
 }

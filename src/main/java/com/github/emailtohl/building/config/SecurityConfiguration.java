@@ -118,9 +118,23 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	 */
 	@Override
 	protected void configure(HttpSecurity security) throws Exception {
+		String[] permitUrl = {
+			"/"/* 首页 */,
+			"/register"/* 获取注册页面 */,
+			"/enable"/* 激活账号 */,
+			"/forgetPassword"/* 在邮箱中获取忘记密码页面 */,
+			"/resetPassword"/* 忘记密码后重置 */,
+			"/authenticate"/* 登录时的认证 */,
+			"/authentication"/* 获取认证信息 */,
+			"/index.html",
+			"/home.html",
+			"/signup",
+			"/about",
+			"/chat/**"
+		};
 		security
 				.authorizeRequests()
-					.antMatchers("/"/* 首页 */, "/register"/* 获取注册页面 */, "/enable"/* 激活账号 */, "/authenticate"/* 登录时的认证 */, "/authentication"/* 获取认证信息 */, "/index.html", "/home.html", "/signup", "/about", "/chat/**").permitAll()
+					.antMatchers(permitUrl).permitAll()
 					.antMatchers("/admin/**").hasAuthority("ADMIN")
 					.antMatchers("/secure/**").hasAnyAuthority("ADMIN", "MANAGER")
 					.antMatchers("/user/**").fullyAuthenticated()
