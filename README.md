@@ -37,13 +37,13 @@
 > 注意，此文件之所以没有放在src/test/resources中，是因为src/test/java/目录下有许多其他共测试的Entities，为避免把数据表弄混乱，所以它仍然存放在src/main/resources/下
 
 ### 2. 创建数据库
-在src/test/java/下的com.github.emailtohl.building.initdb包中可以有两种方式让JPA提供者生成数据表，并填入初始化数据。
+在src/test/java/下的com.github.emailtohl.building.initdb包中可以有两种方式让JPA提供者生成数据表，并填入初始化数据，直接执行即可，该包下的CleanTestData可以将测试数据清除。
 
 ### 3. 后端配置
 项目的servlet、filter、listener均通过com.github.emailtohl.building.bootstrap下的程序启动，并未配置在web.xml中
 
 ### 4. 前端配置
-后端主要靠RequireJS进行统一的代码管理，统一配置在webapp/common/main.js中。
+前端主要靠RequireJS进行统一的代码管理，统一配置在webapp/common/main.js中。
 业务代码统一位于webapp/app/下
 angular组织代码时，一般由3个文件组成：
 - context.js：主要告诉RequireJS该模块下要加载哪些文件
