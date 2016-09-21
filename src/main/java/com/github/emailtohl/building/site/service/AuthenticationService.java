@@ -57,6 +57,13 @@ public interface AuthenticationService extends AuthenticationProvider {
 	void grantedAuthority(@Min(value = 1L) Long id, @NotNull Set<Authority> authorities);
 
 	/**
+	 * 检查该邮箱是否注册
+	 * @param email
+	 * @return
+	 */
+	boolean isExist(String email);
+	
+	/**
 	 * 修改密码，用于用户忘记密码的场景
 	 * @param email
 	 * @param newPassword

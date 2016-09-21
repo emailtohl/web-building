@@ -199,10 +199,15 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 			}
 
 			@Override
+			public boolean isExist(String email) {
+				logger.debug("changePassword invoked");
+				return true;
+			}
+			
+			@Override
 			public void changePassword(String email, String newPassword) {
 				logger.debug("changePassword invoked");
 			}
-
 		};
 	}
 }

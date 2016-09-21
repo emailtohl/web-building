@@ -325,7 +325,16 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 			return this.enabled;
 		}
 	}
-
+	
+	@Override
+	public boolean isExist(String email) {
+		if (userRepository.findByEmail(email) == null) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
 	@Override
 	public void changePassword(String email, String newPassword) {
 		String hashPw = BCryptUtil.hash(newPassword);

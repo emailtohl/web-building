@@ -133,14 +133,13 @@ public class AuthenticationCtrl {
 	 */
 	@RequestMapping(value = "forgetPassword", method = RequestMethod.POST)
 	public void forgetPassword(HttpServletRequest requet, String email, String _csrf) {
-//		User u = userService.getUserByEmail(email);
-//		if (u == null || u.getId() == null) {
-//			throw new ResourceNotFoundException();
-//		}
+		if (!authenticationService.isExist(email)) {
+			throw new ResourceNotFoundException();
+		}
 		String token = UUID.randomUUID().toString();
 		tokenMap.put(token, email);
 		scheduleCleanToken(token);
-		String url = requet.getScheme() + "://" + requet.getServerName() + ":" + requet.getServerPort() + requet.getContextPath() + "/resetPassword";
+		String url = requet.getScheme() + "://" + requet.getServerName() + ":" + requet.getServerPort() + requet.getContextPath() + "/getUpdatePasswordPage";
 		emailService.updatePassword(url, email, token, _csrf);
 	}
 	
@@ -155,17 +154,33 @@ public class AuthenticationCtrl {
 	}
 	
 	/**
-	 * 重置密码，用于忘记密码处
+	 * 忘记密码后，在邮箱中的链接中打开修改密码页面
 	 * @param email
-	 * @param newPassword
+	 * @param token
 	 * @return
 	 */
-	@RequestMapping(value = "resetPassword", method = RequestMethod.POST)
-	public String resetPassword(String email, String newPassword, String token) {
+	@RequestMapping(value = "getUpdatePasswordPage", method = RequestMethod.GET)
+	public String getUpdatePasswordPage(String email, String token, Map<String, Object> model) {
 		if (!email.equals(tokenMap.get(token))) {
-			throw new ResourceNotFoundException("修改密码已过时效");
+			return "redirect:login?error=expire";
 		}
-		authenticationService.changePassword(email, newPassword);
+		model.put("email", email);
+		model.put("token", token);
+		return "updatePassword";
+	}
+	
+	/**
+	 * 重置密码，用于忘记密码处
+	 * @param email
+	 * @param password 修改的密码
+	 * @return
+	 */
+	@RequestMapping(value = "updatePassword", method = RequestMethod.POST)
+	public String updatePassword(String email, String password, String token) {
+		if (!email.equals(tokenMap.get(token))) {
+			return "redirect:login?error=expire";
+		}
+		authenticationService.changePassword(email, password);
 		return "login";
 	}
 	

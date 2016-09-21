@@ -10,7 +10,7 @@ public interface EmailService {
 	void enableUser(String url, String email);
 	
 	/**
-	 * 
+	 * 通知用户获取更新密码的页面
 	 * @param url
 	 * @param email
 	 * @param token
