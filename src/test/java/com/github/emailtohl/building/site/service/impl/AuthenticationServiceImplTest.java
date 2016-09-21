@@ -4,7 +4,7 @@ import static com.github.emailtohl.building.site.entities.Authority.ADMIN;
 import static com.github.emailtohl.building.site.entities.Authority.EMPLOYEE;
 import static com.github.emailtohl.building.site.entities.Authority.MANAGER;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -68,4 +68,18 @@ public class AuthenticationServiceImplTest {
 //		assertTrue(u.getAuthorities().containsAll(Arrays.asList(ADMIN, USER)));
 	}
 
+	@Test
+	public void testIsExist() {
+		assertTrue(authenticationService.isExist("emailtohl@163.com"));
+	}
+	
+	@Test
+	public void testChangePassword() {
+		authenticationService.changePassword("emailtohl@163.com", "111111");
+		Authentication auth = authenticationService.authenticate("emailtohl@163.com", "111111");
+		assertEquals("emailtohl@163.com", auth.getName());
+		authenticationService.changePassword("emailtohl@163.com", "123456");
+		auth = authenticationService.authenticate("emailtohl@163.com", "123456");
+		assertEquals("emailtohl@163.com", auth.getName());
+	}
 }

@@ -200,8 +200,11 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 
 			@Override
 			public boolean isExist(String email) {
-				logger.debug("changePassword invoked");
-				return true;
+				logger.debug("isExist invoked");
+				if ("emailtohl@163.com".equals(email) || "foo@test.com".equals(email) || "bar@test.com".equals(email))
+					return true;
+				else
+					return false;
 			}
 			
 			@Override

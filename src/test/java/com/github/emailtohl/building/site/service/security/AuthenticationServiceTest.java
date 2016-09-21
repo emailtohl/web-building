@@ -4,6 +4,9 @@ import static com.github.emailtohl.building.config.RootContextConfiguration.PROF
 import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_QA;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 import javax.inject.Inject;
 
 import org.junit.Test;
@@ -19,6 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
@@ -67,26 +71,33 @@ public class AuthenticationServiceTest {
 		SecurityContextHolder.clearContext();
 		authenticationService.grantedAuthority(1000L, new HashSet<Authority>(Arrays.asList(Authority.ADMIN, Authority.MANAGER)));
 	}
-*/
+
 	@Test(expected = AccessDeniedException.class)
 	public void testGrantedAuthority2() {
-		User u = new User();
 		setBar();
-		userService.mergeUser(1000L, u);
+		authenticationService.grantedAuthority(1000L, new HashSet<Authority>(Arrays.asList(Authority.ADMIN, Authority.MANAGER)));
 	}
-
+*/
 	@Test
 	public void testGrantedAuthority3() {
-		User u = new User();
 		setFoo();
-		userService.mergeUser(1000L, u);
+		authenticationService.grantedAuthority(1000L, new HashSet<Authority>(Arrays.asList(Authority.ADMIN, Authority.MANAGER)));
 	}
 
 	@Test
 	public void testGrantedAuthority4() {
-		User u = new User();
 		setEmailtohl();
-		userService.mergeUser(1000L, u);
+		authenticationService.grantedAuthority(1000L, new HashSet<Authority>(Arrays.asList(Authority.ADMIN, Authority.MANAGER)));
+	}
+	
+	@Test
+	public void testIsExist() {
+		setFoo();
+		assertTrue(authenticationService.isExist("emailtohl@163.com"));
+	}
+	@Test
+	public void testChangePassword() {
+		authenticationService.changePassword("emailtohl@163.com", "111111");
 	}
 
 	private void setEmailtohl() {

@@ -262,5 +262,9 @@ public class AuthenticationCtrl {
 	public void setEmailService(EmailService emailService) {
 		this.emailService = emailService;
 	}
+
+	public void setTaskScheduler(ThreadPoolTaskScheduler taskScheduler) {
+		this.taskScheduler = taskScheduler;
+	}
 	
 }
