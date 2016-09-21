@@ -198,6 +198,11 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 				return p;
 			}
 
+			@Override
+			public void changePassword(String email, String newPassword) {
+				logger.debug("changePassword invoked");
+			}
+
 		};
 	}
 }

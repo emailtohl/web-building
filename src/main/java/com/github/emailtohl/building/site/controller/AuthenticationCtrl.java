@@ -5,10 +5,13 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,18 +45,21 @@ import com.github.emailtohl.building.site.mail.EmailService;
 import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
 /**
- * 认证控制器
+ * 认证控制器，管理用户注册，更改密码，授权等功能
  * @author Helei
  */
 @Controller
 public class AuthenticationCtrl {
 	private static final Logger logger = LogManager.getLogger();
-	@Inject
-	AuthenticationService authenticationService;
-	@Inject
-	UserService userService;
-	@Inject
-	EmailService emailService;
+	@Inject AuthenticationService authenticationService;
+	@Inject UserService userService;
+	@Inject EmailService emailService;
+	@Inject ThreadPoolTaskScheduler taskScheduler;
+	/**
+	 * 忘记密码时，当发送邮件时，会记录一个token，该token有时效，过期会被清除
+	 */
+	Map<String, String> tokenMap = new ConcurrentHashMap<String, String>();
+	
 	
 	/**
 	 * GET方法获取登录页面
@@ -83,6 +90,7 @@ public class AuthenticationCtrl {
 	 */
 	@RequestMapping(value = "register", method = RequestMethod.POST, produces = {"text/html;charset=UTF-8"})
 	public String register(HttpServletRequest requet, @Valid User u, org.springframework.validation.Errors e) {
+		// 第一步，判断提交表单是否有效
 		if (e.hasErrors()) {
 			StringBuilder s = new StringBuilder();
 			for (ObjectError oe : e.getAllErrors()) {
@@ -93,9 +101,11 @@ public class AuthenticationCtrl {
 			return "redirect:register?error=" + encode(s.toString());
 		}
 		try {
+			// 第二步，添加该用户，若报运行时异常，则抛出，告诉用户该账号不能注册
 			long id = userService.addUser(u);
-			String htmlText = "<html><head><meta charset=\"utf-8\"></head><body><a href=\"" + requet.getScheme() + "://" + requet.getServerName() + ":" + requet.getServerPort() + requet.getContextPath() + "/enable?id=" + id + "\">点击此链接激活账号</a></body></html>";
-			emailService.sendMail(u.getEmail(), "激活账号", htmlText);
+			// 第三步，邮件通知用户，让其激活该账号
+			String url = requet.getScheme() + "://" + requet.getServerName() + ":" + requet.getServerPort() + requet.getContextPath() + "/enable?id=" + id;
+			emailService.enableUser(url, u.getEmail());
 			return "login";
 		} catch (RuntimeException e1) {
 			return "redirect:register?error=" + encode("邮箱重复");
@@ -123,22 +133,39 @@ public class AuthenticationCtrl {
 	 */
 	@RequestMapping(value = "forgetPassword", method = RequestMethod.POST)
 	public void forgetPassword(HttpServletRequest requet, String email, String _csrf) {
-		User u = userService.getUserByEmail(email);
-		if (u == null || u.getId() == null) {
-			throw new ResourceNotFoundException();
-		}
-		Long id = u.getId();
-		String htmlText = "<html><head><meta charset=\"utf-8\"></head><body><a href=\"" + requet.getScheme() + "://" + requet.getServerName() + ":" + requet.getServerPort() + requet.getContextPath() + "/enable?id=" + id + "\">点击此链接激活账号</a></body></html>";
-		emailService.sendMail(email, "更改密码", htmlText);
+//		User u = userService.getUserByEmail(email);
+//		if (u == null || u.getId() == null) {
+//			throw new ResourceNotFoundException();
+//		}
+		String token = UUID.randomUUID().toString();
+		tokenMap.put(token, email);
+		scheduleCleanToken(token);
+		String url = requet.getScheme() + "://" + requet.getServerName() + ":" + requet.getServerPort() + requet.getContextPath() + "/resetPassword";
+		emailService.updatePassword(url, email, token, _csrf);
 	}
+	
+	/**
+	 * 定时清理token
+	 * @param token
+	 */
+	private void scheduleCleanToken(String token) {
+		long l = System.currentTimeMillis() + 10 * 60 * 1000;
+		Date startTime = new Date(l);
+		taskScheduler.schedule(() -> {tokenMap.remove(token);}, startTime);
+	}
+	
 	/**
 	 * 重置密码，用于忘记密码处
-	 * @param id
+	 * @param email
 	 * @param newPassword
 	 * @return
 	 */
 	@RequestMapping(value = "resetPassword", method = RequestMethod.POST)
-	public String resetPassword(long id, String newPassword) {
+	public String resetPassword(String email, String newPassword, String token) {
+		if (!email.equals(tokenMap.get(token))) {
+			throw new ResourceNotFoundException("修改密码已过时效");
+		}
+		authenticationService.changePassword(email, newPassword);
 		return "login";
 	}
 	

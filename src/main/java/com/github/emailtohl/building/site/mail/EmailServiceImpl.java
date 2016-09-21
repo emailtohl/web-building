@@ -1,5 +1,11 @@
 package com.github.emailtohl.building.site.mail;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -13,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 import freemarker.template.Version;
 /**
  * 邮件服务service
@@ -40,7 +48,7 @@ public class EmailServiceImpl implements EmailService {
 	public void sendMail(String to, String subject, String htmlText) {
 		try {
 			MimeMessage msg = mailSender.createMimeMessage();
-			MimeMessageHelper msgHelper = new MimeMessageHelper(msg);
+			MimeMessageHelper msgHelper = new MimeMessageHelper(msg, "UTF-8");
 			msgHelper.setFrom(from);
 			msgHelper.setTo(to);
 			msgHelper.setSubject(subject);
@@ -52,13 +60,37 @@ public class EmailServiceImpl implements EmailService {
 	}
 
 	@Override
-	public void enableUser(String url, String email, long id) {
-		
+	public void enableUser(String url, String email) {
+		Map<String, String> root = new HashMap<String, String>();
+		root.put("url", url);
+		try (Writer out = new StringWriter(2048)) {
+			Template template = configuration.getTemplate("enableUser.ftl");
+			template.process(root, out);
+			String htmlText = out.toString();
+			sendMail(email, "激活账号", htmlText);
+		} catch (IOException | TemplateException e) {
+			e.printStackTrace();
+			logger.catching(e);
+		}
 	}
 
 	@Override
-	public void forgetPassword(String url, String email, String _csrf) {
-		
+	public void updatePassword(String url, String email, String token, String _csrf) {
+		Map<String, String> root = new HashMap<String, String>();
+		root.put("url", url);
+		root.put("email", email);
+		root.put("token", token);
+		root.put("_csrf", _csrf);
+		try (Writer out = new StringWriter(2048)) {
+			Template template = configuration.getTemplate("updatePassword.ftl");
+			template.process(root, out);
+			String htmlText = out.toString();
+			sendMail(email, "修改密码", htmlText);
+		} catch (IOException | TemplateException e) {
+			e.printStackTrace();
+			logger.catching(e);
+		}
 	}
+
 	
 }

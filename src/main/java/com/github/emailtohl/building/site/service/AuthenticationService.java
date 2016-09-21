@@ -5,6 +5,7 @@ import java.util.Set;
 import javax.transaction.Transactional;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -55,4 +56,10 @@ public interface AuthenticationService extends AuthenticationProvider {
 //	@PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
 	void grantedAuthority(@Min(value = 1L) Long id, @NotNull Set<Authority> authorities);
 
+	/**
+	 * 修改密码，用于用户忘记密码的场景
+	 * @param email
+	 * @param newPassword
+	 */
+	void changePassword(String email, @Pattern(regexp = "^[^\\s&\"<>]+$") String newPassword);
 }

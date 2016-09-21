@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 
 import com.github.emailtohl.building.common.Constant;
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.common.utils.BCryptUtil;
 import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.User;
@@ -323,6 +324,13 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 		public boolean isEnabled() {
 			return this.enabled;
 		}
+	}
+
+	@Override
+	public void changePassword(String email, String newPassword) {
+		String hashPw = BCryptUtil.hash(newPassword);
+		User u = userRepository.findByEmail(email);
+		u.setPassword(hashPw);
 	}
 
 }
