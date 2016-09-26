@@ -7,46 +7,61 @@ define([ 'common/module' ], function(common) {
 		return {
 			restrict : 'A',// 只在div中使用
 			templateUrl : 'common/directive/modal/template.html',
+			transclude : true,// 保留原元素中的内容，需要在template中相应的地方使用ng-transclude说明嵌入在哪
 			scope : {
+				open : '=',
 				title : '@',
-				confirm : '&'
+				whenConfirm : '&'
 			},
 			link : function($scope, $element, $attrs) {
-				var startX = 0, startY = 0, x = 0, y = 0;
-//				element = angular.element(document.getElementsByClassName("modal-dialog"));
-				$element.css({
-					position : 'relative',
-					cursor : 'move'
-				});
-
-				$element.on('mousedown', function(event) {
-					// Prevent default dragging of selected content
-					event.preventDefault();
-					startX = event.pageX - x;
-					startY = event.pageY - y;
-					$document.on('mousemove', mousemove);
-					$document.on('mouseup', mouseup);
-				});
-
-				function mousemove(event) {
-					y = event.pageY - startY;
-					x = event.pageX - startX;
-					$element.css({
-						top : y + 'px',
-						left : x + 'px'
+				function openModal() {
+					var startX = 0, startY = 0, x = 0, y = 0, modal, dialog;
+					modal = $element.find('div.modal');
+					
+					modal.modal();                      // initialized with defaults
+					modal.modal({ keyboard: false });   // initialized with no keyboard
+					modal.modal('show');                // initializes and invokes show immediately
+					
+					$scope.confirm = function() {
+						$scope.whenConfirm();
+					};
+					
+					dialog = angular.element(document.getElementsByClassName('modal-dialog'));
+					dialog.css({
+						position : 'relative',
+						cursor : 'move'
 					});
-				}
+					
+					dialog.on('mousedown', function(event) {
+						// Prevent default dragging of selected content
+						event.preventDefault();
+						startX = event.pageX - x;
+						startY = event.pageY - y;
+						$document.on('mousemove', mousemove);
+						$document.on('mouseup', mouseup);
+					});
+					
+					function mousemove(event) {
+						y = event.pageY - startY;
+						x = event.pageX - startX;
+						dialog.css({
+							top : y + 'px',
+							left : x + 'px'
+						});
+					}
+					
+					function mouseup() {
+						$document.off('mousemove', mousemove);
+						$document.off('mouseup', mouseup);
+					}
+				};
 
-				function mouseup() {
-					$document.off('mousemove', mousemove);
-					$document.off('mouseup', mouseup);
-				}
-				
-				$element.modal();                      // initialized with defaults
-				$element.modal({ keyboard: false });   // initialized with no keyboard
-				$element.modal('show');                // initializes and invokes show immediately
-				
-				$scope.confirm({});
+				$scope.$watch('open', function(newVal, oldVal) {
+					if (newVal)
+						openModal();
+					else
+						$('button[data-dismiss="modal"]').click();
+				});
 			}
 		};
 	} ]);

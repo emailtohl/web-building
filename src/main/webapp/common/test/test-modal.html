@@ -11,8 +11,11 @@
 
 <section class="content">
 	<h1>hello world</h1>
-	<button ng-click="ctrl.open()">打开modal</button>
-	<div modal title="{{ctrl.title}}" confirm="ctrl.confirm()"></div>
+	<button ng-click="ctrl.openModal()">打开modal</button>{{ctrl.open}}
+	<!-- open是双向数据绑定，所以不能有{{}}取值，而title是单项取值，需要用{{}}取值 -->
+	<div modal open="ctrl.open" title="{{ctrl.title}}" when-confirm="ctrl.confirm()">
+		<h1>hello world1</h1>
+	</div>
 	
 	
 	

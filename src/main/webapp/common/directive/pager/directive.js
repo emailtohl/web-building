@@ -70,10 +70,10 @@ define([ 'common/module' ], function(common) {
 			 * 数据变化的维护在controller中
 			 */
 			controller : function($scope) {
-				$scope.$watch('pageNumber', function(newVal, oldVal){
+				$scope.$watch('pageNumber', function(newVal, oldVal) {
 					refresh();
 				});
-				$scope.$watch('totalPages', function(newVal, oldVal){
+				$scope.$watch('totalPages', function(newVal, oldVal) {
 					refresh();
 				});
 				function refresh() {

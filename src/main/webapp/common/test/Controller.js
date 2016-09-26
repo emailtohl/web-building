@@ -88,8 +88,11 @@ define(['angular', 'test/module'], function(angular) {
 	.controller('TestModalCtrl', ['$rootScope', '$scope', '$http', '$state', function($rootScope, $scope, $http, $state) {
 		var self = this;
 		self.title = 'hello world';
+		self.openModal = function() {
+			self.open = true;
+		}
 		self.confirm = function() {
-			alert('hello');
+			self.open = false;
 		};
 	}])
 	.controller('TestZtreeCtrl', ['$rootScope', '$scope', '$http', '$state', 'ztreeutil', function($rootScope, $scope, $http, $state, ztreeutil) {
