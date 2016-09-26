@@ -25,23 +25,6 @@ define(['angular', 'test/module'], function(angular) {
 	}])
 	.controller('TestFileuploadCtrl', ['$rootScope', '$scope', '$http', '$state', function($rootScope, $scope, $http, $state) {
 		var self = this;
-/*		Angular不能实时更新scope域，故不能使用
-		self.modal = {
-			open : false,
-			type : 'Success',
-			close : function() {
-				self.modal.open = false;
-			},
-			save : function(params) {
-				console.log(params);
-				self.modal.open = false;
-			}
-		};
-		self.callbackfun = function(msg) {
-			self.modal.body = msg;
-			self.modal.open = true;
-		};
-*/		
 		self.modal = {
 			header : '上传结果',
 			body : '',
@@ -104,25 +87,10 @@ define(['angular', 'test/module'], function(angular) {
 	}])
 	.controller('TestModalCtrl', ['$rootScope', '$scope', '$http', '$state', function($rootScope, $scope, $http, $state) {
 		var self = this;
-		self.modal = {
-			open : false,
-			type : 'Default',
-			msg : '你好， 世界',
-			close : function() {
-				self.modal.open = false;
-			},
-			save : function(params) {
-				console.log(params);
-				self.modal.open = false;
-			}
+		self.title = 'hello world';
+		self.confirm = function() {
+			alert('hello');
 		};
-		self.open = function() {
-			self.modal.open = true;
-		};
-		// $rootScope中有定义，可以使用默认的
-		/*self.open = function() {
-			$rootScope.modal.open = true;
-		};*/
 	}])
 	.controller('TestZtreeCtrl', ['$rootScope', '$scope', '$http', '$state', 'ztreeutil', function($rootScope, $scope, $http, $state, ztreeutil) {
 		var self = this;

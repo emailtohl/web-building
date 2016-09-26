@@ -1,168 +1,20 @@
-<div ng-show="modalModel.open" style="z-index: 1030; position: absolute; top: 0; left: 0; bottom: 0; right: 0; opacity: 0.5; background-color: black;"></div>
-
-<div ng-show="modalModel.open" style="z-index:1031; position: relative; top: 0; left: 0; bottom: 0; right: 0;">
-<style>
-  .example-modal .modal {
-    position: relative;
-    top: auto;
-    bottom: auto;
-    right: auto;
-    left: auto;
-    display: block;
-    z-index: 1;
-  }
-
-  .example-modal .modal {
-    background: transparent !important;
-  }
-</style>
-<div class="example-modal" ng-if="modalModel.type == 'Default'">
-  <div class="modal">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="modalModel.close()">
-            <span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">Default Modal</h4>
-        </div>
-        <div class="modal-body">
-          <p>{{modalModel.msg}}</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default pull-left" data-dismiss="modal" ng-click="modalModel.close()">Close</button>
-          <button type="button" class="btn btn-primary" ng-click="modalModel.save(params)">Save changes</button>
-        </div>
+<div class="modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button aria-label="Close" data-dismiss="modal" class="close" type="button">
+          <span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">{{title}}</h4>
       </div>
-      <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-  </div>
-  <!-- /.modal -->
-</div>
-<!-- /.example-modal -->
-
-<div class="example-modal" ng-if="modalModel.type == 'Primary'">
-  <div class="modal modal-primary">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="modalModel.close()">
-            <span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">Primary Modal</h4>
-        </div>
-        <div class="modal-body">
-          <p>{{modalModel.msg}}</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline pull-left" data-dismiss="modal" ng-click="modalModel.close()">Close</button>
-          <button type="button" class="btn btn-outline" ng-click="modalModel.save(params)">Save changes</button>
-        </div>
+      <div class="modal-body">
+        <p>One fine body…</p>
       </div>
-      <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-  </div>
-  <!-- /.modal -->
-</div>
-<!-- /.example-modal -->
-
-<div class="example-modal" ng-if="modalModel.type == 'Info'">
-  <div class="modal modal-info">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="modalModel.close()">
-            <span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">Info Modal</h4>
-        </div>
-        <div class="modal-body">
-          <p>{{modalModel.msg}}</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline pull-left" data-dismiss="modal" ng-click="modalModel.close()">Close</button>
-          <button type="button" class="btn btn-outline" ng-click="modalModel.save(params)">Save changes</button>
-        </div>
+      <div class="modal-footer">
+        <button data-dismiss="modal" class="btn btn-default pull-left" type="button">Close</button>
+        <button class="btn btn-primary" type="button" ng-click="confirm()">Confirm</button>
       </div>
-      <!-- /.modal-content -->
     </div>
-    <!-- /.modal-dialog -->
+    <!-- /.modal-content -->
   </div>
-  <!-- /.modal -->
-</div>
-<!-- /.example-modal -->
-
-<div class="example-modal" ng-if="modalModel.type == 'Warning'">
-  <div class="modal modal-warning">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="modalModel.close()">
-            <span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">Warning Modal</h4>
-        </div>
-        <div class="modal-body">
-          <p>{{modalModel.msg}}</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline pull-left" data-dismiss="modal" ng-click="modalModel.close()">Close</button>
-          <button type="button" class="btn btn-outline" ng-click="modalModel.save(params)">Save changes</button>
-        </div>
-      </div>
-      <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-  </div>
-  <!-- /.modal -->
-</div>
-<!-- /.example-modal -->
-
-<div class="example-modal" ng-if="modalModel.type == 'Success'">
-  <div class="modal modal-success">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="modalModel.close()">
-            <span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">Success Modal</h4>
-        </div>
-        <div class="modal-body">
-          <p>{{modalModel.msg}}</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline pull-left" data-dismiss="modal" ng-click="modalModel.close()">Close</button>
-          <button type="button" class="btn btn-outline" ng-click="modalModel.save(params)">Save changes</button>
-        </div>
-      </div>
-      <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-  </div>
-  <!-- /.modal -->
-</div>
-<!-- /.example-modal -->
-
-<div class="example-modal" ng-if="modalModel.type == 'Danger'">
-  <div class="modal modal-danger">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="modalModel.close()">
-            <span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">Danger Modal</h4>
-        </div>
-        <div class="modal-body">
-          <p>{{modalModel.msg}}</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline pull-left" data-dismiss="modal" ng-click="modalModel.close()">Close</button>
-          <button type="button" class="btn btn-outline" ng-click="modalModel.save(params)">Save changes</button>
-        </div>
-      </div>
-      <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-  </div>
-  <!-- /.modal -->
-</div>
-<!-- /.example-modal -->
+  <!-- /.modal-dialog -->
 </div>

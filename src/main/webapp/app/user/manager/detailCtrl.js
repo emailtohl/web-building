@@ -56,5 +56,12 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 			}
 			return result;
 		};
+		
+		self.edit = function() {
+			var div = $('div.modal');
+			div.modal();                      // initialized with defaults
+			div.modal({ keyboard: false });   // initialized with no keyboard
+			div.modal('show');                // initializes and invokes show immediately
+		};
 	}]);
 });
