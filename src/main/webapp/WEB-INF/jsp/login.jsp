@@ -141,10 +141,11 @@
   }
   
   $('a#forgot').on('click', function() {
-	  var email, _csrf;
+	  var email, _csrf, p;
+	  p = /^[a-z0-9`!#$%^&*'{}?/+=|_~-]+(\.[a-z0-9`!#$%^&*'{}?/+=|_~-]+)*@([a-z0-9]([a-z0-9-]*[a-z0-9])?)+(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/
 	  email = $('input[name="email"]').val();
 	  _csrf = $('input[name="_csrf"]').val();
-	  if (!email) {
+	  if (!email || email.match(p) == null) {
 		  tip('请正确填写你的邮箱地址');
 		  return false;
 	  }

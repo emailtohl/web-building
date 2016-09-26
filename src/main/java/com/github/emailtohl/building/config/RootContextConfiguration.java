@@ -12,6 +12,7 @@ import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -317,10 +318,21 @@ public class RootContextConfiguration
 	@Bean
 	public JavaMailSender mailSender() {
 		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+		mailSender.setDefaultEncoding("UTF-8");
 		mailSender.setHost(env.getProperty("mailserver.host"));
 		mailSender.setPort(Integer.valueOf(env.getProperty("mailserver.port")));
 		mailSender.setUsername(env.getProperty("mailserver.username"));
 		mailSender.setPassword(env.getProperty("mailserver.password"));
+		Properties p = new Properties();
+		p.setProperty("mail.debug", "true");
+		String proxyHost = env.getProperty("proxyHost");
+		String proxyPort = env.getProperty("proxyPort");
+		// 暂未找到通过代理发送邮件的方法
+		if (proxyHost != null && !proxyHost.isEmpty()) {
+		}
+		if (proxyPort != null && !proxyPort.isEmpty()) {
+		}
+		mailSender.setJavaMailProperties(p);
 		return mailSender;
 	}
 	
