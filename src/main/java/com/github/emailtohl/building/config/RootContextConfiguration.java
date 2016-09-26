@@ -86,7 +86,7 @@ import com.google.gson.Gson;
 @EnableAsync(mode = AdviceMode.PROXY, proxyTargetClass = false, order = Ordered.HIGHEST_PRECEDENCE)
 @Import({ DataSourceConfiguration.class, JPAConfiguration.class, SecurityConfiguration.class })
 public class RootContextConfiguration
-		implements AsyncConfigurer, SchedulingConfigurer, TransactionManagementConfigurer {
+		implements SchedulingConfigurer, AsyncConfigurer, TransactionManagementConfigurer {
 	public static final String PROFILE_DEVELPMENT = "develpment";
 	public static final String PROFILE_QA = "qa";
 	public static final String PROFILE_PRODUCTION = "production";
@@ -116,9 +116,9 @@ public class RootContextConfiguration
 	}
 	
 	/**
-	 * Spring总是使用ID为annotationDrivenTransactionManager的事务管理器，若没特别指定Bean名的话，最好实现接口
-	 * TransactionManagementConfigurer，如此在有多个事务管理器的情况下指定默认事务管理器。
-	 * 注意：如果没有实现接口TransactionManagementConfigurer，可在注解 @Transactional的value指定，否则会抛出异常。
+	 * 默认情况下，Spring总是使用ID为annotationDrivenTransactionManager的事务管理器
+	 * 若实现了TransactionManagementConfigurer接口，则可以自定义提供事务管理器
+	 * 注意：如果没有实现接口TransactionManagementConfigurer，且事务管理器的名字不是默认的annotationDrivenTransactionManager，可在注解 @Transactional的value指定。
 	 */
 	@Override
 	public PlatformTransactionManager annotationDrivenTransactionManager() {
@@ -126,9 +126,7 @@ public class RootContextConfiguration
 	}
 	
 	/**
-	 * 配置定时任务，此时还只是spring容器中管理的Bean，可在实现SchedulingConfigurer接口中的
-	 * void configureTasks(ScheduledTaskRegistrar registrar)
-	 * 方法中，使用本Bean
+	 * 向Spring容器中注册任务执行执行器
 	 */
 	@Bean
 	public ThreadPoolTaskScheduler taskScheduler() {
@@ -152,11 +150,22 @@ public class RootContextConfiguration
 		});
 		return scheduler;
 	}
+
+	/**
+	 * 配置任务执行器，所以需要实现SchedulingConfigurer接口
+	 */
+	@Override
+	public void configureTasks(ScheduledTaskRegistrar registrar) {
+		TaskScheduler scheduler = this.taskScheduler();
+		log.info("Configuring scheduled method executor {}.", scheduler);
+		registrar.setTaskScheduler(scheduler);
+	}
 	
 	/**
+	 * 配置异步执行器，所以需要实现AsyncConfigurer
 	 * 应用程序中通常使用的是JDK提供的线程，如：
 	 * ExecutorService = Executors.newCachedThreadPool();
-	 * 不过这会启动额外的资源，为了让整个应用程序启动的线程在可控范围内，可以统一使用这一个执行器
+	 * 不过这会启动额外的资源，为了让整个应用程序启动的线程在可控范围内，可以统一使用注册在Spring中的taskScheduler
 	 */
 	@Override
 	public Executor getAsyncExecutor() {
@@ -176,28 +185,16 @@ public class RootContextConfiguration
 				schedulingLogger.error("调用异步任务出错了, message : " + method, ex);
 			}};
 	}
-
-	/**
-	 * SchedulingConfigurer接口需要实现的配置
-	 */
-	@Override
-	public void configureTasks(ScheduledTaskRegistrar registrar) {
-		TaskScheduler scheduler = this.taskScheduler();
-		log.info("Configuring scheduled method executor {}.", scheduler);
-		registrar.setTaskScheduler(scheduler);
-	}
 	
 	/**
-	 * 对于Bean Validation，spring主要处理两种类型的beans：
-	 * 1. 一种是普通存放数据的对象，如POJOs、JavaBeans-like，如实体（entities）和表单（form）
-	 * 这主要校验他们的属性是否合法
+	 * Spring可以为其管理的Bean提供统一校验的功能，遵循Java EE的Bean Validation规范
+	 * 首先，在存放数据的POJOs对象（如JavaBeans-like，实体（entities）或表单（form））中注解校验的内容，
+	 * 然后在spring管理的bean中，指明哪些方法参数、哪些Field字段需要校验。
 	 * 
-	 * 2. 另一种是被spring管理的bean，如被注解上@Controllers、@Services的
-	 * 这主要校验传入他们的参数，以及返回的结果是否合法
-	 * 
-	 * 不论哪种，都需要校验器来执行，要获取校验器，就需要先创建Bean验证器工厂，并把该工厂注入到spring容器中。
-	 * LocalValidatorFactoryBean产生的校验器可同时支持javax.validation.Validator和org.springframework.validation.Validator两个接口
-	 * 而后者是前者的门面，它提供统一的报错机制，并且后者用于Spring MVC的验证中
+	 * 要让Spring具有校验能力，首先得找到校验器工厂，然后再从工厂中获取校验器
+	 * Spring自带了一个LocalValidatorFactoryBean校验器工厂
+	 * 它可同时支持javax.validation.Validator和org.springframework.validation.Validator两个接口
+	 * 前者是Java EE规范的一个校验接口，后者是前者的门面，它不仅提供统一的报错机制，还可以应用于Spring MVC的验证中。
 	 * @return
 	 */
 	@Bean
@@ -205,23 +202,14 @@ public class RootContextConfiguration
 		LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
 		/*
 		 * LocalValidatorFactoryBean会自动在classpath下搜索Bean Validation的实现
-		 * 但若在JAVA EE容器里面有多个提供者就不可预测，故还是手动设置提供类
+		 * 我们主要用的实现是HibernateValidator，但若在JAVA EE容器里面有多个提供者就不可预测，故还是手动设置提供类
 		 */
 		validator.setProviderClass(HibernateValidator.class);
 		return validator;
 	}
 	
 	/**
-	 * MethodValidationPostProcessor支持方法参数和返回值的验证，也就是前面说的第二种校验
-	 * 
-	 *	@Service
-	 *	@Validated
-	 *	public class SomeService {
-	 *	    public void someMethod(@Valid SomeForm someForm) {
-	 *	    	...
-	 *	    }
-	 *	}
-	 * 
+	 * 从校验工厂中获取到真正的校验器
 	 * MethodValidationPostProcessor会寻找标注了@org.springframework.validation.annotation.Validated
 	 * 和@javax.validation.executable.ValidateOnExecution的类，并为其创建代理
 	 */
@@ -327,10 +315,15 @@ public class RootContextConfiguration
 		p.setProperty("mail.debug", "true");
 		String proxyHost = env.getProperty("proxyHost");
 		String proxyPort = env.getProperty("proxyPort");
+		String auth = env.getProperty("mailserver.auth");
+		
 		// 暂未找到通过代理发送邮件的方法
 		if (proxyHost != null && !proxyHost.isEmpty()) {
 		}
 		if (proxyPort != null && !proxyPort.isEmpty()) {
+		}
+		if (auth != null && !auth.isEmpty()) {
+			p.setProperty("mail.smtp.auth", auth);
 		}
 		mailSender.setJavaMailProperties(p);
 		return mailSender;

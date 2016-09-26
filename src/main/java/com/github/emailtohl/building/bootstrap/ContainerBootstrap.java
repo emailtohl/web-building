@@ -1,5 +1,4 @@
 package com.github.emailtohl.building.bootstrap;
-
 import javax.servlet.FilterRegistration;
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletContext;
@@ -12,7 +11,8 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.DispatcherServlet;
-
+import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_PRODUCTION;
+import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_QA;
 import com.github.emailtohl.building.config.MvcConfiguration;
 import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.filter.PreSecurityLoggingFilter;
@@ -38,7 +38,7 @@ public class ContainerBootstrap implements WebApplicationInitializer {
 		/* 配置Spring根应用上下文 */
 		AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
 		/* 载入配置 */
-		rootContext.getEnvironment().setActiveProfiles(RootContextConfiguration.PROFILE_PRODUCTION);// 激活spring配置中的profile
+		rootContext.getEnvironment().setActiveProfiles(PROFILE_PRODUCTION, PROFILE_QA);// 激活spring配置中的profile
 		rootContext.register(RootContextConfiguration.class);
 		container.addListener(new ContextLoaderListener(rootContext));
 
@@ -56,8 +56,8 @@ public class ContainerBootstrap implements WebApplicationInitializer {
 		dispatcher.setMultipartConfig(new MultipartConfigElement(null, 20_971_520L, 41_943_040L, 512_000));
 		dispatcher.addMapping("/");
 		// 另一种激活spring配置中的profile的方式
-//		dispatcher.setInitParameter("spring.profiles.active", RootContextConfiguration.PROFILE_PRODUCTION);
-//		container.setInitParameter("spring.profiles.active", RootContextConfiguration.PROFILE_PRODUCTION);
+//		dispatcher.setInitParameter("spring.profiles.active", PROFILE_PRODUCTION);
+//		container.setInitParameter("spring.profiles.active", PROFILE_PRODUCTION);
 
 		/* 在Servlet容器中注册监听器 */
 		container.addListener(SessionListener.class);

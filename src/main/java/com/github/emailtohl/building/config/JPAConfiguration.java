@@ -39,8 +39,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement(
 		mode = AdviceMode.PROXY, proxyTargetClass = false, 
 		order = Ordered.LOWEST_PRECEDENCE)
-// 这时SpringData的注解，扫描DAO层的接口类，SpringData可为DAO中的接口生成代理
-// repositoryImplementationPostfix = "Impl" 的含义是匹配接口名后面含"Impl"的实现类，对于已实现的方法，springdata不再生成代理，而是委托给实现类
+// 这是SpringData的注解，启动后，它将扫描指定包中继承了Repository（实际业务代码中的接口是间接继承它）的接口，并为其提供代理
+// repositoryImplementationPostfix = "Impl" 扫描实现类的名字，若该类的名字为接口名+"Impl"，则认为该实现类将提供SpringData以外的功能
 @EnableJpaRepositories(basePackages = "com.github.emailtohl.building.site.dao", 
 		repositoryImplementationPostfix = "Impl", 
 		transactionManagerRef = "jpaTransactionManager", 
@@ -67,36 +67,22 @@ public class JPAConfiguration {
 	}
 
 	/**
-	 * 脱离容器环境下使用
+	 * 单元测试会脱离容器环境
 	 * @return
 	 */
-	@Profile({ PROFILE_DEVELPMENT, PROFILE_QA })
+	@Profile(PROFILE_DEVELPMENT)
 	@Bean(name = "entityManagerFactory")
-	public LocalEntityManagerFactoryBean entityManagerFactory() {
+	public LocalEntityManagerFactoryBean LocakEntityManagerFactory() {
 		LocalEntityManagerFactoryBean emfb = new LocalEntityManagerFactoryBean();
 		emfb.setPersistenceUnitName("building-unit");
 		return emfb;
 	}
 	
 	/**
-	 * @EnableTransactionManagement 启动了事务管理功能
-	 * 应该提供一个PlatformTransactionManager默认实现
-	 * 由LocalContainerEntityManagerFactoryBean构造出jpa的事务管理器
-	 * 
+	 * 生产环境中，使用容器提供的实体管理工厂，这样可以不用使用META-INFO/persistence.xml配置
 	 * @return
 	 */
-	@Profile({ PROFILE_DEVELPMENT, PROFILE_QA })
-	@Bean(name = "jpaTransactionManager")
-	@Conditional(value = Develpment_QA_ProfileCondition.class)
-	public PlatformTransactionManager development_jpaTransactionManager() {
-		return new JpaTransactionManager(entityManagerFactory().getObject());
-	}
-	
-	/**
-	 * 使用容器提供的实体管理工厂，这样可以不用使用META-INFO/persistence.xml配置
-	 * @return
-	 */
-	@Profile(PROFILE_PRODUCTION)
+	@Profile({ PROFILE_PRODUCTION, PROFILE_QA })
 	@Bean(name = "entityManagerFactory")
 	public LocalContainerEntityManagerFactoryBean containerEntityManagerFactory() {
 		LocalContainerEntityManagerFactoryBean emfb = new LocalContainerEntityManagerFactoryBean();
@@ -106,10 +92,26 @@ public class JPAConfiguration {
 		emfb.setPackagesToScan("com.github.emailtohl.building.site.entities");
 		return emfb;
 	}
-
-	@Profile(PROFILE_PRODUCTION)
+	
+	/**
+	 * @EnableTransactionManagement 启动了事务管理功能
+	 * 应该提供一个PlatformTransactionManager默认实现
+	 * 由LocalContainerEntityManagerFactoryBean构造出jpa的事务管理器
+	 * 
+	 * 编译期，由于无法判断是开发环境还是生产环境，所以需要在@Conditional作进一步判断
+	 * 
+	 * @return
+	 */
+	@Profile(PROFILE_DEVELPMENT)
+	@Conditional(value = Condition1.class)
 	@Bean(name = "jpaTransactionManager")
-	@Conditional(value = ProductionProfileCondition.class)
+	public PlatformTransactionManager development_jpaTransactionManager() {
+		return new JpaTransactionManager(LocakEntityManagerFactory().getObject());
+	}
+	
+	@Profile({ PROFILE_PRODUCTION, PROFILE_QA })
+	@Conditional(value = Condition2.class)
+	@Bean(name = "jpaTransactionManager")
 	public PlatformTransactionManager product_jpaTransactionManager() {
 		return new JpaTransactionManager(containerEntityManagerFactory().getObject());
 	}
@@ -135,12 +137,12 @@ public class JPAConfiguration {
 	 * Like ConditionContext, Annotated- TypeMetadata is an interface.
 	 * 
 	 */
-	public static class Develpment_QA_ProfileCondition implements Condition {
+	public static class Condition1 implements Condition {
 		@Override
 		public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
 			String[] profiles = context.getEnvironment().getActiveProfiles();
 			for (int i = 0; i < profiles.length; i++) {
-				if (PROFILE_QA.equalsIgnoreCase(profiles[i]) || PROFILE_DEVELPMENT.equalsIgnoreCase(profiles[i])) {
+				if (PROFILE_DEVELPMENT.equalsIgnoreCase(profiles[i])) {
 					return true;
 				}
 			}
@@ -148,12 +150,12 @@ public class JPAConfiguration {
 		}
 	}
 	
-	public static class ProductionProfileCondition implements Condition {
+	public static class Condition2 implements Condition {
 		@Override
 		public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
 			String[] profiles = context.getEnvironment().getActiveProfiles();
 			for (int i = 0; i < profiles.length; i++) {
-				if (PROFILE_PRODUCTION.equalsIgnoreCase(profiles[i])) {
+				if (PROFILE_QA.equalsIgnoreCase(profiles[i]) || PROFILE_PRODUCTION.equalsIgnoreCase(profiles[i])) {
 					return true;
 				}
 			}

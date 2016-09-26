@@ -13,7 +13,7 @@ public class SpringUtils {
 	
 	static {
 		context = new AnnotationConfigApplicationContext();
-		context.getEnvironment().setActiveProfiles(RootContextConfiguration.PROFILE_QA);
+		context.getEnvironment().setActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT);
 		context.register(RootContextConfiguration.class);
 		context.refresh();
 	}

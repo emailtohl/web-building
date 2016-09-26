@@ -1,5 +1,6 @@
 package com.github.emailtohl.building.config;
 import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_PRODUCTION;
+import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_QA;
 
 import java.io.IOException;
 
@@ -46,7 +47,7 @@ import com.github.emailtohl.building.site.service.UserPermissionEvaluator;
  * spring security 的编程风格的配置，它不仅被RootContextConfiguration导入，并且也依赖于RootContextConfiguration中的Bean
  * @author HeLei
  */
-@Profile(PROFILE_PRODUCTION)
+@Profile({ PROFILE_PRODUCTION, PROFILE_QA })
 @Configuration
 // 启动安全过滤器
 @EnableWebSecurity
@@ -55,24 +56,25 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Inject
 	@Named("dataSource")
 	DataSource dataSource;
+	
 	/**
-	 * 这是自定义AuthenticationProvider时所需要的依赖
-	 * 它来自于RootContextConfiguration扫描包时，实例化的
-	 * com.github.emailtohl.building.site.service.impl.AuthenticationServiceImpl
+	 * 自定义AuthenticationProvider，可用它来定制如何认证用户
+	 * 该实例是在RootContextConfiguration扫描包时，在
+	 * com.github.emailtohl.building.site.service.impl.AuthenticationServiceImpl中找到的
 	 */
 	@Inject
 	AuthenticationProvider authenticationProvider;
+	
 	/**
-	 * 这也是自定义AuthenticationProvider时所需要的依赖
-	 * 它同样是来自于RootContextConfiguration扫描包时，实例化的
-	 * com.github.emailtohl.building.site.service.impl.AuthenticationServiceImpl
-	 * 这个实现类同时实现了AuthenticationProvider和UserDetailsService
+	 * 自定义认证方式所需要的依赖
+	 * 它同样是在RootContextConfiguration扫描
+	 * com.github.emailtohl.building.site.service.impl.AuthenticationServiceImpl时实例化的
 	 */
 	@Inject
 	UserDetailsService userDetailsService;
 	
 	/**
-	 * 外部可以使用它，从而获取到身份信息
+	 * 为了在应用程序中获取到用户身份信息，将该作为Spring管理的Bean暴露给外界
 	 * @return SessionRegistry
 	 */
 	@Bean
@@ -83,7 +85,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	/**
 	 * 创建认证管理器：AuthenticationManager，它是spring security的核心
 	 * 在这里的配置中，可以直接告诉AuthenticationManager如何获取用户名、密码、授权
-	 * 也可以先创建一个AuthenticationProvider，然后再传递给它
+	 * 也可以自定义一个AuthenticationProvider，然后注册给它
 	 */
 	@Override
 	protected void configure(AuthenticationManagerBuilder builder) throws Exception {
@@ -104,7 +106,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.passwordEncoder(new BCryptPasswordEncoder());
 	}
 	/**
-	 * 默认忽略的路径
+	 * 告诉Spring Security需要忽略的路径
 	 */
 	@Override
 	public void configure(WebSecurity security) {
@@ -114,7 +116,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		security.ignoring().antMatchers("/download/**");
 	}
 	/**
-	 * 细化各类路径的安全配置
+	 * 配置Http安全访问规则
 	 */
 	@Override
 	protected void configure(HttpSecurity security) throws Exception {
@@ -169,11 +171,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	}
 	
 	/**
-	 * 如果是基于表单的方式提交请求，则只需要在表单中添加一个含有令牌的隐藏域即可，这里的令牌是通过服务器返回的
-	 * 如JSP中通过name="${_csrf.parameterName}" value="${_csrf.token}"获取令牌
-	 * 但如果是通过程序访问服务器，如其他REST客户程序，Angular前端应用程序访问服务器的话，则不能每次在服务器那里拿到令牌
-	 * 这时可以通过访问cookie的方式获取令牌，而CsrfHeaderFilter会将CSRF令牌保存在cookie中
-	 * 此外CsrfHeaderFilter需要在Spring security过滤链之后，这样才能访问得到CsrfToken
+	 * 这是为ajax提供csrf认证的解决方案
+	 * 
+	 * 首先看看基于表单方式是如何提供csrf令牌的，在表单中只需添加一个含有令牌的隐藏域即可，该令牌服务器动态页面提供的
+	 * 例如JSP中通过EL表达式：name="${_csrf.parameterName}" value="${_csrf.token}"获取令牌
+	 * 现在考虑如REST风格的客户程序，如Angular前端，它不能在每次提交数据时向服务器要一个令牌
+	 * 实际上Spring Security除了在表单中查询csrf令牌外，还可以在http请求头中查询cookie看是否含有csrf令牌
+	 * 所以可以配置一个过滤器，在每次返回到客户端数据时，在header的cookie中携带csrf令牌，等客户端下次访问时可以带上该令牌
+	 * OncePerRequestFilter就是这样的过滤器，它可以将CSRF令牌保存在cookie中
+	 * 注意：OncePerRequestFilter需要在Spring security过滤链之后，这样才能访问得到CsrfToken
 	 */
 	class CsrfHeaderFilter extends OncePerRequestFilter {
 		@Override
@@ -204,7 +210,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	}
 	
 	/**
-	 * 默认的WebSecurityConfigurerAdapter没有暴露AuthenticationManager Bean
+	 * 在应用程序中，有时需要访问用户的身份信息，默认的WebSecurityConfigurerAdapter没有暴露AuthenticationManager Bean
 	 * 若在应用程序中使用AuthenticationManager，则可以将其注册进spring容器中
 	 */
 	@Bean

@@ -58,7 +58,7 @@ public class DataSourceConfiguration {
 	 * @return
 	 */
 	@Profile(PROFILE_DEVELPMENT)
-	@Bean(name = "dev_dataSource")
+	@Bean(name = "test_dataSource")
 	public DataSource springTestDataSource() {
 		logger.info(env.getProperty("local.driverClassName"));
 		logger.info(env.getProperty("local.url"));
@@ -73,11 +73,11 @@ public class DataSourceConfiguration {
 	}
 	
 	/**
-	 * 开发或QA环境
+	 * 开发环境
 	 * tomcat的连接池
 	 * @return
 	 */
-	@Profile({ PROFILE_DEVELPMENT, PROFILE_QA })
+	@Profile(PROFILE_DEVELPMENT)
 	@Bean(name = "dataSource")
 	public DataSource tomcatJdbc() {
 		// 创建连接池属性对象
@@ -94,11 +94,11 @@ public class DataSourceConfiguration {
 	}
 	
 	/**
-	 * 生产环境
+	 * 生产或QA环境
 	 * 获取容器提供的数据源
 	 * @return
 	 */
-	@Profile(PROFILE_PRODUCTION)
+	@Profile({ PROFILE_PRODUCTION, PROFILE_QA })
 	@Bean(name = "dataSource")
 	public DataSource jndiDataSource() {
 		JndiDataSourceLookup lookup = new JndiDataSourceLookup();
