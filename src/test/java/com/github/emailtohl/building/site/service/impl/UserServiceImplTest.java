@@ -25,6 +25,7 @@ import com.github.emailtohl.building.bootspring.SpringUtils;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.Validator;
 import com.github.emailtohl.building.site.entities.Authority;
+import com.github.emailtohl.building.site.entities.Manager;
 import com.github.emailtohl.building.site.entities.Subsidiary;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.entities.User.Gender;
@@ -69,7 +70,7 @@ public class UserServiceImplTest {
 			User qu = userService.getUser(id);
 			assertEquals(u, qu);
 			// test update
-			User uu = new User();
+			Manager uu = new Manager();
 			uu.setAuthorities(null);
 			uu.setDescription("已修改");
 			userService.mergeUser(id, uu);

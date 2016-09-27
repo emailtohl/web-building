@@ -13,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.site.entities.Manager;
 import com.github.emailtohl.building.site.entities.User;
 
 /**
@@ -94,7 +95,7 @@ public interface UserService {
 	 * @param u中的id不能为null， u中属性不为null的值为修改项
 	 */
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER') || #u.email == authentication.principal.username")
-	void mergeUser(@Min(value = 1L) Long id, User u);
+	void mergeUser(@Min(value = 1L) Long id, Manager u/* 用最大范围接收数据 */);
 	
 	/**
 	 * 获取用户Pager

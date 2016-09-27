@@ -4,10 +4,17 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 	                         , function($scope, $http, $state, userService) {
 		var self = this;
 		$scope.getAuthentication();
+		self.form = {};// 要提交的表单数据
 		self.getDetail = function(id) {
 			userService.getUserById(id).success(function(data, status, fun, obj) {
 				console.log(data);
 				self.detail = data;
+				self.form.id = self.detail.id;
+				self.form.email = self.detail.email;
+				self.form.name = self.detail.name;
+				self.form.post = self.detail.post;
+				self.form.department = {name : self.detail.department.name};
+				self.form.description = self.detail.description;
 			})
 			.error(function(data, status, fun, obj) {
 				console.log(data);
@@ -57,11 +64,17 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 			return result;
 		};
 		
+		self.modal = {
+			open : false,
+			title : '编辑用户信息',
+			type : '',
+			whenConfirm : function() {
+				userService.update(self.form);
+				$state.go('user.detail', { id : self.form.id }, { reload : true });
+			},
+		};
 		self.edit = function() {
-			var div = $('div.modal');
-			div.modal();                      // initialized with defaults
-			div.modal({ keyboard: false });   // initialized with no keyboard
-			div.modal('show');                // initializes and invokes show immediately
+			self.modal.open = true;
 		};
 	}]);
 });

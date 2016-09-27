@@ -69,6 +69,10 @@ define([ 'common/module' ], function(common) {
 					
 					dialog.on('mousedown', function(event) {
 						// Prevent default dragging of selected content
+						var tagName = event.target.tagName.toUpperCase();
+						if ('INPUT' == tagName || 'TEXTAREA' == tagName) {
+							return;
+						}
 						event.preventDefault();
 						startX = event.pageX - x;
 						startY = event.pageY - y;

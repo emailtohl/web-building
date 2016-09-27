@@ -29,6 +29,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.entities.Authority;
+import com.github.emailtohl.building.site.entities.Manager;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserPermissionEvaluator;
@@ -116,7 +117,7 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 			}
 
 			@Override
-			public void mergeUser(Long id, User u) {
+			public void mergeUser(Long id, Manager u) {
 				logger.debug("mergeUser invoked");
 			}
 

@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.github.emailtohl.building.site.entities.Manager;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
 /**
@@ -84,21 +85,21 @@ public class UserServiceTest {
 	@Test(expected = AuthenticationCredentialsNotFoundException.class)
 	public void testMergeUser1() {
 		SecurityContextHolder.clearContext();
-		User u = new User();
+		Manager u = new Manager();
 		userService.mergeUser(1000L, u);
 	}
 	
 	@Test(expected = AccessDeniedException.class)
 	public void testMergeUser2() {
 		setBar();
-		User u = new User();
+		Manager u = new Manager();
 		userService.mergeUser(1000L, u);
 	}
 	
 	@Test
 	public void testMergeUser3() {
 		setEmailtohl();
-		User u = new User();
+		Manager u = new Manager();
 		u.setEmail("bar@test.com");
 		userService.mergeUser(1000L, u);
 	}

@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.BCryptUtil;
 import com.github.emailtohl.building.common.utils.BeanTools;
+import com.github.emailtohl.building.site.dao.DepartmentRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
+import com.github.emailtohl.building.site.entities.Department;
 import com.github.emailtohl.building.site.entities.Manager;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
@@ -32,6 +34,8 @@ public class UserServiceImpl implements UserService {
 
 	@Inject
 	UserRepository userRepository;
+	@Inject
+	DepartmentRepository departmentRepository;
 	
 	@Override
 	public Long addUser(User u) {
@@ -96,11 +100,15 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public void mergeUser(Long id, User u) {
+	public void mergeUser(Long id, Manager u) {
 		User persistStatus = userRepository.findOne(id);
 		// 是否启动，授权，不走此接口，所以在调用merge方法前，先将其设置为null
 		u.setEnabled(null);
 		u.setAuthorities(null);
+		Department d = u.getDepartment();
+		if (d != null && d.getName() != null) {
+			u.setDepartment(departmentRepository.findByName(d.getName()));
+		}
 		BeanTools.merge(persistStatus, u);
 		userRepository.save(persistStatus);
 	}
