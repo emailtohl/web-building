@@ -14,7 +14,7 @@
 - bootstrap
 - requirejs
 - angularjs
-- 其他组件：如select2,datepicker,ztree,codemirror等等
+- 其他组件：如pager,modal,select2,datepicker,ztree,codemirror等等
 
 ## 二、部署
 ### 1. 数据源
@@ -34,7 +34,7 @@
 
 ###(3) 位于src/main/resources/META-INF/persistence.xml
 执行测试用例时，由于不在容器环境中，所以使用LocalEntityManagerFactoryBean来管理实体工厂，该Bean需要读取META-INF/persistence.xml中的配置。
-> 注意，此文件之所以没有放在src/test/resources中，是因为src/test/java/目录下有许多其他共测试的Entities，为避免把数据表弄混乱，所以它仍然存放在src/main/resources/下
+> 注意，此文件之所以没有放在src/test/resources中，是因为src/test/java/目录下有许多其他供测试的Entities，为避免把数据表弄混乱，所以它仍然存放在src/main/resources/下
 
 ### 2. 创建数据库
 在src/test/java/下的com.github.emailtohl.building.initdb包中可以有两种方式让JPA提供者生成数据表，并填入初始化数据，直接执行即可，该包下的CleanTestData可以将测试数据清除。
@@ -95,6 +95,6 @@ common/service里面主要提到interceptors.js，这是一个面向切面的拦
 README仅简述了项目概况，该项目是我学习所用，如何配置和运行的都详细注释在源文件中，可在项目中查看项目运行实际情况。
 
 ## 五、 持续开发
-目前只是将框架搭建以及基础组件以及创建完毕：如对用户、授权的实体建模，基础数据访问仓库，通用工具，通用过滤器，通用组件等，前端的拦截器、分页、select2等指令也都已齐备。
+目前框架搭建以及基础组件以及创建完毕：如对用户、授权的实体建模，基础数据访问仓库，通用工具，通用过滤器，通用组件等，前端的拦截器、分页、select2等angular指令也都已齐备。
 
-目前仅添加了简单的用户管理业务代码，项目持续进行中……
+现在业务代码方面已添加了简单的用户管理功能，项目持续进行中……
