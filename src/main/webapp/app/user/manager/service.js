@@ -31,7 +31,7 @@ define([ 'user/module', 'mine' ], function(userModule) {
 				f.email = e.email;
 				f.name = e.name;
 				f.post = e.post;
-				f.department = {name : e.department.name};
+				f.department = {name : e.department ? e.department.name : ''};
 				f.description = e.description;
 				return f;
 			},
