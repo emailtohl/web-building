@@ -2,7 +2,7 @@
  * 模态框指令
  * author helei
  */
-define([ 'common/module' ], function(common) {
+define([ 'common/module', 'bootstrap' ], function(common) {
 	common.directive('modal', [ '$document', function($document) {
 		return {
 			restrict : 'A',// 只在div中使用
@@ -42,16 +42,16 @@ define([ 'common/module' ], function(common) {
 						$scope.typeModel.primary = true;
 						break;
 					case 'info':
-						$scope.typeModel.primary = true;
+						$scope.typeModel.info = true;
 						break;
 					case 'warning':
-						$scope.typeModel.primary = true;
+						$scope.typeModel.warning = true;
 						break;
 					case 'success':
-						$scope.typeModel.primary = true;
+						$scope.typeModel.success = true;
 						break;
 					case 'danger':
-						$scope.typeModel.primary = true;
+						$scope.typeModel.danger = true;
 						break;
 					default :
 						for (p in $scope.typeModel) {
