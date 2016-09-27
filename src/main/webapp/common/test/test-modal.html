@@ -14,10 +14,8 @@
 	<button ng-click="ctrl.openModal()">打开modal</button>{{ctrl.open}}
 	<!-- open是双向数据绑定，所以不能有{{}}取值，而title是单项取值，需要用{{}}取值 -->
 	<div modal open="ctrl.open" title="{{ctrl.title}}" when-confirm="ctrl.confirm()" type="{{ctrl.modalType}}">
-		<h1>hello world1</h1>
+		<h1>hello world</h1>
 	</div>
-	
-	
 	
 	<div id="dialog" title="Basic dialog">
 	  <p>This is the default dialog which is useful for displaying information. The dialog window can be moved, resized and closed with the 'x' icon.</p>

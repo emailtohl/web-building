@@ -132,8 +132,6 @@
   function tip(content) {
 	  var div = $('div.modal');
 	  div.find('#content').text(content);
-	  div.modal();                      // initialized with defaults
-	  div.modal({ keyboard: false });   // initialized with no keyboard
 	  div.modal('show');                // initializes and invokes show immediately
   }
   

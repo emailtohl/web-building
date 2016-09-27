@@ -3,18 +3,12 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 	.controller('UserDetailCtrl', ['$scope', '$http', '$state', 'userService'
 	                         , function($scope, $http, $state, userService) {
 		var self = this;
-		$scope.getAuthentication();
 		self.form = {};// 要提交的表单数据
+		$scope.getAuthentication();
 		self.getDetail = function(id) {
 			userService.getUserById(id).success(function(data, status, fun, obj) {
 				console.log(data);
 				self.detail = data;
-				self.form.id = self.detail.id;
-				self.form.email = self.detail.email;
-				self.form.name = self.detail.name;
-				self.form.post = self.detail.post;
-				self.form.department = {name : self.detail.department.name};
-				self.form.description = self.detail.description;
 			})
 			.error(function(data, status, fun, obj) {
 				console.log(data);
@@ -69,11 +63,14 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 			title : '编辑用户信息',
 			type : '',
 			whenConfirm : function() {
-				userService.update(self.form);
-				$state.go('user.detail', { id : self.form.id }, { reload : true });
+				userService.update(self.form).success(function(data) {
+//					$state.go('user.detail', { id : self.form.id }, { reload : true });
+					self.getDetail(self.form.id);
+				});
 			},
 		};
 		self.edit = function() {
+			self.form = userService.entity2form(self.detail);
 			self.modal.open = true;
 		};
 	}]);

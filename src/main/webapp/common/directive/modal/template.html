@@ -2,14 +2,14 @@
   <div class="modal-dialog" ng-class="{'modal-primary':typeModel.primary,'modal-info':typeModel.info,'modal-warning':typeModel.warning,'modal-success':typeModel.success,'modal-danger':typeModel.danger}">
     <div class="modal-content">
       <div class="modal-header">
-        <button aria-label="Close" data-dismiss="modal" class="close" type="button" ng-click="dismiss()">
+        <button aria-label="Close" data-dismiss="modal" class="close" type="button">
           <span aria-hidden="true">×</span></button>
         <h4 class="modal-title">{{title}}</h4>
       </div>
       <div class="modal-body" ng-transclude>
       </div>
       <div class="modal-footer">
-        <button data-dismiss="modal" class="btn btn-default pull-left" type="button" ng-click="dismiss()">Close</button>
+        <button data-dismiss="modal" class="btn btn-default pull-left" type="button">Close</button>
         <button class="btn btn-primary" type="button" ng-click="confirm()">Confirm</button>
       </div>
     </div>

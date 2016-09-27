@@ -16,51 +16,61 @@ define([ 'common/module', 'bootstrap' ], function(common) {
 			},
 			link : function($scope, $element, $attrs) {
 				function openModal() {
-					var startX = 0, startY = 0, x = 0, y = 0, modal, dialog;
-					modal = $element.find('div.modal');
+					var modal = $element.find('div.modal');
 					// 打开模态框
-					modal.modal();                      // initialized with defaults
-					modal.modal({ keyboard: false });   // initialized with no keyboard
+//					modal.modal();                      // initialized with defaults
+//					modal.modal({ keyboard: false });   // initialized with no keyboard
 					modal.modal('show');                // initializes and invokes show immediately
+					
+					/*
+					 * 由于点击confirm按钮后，调用$scope.$apply()会报错
+					 * 虽然对指令功能没有影响，但是会给人困扰，所以，使用一个特别的标记位
+					 * 若是点击confirm按钮关闭的模态框，则不调用$scope.$apply()
+					 */
+					var confirmBtnHasBeenClicked = false;
 					
 					// 绑定“确定”按钮的处理程序
 					$scope.confirm = function() {
+						confirmBtnHasBeenClicked = true;
 						$scope.whenConfirm();
-						$scope.open = false;
 						modal.modal('hide');
-//						$element.find('button[data-dismiss="modal"]')[0].click();
 					};
 					
-					$scope.dismiss = function() {
+					// 如果模态框被其他方式关闭，则修改open的状态
+					modal.on('hidden.bs.modal', function(e) {
 						$scope.open = false;
-					}
+						// Also tell AngularJS that it needs to update the UI
+						if (!confirmBtnHasBeenClicked)
+							$scope.$apply();
+					});
 					
-					$scope.typeModel = {};
 					// 添加class样式
+					$scope.typeModel = {};
 					switch ($scope.type) {
-					case 'primary':
-						$scope.typeModel.primary = true;
-						break;
-					case 'info':
-						$scope.typeModel.info = true;
-						break;
-					case 'warning':
-						$scope.typeModel.warning = true;
-						break;
-					case 'success':
-						$scope.typeModel.success = true;
-						break;
-					case 'danger':
-						$scope.typeModel.danger = true;
-						break;
-					default :
-						for (p in $scope.typeModel) {
-							if ($scope.typeModel.hasOwnProperty(p))
-								$scope.typeModel[p] = false;
-						}
+						case 'primary':
+							$scope.typeModel.primary = true;
+							break;
+						case 'info':
+							$scope.typeModel.info = true;
+							break;
+						case 'warning':
+							$scope.typeModel.warning = true;
+							break;
+						case 'success':
+							$scope.typeModel.success = true;
+							break;
+						case 'danger':
+							$scope.typeModel.danger = true;
+							break;
+						default :
+							for (p in $scope.typeModel) {
+								if ($scope.typeModel.hasOwnProperty(p))
+									$scope.typeModel[p] = false;
+							}
 					}
 					
 					// 下面是让模态框可以拖动
+					var startX = 0, startY = 0, x = 0, y = 0, dialog;
 					dialog = angular.element(document.getElementsByClassName('modal-dialog'));
 					dialog.css({
 						position : 'relative',
@@ -68,11 +78,12 @@ define([ 'common/module', 'bootstrap' ], function(common) {
 					});
 					
 					dialog.on('mousedown', function(event) {
-						// Prevent default dragging of selected content
 						var tagName = event.target.tagName.toUpperCase();
+						// 如果点击模态框中的输入框，则不作拖动
 						if ('INPUT' == tagName || 'TEXTAREA' == tagName) {
 							return;
 						}
+						// Prevent default dragging of selected content
 						event.preventDefault();
 						startX = event.pageX - x;
 						startY = event.pageY - y;
@@ -101,6 +112,7 @@ define([ 'common/module', 'bootstrap' ], function(common) {
 					if (newVal)
 						openModal();
 				});
+	
 			}
 		};
 	} ]);
