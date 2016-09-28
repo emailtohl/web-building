@@ -49,7 +49,7 @@ define([ 'common/module' ], function(commonModule) {
 		return {
 			response : function(response) {
 				// 当spring security拦截后，会将默认页面返回，这个页面带有<!DOCTYPE html>，所以根据这个标记进行识别
-				if (typeof response.data == 'string' && response.data.indexOf('<!DOCTYPE html>') > -1) {
+				if (typeof response.data == 'string' && (response.data.indexOf('<!DOCTYPE html>') > -1 || response.data.match(/session.+expired/i))) {
 					location.replace('login');
 				}
 				return response || $q.when(response);

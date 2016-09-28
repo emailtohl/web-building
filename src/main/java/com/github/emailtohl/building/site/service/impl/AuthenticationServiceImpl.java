@@ -133,7 +133,13 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 		List<User> src = p.getContent();
 		List<User> nl = new ArrayList<User>();
 
-		Set<String> roles = getGrantedAuthoritySet(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
+		Set<String> roles;
+		Authentication a = SecurityContextHolder.getContext().getAuthentication();
+		if (a != null) {
+			roles = getGrantedAuthoritySet(a.getAuthorities());
+		} else {
+			roles = new HashSet<String>();
+		}
 		// 如果是管理员的情况
 		if (roles.contains("ADMIN")) {
 			for (User u : src) {

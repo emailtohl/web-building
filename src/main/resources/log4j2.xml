@@ -12,7 +12,7 @@
 		</root>
 		<logger name="org.apache" level="info" />
 		<logger name="org.springframework" level="info" />
-		<logger name="org.springframework.security.web.authentication" level="debug" />
+		<!-- <logger name="org.springframework.security.web.authentication" level="debug" /> -->
 		<logger name="com.github.emailtohl.building" level="info" />
 	</loggers>
 </configuration>  

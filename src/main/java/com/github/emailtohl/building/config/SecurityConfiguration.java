@@ -159,9 +159,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 					.logoutSuccessUrl("/login?loggedOut").invalidateHttpSession(true)
 					.deleteCookies("JSESSIONID").permitAll()
-				// session管理，例如登录后切换sessionid，只允许一个人一处登录
+				// session管理，例如登录后切换sessionid，只允许一个人一处登录，控制用户同时登录等功能
 				.and().sessionManagement()
-					.sessionFixation().changeSessionId().maximumSessions(1).maxSessionsPreventsLogin(true)
+				// 要启用并发控制,还必须配置一个特殊的Spring Security HttpListener发布HttpSession-related事件
+				// 这允许Spring Security注册表建立一个会话它可以用来检测并发会话，见SecurityBootstrap.java
+				// maxSessionsPreventsLogin设置为true时，不允许用户在第二个地方同时登录，默认为false：如果用户在第二个地方登录则将前一会话置为失效
+				// 请注意,如果设置为true,没有明确的用户注销(例如刚刚关闭了浏览器)将无法再次登录,直到他们最初的会话到期
+					.sessionFixation().changeSessionId().maximumSessions(1)/*.maxSessionsPreventsLogin(true)*/
 					.sessionRegistry(sessionRegistryImpl())
 				.and().and().csrf()/*.disable()*/.csrfTokenRepository(csrfTokenRepository())
 				.and().addFilterAfter(new CsrfHeaderFilter(), CsrfFilter.class)
