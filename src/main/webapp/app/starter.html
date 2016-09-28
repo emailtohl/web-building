@@ -55,7 +55,10 @@ desired effect
 |               | sidebar-mini                            |
 |---------------------------------------------------------|
 -->
-<body class="hold-transition skin-blue sidebar-mini">
+<body class="hold-transition skin-blue sidebar-mini" ng-class="{'box' : overlay}">
+<div class="overlay" ng-show="overlay">
+    <i class="fa fa-refresh fa-spin"></i>
+   </div>
 <div class="wrapper">
 
   <!-- Main Header -->

@@ -45,6 +45,25 @@ define([ 'common/module' ], function(commonModule) {
 			}
 		};
 	} ])
+	.factory('OverlayInterceptor', [ '$rootScope', '$q', function($rootScope, $q) {
+		return {
+			request : function(config) {
+				$rootScope.overlay = true;
+				return config;
+			},
+			requestError : function(rejection) {
+				return $q.reject(rejection);
+			},
+			response : function(response) {
+				$rootScope.overlay = false;
+				return response || $q.when(response);
+			},
+			responseError : function(rejection) {
+				$rootScope.overlay = false;
+				return $q.reject(rejection);
+			}
+		};
+	} ])
 	.factory('ErrorInterceptor', [ '$q', function($q) {
 		return {
 			response : function(response) {
@@ -108,6 +127,7 @@ define([ 'common/module' ], function(commonModule) {
 	} ])
 	.config([ '$httpProvider', function($httpProvider) {
 		$httpProvider.interceptors.push('LoggingInterceptor');
+		$httpProvider.interceptors.push('OverlayInterceptor');
 		$httpProvider.interceptors.push('ErrorInterceptor');
 		$httpProvider.interceptors.push('csrfTokenInterceptor');
 		$httpProvider.interceptors.push('pagerInterceptor');
