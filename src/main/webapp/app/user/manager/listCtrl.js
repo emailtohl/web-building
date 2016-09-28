@@ -3,6 +3,7 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 	.controller('UserListCtrl', ['$scope', '$http', '$state', 'userService'
 	                         , function($scope, $http, $state, userService) {
 		var self = this;
+		$scope.getAuthentication();
 		self.params = {
 			page : 1,
 			size : 20,
@@ -24,7 +25,13 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 			self.params.page = pageNumber;
 			self.query();
 		};
-		self.query();
 		
+		self['delete'] = function(id) {
+			userService['delete'](id).success(function(data) {
+				self.query();
+			});
+		};
+		
+		self.query();
 	}]);
 });
