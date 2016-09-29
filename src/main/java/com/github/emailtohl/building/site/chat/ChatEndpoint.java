@@ -66,13 +66,17 @@ public class ChatEndpoint {
 	}
 
 	@OnClose
-	public void onClose(CloseReason reason) throws IOException {
+	public void onClose(CloseReason reason) {
 		String str = "goodbye username: " + username + "  reason: " + reason.getReasonPhrase();
 		for (Session s : map.values()) {
 			if (s.equals(session)) {
 				continue;
 			}
-			s.getBasicRemote().sendText(str);
+			try {
+				s.getBasicRemote().sendText(str);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		map.remove(session.getId());
 	}
