@@ -1,19 +1,32 @@
 package com.github.emailtohl.building.common;
 
-import static org.junit.Assert.*;
+import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_DEVELPMENT;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.hibernate.Session;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.github.emailtohl.building.bootspring.SpringUtils;
+import com.github.emailtohl.building.config.RootContextConfiguration;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = RootContextConfiguration.class)
+@ActiveProfiles({ PROFILE_DEVELPMENT })
 public class HibernateSessionFactoryTest {
 
+	@Inject
+	HibernateSessionFactory f;
+	
 	@Test
 	public void testGetSession() {
-		HibernateSessionFactory f = SpringUtils.context.getBean(HibernateSessionFactory.class);
 		Session s = f.getSession();
 		s.beginTransaction();
 		@SuppressWarnings("rawtypes")

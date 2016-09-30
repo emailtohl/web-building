@@ -1,7 +1,6 @@
 package com.github.emailtohl.building.site.service.security;
 
 import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_DEVELPMENT;
-import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_QA;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -29,7 +28,7 @@ import com.github.emailtohl.building.site.service.UserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SecurityTestConfig.class)
-@ActiveProfiles({ PROFILE_DEVELPMENT, PROFILE_QA })
+@ActiveProfiles({ PROFILE_DEVELPMENT })
 public class AuthenticationServiceTest {
 	@Inject
 	UserService userService;
