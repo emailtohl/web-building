@@ -27,6 +27,7 @@ public class HibernateSessionFactoryTest {
 		
 		s = f.getSession();
 		assertTrue(s.isOpen());
+		f.closeSession();
 	}
 
 }

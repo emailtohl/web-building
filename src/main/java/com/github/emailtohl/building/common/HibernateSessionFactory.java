@@ -39,7 +39,7 @@ public class HibernateSessionFactory {
 		}
 	}
 
-	public org.hibernate.SessionFactory getSessionFactory() {
+	public SessionFactory getSessionFactory() {
 		return sessionFactory;
 	}
 }
