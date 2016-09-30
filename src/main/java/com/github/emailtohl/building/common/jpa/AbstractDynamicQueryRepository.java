@@ -58,6 +58,11 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 	protected final short aliasIndex = 13;
 	protected final short predicateIndex = 19;
 	protected final short entityNameIndex = 9;
+	
+	/**
+	 * 查询字符串时，是否用LIKE模糊查询
+	 */
+	private boolean isFuzzy = true;
 
 	protected AbstractDynamicQueryRepository() {
 		super();
@@ -65,6 +70,10 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 
 	protected AbstractDynamicQueryRepository(Class<E> entityClass) {
 		super(Long.class, entityClass);
+	}
+
+	public void setFuzzy(boolean isFuzzy) {
+		this.isFuzzy = isFuzzy;
 	}
 
 	/**
@@ -262,14 +271,14 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 						if (first) {
 							jpql.append(" WHERE ");
 							first = false;
-							if (value instanceof String) {
+							if (value instanceof String && isFuzzy) {
 								jpql.append(prefix).append('.').append(name).append(" LIKE ?").append(position);
 							} else {
 								jpql.append(prefix).append('.').append(name).append(" = ?").append(position);
 							}
 						} else {
 							jpql.append(" AND ");
-							if (value instanceof String) {
+							if (value instanceof String && isFuzzy) {
 								jpql.append(prefix).append('.').append(name).append(" LIKE ?").append(position);
 							} else {
 								jpql.append(prefix).append('.').append(name).append(" = ?").append(position);
@@ -368,14 +377,14 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 							if (first) {
 								jpql.append(" WHERE ");
 								first = false;
-								if (value instanceof String) {
+								if (value instanceof String && isFuzzy) {
 									jpql.append(prefix).append('.').append(name).append(" LIKE ?").append(position);
 								} else {
 									jpql.append(prefix).append('.').append(name).append(" = ?").append(position);
 								}
 							} else {
 								jpql.append(" AND ");
-								if (value instanceof String) {
+								if (value instanceof String && isFuzzy) {
 									jpql.append(prefix).append('.').append(name).append(" LIKE ?").append(position);
 								} else {
 									jpql.append(prefix).append('.').append(name).append(" = ?").append(position);
