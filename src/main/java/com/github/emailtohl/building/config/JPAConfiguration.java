@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.DataSource;
 
+import org.hibernate.SessionFactory;
 import org.hibernate.dialect.PostgreSQL95Dialect;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
@@ -166,17 +167,18 @@ public class JPAConfiguration {
 	}
 	
 	/**
-	 * 可以从LocalSessionFactoryBuilder中获取Hibernate的SessionFactory
+	 * 获取Hibernate的SessionFactory
 	 * @return
 	 */
 	@Bean
-	public LocalSessionFactoryBuilder LocalSessionFactoryBuilder() {
+	public SessionFactory sessionFactory() {
 		LocalSessionFactoryBuilder builder = new LocalSessionFactoryBuilder(dataSource);
 		builder.scanPackages("com.github.emailtohl.building.site.entities");
 		builder.setProperty("hibernate.dialect", PostgreSQL95Dialect.class.getCanonicalName());
 		builder.setProperty("hibernate.hbm2ddl.auto", "update");
 		builder.setProperty("hibernate.search.default.directory_provider", "filesystem");
 		builder.setProperty("hibernate.search.default.indexBase", "../searchIndexes");
-		return builder;
+		return builder.buildSessionFactory();
 	}
+	
 }
