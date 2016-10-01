@@ -185,7 +185,7 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 	public void grantedAuthority(Long id, Set<Authority> authorities) {
 		Set<String> roles = getGrantedAuthoritySet(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
 		// 注册时的情况
-		if (roles.isEmpty() && authorities.contains(ADMIN) || authorities.contains(MANAGER) || authorities.contains(EMPLOYEE)) {
+		if (roles.isEmpty() && !(authorities.contains(ADMIN) || authorities.contains(MANAGER) || authorities.contains(EMPLOYEE))) {
 			throw new AccessDeniedException("没有权限提权");
 		}
 		if (!roles.contains("ADMIN") && authorities.contains(ADMIN)) {

@@ -39,6 +39,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.exception.ResourceNotFoundException;
+import com.github.emailtohl.building.site.controller.form.UserForm;
 import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.mail.EmailService;
@@ -89,7 +90,7 @@ public class AuthenticationCtrl {
 	 * @throws UnsupportedEncodingException 
 	 */
 	@RequestMapping(value = "register", method = RequestMethod.POST, produces = {"text/html;charset=UTF-8"})
-	public String register(HttpServletRequest requet, @Valid User u, org.springframework.validation.Errors e) {
+	public String register(HttpServletRequest requet, @Valid UserForm u, org.springframework.validation.Errors e) {
 		// 第一步，判断提交表单是否有效
 		if (e.hasErrors()) {
 			StringBuilder s = new StringBuilder();
@@ -227,7 +228,7 @@ public class AuthenticationCtrl {
 	@RequestMapping(value = "authentication/page", method = GET)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	public Pager<User> getPageByAuthorities(@ModelAttribute User u, @PageableDefault(sort = "id=desc") Pageable pageable) {
+	public Pager<User> getPageByAuthorities(@ModelAttribute UserForm u, @PageableDefault(sort = "id=desc") Pageable pageable) {
 		return authenticationService.getPageByAuthorities(u, pageable);
 	}
 	

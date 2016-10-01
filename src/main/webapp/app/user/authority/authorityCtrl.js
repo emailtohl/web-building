@@ -26,11 +26,15 @@ define(['user/module'], function(userModule) {
 			self.params.authorities.length = 0;
 		};
 		
+		self.modal = {
+			success : {open : false},
+			fail : {open : false},
+		};
 		self.onChange = function(id, value) {
 			authorityService.authorize(id, value).then(function(respose) {
-				alert('修改成功');
+				self.modal.success.open = true;
 			}, function(respose) {
-				alert('修改失败');
+				self.modal.fail.open = true;
 			});
 		};
 	}]);

@@ -33,7 +33,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.exception.ResourceNotFoundException;
-import com.github.emailtohl.building.site.entities.Manager;
+import com.github.emailtohl.building.site.controller.form.UserForm;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
 import com.google.gson.Gson;
@@ -135,7 +135,7 @@ public class UserCtrl {
 	@RequestMapping(value = "pager", method = GET)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	public Pager<User> getUserPager(@ModelAttribute User u, @PageableDefault(sort = "id=desc") Pageable pageable) {
+	public Pager<User> getUserPager(@ModelAttribute UserForm u, @PageableDefault(sort = "id=desc") Pageable pageable) {
 		return userService.getUserPager(u, pageable);
 	}
 	
@@ -147,7 +147,7 @@ public class UserCtrl {
 	 * @return
 	 */
 	@RequestMapping(value = "", method = POST)
-	public ResponseEntity<?> addUser(@RequestBody @Valid User u, Errors e) {
+	public ResponseEntity<?> addUser(@RequestBody @Valid UserForm u, Errors e) {
 		if (e.hasErrors()) {
 			for (ObjectError oe : e.getAllErrors()) {
 				logger.info(oe);
@@ -168,7 +168,7 @@ public class UserCtrl {
 	 * @param user
 	 */
 	@RequestMapping(value = "{id}", method = PUT)
-	public ResponseEntity<Void> update(@PathVariable("id") @Min(1L) long id, @Valid @RequestBody Manager user/* 用最大范围来接收表单数据 */, Errors e) {
+	public ResponseEntity<Void> update(@PathVariable("id") @Min(1L) long id, @Valid @RequestBody UserForm user/* 用最大范围来接收表单数据 */, Errors e) {
 		if (e.hasErrors()) {
 			for (ObjectError oe : e.getAllErrors()) {
 				logger.info(oe);
