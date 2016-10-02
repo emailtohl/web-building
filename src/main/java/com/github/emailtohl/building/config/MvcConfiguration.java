@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
@@ -26,6 +27,7 @@ import org.springframework.web.servlet.view.JstlView;
 // enabling conversion of Pageables and Sorts from request parameters
 @EnableSpringDataWebSupport
 @ComponentScan(basePackages = "com.github.emailtohl.building.site.controller", useDefaultFilters = false, includeFilters = @ComponentScan.Filter(Controller.class))
+@Import({ WebsocketConfiguration.class })
 public class MvcConfiguration extends WebMvcConfigurerAdapter {
 
 	/**
