@@ -39,6 +39,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.validator.HibernateValidator;
 import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -84,6 +87,7 @@ import com.google.gson.Gson;
 		Controller.class, Configuration.class }))
 // 代理功能时，如事务，安全等，proxyTargetClass = false 表示使用Java的动态代理
 @EnableAsync(mode = AdviceMode.PROXY, proxyTargetClass = false, order = Ordered.HIGHEST_PRECEDENCE)
+@EnableCaching// 开启缓存功能
 @Import({ DataSourceConfiguration.class, JPAConfiguration.class, SecurityConfiguration.class })
 public class RootContextConfiguration
 		implements SchedulingConfigurer, AsyncConfigurer, TransactionManagementConfigurer {
@@ -218,6 +222,15 @@ public class RootContextConfiguration
 		MethodValidationPostProcessor processor = new MethodValidationPostProcessor();
 		processor.setValidator(this.localValidatorFactoryBean());
 		return processor;
+	}
+	
+	/**
+	 * 简单的缓存管理器的实现
+	 * @return
+	 */
+	@Bean
+	public CacheManager cacheManager() {
+		return new ConcurrentMapCacheManager();
 	}
 	
 	@Bean
