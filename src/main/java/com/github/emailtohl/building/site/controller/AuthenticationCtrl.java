@@ -20,6 +20,7 @@ import javax.validation.constraints.Min;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -102,8 +103,10 @@ public class AuthenticationCtrl {
 			return "redirect:register?error=" + encode(s.toString());
 		}
 		try {
+			User entity = new User();
+			BeanUtils.copyProperties(u, entity);
 			// 第二步，添加该用户，若报运行时异常，则抛出，告诉用户该账号不能注册
-			long id = userService.addUser(u);
+			long id = userService.addUser(entity);
 			// 第三步，邮件通知用户，让其激活该账号
 			String url = requet.getScheme() + "://" + requet.getServerName() + ":" + requet.getServerPort() + requet.getContextPath() + "/enable?id=" + id;
 			emailService.enableUser(url, u.getEmail());
