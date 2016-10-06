@@ -12,6 +12,7 @@ import javax.validation.constraints.Min;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
@@ -154,12 +155,14 @@ public class UserCtrl {
 			}
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
-		Long id = userService.addUser(u);
+		User entity = new User();
+		BeanUtils.copyProperties(u, entity);
+		Long id = userService.addUser(entity);
 		String uri = ServletUriComponentsBuilder.fromCurrentServletMapping().path("/user/{id}")
 				.buildAndExpand(id).toString();
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Location", uri);
-		return new ResponseEntity<>(u, headers, HttpStatus.CREATED);
+		return new ResponseEntity<>(entity, headers, HttpStatus.CREATED);
 	}
 	
 	/**
