@@ -18,11 +18,11 @@
       </div>
       <!-- /.box-header -->
       <!-- form start -->
-      <form role="form" novalidate name="formName" upload upload-to="FileUploadServer" when-done="ctrl.callbackfun(msg)">
+      <form role="form" novalidate name="formName" upload upload-to="fileUploadServer/test" when-done="ctrl.callbackfun(msg)">
         <div class="box-body">
           <div class="form-group">
-            <label for="exampleInputText1">用户名</label>
-            <input type="text" class="form-control" placeholder="用户名" name="personname" ng-model="ctrl.form.personname" required>
+            <label for="exampleInputText1">邮箱</label>
+            <input type="email" class="form-control" placeholder="用户邮箱" name="email" ng-model="ctrl.form.email" required>
           </div>
           <div class="form-group">
             <label for="exampleInputAge1">用户年龄</label>
@@ -61,7 +61,9 @@
       <p>ctrl.fileInvalid() :{{ctrl.fileInvalid()}} </p>
       <p>&& {{formName.$invalid && ctrl.fileInvalid()}} </p>
       <p>modal: {{ctrl.modal}}  </p>
-      <modal modal-model="ctrl.modal"></modal>
+      <div modal open="ctrl.modal.open" title="结果" when-confirm="" type="success">
+		<p>{{ctrl.modal.content}}</p>
+	  </div>
     </div>
     <!-- /.box -->
   </div>

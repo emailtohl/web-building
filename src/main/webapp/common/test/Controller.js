@@ -23,28 +23,6 @@ define(['angular', 'test/module'], function(angular) {
 			console.log('select值改为：' + value);
 		};
 	}])
-	.controller('TestFileuploadCtrl', ['$rootScope', '$scope', '$http', '$state', function($rootScope, $scope, $http, $state) {
-		var self = this;
-		self.modal = {
-			header : '上传结果',
-			body : '',
-		};
-		self.action = function() {
-			$('.modal').modal('hide');
-		}
-		self.callbackfun = function(msg) {
-			self.modal.body = msg;
-			angular.element(document.getElementById('myModal')).scope().$digest();
-			$('.modal').modal('show');
-		};
-		self.fileInvalid = function() {
-			var file1, file2;
-			file1 = $('#exampleInputFile1').val();
-			file2 = $('#exampleInputFile2').val();
-			return file1 && file2 ? false : true;
-		}
-		self.langList = ["ActionScript", "AppleScript", "Asp", "BASIC", "C", "C++", "Clojure", "COBOL", "ColdFusion", "Erlang", "Fortran", "Groovy", "Haskell", "Java", "JavaScript", "Lisp", "Perl", "PHP", "Python", "Ruby", "Scala", "Scheme"];
-	}])
 	.controller('TestPagerCtrl', ['$scope', '$http', '$state', function($scope, $http, $state) {
 		var self = this;
 		var buttonCount = 5, pageSize = 20;
@@ -95,6 +73,25 @@ define(['angular', 'test/module'], function(angular) {
 		self.confirm = function() {
 			alert('确认后关闭模态框');
 		};
+	}])
+	.controller('TestFileuploadCtrl', ['$rootScope', '$scope', '$http', '$state', function($rootScope, $scope, $http, $state) {
+		var self = this;
+		self.fileInvalid = function() {
+			var file1, file2;
+			file1 = $('#exampleInputFile1').val();
+			file2 = $('#exampleInputFile2').val();
+			return file1 && file2 ? false : true;
+		}
+		self.langList = ["ActionScript", "AppleScript", "Asp", "BASIC", "C", "C++", "Clojure", "COBOL", "ColdFusion", "Erlang", "Fortran", "Groovy", "Haskell", "Java", "JavaScript", "Lisp", "Perl", "PHP", "Python", "Ruby", "Scala", "Scheme"];
+		self.modal = {
+			open : false,
+			content : ''
+		};
+		self.callbackfun = function(result) {
+			self.modal.content = result;
+			self.modal.open = true;
+			$scope.$apply();
+		}
 	}])
 	.controller('TestZtreeCtrl', ['$rootScope', '$scope', '$http', '$state', 'ztreeutil', function($rootScope, $scope, $http, $state, ztreeutil) {
 		var self = this;

@@ -5,6 +5,18 @@
  */
 define([ 'common/module', 'common/service/util' ], function(commonModule) {
 	commonModule.directive('upload', [ 'util', function(util) {
+		/**
+		 * 在请求中添加csrf令牌
+		 * 有的是在请求表单数据中添加，有的是在cookie或其他请求头中添加，或者令牌名都有所不同
+		 * 根据后台识别的方式进行添加
+		 */
+		function csrf(xhr) {
+			var token = util.getCookie('XSRF-TOKEN');
+			if (token) {
+				xhr.setRequestHeader('X-XSRF-TOKEN', token);
+			}
+		}
+		
 		return {
 			restrict : 'EA',
 			scope : {
@@ -15,7 +27,8 @@ define([ 'common/module', 'common/service/util' ], function(commonModule) {
 				$element.find('[type="submit"]').on('click', function(event) {
 					event.preventDefault();
 					var element = $element.get(0);
-					var formData = util.getFormData(element);
+//					var formData = util.getFormData(element);
+					var formData = new FormData(element);
 					var xhr = new XMLHttpRequest();
 					// 一般来说，xhr.onprogress监控的是下载时的进度
 					// xhr.upload.onprogress监控的是上传进度
@@ -46,6 +59,7 @@ define([ 'common/module', 'common/service/util' ], function(commonModule) {
 							callback(xhr); // 调用回调函数
 						}
 					};
+					csrf(xhr);
 					xhr.send(formData);
 					/*
 					 * <form upload when-done="ctrl.callbackfun(msg)">
