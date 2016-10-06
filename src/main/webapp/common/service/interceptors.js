@@ -66,7 +66,7 @@ define([ 'common/module' ], function(commonModule) {
 			}
 		};
 	} ])
-	.factory('ErrorInterceptor', [ '$q', function($q) {
+	.factory('ErrorInterceptor', [ '$rootScope', '$q', function($rootScope, $q) {
 		return {
 			response : function(response) {
 				// 当spring security拦截后，会将默认页面返回，这个页面带有<!DOCTYPE html>，所以根据这个标记进行识别
@@ -79,7 +79,10 @@ define([ 'common/module' ], function(commonModule) {
 				if (rejection.status === 403) {
 					location.replace('login');
 				} else {
-					alert('status: ' + rejection.status + ' , statusText: ' + rejection.statusText);
+					$rootScope.errorModal.open = true;
+					$rootScope.errorModal.content = 'status: ' + rejection.status + ' , statusText: ' + rejection.statusText;
+					$rootScope.$apply();
+					//alert('status: ' + rejection.status + ' , statusText: ' + rejection.statusText);
 				}
 				return $q.reject(rejection);
 			}
