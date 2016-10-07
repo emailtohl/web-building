@@ -24,8 +24,8 @@ import org.springframework.data.domain.PageRequest;
 import com.github.emailtohl.building.bootspring.SpringUtils;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.Validator;
+import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.Authority;
-import com.github.emailtohl.building.site.entities.Manager;
 import com.github.emailtohl.building.site.entities.Subsidiary;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.entities.User.Gender;
@@ -34,12 +34,12 @@ import com.github.emailtohl.building.site.service.UserService;
 public class UserServiceImplTest {
 	static final Logger logger = LogManager.getLogger();
 	UserService userService;
-	User u;
+	UserDto u;
 	
 	@Before
 	public void setUp() {
 		userService = SpringUtils.context.getBean(UserService.class);
-		u = new User();
+		u = new UserDto();
 		u.setAddress("四川路");
 		u.setAge(20);
 		u.setAuthorities(new HashSet<Authority>(Arrays.asList(Authority.EMPLOYEE, Authority.ADMIN)));
@@ -67,10 +67,10 @@ public class UserServiceImplTest {
 		try {
 			assertNotNull(id);
 			// test query
-			User qu = userService.getUser(id);
+			UserDto qu = userService.getUser(id);
 			assertEquals(u, qu);
 			// test update
-			Manager uu = new Manager();
+			UserDto uu = new UserDto();
 			uu.setAuthorities(null);
 			uu.setDescription("已修改");
 			userService.mergeUser(id, uu);
@@ -96,19 +96,19 @@ public class UserServiceImplTest {
 
 	@Test
 	public void testGetUserPager() {
-		User u = new User();
+		UserDto u = new UserDto();
 		u.setEmail("foo@test.com");
 		// 查询页从第0页开始
-		Pager<User> p = userService.getUserPager(u, new PageRequest(0, 20));
+		Pager<UserDto> p = userService.getUserPager(u, new PageRequest(0, 20));
 		assertTrue(p.getContent().size() > 0);
 	}
 	
 	@Test
 	public void testGetUserPage() {
-		User u = new User();
+		UserDto u = new UserDto();
 		u.setEmail("foo@test.com");
 		// 查询页从第0页开始
-		Page<User> p = userService.getUserPage(u, new PageRequest(0, 20));
+		Page<UserDto> p = userService.getUserPage(u, new PageRequest(0, 20));
 		assertTrue(p.getContent().size() > 0);
 	}
 	

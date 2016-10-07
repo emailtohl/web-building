@@ -21,11 +21,13 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.Authority;
-import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
-
+/**
+ * @author HeLei
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SecurityTestConfig.class)
 @ActiveProfiles({ PROFILE_DEVELPMENT })
@@ -40,21 +42,21 @@ public class AuthenticationServiceTest {
 	@Test(expected = AuthenticationCredentialsNotFoundException.class)
 	public void testGetPageByAuthorities1() {
 		SecurityContextHolder.clearContext();
-		User u = new User();
+		UserDto u = new UserDto();
 		authenticationService.getPageByAuthorities(u, new PageRequest(0, 20));
 	}
 
 	@Test(expected = AccessDeniedException.class)
 	public void testGetPageByAuthorities2() {
 		setBar();
-		User u = new User();
+		UserDto u = new UserDto();
 		authenticationService.getPageByAuthorities(u, new PageRequest(0, 20));
 	}
 
 	@Test
 	public void testGetPageByAuthorities3() {
 		setEmailtohl();
-		User u = new User();
+		UserDto u = new UserDto();
 		u.setEmail("bar@test.com");
 		authenticationService.getPageByAuthorities(u, new PageRequest(0, 20));
 	}

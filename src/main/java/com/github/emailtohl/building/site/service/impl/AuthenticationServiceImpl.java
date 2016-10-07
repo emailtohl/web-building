@@ -36,6 +36,7 @@ import com.github.emailtohl.building.common.Constant;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.BCryptUtil;
 import com.github.emailtohl.building.site.dao.UserRepository;
+import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.mail.EmailService;
@@ -128,10 +129,10 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 	 * 查询用户权限，根据用户权限过滤信息
 	 */
 	@Override
-	public Pager<User> getPageByAuthorities(User user, Pageable pageable) {
+	public Pager<UserDto> getPageByAuthorities(UserDto user, Pageable pageable) {
 		Pager<User> p = userRepository.getPageByAuthorities(user, pageable);
 		List<User> src = p.getContent();
-		List<User> nl = new ArrayList<User>();
+		List<UserDto> dest = new ArrayList<UserDto>();
 
 		Set<String> roles;
 		Authentication a = SecurityContextHolder.getContext().getAuthentication();
@@ -143,12 +144,11 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 		// 如果是管理员的情况
 		if (roles.contains("ADMIN")) {
 			for (User u : src) {
-				User target = new User();
+				UserDto target = new UserDto();
 				BeanUtils.copyProperties(u, target, "password", "icon", "subsidiary", "iconSrc");
-				nl.add(target);
+				dest.add(target);
 			}
-			p.setContent(nl);
-			return p;
+			return new Pager<UserDto>(dest, p.getTotalElements(), p.getPageSize());
 		}
 		// 如果是经理的情况
 		if (roles.contains("MANAGER")) {
@@ -157,24 +157,22 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 				if (u.getAuthorities().contains(Authority.ADMIN)) {
 					continue;
 				}
-				User target = new User();
+				UserDto target = new UserDto();
 				BeanUtils.copyProperties(u, target, "password", "icon", "subsidiary", "iconSrc");
-				nl.add(target);
+				dest.add(target);
 			}
-			p.setContent(nl);
-			return p;
+			return new Pager<UserDto>(dest, p.getTotalElements(), p.getPageSize());
 		} else {// 其他情况
 			for (User u : src) {
 				// 过滤管理员的信息
 				if (u.getAuthorities().contains(Authority.ADMIN) || u.getAuthorities().contains(Authority.MANAGER)) {
 					continue;
 				}
-				User target = new User();
+				UserDto target = new UserDto();
 				BeanUtils.copyProperties(u, target, "password", "icon", "subsidiary", "iconSrc");
-				nl.add(target);
+				dest.add(target);
 			}
-			p.setContent(nl);
-			return p;
+			return new Pager<UserDto>(dest, p.getTotalElements(), p.getPageSize());
 		}
 	}
 	

@@ -1,17 +1,24 @@
 package com.github.emailtohl.building.site.controller;
 
-import static com.github.emailtohl.building.initdb.PersistenceData.*;
+import static com.github.emailtohl.building.initdb.PersistenceData.foo;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+
 import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.stubbing.Answer;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -22,18 +29,21 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.github.emailtohl.building.common.jpa.Pager;
-import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.service.UserService;
 import com.google.gson.Gson;
 
 public class UserCtrlTest {
 	Gson gson = new Gson();
 	MockMvc mockMvc;
-	MockHttpServletRequest request = new MockHttpServletRequest();  
-    MockHttpServletResponse response = new MockHttpServletResponse(); 
+	MockHttpServletRequest request = new MockHttpServletRequest();
+    MockHttpServletResponse response = new MockHttpServletResponse();
+    UserDto fooDto = new UserDto();
 	
 	@Before
 	public void setUp() {
+		BeanUtils.copyProperties(fooDto, fooDto);
+		
 		UserService userService = mock(UserService.class);
 		/*Answer<Object> answer = new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -46,18 +56,18 @@ public class UserCtrlTest {
 			return "called with arguments: " + args;
 		};
 
-		when(userService.addUser(foo)).thenReturn(100L);
+		when(userService.addUser(fooDto)).thenReturn(100L);
 		doAnswer(answer).when(userService).enableUser(100L);
 		doAnswer(answer).when(userService).disableUser(100L);
 		doAnswer(answer).when(userService).changePassword("foo@test.com", "123456");
 		doAnswer(answer).when(userService).deleteUser(100L);
-		when(userService.getUser(100L)).thenReturn(foo);
-		when(userService.getUserByEmail("foo@test.com")).thenReturn(foo);
-		doAnswer(answer).when(userService).mergeUser(100L, foo);
-		Pager<User> pager = new Pager<User>(Arrays.asList(foo));
-		when(userService.getUserPager(foo, new PageRequest(0, 20))).thenReturn(pager);
-		Page<User> page = new PageImpl<User>(Arrays.asList(foo));
-		when(userService.getUserPage(foo, new PageRequest(0, 20))).thenReturn(page);
+		when(userService.getUser(100L)).thenReturn(fooDto);
+		when(userService.getUserByEmail("foo@test.com")).thenReturn(fooDto);
+		doAnswer(answer).when(userService).mergeUser(100L, fooDto);
+		Pager<UserDto> pager = new Pager<UserDto>(Arrays.asList(fooDto));
+		when(userService.getUserPager(fooDto, new PageRequest(0, 20))).thenReturn(pager);
+		Page<UserDto> page = new PageImpl<UserDto>(Arrays.asList(fooDto));
+		when(userService.getUserPage(fooDto, new PageRequest(0, 20))).thenReturn(page);
 	
 		UserCtrl userCtrl = new UserCtrl();
 		userCtrl.setGson(gson);

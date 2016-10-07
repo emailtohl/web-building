@@ -14,8 +14,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.Authority;
-import com.github.emailtohl.building.site.entities.User;
 
 /**
  * 认证和授权服务
@@ -43,7 +43,7 @@ public interface AuthenticationService extends AuthenticationProvider {
 	 */
 	@NotNull
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
-	Pager<User> getPageByAuthorities(User user, Pageable pageable);
+	Pager<UserDto> getPageByAuthorities(UserDto user, Pageable pageable);
 	
 	/**
 	 * 为用户授权

@@ -17,15 +17,15 @@ import com.github.emailtohl.building.common.utils.BCryptUtil;
 import com.github.emailtohl.building.common.utils.BeanTools;
 import com.github.emailtohl.building.site.dao.DepartmentRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
+import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.Department;
-import com.github.emailtohl.building.site.entities.Manager;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
 
 /**
  * 管理用户的相关服务，实现类中只提供功能
  * 安全，校验等功能在切面中完成
- * @author Helei
+ * @author HeLei
  */
 @Service
 public class UserServiceImpl implements UserService {
@@ -38,16 +38,15 @@ public class UserServiceImpl implements UserService {
 	DepartmentRepository departmentRepository;
 	
 	@Override
-	public Long addUser(User u) {
-		// 确保添加新用户时，没有授予任何权限，没有启动等
-		if (u.getAuthorities() != null) {
-			u.getAuthorities().clear();
-		}
+	public Long addUser(UserDto u) {
 		u.setEnabled(false);
 		String hashPw = BCryptUtil.hash(u.getPassword());
 		u.setPassword(hashPw);
-		userRepository.save(u);
-		return u.getId();
+		User entity = new User();
+		// 确保添加新用户时，没有授予任何权限，没有启动等
+		BeanUtils.copyProperties(u, entity, "authorities");
+		userRepository.save(entity);
+		return entity.getId();
 	}
 	
 	@Override
@@ -69,39 +68,39 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void deleteUser(Long id) {
-		User persistStatus = userRepository.findOne(id);
+		User entity = userRepository.findOne(id);
 		// 先删除外联关系
-		persistStatus.setAuthorities(null);
-		userRepository.delete(persistStatus);
+		entity.setAuthorities(null);
+		userRepository.delete(entity);
 	}
 
 	@Override
-	public Pager<User> getUserPager(User u, Pageable pageable) {
-		Pager<User> p = userRepository.dynamicQuery(u, pageable.getPageNumber());
-		List<User> ls = filter(p.getContent());
-		p.setContent(ls);
-		return p;
+	public Pager<UserDto> getUserPager(UserDto u, Pageable pageable) {
+		Pager<User> pe = userRepository.dynamicQuery(u, pageable.getPageNumber());
+		List<UserDto> ls = convert(pe.getContent());
+		Pager<UserDto> pd = new Pager<UserDto>(ls, pe.getTotalElements(), pe.getPageSize());
+		return pd;
 	}
 
 	@Override
-	public Page<User> getUserPage(User u, Pageable pageable) {
-		Pager<User> p = this.getUserPager(u, pageable);
-		return new PageImpl<User>(p.getContent(), pageable, p.getTotalElements());
+	public Page<UserDto> getUserPage(UserDto u, Pageable pageable) {
+		Pager<UserDto> p = this.getUserPager(u, pageable);
+		return new PageImpl<UserDto>(p.getContent(), pageable, p.getTotalElements());
 	}
 	
 	@Override
-	public User getUser(Long id) {
-		return filter(userRepository.findOne(id));
+	public UserDto getUser(Long id) {
+		return convert(userRepository.findOne(id));
 	}
 
 	@Override
-	public User getUserByEmail(String email) {
-		return userRepository.findByEmail(email);
+	public UserDto getUserByEmail(String email) {
+		return convert(userRepository.findByEmail(email));
 	}
 
 	@Override
-	public void mergeUser(Long id, Manager u) {
-		User persistStatus = userRepository.findOne(id);
+	public void mergeUser(Long id, UserDto u) {
+		User entity = userRepository.findOne(id);
 		// 是否启动，授权，不走此接口，所以在调用merge方法前，先将其设置为null
 		u.setEnabled(null);
 		u.setAuthorities(null);
@@ -109,8 +108,8 @@ public class UserServiceImpl implements UserService {
 		if (d != null && d.getName() != null) {
 			u.setDepartment(departmentRepository.findByName(d.getName()));
 		}
-		BeanTools.merge(persistStatus, u);
-		userRepository.save(persistStatus);
+		BeanTools.merge(entity, u);
+		userRepository.save(entity);
 	}
 	
 	/**
@@ -118,14 +117,13 @@ public class UserServiceImpl implements UserService {
 	 * @param users
 	 * @return
 	 */
-	private List<User> filter(List<? extends User> users) {
-		List<User> ls = new ArrayList<User>();
-		for (User u : users) {
-			// Manager对象能获取最完整的信息
-			Manager nu = new Manager();
-			BeanUtils.copyProperties(u, nu, "password", "authorities");
-			ls.add(nu);
-		}
+	private List<UserDto> convert(List<? extends User> users) {
+		List<UserDto> ls = new ArrayList<UserDto>();
+		users.forEach(u -> {
+			UserDto dto = new UserDto();
+			BeanUtils.copyProperties(u, dto, "password", "authorities");
+			ls.add(dto);
+		});
 		return ls;
 	}
 
@@ -134,11 +132,11 @@ public class UserServiceImpl implements UserService {
 	 * @param users
 	 * @return
 	 */
-	private User filter(User user) {
+	private UserDto convert(User user) {
 		// Manager对象能获取最完整的信息
-		Manager nu = new Manager();
-		BeanUtils.copyProperties(user, nu, "password");
-		return nu;
+		UserDto dto = new UserDto();
+		BeanUtils.copyProperties(user, dto, "password");
+		return dto;
 	}
 
 }

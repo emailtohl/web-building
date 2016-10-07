@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.emailtohl.building.common.utils.ServletUtils;
 import com.github.emailtohl.building.exception.VerifyFailure;
-import com.github.emailtohl.building.site.controller.form.UserForm;
+import com.github.emailtohl.building.site.dto.UserDto;
 /**
  * 文件上传控制器
  * @author HeLei
@@ -43,7 +43,7 @@ public class FileUploadServer {
 			HttpServletRequest request,
 			@RequestPart("multiplefiles") Part multiplefiles,
 			@RequestPart("singlefile") Part singlefile,
-			@Valid UserForm user,
+			@Valid UserDto user,
 			Errors errors) {
 		if (errors.hasErrors()) {
 			StringBuilder sb = new StringBuilder();

@@ -14,8 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.github.emailtohl.building.site.entities.Manager;
-import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.service.UserService;
 /**
  * 测试spring security的配置
@@ -56,7 +55,7 @@ public class UserServiceTest {
 	
 	@Test
 	public void testAddUser() {
-		userService.addUser(new User());
+		userService.addUser(new UserDto());
 	}
 
 	@Test
@@ -85,21 +84,21 @@ public class UserServiceTest {
 	@Test(expected = AuthenticationCredentialsNotFoundException.class)
 	public void testMergeUser1() {
 		SecurityContextHolder.clearContext();
-		Manager u = new Manager();
+		UserDto u = new UserDto();
 		userService.mergeUser(1000L, u);
 	}
 	
 	@Test(expected = AccessDeniedException.class)
 	public void testMergeUser2() {
 		setBar();
-		Manager u = new Manager();
+		UserDto u = new UserDto();
 		userService.mergeUser(1000L, u);
 	}
 	
 	@Test
 	public void testMergeUser3() {
 		setEmailtohl();
-		Manager u = new Manager();
+		UserDto u = new UserDto();
 		u.setEmail("bar@test.com");
 		userService.mergeUser(1000L, u);
 	}
@@ -187,19 +186,19 @@ public class UserServiceTest {
 	@Test
 	public void testGetUserPager2() {
 		setBar();
-		userService.getUserPager(new User(), new PageRequest(10, 20));
+		userService.getUserPager(new UserDto(), new PageRequest(10, 20));
 	}
 	
 	@Test(expected = AuthenticationCredentialsNotFoundException.class)
 	public void testGetUserPage1() {
 		SecurityContextHolder.clearContext();
-		userService.getUserPage(new User(), new PageRequest(10, 20));
+		userService.getUserPage(new UserDto(), new PageRequest(10, 20));
 	}
 	
 	@Test
 	public void testGetUserPage2() {
 		setBar();
-		userService.getUserPage(new User(), new PageRequest(10, 20));
+		userService.getUserPage(new UserDto(), new PageRequest(10, 20));
 	}
 
 }

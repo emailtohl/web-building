@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,20 +29,25 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.Authority;
-import com.github.emailtohl.building.site.entities.Manager;
-import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserPermissionEvaluator;
 import com.github.emailtohl.building.site.service.UserService;
 /**
  * 为测试spring security注解在方法级别的配置
- * @author Helei
+ * @author HeLei
  */
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
+	UserDto emailtohlDto = new UserDto(), fooDto = new UserDto(), barDto = new UserDto();
 	
+	public SecurityTestConfig() {
+		BeanUtils.copyProperties(emailtohl, emailtohlDto);
+		BeanUtils.copyProperties(foo, fooDto);
+		BeanUtils.copyProperties(bar, barDto);
+	}
 	/**
 	 * 使用示例
 	 */
@@ -101,7 +107,7 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 			private final Logger logger = LogManager.getLogger();
 			
 			@Override
-			public Long addUser(User u) {
+			public Long addUser(UserDto u) {
 				logger.debug("addUser invoked");
 				return 1000L;
 			}
@@ -117,7 +123,7 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 			}
 
 			@Override
-			public void mergeUser(Long id, Manager u) {
+			public void mergeUser(Long id, UserDto u) {
 				logger.debug("mergeUser invoked");
 			}
 
@@ -132,32 +138,34 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 			}
 
 			@Override
-			public User getUser(Long id) {
+			public UserDto getUser(Long id) {
 				logger.debug("getUser invoked");
+				UserDto dto = new UserDto();
 				if (id == 1000L) {
-					return emailtohl;
+					BeanUtils.copyProperties(emailtohl, dto);
 				} else {
-					return bar;
+					BeanUtils.copyProperties(bar, dto);
 				}
+				return dto;
 			}
 
 			@Override
-			public Pager<User> getUserPager(User u, Pageable pageable) {
+			public Pager<UserDto> getUserPager(UserDto u, Pageable pageable) {
 				logger.debug("getUserPager invoked");
-				Pager<User> p = new Pager<User>(Arrays.asList(emailtohl, foo, bar), 100L);
+				Pager<UserDto> p = new Pager<UserDto>(Arrays.asList(emailtohlDto, fooDto, barDto), 100L);
 				return p;
 			}
 
 			@Override
-			public Page<User> getUserPage(User u, Pageable pageable) {
+			public Page<UserDto> getUserPage(UserDto u, Pageable pageable) {
 				logger.debug("getUserPage invoked");
-				Pager<User> p = this.getUserPager(u, pageable);
-				return new PageImpl<User>(p.getContent(), pageable, p.getTotalElements());
+				Pager<UserDto> p = this.getUserPager(u, pageable);
+				return new PageImpl<UserDto>(p.getContent(), pageable, p.getTotalElements());
 			}
 
 			@Override
-			public User getUserByEmail(String email) {
-				return emailtohl;
+			public UserDto getUserByEmail(String email) {
+				return emailtohlDto;
 			}
 		};
 	}
@@ -193,9 +201,9 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 			}
 
 			@Override
-			public Pager<User> getPageByAuthorities(User user, Pageable pageable) {
+			public Pager<UserDto> getPageByAuthorities(UserDto user, Pageable pageable) {
 				logger.debug("getUserPager invoked");
-				Pager<User> p = new Pager<User>(Arrays.asList(emailtohl, foo, bar), 100L);
+				Pager<UserDto> p = new Pager<UserDto>(Arrays.asList(emailtohlDto, fooDto, barDto), 100L);
 				return p;
 			}
 

@@ -13,8 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 
 import com.github.emailtohl.building.common.jpa.Pager;
-import com.github.emailtohl.building.site.entities.Manager;
-import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.dto.UserDto;
 
 /**
  * 用户管理的服务
@@ -36,7 +35,7 @@ public interface UserService {
 	 * @return 新增User的id
 	 */
 	@Min(value = 1L)
-	Long addUser(@Valid User u);
+	Long addUser(@Valid UserDto u);
 	
 	/**
 	 * 启用用户
@@ -75,7 +74,7 @@ public interface UserService {
 	 * @return
 	 */
 	@PostAuthorize("hasAnyAuthority('ADMIN', 'MANAGER') || returnObject.email == principal.username")
-	User getUser(@Min(value = 1L) Long id);
+	UserDto getUser(@Min(value = 1L) Long id);
 	
 	/**
 	 * 通过邮箱名查询用户，通过认证的均可调用
@@ -84,7 +83,7 @@ public interface UserService {
 	 * @return
 	 */
 	@PostAuthorize("hasAnyAuthority('ADMIN', 'MANAGER') || #email == principal.username")
-	User getUserByEmail(@NotNull String email);
+	UserDto getUserByEmail(@NotNull String email);
 	
 	/**
 	 * 修改用户
@@ -95,7 +94,7 @@ public interface UserService {
 	 * @param u中的id不能为null， u中属性不为null的值为修改项
 	 */
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER') || #u.email == authentication.principal.username")
-	void mergeUser(@Min(value = 1L) Long id, Manager u/* 用最大范围接收数据 */);
+	void mergeUser(@Min(value = 1L) Long id, UserDto u/* 用最大范围接收数据 */);
 	
 	/**
 	 * 获取用户Pager
@@ -108,7 +107,7 @@ public interface UserService {
 	 */
 	@NotNull
 	@PreAuthorize("isAuthenticated()")
-	Pager<User> getUserPager(User u, Pageable pageable);
+	Pager<UserDto> getUserPager(UserDto u, Pageable pageable);
 	
 	/**
 	 * 获取用户Page,这里的Page是Spring Data提供的数据结构
@@ -121,6 +120,6 @@ public interface UserService {
 	 */
 	@NotNull
 	@PreAuthorize("isAuthenticated()")
-	Page<User> getUserPage(User u, Pageable pageable);
+	Page<UserDto> getUserPage(UserDto u, Pageable pageable);
 	
 }

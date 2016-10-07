@@ -20,7 +20,6 @@ import javax.validation.constraints.Min;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -40,9 +39,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.exception.ResourceNotFoundException;
-import com.github.emailtohl.building.site.controller.form.UserForm;
+import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.Authority;
-import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.mail.EmailService;
 import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
@@ -91,7 +89,7 @@ public class AuthenticationCtrl {
 	 * @throws UnsupportedEncodingException 
 	 */
 	@RequestMapping(value = "register", method = RequestMethod.POST, produces = {"text/html;charset=UTF-8"})
-	public String register(HttpServletRequest requet, @Valid UserForm u, org.springframework.validation.Errors e) {
+	public String register(HttpServletRequest requet, @Valid UserDto u, org.springframework.validation.Errors e) {
 		// 第一步，判断提交表单是否有效
 		if (e.hasErrors()) {
 			StringBuilder s = new StringBuilder();
@@ -103,10 +101,8 @@ public class AuthenticationCtrl {
 			return "redirect:register?error=" + encode(s.toString());
 		}
 		try {
-			User entity = new User();
-			BeanUtils.copyProperties(u, entity);
 			// 第二步，添加该用户，若报运行时异常，则抛出，告诉用户该账号不能注册
-			long id = userService.addUser(entity);
+			long id = userService.addUser(u);
 			// 第三步，邮件通知用户，让其激活该账号
 			String url = requet.getScheme() + "://" + requet.getServerName() + ":" + requet.getServerPort() + requet.getContextPath() + "/enable?id=" + id;
 			emailService.enableUser(url, u.getEmail());
@@ -231,7 +227,7 @@ public class AuthenticationCtrl {
 	@RequestMapping(value = "authentication/page", method = GET)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	public Pager<User> getPageByAuthorities(@ModelAttribute UserForm u, @PageableDefault(sort = "id=desc") Pageable pageable) {
+	public Pager<UserDto> getPageByAuthorities(@ModelAttribute UserDto u, @PageableDefault(sort = "id=desc") Pageable pageable) {
 		return authenticationService.getPageByAuthorities(u, pageable);
 	}
 	

@@ -19,6 +19,7 @@ import java.util.HashSet;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.stubbing.Answer;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -29,8 +30,8 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import com.github.emailtohl.building.bootspring.SpringUtils;
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.Authority;
-import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.mail.EmailService;
 import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
@@ -41,6 +42,9 @@ public class AuthenticationCtrlTest {
 	
 	@Before
 	public void setUp() {
+		UserDto fooDto = new UserDto();
+		BeanUtils.copyProperties(foo, fooDto);
+		
 		AuthenticationService authenticationService = mock(AuthenticationService.class);
 		when(authenticationService.authenticate("foo@test.com", "123456")).thenReturn(new Authentication() {
 			private static final long serialVersionUID = -7421487535149159420L;
@@ -72,7 +76,7 @@ public class AuthenticationCtrlTest {
 			public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
 			}}
 		);
-		when(authenticationService.getPageByAuthorities(foo, new PageRequest(0, 10))).thenReturn(new Pager<User>(Arrays.asList(foo)));
+		when(authenticationService.getPageByAuthorities(fooDto, new PageRequest(0, 10))).thenReturn(new Pager<UserDto>(Arrays.asList(fooDto)));
 		when(authenticationService.isExist(foo.getEmail())).thenReturn(true);
 		
 		/*Answer<Object> answer = new Answer<Object>() {
@@ -94,7 +98,7 @@ public class AuthenticationCtrlTest {
 		
 		
 		UserService userService = mock(UserService.class);
-		when(userService.addUser(foo)).thenReturn(100L);
+		when(userService.addUser(fooDto)).thenReturn(100L);
 		doAnswer(answer).when(userService).enableUser(100L);
 		
 		EmailService emailService = mock(EmailService.class);
