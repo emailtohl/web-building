@@ -27,9 +27,11 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 		};
 		
 		self['delete'] = function(id) {
-			userService['delete'](id).success(function(data) {
-				self.query();
-			});
+			if (prompt('确认删除吗？') != null) {
+				userService['delete'](id).success(function(data) {
+					self.query();
+				});
+			}
 		};
 		
 		self.query();
