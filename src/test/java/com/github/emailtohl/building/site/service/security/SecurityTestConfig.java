@@ -163,6 +163,7 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 			public UserDto getUserByEmail(String email) {
 				return emailtohlDto;
 			}
+
 		};
 	}
 
@@ -222,6 +223,12 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 			@Override
 			public void changePassword(String email, String newPassword) {
 				logger.debug("changePassword invoked");
+			}
+			
+			@Override
+			public long updateUserType(long id, Authority a) {
+				logger.debug("updateType invoked");
+				return 1000L;
 			}
 		};
 	}

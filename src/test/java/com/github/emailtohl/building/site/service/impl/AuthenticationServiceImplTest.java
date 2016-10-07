@@ -3,6 +3,7 @@ package com.github.emailtohl.building.site.service.impl;
 import static com.github.emailtohl.building.site.entities.Authority.ADMIN;
 import static com.github.emailtohl.building.site.entities.Authority.EMPLOYEE;
 import static com.github.emailtohl.building.site.entities.Authority.MANAGER;
+import static com.github.emailtohl.building.site.entities.Authority.USER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -81,5 +82,13 @@ public class AuthenticationServiceImplTest {
 		authenticationService.changePassword("emailtohl@163.com", "123456");
 		auth = authenticationService.authenticate("emailtohl@163.com", "123456");
 		assertEquals("emailtohl@163.com", auth.getName());
+	}
+	
+	@Test
+	public void testUpdateUserType() {
+		long id = userService.getUserByEmail("emailtohl@163.com").getId();
+		id = authenticationService.updateUserType(id, EMPLOYEE);
+		id = authenticationService.updateUserType(id, MANAGER);
+		id = authenticationService.updateUserType(id, USER);
 	}
 }

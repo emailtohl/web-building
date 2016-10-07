@@ -69,4 +69,13 @@ public interface AuthenticationService extends AuthenticationProvider {
 	 * @param newPassword
 	 */
 	void changePassword(String email, @Pattern(regexp = "^[^\\s&\"<>]+$") String newPassword);
+
+	/**
+	 * 更改User的类型，例如将职员提升为经理
+	 * 先删除原实体，然后再重新生成新实体，所以会返回新的实体id
+	 * @param id
+	 * @param a
+	 * return 新生成实体的id
+	 */
+	long updateUserType(long id, Authority a);
 }

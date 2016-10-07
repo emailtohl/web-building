@@ -1,8 +1,6 @@
 package com.github.emailtohl.building.site.service.impl;
 
-import static com.github.emailtohl.building.site.entities.Authority.ADMIN;
-import static com.github.emailtohl.building.site.entities.Authority.EMPLOYEE;
-import static com.github.emailtohl.building.site.entities.Authority.MANAGER;
+import static com.github.emailtohl.building.site.entities.Authority.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,6 +36,8 @@ import com.github.emailtohl.building.common.utils.BCryptUtil;
 import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.Authority;
+import com.github.emailtohl.building.site.entities.Employee;
+import com.github.emailtohl.building.site.entities.Manager;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.mail.EmailService;
 import com.github.emailtohl.building.site.service.AuthenticationService;
@@ -344,6 +344,28 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 		String hashPw = BCryptUtil.hash(newPassword);
 		User u = userRepository.findByEmail(email);
 		u.setPassword(hashPw);
+	}
+
+	@Override
+	public long updateUserType(long id, Authority a) {
+		User persist = userRepository.getOne(id);
+		User entity;
+		switch (a) {
+		case EMPLOYEE :
+			entity = new Employee();
+			break;
+		case MANAGER :
+			entity = new Manager();
+			break;
+		default :
+			entity = new User();
+			break;
+		}
+		BeanUtils.copyProperties(persist, entity, "id");
+		userRepository.delete(persist);
+		userRepository.flush();
+		userRepository.save(entity);
+		return entity.getId();
 	}
 
 }
