@@ -19,6 +19,7 @@ import com.github.emailtohl.building.site.dao.DepartmentRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.Department;
+import com.github.emailtohl.building.site.entities.Employee;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
 
@@ -42,7 +43,12 @@ public class UserServiceImpl implements UserService {
 		u.setEnabled(false);
 		String hashPw = BCryptUtil.hash(u.getPassword());
 		u.setPassword(hashPw);
-		User entity = new User();
+		User entity;
+		if (u.getDepartment() != null) {
+			entity = new Employee();
+		} else {
+			entity = new User();
+		}
 		// 确保添加新用户时，没有授予任何权限，没有启动等
 		BeanUtils.copyProperties(u, entity, "authorities");
 		userRepository.save(entity);
