@@ -59,11 +59,15 @@
         <label for="exampleInputPassword1">描述</label>
         <input type="text" placeholder="description" class="form-control" ng-model="ctrl.form.description">
       </div>
-      <div class="form-group">
+      <!-- 普通用户（User）没有department属性，所以编辑不起作用
+      	从这里可以总结经验，以后设计JPA实体关系时，尽量避免使用继承，否则从User转为其导出类Employee将很困难
+      	以ctrl.detail.post判断是否Employee，如果没有这个值则不显示为编辑项
+       -->
+      <div class="form-group" ng-if="ctrl.detail.post">
         <label for="exampleInputPassword1">职位</label>
         <input type="text" placeholder="post" class="form-control" ng-model="ctrl.form.post">
       </div>
-      <div class="form-group">
+      <div class="form-group" ng-if="ctrl.detail.post">
         <label for="exampleInputFile">部门</label>
         <select class="form-control select2" style="width: 100%;" select2 ng-model="ctrl.form.department.name">
 	      <option value="">请选择</option>

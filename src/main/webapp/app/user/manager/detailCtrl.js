@@ -1,6 +1,6 @@
 define(['user/module', 'user/manager/service'], function(userModule) {
 	return userModule
-	.controller('UserDetailCtrl', ['$scope', '$http', '$state', 'userService'
+	.controller('UserDetailCtrl', [ '$scope', '$http', '$state', 'userService'
 	                         , function($scope, $http, $state, userService) {
 		var self = this;
 		self.form = {};// 要提交的表单数据
