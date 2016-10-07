@@ -25,7 +25,7 @@ import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
 /**
  * 对实现的测试，接口上对安全注解的测试在不含在内
- * @author Helei
+ * @author HeLei
  */
 public class AuthenticationServiceImplTest {
 	AuthenticationService authenticationService;

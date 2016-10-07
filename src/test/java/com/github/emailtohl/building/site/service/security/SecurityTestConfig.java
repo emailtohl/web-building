@@ -41,13 +41,6 @@ import com.github.emailtohl.building.site.service.UserService;
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
-	UserDto emailtohlDto = new UserDto(), fooDto = new UserDto(), barDto = new UserDto();
-	
-	public SecurityTestConfig() {
-		BeanUtils.copyProperties(emailtohl, emailtohlDto);
-		BeanUtils.copyProperties(foo, fooDto);
-		BeanUtils.copyProperties(bar, barDto);
-	}
 	/**
 	 * 使用示例
 	 */
@@ -105,7 +98,12 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 	public UserService userService() throws Exception {
 		return new UserService() {
 			private final Logger logger = LogManager.getLogger();
-			
+			UserDto emailtohlDto = new UserDto(), fooDto = new UserDto(), barDto = new UserDto();
+			{
+				BeanUtils.copyProperties(emailtohl, emailtohlDto);
+				BeanUtils.copyProperties(foo, fooDto);
+				BeanUtils.copyProperties(bar, barDto);
+			}
 			@Override
 			public Long addUser(UserDto u) {
 				logger.debug("addUser invoked");
@@ -140,13 +138,11 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 			@Override
 			public UserDto getUser(Long id) {
 				logger.debug("getUser invoked");
-				UserDto dto = new UserDto();
 				if (id == 1000L) {
-					BeanUtils.copyProperties(emailtohl, dto);
+					return emailtohlDto;
 				} else {
-					BeanUtils.copyProperties(bar, dto);
+					return barDto;
 				}
-				return dto;
 			}
 
 			@Override
@@ -174,6 +170,13 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 	public AuthenticationService authenticationService() throws Exception {
 		AuthenticationManager authenticationManager = authenticationManager();
 		return new AuthenticationService() {
+			UserDto emailtohlDto = new UserDto(), fooDto = new UserDto(), barDto = new UserDto();
+			{
+				BeanUtils.copyProperties(emailtohl, emailtohlDto);
+				BeanUtils.copyProperties(foo, fooDto);
+				BeanUtils.copyProperties(bar, barDto);
+			}
+			
 			private final Logger logger = LogManager.getLogger();
 			@Override
 			public Authentication authenticate(String email, String password) {

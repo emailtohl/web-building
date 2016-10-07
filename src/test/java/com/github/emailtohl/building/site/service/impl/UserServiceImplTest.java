@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
 
 import com.github.emailtohl.building.bootspring.SpringUtils;
 import com.github.emailtohl.building.common.jpa.Pager;
@@ -29,16 +30,19 @@ import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.Subsidiary;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.entities.User.Gender;
+import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
 
 public class UserServiceImplTest {
 	static final Logger logger = LogManager.getLogger();
 	UserService userService;
+	AuthenticationService authenticationService;
 	UserDto u;
 	
 	@Before
 	public void setUp() {
 		userService = SpringUtils.context.getBean(UserService.class);
+		authenticationService = SpringUtils.context.getBean(AuthenticationService.class);
 		u = new UserDto();
 		u.setAddress("四川路");
 		u.setAge(20);
@@ -62,13 +66,12 @@ public class UserServiceImplTest {
 	
 	@Test
 	public void testCRUD() {
-		userService.addUser(u);
-		Long id = u.getId();
+		Long id = userService.addUser(u);
 		try {
 			assertNotNull(id);
 			// test query
 			UserDto qu = userService.getUser(id);
-			assertEquals(u, qu);
+			assertEquals(u.getEmail(), qu.getEmail());
 			// test update
 			UserDto uu = new UserDto();
 			uu.setAuthorities(null);
@@ -85,8 +88,11 @@ public class UserServiceImplTest {
 			qu = userService.getUser(id);
 			assertFalse(qu.getEnabled());
 			// test change password
-			userService.changePassword("test@test.com", "987654321");
+			String em = "test@test.com", pw = "987654321";
+			userService.changePassword(em, pw);
 			qu = userService.getUser(id);
+			Authentication a = authenticationService.authenticate(em, pw);
+			assertNotNull(a);
 		} catch (Exception e) {
 			throw e;
 		} finally {
