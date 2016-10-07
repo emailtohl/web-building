@@ -5,6 +5,9 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.AccessType;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -15,6 +18,7 @@ import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.AbstractCriterionQueryRepository;
 import com.github.emailtohl.building.site.dao.UserRepositoryCustomization;
 import com.github.emailtohl.building.site.entities.Authority;
+import com.github.emailtohl.building.site.entities.Employee;
 import com.github.emailtohl.building.site.entities.User;
 
 /**
@@ -63,6 +67,19 @@ public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> i
 		Pager<User> myPager = getPager(user, pageable.getPageNumber(), pageable.getPageSize(), AccessType.PROPERTY);
 		Page<User> springPage = new PageImpl<User>(myPager.getContent(), pageable, myPager.getTotalElements());
 		return springPage;
+	}
+
+	@Override
+	public Integer getMaxEmpNo() {
+		Integer result;
+//		result = entityManager.createQuery("select max(e.empNum) from Employee e", Integer.class).getSingleResult();
+		
+		CriteriaBuilder b = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Integer> q = b.createQuery(Integer.class);
+		Root<Employee> r = q.from(Employee.class);
+		result = entityManager.createQuery(q.select(b.max(r.get("empNum")))).getSingleResult();
+			
+		return result;
 	}
 	
 }

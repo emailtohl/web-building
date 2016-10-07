@@ -25,4 +25,9 @@ public interface UserRepositoryCustomization extends CriterionQueryRepository<Us
 	 * 默认使用JavaBean属性获取查询条件
 	 */
 	Page<User> getPage(User entity, Pageable pageable);
+	
+	/**
+	 * 获取最大的emp_no
+	 */
+	Integer getMaxEmpNo();
 }

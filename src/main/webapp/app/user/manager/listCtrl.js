@@ -33,7 +33,25 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 				});
 			}
 		};
-		
+		// 查询
 		self.query();
+		
+		self.form = {};
+		// 下面是新增职员功能
+		self.modal = {
+			open : false,
+			title : '新增职员',
+			whenConfirm : function() {
+				userService.addUser(self.form).success(function(data) {
+					console.log('确认')
+					
+				});
+			},
+			type : '',
+		};
+		self.openModal = function() {
+			self.modal.open = true;
+		};
+		
 	}]);
 });

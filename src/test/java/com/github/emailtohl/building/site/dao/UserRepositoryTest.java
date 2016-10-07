@@ -146,6 +146,13 @@ public class UserRepositoryTest {
 		logger.debug("previousPageable:" + p.previousPageable());
 		logger.debug("spliterator:" + p.spliterator());
 	}
+	
+	@Test
+	public void testGetMaxEmpNo() {
+		logger.debug(userRepository.getMaxEmpNo());
+		assertNotNull(userRepository.getMaxEmpNo());
+	}
+	
 	@Test
 	public void testGetPageByAuthorities() {
 		PageRequest pageable = new PageRequest(0, 20);

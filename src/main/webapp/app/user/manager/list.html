@@ -106,59 +106,48 @@
             <!-- /.box-body -->
           </div>
           <!-- /.box -->
-
-        </div>
-        <!-- /.col -->
-        <div id="dialog_edit" title="编辑用户" class="ui-dialog-content ui-widget-content" style="width: auto; min-height: 19px; max-height: none; height: auto; display:none">
-          <div class="box box-primary">
-            <!-- /.box-header -->
-            <!-- form start -->
-            <form role="form">
-              <div class="box-body">
-                <div class="form-group">
-                  <label for="">姓名</label>
-                  <input type="text" class="form-control" placeholder="姓名" ng-model="ctrl.user.name">
-                </div>
-                <div class="form-group">
-                  <label for="">用户名</label>
-                  <input type="text" class="form-control" placeholder="用户名" ng-model="ctrl.user.nickname">
-                </div>
-                <div class="form-group">
-                  <label for="">电话</label>
-                  <input type="text" class="form-control" placeholder="电话" ng-model="ctrl.user.contact.telephone">
-                </div>
-                <div class="form-group">
-                  <label for="">邮箱</label>
-                  <input type="text" class="form-control" placeholder="邮箱" ng-model="ctrl.user.contact.email">
-                </div>
-                <div class="form-group">
-                  <label for="">描述</label>
-                  <input type="text" class="form-control" placeholder="描述" ng-model="ctrl.user.description">
-                </div>
-<!--            <div class="form-group">
-                  <label for="exampleInputFile">权限</label>
-                  <select class="form-control select2" multiple="multiple" data-placeholder="Select a State" style="width: 100%;" select2 ng-model="ctrl.user.authority">
-			        <option value="">无</option>
-			        <option value="ADMIN">ADMIN</option>
-			        <option value="USER">USER</option>
-			      </select>
-                  <p class="help-block">Example block-level help text here.</p>
-                </div> -->
-                <div class="form-group" ng-if="ctrl.user.nickname == authentication.username || hasAuthority('ADMIN')">
-                  <label for="">修改密码</label>
-                  <input type="password" class="form-control" placeholder="修改密码" ng-model="ctrl.user.plainPassword">
-                </div>
-<!--            <div class="checkbox">
-                  <label>
-                    <input type="checkbox" ng-model="ctrl.user.enabled" ng-true-value="true" ng-false-value="false"> 是否启动
-                  </label>
-                </div> -->
-              </div>
-              <!-- /.box-body -->
-            </form>
-          </div>
+	      <div class="box-footer clearfix">
+	        <button type="button" class="btn btn-default pull-left" ng-click="ctrl.openModal()">新增</button>
+	      </div>
         </div>
     </div>
     <!-- /.row -->
 </section>
 <!-- /.content -->
+
+
+<div modal open="ctrl.modal.open" title="{{ctrl.modal.title}}" when-confirm="ctrl.modal.whenConfirm()" type="{{ctrl.modal.type}}">
+  <form role="form" name="addUserform">
+    <div class="box-body">
+      <div class="form-group">
+        <label for="exampleInputEmail1">姓名</label>
+        <input type="text" placeholder="name" class="form-control" ng-model="ctrl.form.name" required="required">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputEmail1">邮箱</label>
+        <input type="email" placeholder="name" class="form-control" ng-model="ctrl.form.email" required="required">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">描述</label>
+        <input type="text" placeholder="description" class="form-control" ng-model="ctrl.form.description">
+      </div>
+      <!-- 普通用户（User）没有department属性，所以编辑不起作用
+      	从这里可以总结经验，以后设计JPA实体关系时，尽量避免使用继承，否则从User转为其导出类Employee将很困难
+      	以ctrl.detail.empNum判断是否Employee，如果没有这个值则不显示为编辑项
+       -->
+      <div class="form-group" ng-if="ctrl.detail.empNum">
+        <label for="exampleInputPassword1">职位</label>
+        <input type="text" placeholder="post" class="form-control" ng-model="ctrl.form.post">
+      </div>
+      <div class="form-group" ng-if="ctrl.detail.empNum">
+        <label for="exampleInputFile">部门</label>
+        <select class="form-control select2" style="width: 100%;" select2 ng-model="ctrl.form.department.name">
+	      <option value="">请选择</option>
+	      <option value="生产部">生产部</option>
+	      <option value="质量部">质量部</option>
+	    </select>
+      </div>
+    </div>
+    <!-- /.box-body -->
+  </form>
+</div>

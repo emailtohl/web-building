@@ -111,6 +111,7 @@ public class PersistenceData {
 			e.printStackTrace();
 		}
 		foo.setDescription("foo的工作岗位");
+		foo.setEmpNum(1);
 		foo.setPost("系统分析师");
 		foo.setSalary(10000.00);
 		foo.setDepartment(product);
@@ -141,6 +142,7 @@ public class PersistenceData {
 			e.printStackTrace();
 		}
 		bar.setDescription("bar的工作岗位");
+		bar.setEmpNum(2);
 		bar.setPost("QA人员");
 		bar.setSalary(6000.00);
 		bar.setDepartment(qa);

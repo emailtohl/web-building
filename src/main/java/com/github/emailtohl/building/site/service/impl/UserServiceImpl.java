@@ -44,8 +44,8 @@ public class UserServiceImpl implements UserService {
 		String hashPw = BCryptUtil.hash(u.getPassword());
 		u.setPassword(hashPw);
 		User entity;
-		if (u.getDepartment() != null) {
-			entity = new Employee();
+		if (u.getEmpNum() != null) {
+			entity = getNewEmployee();
 		} else {
 			entity = new User();
 		}
@@ -53,6 +53,17 @@ public class UserServiceImpl implements UserService {
 		BeanUtils.copyProperties(u, entity, "authorities");
 		userRepository.save(entity);
 		return entity.getId();
+	}
+	
+	// 获取的Employee含emp_no
+	private synchronized Employee getNewEmployee() {
+		Employee e = new Employee();
+		Integer max = userRepository.getMaxEmpNo();
+		if (max == null) {
+			max = 1;
+		}
+		e.setEmpNum(max++);
+		return e;
 	}
 	
 	@Override
