@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
 		Employee e = new Employee();
 		Integer max = userRepository.getMaxEmpNo();
 		if (max == null) {
-			max = 1;
+			max = 0;
 		}
 		e.setEmpNum(max++);
 		return e;
