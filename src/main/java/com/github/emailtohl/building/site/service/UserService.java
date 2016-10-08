@@ -32,6 +32,9 @@ public interface UserService {
 	 * 添加用户
 	 * 新增用户时，不设置authorities属性，且enable属性为false
 	 * 权限方面，这里添加用户主要是职员实体，需要管理员或经理才能新增
+	 * 
+	 * 注意：对于Spring Security来说，新增用户时，必须同时为其添加相应的用户授权，否则即便激活了该用户，也不会让其登录
+	 * 
 	 * @param u
 	 * @return 新增User的id
 	 */
@@ -90,7 +93,7 @@ public interface UserService {
 	 * 修改用户
 	 * 这里的方法名使用的是merge，传入的User参数只存储需要更新的属性，不更新的属性值为null
 	 * 
-	 * 修改用户时，不设置password，authorities属性
+	 * 修改密码，启用/禁用账户，授权功能，不走此接口
 	 * 
 	 * @param u中的id不能为null， u中属性不为null的值为修改项
 	 */

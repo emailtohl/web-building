@@ -16,6 +16,12 @@ define([ 'user/module', 'mine' ], function(userModule) {
 			addUser : function(user) {
 				return $http.post('user', user);
 			},
+			enableUser : function(id) {
+				return $http.put('user/enableUser/' + id);
+			},
+			disableUser : function(id) {
+				return $http.put('user/disableUser/' + id);
+			},
 			update : function(user) {
 				return $http.put('user/' + user.id, user);
 			},

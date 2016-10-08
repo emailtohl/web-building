@@ -131,6 +131,22 @@ public class UserCtrlTest {
         .content("{username:foo}".getBytes()))
 		.andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
 	}
+	
+	@Test
+	public void testEnableUser() throws Exception {
+		mockMvc.perform(put("/user/enableUser/100")
+				.characterEncoding("UTF-8")  
+				.contentType(MediaType.APPLICATION_JSON))
+		.andExpect(status().isOk());
+	}
+	
+	@Test
+	public void testDisableUser() throws Exception {
+		mockMvc.perform(put("/user/disableUser/100")
+				.characterEncoding("UTF-8")  
+				.contentType(MediaType.APPLICATION_JSON))
+		.andExpect(status().isOk());
+	}
 
 	@Test
 	public void testUpdate() throws Exception {

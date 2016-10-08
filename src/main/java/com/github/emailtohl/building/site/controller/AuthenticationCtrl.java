@@ -103,6 +103,7 @@ public class AuthenticationCtrl {
 		try {
 			// 第二步，添加该用户，若报运行时异常，则抛出，告诉用户该账号不能注册
 			long id = userService.addUser(u);
+			
 			// 第三步，邮件通知用户，让其激活该账号
 			String url = requet.getScheme() + "://" + requet.getServerName() + ":" + requet.getServerPort() + requet.getContextPath() + "/enable?id=" + id;
 			emailService.enableUser(url, u.getEmail());
@@ -186,6 +187,7 @@ public class AuthenticationCtrl {
 	
 	/**
 	 * 激活账号
+	 * 这里的激活与UserCtrl中的激活有些不一样，它会返回一个登录页面，而UserCtrl中激活了用户后不做其他操作
 	 * @param id
 	 */
 	@RequestMapping(value = "enable", method = RequestMethod.GET)

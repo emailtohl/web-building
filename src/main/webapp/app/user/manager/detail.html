@@ -34,6 +34,8 @@
     <!-- /.box-body -->
     <div class="box-footer clearfix">
       <button type="button" class="btn btn-default pull-left" ng-click="ctrl.edit()">编辑</button>
+      <button type="button" class="btn btn-default pull-left" ng-click="ctrl.enableUser()" ng-if="!ctrl.detail.enabled">激活账户</button>
+      <button type="button" class="btn btn-default pull-left" ng-click="ctrl.disableUser()" ng-if="hasAuthority('ADMIN') && ctrl.detail.enabled">禁用账户</button>
       <ul class="pagination pagination-sm no-margin pull-right">
         <li><a href="#">«</a></li>
         <li><a href="#">1</a></li>
@@ -55,6 +57,7 @@
         <label for="exampleInputEmail1">姓名</label>
         <input type="text" placeholder="name" class="form-control" ng-model="ctrl.form.name">
       </div>
+      <!-- 
       <div class="form-group" ng-if="hasAuthority('ADMIN') || hasAuthority('MANAGER')">
         <div class="radio">
           <label>
@@ -69,6 +72,7 @@
           </label>
         </div>
       </div>
+       -->
       <div class="form-group">
         <label for="exampleInputPassword1">描述</label>
         <input type="text" placeholder="description" class="form-control" ng-model="ctrl.form.description">

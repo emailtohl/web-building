@@ -163,6 +163,26 @@ public class UserCtrl {
 	}
 	
 	/**
+	 * 激活账户
+	 * @param id
+	 */
+	@RequestMapping(value = "enableUser/{id}", method = PUT)
+	@ResponseBody
+	public void enableUser(@PathVariable(value = "id") long id) {
+		userService.enableUser(id);
+	}
+	
+	/**
+	 * 禁用账户，权限在service接口处配置
+	 * @param id
+	 */
+	@RequestMapping(value = "disableUser/{id}", method = PUT)
+	@ResponseBody
+	public void disableUser(@PathVariable(value = "id") long id) {
+		userService.disableUser(id);
+	}
+	
+	/**
 	 * 修改一个User
 	 * @param id
 	 * @param user

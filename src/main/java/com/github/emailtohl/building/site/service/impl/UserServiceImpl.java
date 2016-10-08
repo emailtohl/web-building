@@ -182,9 +182,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void mergeUser(Long id, UserDto u) {
 		User entity = userRepository.findOne(id);
-		// 修改密码，授权功能，不走此接口，所以在调用merge方法前，先将其设置为null
+		// 修改密码，启用/禁用账户，授权功能，不走此接口，所以在调用merge方法前，先将其设置为null
 		u.setAuthorities(null);
 		u.setPassword(null);
+		u.setEnabled(null);
 		Department d = u.getDepartment();
 		if (d != null && d.getName() != null) {
 			u.setDepartment(departmentRepository.findByName(d.getName()));

@@ -73,5 +73,24 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 			self.form = userService.entity2form(self.detail);
 			self.modal.open = true;
 		};
+		
+		self.enableUser = function() {
+			var id = self.detail.id;
+			if (!id) {
+				return;
+			}
+			userService.enableUser(id).success(function(data) {
+				self.getDetail(id);
+			});
+		};
+		self.disableUser = function() {
+			var id = self.detail.id;
+			if (!id) {
+				return;
+			}
+			userService.disableUser(id).success(function(data) {
+				self.getDetail(id);
+			});
+		};
 	}]);
 });
