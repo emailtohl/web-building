@@ -90,7 +90,7 @@ public interface UserService {
 	 * 修改用户
 	 * 这里的方法名使用的是merge，传入的User参数只存储需要更新的属性，不更新的属性值为null
 	 * 
-	 * 修改用户时，不设置authorities属性
+	 * 修改用户时，不设置password，authorities属性
 	 * 
 	 * @param u中的id不能为null， u中属性不为null的值为修改项
 	 */

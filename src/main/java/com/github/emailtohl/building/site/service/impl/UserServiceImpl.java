@@ -18,6 +18,7 @@ import com.github.emailtohl.building.common.utils.BeanTools;
 import com.github.emailtohl.building.site.dao.DepartmentRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.dto.UserDto;
+import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.Department;
 import com.github.emailtohl.building.site.entities.Employee;
 import com.github.emailtohl.building.site.entities.Manager;
@@ -78,6 +79,7 @@ public class UserServiceImpl implements UserService {
 			max = 0;
 		}
 		e.setEmpNum(max++);
+		e.getAuthorities().add(Authority.EMPLOYEE);
 		return e;
 	}
 	// 获取的Manager含emp_no
@@ -88,6 +90,7 @@ public class UserServiceImpl implements UserService {
 			max = 1;
 		}
 		m.setEmpNum(max++);
+		m.getAuthorities().add(Authority.MANAGER);
 		return m;
 	}
 	
@@ -143,8 +146,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void mergeUser(Long id, UserDto u) {
 		User entity = userRepository.findOne(id);
-		// 授权功能，不走此接口，所以在调用merge方法前，先将其设置为null
+		// 修改密码，授权功能，不走此接口，所以在调用merge方法前，先将其设置为null
 		u.setAuthorities(null);
+		u.setPassword(null);
 		Department d = u.getDepartment();
 		if (d != null && d.getName() != null) {
 			u.setDepartment(departmentRepository.findByName(d.getName()));
