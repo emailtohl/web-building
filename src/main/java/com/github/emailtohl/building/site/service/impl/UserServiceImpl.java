@@ -42,56 +42,92 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public Long addUser(UserDto u) {
-		u.setEnabled(false);
-		String hashPw = BCryptUtil.hash(u.getPlainPassword());
-		u.setPassword(hashPw);
-		Department d = u.getDepartment();
-		if (d != null && d.getName() != null) {
-			d = departmentRepository.findByName(d.getName());
-			u.setDepartment(d);
-		}
 		User entity;
 		if (u.getUserType() != null) {
 			switch (u.getUserType()) {
 			case EMPLOYEE :
-				entity = getNewEmployee();
+				entity = newEmployee(u);
 				break;
 			case MANAGER :
-				entity = getNewManager();
+				entity = newManager(u);
 				break;
 			default :
-				entity = new User();
+				entity = newUser(u);
 			}
 		} else {
-			entity = new User();
+			entity = newUser(u);
 		}
-		// 确保添加新用户时，没有授予任何权限，没有启动等
-		BeanUtils.copyProperties(u, entity, "authorities");
+		// 新建时，账户处于未激活状态，通过授权接口进行激活
+		entity.setEnabled(false);
+		String hashPw;
+		if (u.getPlainPassword() == null) {
+			hashPw = BCryptUtil.hash("123456");// 设置默认密码
+		} else {
+			hashPw = BCryptUtil.hash(u.getPlainPassword());
+		}
+		entity.setPassword(hashPw);
 		userRepository.save(entity);
 		return entity.getId();
 	}
-	
-	// 获取的Employee含emp_no
-	private synchronized Employee getNewEmployee() {
+	/**
+	 * 获取普通的User实体，初始化默认授权
+	 * @param u
+	 * @return
+	 */
+	private synchronized User newUser(UserDto u) {
+		User entity = new User();
+		copyProperties(u, entity);
+		entity.getAuthorities().add(Authority.USER);
+		return entity;
+	}
+	/**
+	 * 获取的Employee含emp_no，初始化默认授权
+	 * @param u
+	 * @return
+	 */
+	private synchronized Employee newEmployee(UserDto u) {
 		Employee e = new Employee();
+		copyProperties(u, e);
 		Integer max = userRepository.getMaxEmpNo();
 		if (max == null) {
 			max = 0;
 		}
-		e.setEmpNum(max++);
+		e.setEmpNum(++max);
 		e.getAuthorities().add(Authority.EMPLOYEE);
+		Department d = u.getDepartment();
+		if (d != null && d.getName() != null) {
+			d = departmentRepository.findByName(d.getName());
+			e.setDepartment(d);
+		}
 		return e;
 	}
-	// 获取的Manager含emp_no
-	private synchronized Manager getNewManager() {
+	/**
+	 * 获取的Manager含emp_no，初始化默认授权
+	 * @param u
+	 * @return
+	 */
+	private synchronized Manager newManager(UserDto u) {
 		Manager m = new Manager();
+		copyProperties(u, m);
 		Integer max = userRepository.getMaxEmpNo();
 		if (max == null) {
-			max = 1;
+			max = 0;
 		}
-		m.setEmpNum(max++);
+		m.setEmpNum(++max);
 		m.getAuthorities().add(Authority.MANAGER);
+		Department d = u.getDepartment();
+		if (d != null && d.getName() != null) {
+			d = departmentRepository.findByName(d.getName());
+			m.setDepartment(d);
+		}
 		return m;
+	}
+	
+	/**
+	 * 统一定义复制属性
+	 */
+	private void copyProperties(UserDto src, User dest) {
+		BeanUtils.copyProperties(src, dest, "authorities", "enabled", "password", "department");
 	}
 	
 	@Override

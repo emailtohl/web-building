@@ -17,7 +17,7 @@ public class Employee extends User {
 	private Double salary;
 	private Department department;
 	
-	@Column(name = "emp_num"/*, nullable = false*/) // 这里不能声明不可为空，否则会影响其他继承层次上的关系，这就是弊端
+	@Column(name = "emp_num", unique = true/*, nullable = false*/) // 这里不能声明不可为空，否则会影响其他继承层次上的关系，这就是弊端
 	@Min(value = 1)
 	public Integer getEmpNum() {
 		return empNum;
