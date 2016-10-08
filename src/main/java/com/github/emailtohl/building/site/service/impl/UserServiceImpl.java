@@ -20,6 +20,7 @@ import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.Department;
 import com.github.emailtohl.building.site.entities.Employee;
+import com.github.emailtohl.building.site.entities.Manager;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
 
@@ -44,8 +45,17 @@ public class UserServiceImpl implements UserService {
 		String hashPw = BCryptUtil.hash(u.getPassword());
 		u.setPassword(hashPw);
 		User entity;
-		if (u.getEmpNum() != null) {
-			entity = getNewEmployee();
+		if (u.getUserType() != null) {
+			switch (u.getUserType()) {
+			case EMPLOYEE :
+				entity = getNewEmployee();
+				break;
+			case MANAGER :
+				entity = getNewManager();
+				break;
+			default :
+				entity = new User();
+			}
 		} else {
 			entity = new User();
 		}
@@ -64,6 +74,16 @@ public class UserServiceImpl implements UserService {
 		}
 		e.setEmpNum(max++);
 		return e;
+	}
+	// 获取的Manager含emp_no
+	private synchronized Manager getNewManager() {
+		Manager m = new Manager();
+		Integer max = userRepository.getMaxEmpNo();
+		if (max == null) {
+			max = 1;
+		}
+		m.setEmpNum(max++);
+		return m;
 	}
 	
 	@Override

@@ -3,6 +3,7 @@ package com.github.emailtohl.building.site.service.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.time.Duration;
@@ -26,6 +27,7 @@ import com.github.emailtohl.building.bootspring.SpringUtils;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.Validator;
 import com.github.emailtohl.building.site.dto.UserDto;
+import com.github.emailtohl.building.site.dto.UserDto.UserType;
 import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.Subsidiary;
 import com.github.emailtohl.building.site.entities.User;
@@ -100,6 +102,27 @@ public class UserServiceImplTest {
 		}
 	}
 
+	@Test
+	public void testAddUser() {
+		u.setPost("职位");
+		Long id = userService.addUser(u);
+		UserDto dto = userService.getUser(id);
+		assertNull(dto.getPost());
+		userService.deleteUser(id);
+		
+		u.setUserType(UserType.EMPLOYEE);
+		id = userService.addUser(u);
+		dto = userService.getUser(id);
+		assertEquals("职位", dto.getPost());
+		userService.deleteUser(id);
+		
+		u.setUserType(UserType.MANAGER);
+		id = userService.addUser(u);
+		dto = userService.getUser(id);
+		assertEquals("职位", dto.getPost());
+		userService.deleteUser(id);
+	}
+	
 	@Test
 	public void testGetUserPager() {
 		UserDto u = new UserDto();
