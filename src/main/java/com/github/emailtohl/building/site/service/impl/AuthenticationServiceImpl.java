@@ -126,6 +126,28 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 	}
 
 	/**
+	 * 判断用户是否具有该权限
+	 * @param authorities
+	 * @return
+	 */
+	@Override
+	public boolean hasAuthority(Authority... authorities) {
+		boolean result = false;
+		Authentication a = SecurityContextHolder.getContext().getAuthentication();
+		if (a != null) {
+			Set<String> roles = getGrantedAuthoritySet(a.getAuthorities());
+			for (int i = 0; i < authorities.length; i++) {
+				String authority = authorities[i].name();
+				if (roles.contains(authority)) {
+					result = true;
+					break;
+				}
+			}
+		}
+		return result;
+	}
+	
+	/**
 	 * 查询用户权限，根据用户权限过滤信息
 	 */
 	@Override

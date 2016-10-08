@@ -106,7 +106,7 @@
             <!-- /.box-body -->
           </div>
           <!-- /.box -->
-	      <div class="box-footer clearfix">
+	      <div class="box-footer clearfix" ng-if="hasAuthority('ADMIN') || hasAuthority('MANAGER')">
 	        <button type="button" class="btn btn-default pull-left" ng-click="ctrl.openModal()">新增</button>
 	      </div>
         </div>
@@ -125,8 +125,23 @@
       </div>
       <div class="form-group">
         <label for="exampleInputEmail1">邮箱</label>
-        <input type="email" placeholder="name" class="form-control" ng-model="ctrl.form.email" required="required">
+        <input type="email" placeholder="email" class="form-control" ng-model="ctrl.form.email" required="required">
       </div>
+	  <div class="form-group" ng-init="ctrl.form.userType = 'EMPLOYEE'">
+         <div class="radio">
+           <label>
+             <input name="userType" id="" value="EMPLOYEE" type="radio" ng-model="ctrl.form.userType">
+            	 普通职员
+           </label>
+         </div>
+         <div class="radio" ng-if="hasAuthority('ADMIN')">
+           <label>
+             <input name="userType" id="" value="MANAGER" type="radio" ng-model="ctrl.form.userType">
+             	经理
+           </label>
+         </div>
+       </div>
+
       <div class="form-group">
         <label for="exampleInputPassword1">描述</label>
         <input type="text" placeholder="description" class="form-control" ng-model="ctrl.form.description">

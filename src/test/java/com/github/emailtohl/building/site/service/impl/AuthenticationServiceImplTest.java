@@ -49,6 +49,12 @@ public class AuthenticationServiceImplTest {
 	
 //	需要在安全上下文中验证，这里不容易单元测试
 //	@Test
+	public void testHasAuthority() {
+		
+	}
+	
+//	需要在安全上下文中验证，这里不容易单元测试
+//	@Test
 	public void testGetPageByAuthorities() {
 		UserDto u = new UserDto();
 		u.setEmail("foo@test.com");

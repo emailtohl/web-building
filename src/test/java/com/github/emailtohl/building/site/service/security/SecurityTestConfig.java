@@ -205,6 +205,12 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 			}
 
 			@Override
+			public boolean hasAuthority(Authority... authorities) {
+				logger.debug("hasAuthority invoked");
+				return false;
+			}
+			
+			@Override
 			public Pager<UserDto> getPageByAuthorities(UserDto user, Pageable pageable) {
 				logger.debug("getUserPager invoked");
 				Pager<UserDto> p = new Pager<UserDto>(Arrays.asList(emailtohlDto, fooDto, barDto), 100L);
@@ -230,6 +236,7 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 				logger.debug("updateType invoked");
 				return 1000L;
 			}
+
 		};
 	}
 }

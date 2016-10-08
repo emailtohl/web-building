@@ -31,10 +31,11 @@ public interface UserService {
 	/**
 	 * 添加用户
 	 * 新增用户时，不设置authorities属性，且enable属性为false
+	 * 权限方面，这里添加用户主要是职员实体，需要管理员或经理才能新增
 	 * @param u
 	 * @return 新增User的id
 	 */
-	@Min(value = 1L)
+	@PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
 	Long addUser(@Valid UserDto u);
 	
 	/**

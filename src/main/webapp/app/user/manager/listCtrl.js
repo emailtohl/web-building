@@ -1,6 +1,6 @@
 define(['user/module', 'user/manager/service'], function(userModule) {
 	return userModule
-	.controller('UserListCtrl', ['$scope', '$http', '$state', 'userService'
+	.controller('UserListCtrl', [ '$scope', '$http', '$state', 'userService'
 	                         , function($scope, $http, $state, userService) {
 		var self = this;
 		$scope.getAuthentication();

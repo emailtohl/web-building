@@ -36,6 +36,13 @@ public interface AuthenticationService extends AuthenticationProvider {
 	Authentication authenticate(String email, String password);
 
 	/**
+	 * 判断用户是否具有该权限
+	 * @param authorities
+	 * @return
+	 */
+	boolean hasAuthority(Authority ... authorities);
+	
+	/**
 	 * 获取用户权限，需要管理员或MANAGER权限
 	 * @param user
 	 * @param pageable
@@ -78,4 +85,5 @@ public interface AuthenticationService extends AuthenticationProvider {
 	 * return 新生成实体的id
 	 */
 	long updateUserType(long id, Authority a);
+	
 }
