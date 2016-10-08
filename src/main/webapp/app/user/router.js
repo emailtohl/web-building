@@ -20,6 +20,11 @@ define(['user/module',
 			templateUrl : 'app/user/manager/detail.html',
 			controller : 'UserDetailCtrl as ctrl'
 		})
+		.state('user.addUser', {
+			url : '/addUser',
+			templateUrl : 'app/user/manager/addUser.html',
+			controller : 'AddUserCtrl as ctrl'
+		})
 		.state('user.authority', {
 			url : '/authority',
 			templateUrl : 'app/user/authority/authority.html',

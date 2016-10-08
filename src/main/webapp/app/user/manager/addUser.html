@@ -1,0 +1,111 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>新增职员
+    <small>Preview</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li ui-sref="dashboard"><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li ui-sref="user.list"><a href="#">User List</a></li>
+    <li class="active">新增职员</li>
+  </ol>
+</section>
+<!-- Main content -->
+<section class="content">
+  <div class="row">
+  
+	  <form role="form" name="addUserform">
+	    <div class="box-body">
+	      <div class="row">
+	        <div class="col-md-6">
+	          <div class="form-group">
+		        <label for="exampleInputEmail1">姓名</label>
+		        <input type="text" placeholder="name" class="form-control" ng-model="ctrl.form.name" required="required">
+		      </div>
+		      <div class="form-group">
+		        <label for="exampleInputEmail1">邮箱</label>
+		        <input type="email" placeholder="email" class="form-control" ng-model="ctrl.form.email" required="required">
+		      	<span ng-show="addUserform.email.$error.required">
+				This is a required field
+				</span>
+				<span ng-show="addUserform.email.$error.minlength">
+				Minimum length required is 4
+				</span>
+				<span ng-show="addUserform.email.$invalid">
+				This field is invalid
+				</span>
+		      </div>
+		      <div class="form-group">
+		        <label for="exampleInputEmail1">生日</label>
+		        <input type="text" placeholder="birthday" class="form-control" id="" datepicker ng-model="ctrl.form.date">
+		      </div>
+		      <div class="form-group">
+		        <label for="exampleInputEmail1">联系电话</label>
+		        <input type="text" placeholder="mobile" class="form-control" ng-model="ctrl.form.subsidiary.mobile">
+		      </div>
+	        </div>
+	        
+	        <div class="col-md-6">
+			  <div class="form-group" ng-init="ctrl.form.userType = 'EMPLOYEE'">
+		        <div class="radio">
+		          <label>
+		            <input name="userType" id="" value="EMPLOYEE" type="radio" ng-model="ctrl.form.userType">
+		            	 普通职员
+		          </label>
+		        </div>
+		        <div class="radio" ng-if="hasAuthority('ADMIN') || hasAuthority('MANAGER')">
+		          <label>
+		            <input name="userType" id="" value="MANAGER" type="radio" ng-model="ctrl.form.userType">
+		             	经理
+		          </label>
+		        </div>
+		      </div>
+		      <div class="form-group">
+		        <label for="exampleInputEmail1">岗位</label>
+		        <input type="text" placeholder="岗位" class="form-control" ng-model="ctrl.form.post" required="required">
+		      </div>
+		      <div class="form-group">
+		        <label for="exampleInputEmail1">部门</label>
+		        <select class="form-control select2" style="width: 100%;" select2 ng-model="ctrl.form.department.name">
+			      <option value="">请选择</option>
+			      <option value="生产部">生产部</option>
+			      <option value="质量部">质量部</option>
+			    </select>
+		      </div>
+		      <div class="form-group">
+		        <label for="exampleInputPassword1">描述</label>
+		        <input type="text" placeholder="description" class="form-control" ng-model="ctrl.form.description" ng-maxlength="300">
+		      </div>
+		      <!-- 普通用户（User）没有department属性，所以编辑不起作用
+		      	从这里可以总结经验，以后设计JPA实体关系时，尽量避免使用继承，否则从User转为其导出类Employee将很困难
+		      	以ctrl.detail.empNum判断是否Employee，如果没有这个值则不显示为编辑项
+		       -->
+		      <div class="form-group" ng-if="ctrl.detail.empNum">
+		        <label for="exampleInputPassword1">职位</label>
+		        <input type="text" placeholder="post" class="form-control" ng-model="ctrl.form.post">
+		      </div>
+		      <div class="form-group" ng-if="ctrl.detail.empNum">
+		        <label for="exampleInputFile">部门</label>
+		        <select class="form-control select2" style="width: 100%;" select2 ng-model="ctrl.form.department.name">
+			      <option value="">请选择</option>
+			      <option value="生产部">生产部</option>
+			      <option value="质量部">质量部</option>
+			    </select>
+		      </div>
+	        </div>
+	        
+	        <div class="col-md-12">
+      		  <div class="box-body">
+		        <input type="submit" class="btn btn-default btn-block" ng-disabled="addUserform.$invalid" ng-click="ctrl.submit()">
+		      </div>
+	        </div>
+	        
+	      </div>
+
+	    </div>
+	    <!-- /.box-body -->
+	  </form>
+  
+  </div>
+  <!-- /.row -->
+</section>
+<!-- /.content -->

@@ -44,7 +44,7 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 			whenConfirm : function() {
 				userService.addUser(self.form).success(function(data) {
 					console.log('确认')
-					
+					self.query();
 				});
 			},
 			type : '',

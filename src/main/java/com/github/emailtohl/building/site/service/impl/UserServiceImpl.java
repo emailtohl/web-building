@@ -44,6 +44,11 @@ public class UserServiceImpl implements UserService {
 		u.setEnabled(false);
 		String hashPw = BCryptUtil.hash(u.getPassword());
 		u.setPassword(hashPw);
+		Department d = u.getDepartment();
+		if (d != null && d.getName() != null) {
+			d = departmentRepository.findByName(d.getName());
+			u.setDepartment(d);
+		}
 		User entity;
 		if (u.getUserType() != null) {
 			switch (u.getUserType()) {

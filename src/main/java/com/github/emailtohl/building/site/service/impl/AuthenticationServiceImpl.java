@@ -147,6 +147,14 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 		return result;
 	}
 	
+	private Set<String> getGrantedAuthoritySet(Collection<? extends GrantedAuthority> collection) {
+		Set<String> set = new HashSet<String>();
+		for (GrantedAuthority g : collection) {
+			set.add(g.getAuthority());
+		}
+		return set;
+	}
+	
 	/**
 	 * 查询用户权限，根据用户权限过滤信息
 	 */
@@ -156,15 +164,8 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 		List<User> src = p.getContent();
 		List<UserDto> dest = new ArrayList<UserDto>();
 
-		Set<String> roles;
-		Authentication a = SecurityContextHolder.getContext().getAuthentication();
-		if (a != null) {
-			roles = getGrantedAuthoritySet(a.getAuthorities());
-		} else {
-			roles = new HashSet<String>();
-		}
 		// 如果是管理员的情况
-		if (roles.contains("ADMIN")) {
+		if (hasAuthority(ADMIN)) {
 			for (User u : src) {
 				UserDto target = new UserDto();
 				BeanUtils.copyProperties(u, target, "password", "icon", "subsidiary", "iconSrc");
@@ -173,7 +174,7 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 			return new Pager<UserDto>(dest, p.getTotalElements(), p.getPageSize());
 		}
 		// 如果是经理的情况
-		if (roles.contains("MANAGER")) {
+		if (hasAuthority(MANAGER)) {
 			for (User u : src) {
 				// 过滤管理员的信息
 				if (u.getAuthorities().contains(Authority.ADMIN)) {
@@ -203,28 +204,21 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 	 */
 	@Override
 	public void grantedAuthority(Long id, Set<Authority> authorities) {
-		Set<String> roles = getGrantedAuthoritySet(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
-		// 注册时的情况
-		if (roles.isEmpty() && !(authorities.contains(ADMIN) || authorities.contains(MANAGER) || authorities.contains(EMPLOYEE))) {
-			throw new AccessDeniedException("没有权限提权");
+		// 用户注册时，不含任何权限，但是需要授予普通用户（User）权限，所以只要含有ADMIN, MANAGER, EMPLOYEE中任意一个权限，则抛异常
+		if (!hasAuthority(ADMIN, MANAGER, EMPLOYEE, USER) && !(authorities.contains(ADMIN) || authorities.contains(MANAGER) || authorities.contains(EMPLOYEE))) {
+			throw new AccessDeniedException("没有授予" + authorities + "的权限");
 		}
-		if (!roles.contains("ADMIN") && authorities.contains(ADMIN)) {
-			throw new AccessDeniedException("不能添加管理员权限");
+		// 如果没有ADMIN的权限，则不能授予ADMIN的权限
+		if (!hasAuthority(ADMIN) && authorities.contains(ADMIN)) {
+			throw new AccessDeniedException("不能添加ADMIN权限");
 		}
-		if (!roles.contains("ADMIN") && !roles.contains("MANAGER") && (authorities.contains(MANAGER))) {
+		// 如果既不包含ADMIN也不包含MANAGER的权限，那么就不能授予MANAGER权限
+		if (!hasAuthority(ADMIN, MANAGER) && (authorities.contains(MANAGER))) {
 			throw new AccessDeniedException("没有权限添加MANAGER权限");
 		}
 		userRepository.findOne(id).setAuthorities(authorities);
 	}
 	
-	private Set<String> getGrantedAuthoritySet(Collection<? extends GrantedAuthority> collection) {
-		Set<String> set = new HashSet<String>();
-		for (GrantedAuthority g : collection) {
-			set.add(g.getAuthority());
-		}
-		return set;
-	}
-
 	/**
 	 * 实现AuthenticationProvider
 	 */
