@@ -30,6 +30,7 @@ define([ 'user/module', 'mine' ], function(userModule) {
 				f.id = e.id;
 				f.email = e.email;
 				f.name = e.name;
+				f.enabled = e.enabled;
 				f.post = e.post;
 				f.department = {name : e.department ? e.department.name : ''};
 				f.description = e.description;

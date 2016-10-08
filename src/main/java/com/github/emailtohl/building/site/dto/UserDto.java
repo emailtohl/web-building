@@ -14,12 +14,25 @@ public class UserDto extends Manager {
 	 */
 	private UserType userType;
 	
+	/**
+	 * 创建用户，更改密码时，需要传输明文密码
+	 */
+	private String plainPassword;
+	
 	public UserType getUserType() {
 		return userType;
 	}
 
 	public void setUserType(UserType userType) {
 		this.userType = userType;
+	}
+
+	public String getPlainPassword() {
+		return plainPassword;
+	}
+
+	public void setPlainPassword(String plainPassword) {
+		this.plainPassword = plainPassword;
 	}
 
 	public static enum UserType {

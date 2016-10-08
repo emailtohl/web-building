@@ -35,8 +35,12 @@
 				</span>
 		      </div>
 		      <div class="form-group">
+		        <label for="exampleInputEmail1">默认密码</label>
+		        <input type="password" placeholder="password min 6" class="form-control" ng-model="ctrl.form.plainPassword" required="required" ng-minlength="6">
+		      </div>
+		      <div class="form-group">
 		        <label for="exampleInputEmail1">生日</label>
-		        <input type="text" placeholder="birthday" class="form-control" id="" datepicker ng-model="ctrl.form.date">
+		        <input type="text" placeholder="birthday" class="form-control" datepicker ng-model="ctrl.form.date">
 		      </div>
 		      <div class="form-group">
 		        <label for="exampleInputEmail1">联系电话</label>
@@ -48,13 +52,13 @@
 			  <div class="form-group" ng-init="ctrl.form.userType = 'EMPLOYEE'">
 		        <div class="radio">
 		          <label>
-		            <input name="userType" id="" value="EMPLOYEE" type="radio" ng-model="ctrl.form.userType">
+		            <input name="userType" value="EMPLOYEE" type="radio" ng-model="ctrl.form.userType">
 		            	 普通职员
 		          </label>
 		        </div>
 		        <div class="radio" ng-if="hasAuthority('ADMIN') || hasAuthority('MANAGER')">
 		          <label>
-		            <input name="userType" id="" value="MANAGER" type="radio" ng-model="ctrl.form.userType">
+		            <input name="userType" value="MANAGER" type="radio" ng-model="ctrl.form.userType">
 		             	经理
 		          </label>
 		        </div>
@@ -74,22 +78,6 @@
 		      <div class="form-group">
 		        <label for="exampleInputPassword1">描述</label>
 		        <input type="text" placeholder="description" class="form-control" ng-model="ctrl.form.description" ng-maxlength="300">
-		      </div>
-		      <!-- 普通用户（User）没有department属性，所以编辑不起作用
-		      	从这里可以总结经验，以后设计JPA实体关系时，尽量避免使用继承，否则从User转为其导出类Employee将很困难
-		      	以ctrl.detail.empNum判断是否Employee，如果没有这个值则不显示为编辑项
-		       -->
-		      <div class="form-group" ng-if="ctrl.detail.empNum">
-		        <label for="exampleInputPassword1">职位</label>
-		        <input type="text" placeholder="post" class="form-control" ng-model="ctrl.form.post">
-		      </div>
-		      <div class="form-group" ng-if="ctrl.detail.empNum">
-		        <label for="exampleInputFile">部门</label>
-		        <select class="form-control select2" style="width: 100%;" select2 ng-model="ctrl.form.department.name">
-			      <option value="">请选择</option>
-			      <option value="生产部">生产部</option>
-			      <option value="质量部">质量部</option>
-			    </select>
 		      </div>
 	        </div>
 	        

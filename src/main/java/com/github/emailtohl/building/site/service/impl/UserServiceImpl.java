@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Long addUser(UserDto u) {
 		u.setEnabled(false);
-		String hashPw = BCryptUtil.hash(u.getPassword());
+		String hashPw = BCryptUtil.hash(u.getPlainPassword());
 		u.setPassword(hashPw);
 		Department d = u.getDepartment();
 		if (d != null && d.getName() != null) {
@@ -143,8 +143,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void mergeUser(Long id, UserDto u) {
 		User entity = userRepository.findOne(id);
-		// 是否启动，授权，不走此接口，所以在调用merge方法前，先将其设置为null
-		u.setEnabled(null);
+		// 授权功能，不走此接口，所以在调用merge方法前，先将其设置为null
 		u.setAuthorities(null);
 		Department d = u.getDepartment();
 		if (d != null && d.getName() != null) {
