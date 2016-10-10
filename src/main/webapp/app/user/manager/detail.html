@@ -75,7 +75,7 @@
        -->
       <div class="form-group">
         <label for="exampleInputPassword1">描述</label>
-        <input type="text" placeholder="description" class="form-control" ng-model="ctrl.form.description">
+        <textarea rows="3" placeholder="description" class="form-control" ng-model="ctrl.form.description"></textarea>
       </div>
       <!-- 普通用户（User）没有department属性，所以编辑不起作用
       	从这里可以总结经验，以后设计JPA实体关系时，尽量避免使用继承，否则从User转为其导出类Employee将很困难

@@ -17,26 +17,48 @@
 	    <div class="box-body">
 	      <div class="row">
 	        <div class="col-md-6">
-	          <div class="form-group">
+	          <div class="form-group has-feedback" ng-class="{'has-success':addUserform.name.$valid,'has-warning':addUserform.name.$error.required,'has-error':addUserform.name.$error.minlength}">
 		        <label for="exampleInputEmail1">姓名</label>
-		        <input type="text" placeholder="name" class="form-control" ng-model="ctrl.form.name" required="required">
+		        <input type="text" placeholder="name" name="name" class="form-control" ng-model="ctrl.form.name" required="required">
+		        <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':addUserform.name.$valid,'glyphicon-warning-sign':addUserform.name.$error.required,'glyphicon-remove':addUserform.name.$error.minlength}"></span>
+			    <span ng-show="addUserform.name.$error.required">
+				This is a required field
+				</span>
+				<span ng-show="addUserform.name.$error.minlength">
+				Minimum length required is 6
+				</span>
+				<span ng-show="addUserform.name.$invalid">
+				This field is invalid
+				</span>
+		        <span class="glyphicon glyphicon-ok form-control-feedback"></span>
 		      </div>
-		      <div class="form-group">
+		      <div class="form-group has-feedback" ng-class="{'has-success':addUserform.email.$valid,'has-warning':addUserform.email.$error.required,'has-error':addUserform.email.$error.minlength}">
 		        <label for="exampleInputEmail1">邮箱</label>
-		        <input type="email" placeholder="email" class="form-control" ng-model="ctrl.form.email" required="required">
+		        <input type="email" placeholder="email" name="email" class="form-control" ng-model="ctrl.form.email" required="required">
+		        <span class="glyphicon glyphicon-ok form-control-feedback" ng-class="{'glyphicon-ok':addUserform.email.$valid,'glyphicon-warning-sign':addUserform.email.$error.required,'glyphicon-remove':addUserform.email.$error.minlength}"></span>
 		      	<span ng-show="addUserform.email.$error.required">
 				This is a required field
 				</span>
 				<span ng-show="addUserform.email.$error.minlength">
-				Minimum length required is 4
+				Minimum length required is 6
 				</span>
 				<span ng-show="addUserform.email.$invalid">
 				This field is invalid
 				</span>
 		      </div>
-		      <div class="form-group">
+		      <div class="form-group has-feedback" ng-class="{'has-success':addUserform.password.$valid,'has-warning':addUserform.password.$error.required,'has-error':addUserform.password.$error.minlength}">
 		        <label for="exampleInputEmail1">默认密码</label>
-		        <input type="password" placeholder="password min 6" class="form-control" ng-model="ctrl.form.plainPassword" required="required" ng-minlength="6">
+		        <input type="password" placeholder="password min 6" name="password" class="form-control" ng-model="ctrl.form.plainPassword" required="required" ng-minlength="6">
+		      	<span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':addUserform.password.$valid,'glyphicon-warning-sign':addUserform.password.$error.required,'glyphicon-remove':addUserform.password.$error.minlength}"></span>
+			    <span ng-show="addUserform.password.$error.required">
+				This is a required field
+				</span>
+				<span ng-show="addUserform.password.$error.minlength">
+				Minimum length required is 6
+				</span>
+				<span ng-show="addUserform.password.$invalid">
+				This field is invalid
+				</span>
 		      </div>
 		      <div class="form-group">
 		        <label for="exampleInputEmail1">生日</label>
@@ -63,9 +85,19 @@
 		          </label>
 		        </div>
 		      </div>
-		      <div class="form-group">
+		      <div class="form-group has-feedback"  ng-class="{'has-success':addUserform.post.$valid,'has-warning':addUserform.post.$error.required,'has-error':addUserform.post.$error.minlength}">
 		        <label for="exampleInputEmail1">岗位</label>
-		        <input type="text" placeholder="岗位" class="form-control" ng-model="ctrl.form.post" required="required">
+		        <input type="text" placeholder="岗位" name="post" class="form-control" ng-model="ctrl.form.post" required="required">
+     		    <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':addUserform.post.$valid,'glyphicon-warning-sign':addUserform.post.$error.required,'glyphicon-remove':addUserform.post.$error.minlength}"></span>
+			    <span ng-show="addUserform.post.$error.required">
+				This is a required field
+				</span>
+				<span ng-show="addUserform.post.$error.minlength">
+				Minimum length required is 6
+				</span>
+				<span ng-show="addUserform.post.$invalid">
+				This field is invalid
+				</span>
 		      </div>
 		      <div class="form-group">
 		        <label for="exampleInputEmail1">部门</label>
@@ -77,13 +109,13 @@
 		      </div>
 		      <div class="form-group">
 		        <label for="exampleInputPassword1">描述</label>
-		        <input type="text" placeholder="description" class="form-control" ng-model="ctrl.form.description" ng-maxlength="300">
+		        <textarea rows="3" type="text" placeholder="description" class="form-control" ng-model="ctrl.form.description" ng-maxlength="300"></textarea>
 		      </div>
 	        </div>
 	        
 	        <div class="col-md-12">
       		  <div class="box-body">
-		        <input type="submit" class="btn btn-default btn-block" ng-disabled="addUserform.$invalid" ng-click="ctrl.submit()">
+		        <input type="submit" class="btn btn-primary btn-block" ng-disabled="addUserform.$invalid" ng-click="ctrl.submit()">
 		      </div>
 	        </div>
 	        
