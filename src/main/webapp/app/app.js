@@ -1,7 +1,7 @@
 /**
  * 这是主要的app模块，运行前Angular的各个module已组装好，本模块仅仅将各module组合起来
  */
-define([ 'angular', 'uirouter', 'common/context', 'test/context', 'user/context', 'dashboard/context' ],
+define([ 'angular', 'uirouter', 'common/context', 'test/context', 'user/context', 'dashboard/context', 'forum/context' ],
 	function(angular) {
 		return angular.module('appdemo', [ 'ui.router', 'commonModule', 'testModule', 'userModule', 'dashboardModule' ])
 		.run([ '$rootScope', '$state', '$stateParams', '$http', function($rootScope, $state, $stateParams, $http) {
