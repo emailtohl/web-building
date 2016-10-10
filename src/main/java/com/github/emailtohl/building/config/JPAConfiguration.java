@@ -62,9 +62,9 @@ public class JPAConfiguration {
 	public JpaVendorAdapter jpaVendorAdapter() {
 		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
 		adapter.setDatabase(Database.POSTGRESQL);
+		adapter.setDatabasePlatform("org.hibernate.dialect.PostgreSQL94Dialect");
 //		adapter.setShowSql(true);
 		adapter.setGenerateDdl(false);
-		adapter.setDatabasePlatform("org.hibernate.dialect.PostgreSQL94Dialect");
 		return adapter;
 	}
 

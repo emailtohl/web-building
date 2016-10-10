@@ -35,6 +35,8 @@ import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.hibernate.search.annotations.Field;
+
 import com.github.emailtohl.building.common.Constant;
 
 /**
@@ -85,6 +87,7 @@ public class User extends BaseEntity {
 	protected String description;
 	protected Set<Authority> authorities = new HashSet<Authority>();
 	
+	@Field
 	public String getName() {
 		return name;
 	}
@@ -92,6 +95,7 @@ public class User extends BaseEntity {
 		this.name = name;
 	}
 	
+	@Field
 	public String getUsername() {
 		return username;
 	}
@@ -99,6 +103,7 @@ public class User extends BaseEntity {
 		this.username = username;
 	}
 	
+	@Field
 	@Column(nullable = false, unique = true)
 	public String getEmail() {
 		return email;
@@ -198,6 +203,7 @@ public class User extends BaseEntity {
 		this.iconSrc = iconSrc;
 	}
 	
+	@Field
 	public String getDescription() {
 		return description;
 	}

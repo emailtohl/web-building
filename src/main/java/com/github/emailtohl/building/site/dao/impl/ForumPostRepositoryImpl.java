@@ -34,8 +34,9 @@ public class ForumPostRepositoryImpl implements SearchableRepository<ForumPost> 
 
 		QueryBuilder builder = manager.getSearchFactory().buildQueryBuilder().forEntity(ForumPost.class).get();
 
-		Query lucene = builder.keyword().onFields("title", "body", "keywords", "user.username").matching(query)
-				.createQuery();
+		Query lucene = builder.keyword()
+				.onFields("title", "body", "keywords", "user.name", "user.username", "user.email", "user.description")
+				.matching(query).createQuery();
 
 		FullTextQuery q = manager.createFullTextQuery(lucene, ForumPost.class);
 		q.setProjection(FullTextQuery.THIS, FullTextQuery.SCORE);
