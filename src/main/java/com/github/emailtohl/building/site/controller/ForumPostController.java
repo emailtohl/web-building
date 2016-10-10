@@ -1,14 +1,15 @@
 package com.github.emailtohl.building.site.controller;
 
-import java.util.Map;
-
 import javax.inject.Inject;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.site.dao.SearchResult;
 import com.github.emailtohl.building.site.entities.ForumPost;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.ForumPostService;
@@ -18,21 +19,22 @@ import com.github.emailtohl.building.site.service.ForumPostService;
  * 
  * @author HeLei
  */
-@Controller
+@RestController
+@RequestMapping("forum")
 public class ForumPostController {
 	@Inject
 	ForumPostService forumPostService;
 
-	@RequestMapping(value = "", method = RequestMethod.GET)
+/*	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String form(Map<String, Object> model) {
 		model.put("added", null);
 		model.put("addForm", new PostForm());
 		return "add";
 	}
-
+*/
 	@RequestMapping(value = "", method = RequestMethod.POST)
-	public String add(Map<String, Object> model, PostForm form) {
-		User user = this.forumPostService.getUser(form.getUser());
+	public void add(PostForm form) {
+		User user = this.forumPostService.getUser(form.getEmail());
 		if (user == null)
 			throw new IllegalArgumentException("User does not exist.");
 
@@ -43,12 +45,8 @@ public class ForumPostController {
 		post.setKeywords(form.getKeywords());
 
 		this.forumPostService.save(post);
-
-		model.put("added", post.getId());
-		model.put("addForm", new PostForm());
-		return "add";
 	}
-
+/*
 	@RequestMapping(value = "search")
 	public String search(Map<String, Object> model) {
 		model.put("searchPerformed", false);
@@ -56,34 +54,38 @@ public class ForumPostController {
 
 		return "search";
 	}
-
+*/
 	@RequestMapping(value = "search", params = "query")
-	public String search(Map<String, Object> model, SearchForm form, Pageable pageable) {
-		if (form.getQuery() == null || form.getQuery().trim().length() == 0)
-			model.put("searchPerformed", false);
-		else {
-			model.put("searchPerformed", true);
-			model.put("results", this.forumPostService.search(form.getQuery(), pageable));
+	public Pager<SearchResult<ForumPost>> search(SearchForm form, Pageable pageable) {
+		Pager<SearchResult<ForumPost>> p = null;
+		if (form.getQuery() != null && form.getQuery().trim().length() != 0) {
+			Page<SearchResult<ForumPost>> page = this.forumPostService.search(form.getQuery(), pageable);
+			p = new Pager<>(page.getContent(), page.getTotalElements(), page.getSize());
 		}
-
-		return "search";
+		return p;
 	}
 
 	public static class PostForm {
-		private String user;
-
+		private String username;
+		private String email;
 		private String title;
-
 		private String body;
-
 		private String keywords;
 
-		public String getUser() {
-			return this.user;
+		public String getUsername() {
+			return username;
 		}
 
-		public void setUser(String user) {
-			this.user = user;
+		public void setUsername(String username) {
+			this.username = username;
+		}
+
+		public String getEmail() {
+			return email;
+		}
+
+		public void setEmail(String email) {
+			this.email = email;
 		}
 
 		public String getTitle() {

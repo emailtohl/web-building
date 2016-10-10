@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.site.dao;
+package com.github.emailtohl.building.site.dao.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +18,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.orm.jpa.EntityManagerProxy;
 
+import com.github.emailtohl.building.site.dao.SearchResult;
+import com.github.emailtohl.building.site.dao.SearchableRepository;
 import com.github.emailtohl.building.site.entities.ForumPost;
 
 public class ForumPostRepositoryImpl implements SearchableRepository<ForumPost> {
