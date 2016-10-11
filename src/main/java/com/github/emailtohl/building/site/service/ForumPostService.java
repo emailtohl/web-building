@@ -16,4 +16,6 @@ public interface ForumPostService {
 	Page<SearchResult<ForumPost>> search(String query, Pageable pageable);
 
 	void save(ForumPost forumPost);
+	
+	void delete(ForumPost forumPost);
 }

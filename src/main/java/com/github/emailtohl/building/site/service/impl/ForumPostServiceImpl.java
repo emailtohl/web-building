@@ -43,4 +43,10 @@ public class ForumPostServiceImpl implements ForumPostService {
 	public void save(ForumPost forumPost) {
 		this.forumPostRepository.save(forumPost);
 	}
+
+	@Override
+	@Transactional
+	public void delete(ForumPost forumPost) {
+		this.forumPostRepository.delete(forumPost);
+	}
 }
