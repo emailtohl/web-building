@@ -3,6 +3,9 @@ import static com.github.emailtohl.building.config.RootContextConfiguration.PROF
 import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_PRODUCTION;
 import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_QA;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.DataSource;
@@ -77,6 +80,7 @@ public class JPAConfiguration {
 	public LocalEntityManagerFactoryBean LocakEntityManagerFactory() {
 		LocalEntityManagerFactoryBean emfb = new LocalEntityManagerFactoryBean();
 		emfb.setPersistenceUnitName("building-unit");
+		emfb.setJpaPropertyMap(getJpaPropertyMap());
 		return emfb;
 	}
 	
@@ -92,7 +96,16 @@ public class JPAConfiguration {
 		emfb.setJpaVendorAdapter(jpaVendorAdapter());
 		// 实际上hibernate可以扫描类路径下有JPA注解的实体类，但是JPA规范并没有此功能，所以最好还是告诉它实际所在位置
 		emfb.setPackagesToScan("com.github.emailtohl.building.site.entities");
+		emfb.setJpaPropertyMap(getJpaPropertyMap());
 		return emfb;
+	}
+	
+	private Map<String, Object> getJpaPropertyMap() {
+		Map<String, Object> properties = new HashMap<String, Object>();
+		properties.put("javax.persistence.schema-generation.database.action", "none");
+		properties.put("hibernate.search.default.directory_provider", "filesystem");
+		properties.put("hibernate.search.default.indexBase", "../searchIndexes");
+		return properties;
 	}
 	
 	/**
