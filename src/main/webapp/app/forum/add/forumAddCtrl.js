@@ -12,5 +12,11 @@ define(['forum/module', 'forum/add/service', 'ckeditor'], function(forumModule) 
 		// bootstrap WYSIHTML5 - text editor
 //		$(".textarea").wysihtml5();
 		
+		self.forumPost = {};
+		self.submit = function() {
+			forumAddService.add(self.forumPost).success(function(data) {
+				self.forumPost = {};
+			});
+		}
 	}]);
 });
