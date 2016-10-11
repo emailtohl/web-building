@@ -37,11 +37,11 @@ public class ForumPostServiceImpl implements ForumPostService {
 	@Transactional
 	public Pager<SearchResult<ForumPostDto>> search(String query, Pageable pageable) {
 		Page<SearchResult<ForumPost>> page = this.forumPostRepository.search(query, pageable);
-		for (SearchResult<ForumPost> sss : page.getContent()) {
-			System.out.println(sss.getEntity());
-		}
 		List<SearchResult<ForumPostDto>> ls = new ArrayList<SearchResult<ForumPostDto>>();
 		page.getContent().forEach((s1) -> {
+			if (s1.getEntity() == null) {
+				return;
+			}
 			ForumPostDto dto = convert(s1.getEntity());
 			SearchResult<ForumPostDto> s2 = new SearchResult<ForumPostDto>(dto, s1.getRelevance());
 			ls.add(s2);

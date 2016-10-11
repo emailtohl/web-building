@@ -10,7 +10,7 @@
  - 容器：spring、spring mvc、Websocket
  - 安全：spring security
  - 数据访问层：JPA Hibernate，spring data
- - 其他：Hibernate校验、Hibernate Search等
+ - 其他：Hibernate校验、Hibernate Search（全文搜索）等
  
 #### JavaScript
 - bootstrap
