@@ -48,6 +48,12 @@ define([ 'angular', 'uirouter', 'common/context', 'test/context', 'user/context'
 				}
 				return flag;
 			};
+			// 判断是否登录
+			$rootScope.isAuthenticated = function() {
+				return $rootScope.authentication
+				&& $rootScope.authentication.principal
+				&& $rootScope.authentication.principal.username;
+			};
 		} ]);
 	}
 );

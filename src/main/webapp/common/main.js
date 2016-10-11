@@ -91,7 +91,7 @@ require.config({
 		},
 		'bootstrap-wysihtml5' : {
 			deps : [ 'bootstrap' ],
-			exports : 'bootstrapWysihtml5'
+			exports : 'bootstrapwysihtml5'
 		},
 		'chartjs' : {
 			deps : [ 'jquery' ],
