@@ -11,14 +11,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import com.github.emailtohl.building.bootspring.SpringUtils;
+import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.dao.SearchResult;
 import com.github.emailtohl.building.site.dao.UserRepository;
-import com.github.emailtohl.building.site.entities.ForumPost;
-import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.dto.ForumPostDto;
 import com.github.emailtohl.building.site.service.ForumPostService;
 /**
  * 全文搜索测试
@@ -31,38 +30,32 @@ public class ForumPostServiceTest {
 	AnnotationConfigApplicationContext ctx = SpringUtils.context;
 	ForumPostService forumPostService = ctx.getBean(ForumPostService.class);
 	UserRepository userRepository = ctx.getBean(UserRepository.class);
-	ForumPost p1 = new ForumPost(), p2 = new ForumPost(), p3 = new ForumPost();
-	
+	ForumPostDto p1 = new ForumPostDto(), p2 = new ForumPostDto(), p3 = new ForumPostDto();
+	static String TITLE_EMAILTOHL = "emailtohl's post", TITLE_FOO = "foo's post", TITLE_BAR = "bar's post";
 	@Before
 	public void setUp() throws Exception {
-		p1.setTitle("emailtohl's post");
+		p1.setTitle(TITLE_EMAILTOHL);
 		p1.setKeywords("first emailtohl");
 		p1.setBody("hl's first post hello forum");
-		User emailtohl = userRepository.findByEmail("emailtohl@163.com");
-		p1.setUser(emailtohl);
 		
-		p2.setTitle("foo's post");
+		p2.setTitle(TITLE_FOO);
 		p2.setKeywords("first foo");
 		p2.setBody("foo's first post hello forum");
-		User foo = userRepository.findByEmail("foo@test.com");
-		p2.setUser(foo);
 		
-		p3.setTitle("bar's post");
+		p3.setTitle(TITLE_BAR);
 		p3.setKeywords("first bar");
 		p3.setBody("bar's first post hello forum");
-		User bar = userRepository.findByEmail("bar@test.com");
-		p3.setUser(bar);
 		
-		forumPostService.save(p1);
-		forumPostService.save(p2);
-		forumPostService.save(p3);
+		forumPostService.save("emailtohl@163.com", p1);
+		forumPostService.save("foo@test.com", p2);
+		forumPostService.save("bar@test.com", p3);
 	}
 
 	@Test
 	public void testSearch() {
-		Page<SearchResult<ForumPost>> p = forumPostService.search("first", new PageRequest(0, 20));
-		List<String> ls = Arrays.asList("emailtohl's post", "foo's post", "bar's post");
-		for (SearchResult<ForumPost> s : p.getContent()) {
+		Pager<SearchResult<ForumPostDto>> p = forumPostService.search("first", new PageRequest(0, 20));
+		List<String> ls = Arrays.asList(TITLE_EMAILTOHL, TITLE_FOO, TITLE_BAR);
+		for (SearchResult<ForumPostDto> s : p.getContent()) {
 			System.out.println(s.getEntity().getTitle());
 			System.out.println(s.getEntity().getKeywords());
 			System.out.println(s.getEntity().getBody());
@@ -73,21 +66,21 @@ public class ForumPostServiceTest {
 		}
 		
 		p = forumPostService.search("emailtohl@163.com", new PageRequest(0, 20));
-		for (SearchResult<ForumPost> s : p.getContent()) {
+		for (SearchResult<ForumPostDto> s : p.getContent()) {
 			System.out.println(s.getEntity().getTitle());
 			System.out.println(s.getEntity().getKeywords());
 			System.out.println(s.getEntity().getBody());
 			System.out.println(s.getEntity().getUser().getEmail());
 			System.out.println(s.getEntity().getUser().getName());
 			System.out.println(s.getRelevance());
-			assertEquals("emailtohl's post", s.getEntity().getTitle());
+			assertEquals(TITLE_EMAILTOHL, s.getEntity().getTitle());
 		}
 	}
 
 	@After
 	public void clean() {
-		forumPostService.delete(p1);
-		forumPostService.delete(p2);
-		forumPostService.delete(p3);
+		forumPostService.delete(forumPostService.getForumPostByTitle(TITLE_EMAILTOHL).getId());
+		forumPostService.delete(forumPostService.getForumPostByTitle(TITLE_FOO).getId());
+		forumPostService.delete(forumPostService.getForumPostByTitle(TITLE_BAR).getId());
 	}
 }

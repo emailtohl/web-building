@@ -8,4 +8,5 @@ import com.github.emailtohl.building.site.entities.ForumPost;
  * @author HeLei
  */
 public interface ForumPostRepository extends CrudRepository<ForumPost, Long>, SearchableRepository<ForumPost> {
+	ForumPost findByTitle(String title);
 }
