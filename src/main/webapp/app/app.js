@@ -3,7 +3,7 @@
  */
 define([ 'angular', 'uirouter', 'common/context', 'test/context', 'user/context', 'dashboard/context', 'forum/context' ],
 	function(angular) {
-		return angular.module('appdemo', [ 'ui.router', 'commonModule', 'testModule', 'userModule', 'dashboardModule' ])
+		return angular.module('appdemo', [ 'ui.router', 'commonModule', 'testModule', 'userModule', 'dashboardModule', 'forumModule' ])
 		.run([ '$rootScope', '$state', '$stateParams', '$http', function($rootScope, $state, $stateParams, $http) {
 			// 让页面能同步状态，显示出该状态应有的效果，例如某菜单被激活的样式
 			$rootScope.$state = $state;

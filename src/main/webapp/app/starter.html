@@ -270,6 +270,13 @@ desired effect
         <li class="header">HEADER</li>
         <!-- Optionally, you can add icons to the links -->
         <li ng-class="{active: $state.includes('dashboard')}"><a ui-sref="dashboard"><i class="fa fa-dashboard"></i> <span>首页</span></a></li>
+        <li class="treeview" ng-class="{active: $state.includes('forum')}">
+          <a href="#"><i class="fa fa-users"></i> <span>论坛</span> <i class="fa fa-angle-left pull-right"></i></a>
+          <ul class="treeview-menu">
+            <li ng-class="{active: $state.includes('forum.search')}" ><a ui-sref="forum.search" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>全文查找</a></li>
+            <li ng-class="{active: $state.includes('forum.add')}"><a ui-sref="forum.add" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>发帖</a></li>
+          </ul>
+        </li>
         <li class="treeview" ng-class="{active: $state.includes('user')}">
           <a href="#"><i class="fa fa-users"></i> <span>用户管理</span> <i class="fa fa-angle-left pull-right"></i></a>
           <ul class="treeview-menu">
