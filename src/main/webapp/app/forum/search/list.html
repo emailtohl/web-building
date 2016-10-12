@@ -11,7 +11,31 @@
 <!-- Main content -->
 <section class="content">
   <div class="row">
-    </div>
-    <!-- /.row -->
+  
+      <div class="box box-info" ng-repeat="x in ctrl.pager.content" repeat-finish="ctrl.renderFinish()">
+        <div class="box-header">
+          <h3 class="box-title">{{x.entity.title}}
+            <small>关键字：{{x.entity.keywords}}</small>
+            <small>相关度：{{x.relevance}}</small>
+          </h3>
+          <!-- tools box -->
+          <div class="pull-right box-tools">
+            <button type="button" class="btn btn-info btn-sm" data-widget="collapse" data-toggle="tooltip" title="Collapse">
+              <i class="fa fa-minus"></i></button>
+            <button type="button" class="btn btn-info btn-sm" data-widget="remove" data-toggle="tooltip" title="Remove">
+              <i class="fa fa-times"></i></button>
+          </div>
+          <!-- /. tools -->
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body pad">
+           <textarea name="body" rows="10" cols="80">
+               {{x.entity.body}}
+           </textarea>
+        </div>
+      </div>
+  	  <pager page-number="ctrl.pager.pageNumber" total-pages="ctrl.pager.totalPages" button-count="5" on-click="ctrl.query(pageNumber)">
+  </div>
+  <!-- /.row -->
 </section>
 <!-- /.content -->

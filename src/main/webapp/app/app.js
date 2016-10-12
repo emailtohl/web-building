@@ -54,6 +54,12 @@ define([ 'angular', 'uirouter', 'common/context', 'test/context', 'user/context'
 				&& $rootScope.authentication.principal
 				&& $rootScope.authentication.principal.username;
 			};
+			
+			// 进入全文搜索
+			$('form[name="fulltextsearch"]').on('submit', function(e) {
+				e.preventDefault();
+				$state.go('forum.search', {query : $(this).find('input').val()}, { reload : true});
+			});
 		} ]);
 	}
 );

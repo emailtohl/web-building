@@ -15,7 +15,7 @@ define(['forum/module',
 			controller : 'ForumAddCtrl as ctrl'
 		})
 		.state('forum.search', {
-			url : '/search',
+			url : '/search/{query}',
 			templateUrl : 'app/forum/search/list.html',
 			controller : 'ForumSearchCtrl as ctrl'
 		})

@@ -39,6 +39,27 @@ define([ 'common/module' ], function(commonModule) {
 				}
 			},
 			/**
+			 * 将对象的名值对转成URL请求参数 可用于GET请求，也可以用于POST的requestBody，不过注意要将XMLHttpRequest对象的请求头设置为
+			 * 'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+			 */
+			encodeUrlParams : function(data) {
+				var pairs, name, value;
+				if (!data)
+					return '';
+				pairs = [];
+				for (name in data) {
+					if (!data.hasOwnProperty(name))
+						continue;
+					if (!data[name] || typeof data[name] === 'function')
+						continue;
+					value = data[name].toString();
+					name = encodeURIComponent(name);
+					value = encodeURIComponent(value);
+					pairs.push(name + '=' + value);
+				}
+				return pairs.join('&');
+			},
+			/**
 			 * 使用POST方法发送multipart/form-data请求主体
 			 */
 			postFormData : function(url, data, callback) {

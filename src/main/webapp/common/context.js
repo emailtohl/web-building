@@ -13,6 +13,7 @@ define([ 'common/module',
          'common/directive/select2/directive',
          'common/directive/fileupload/directive',
          'common/directive/pager/directive',
+         'common/directive/repeatfinish/directive',
          'common/directive/modal/directive',
          'common/directive/ztree/directive',
          ], function() {});
