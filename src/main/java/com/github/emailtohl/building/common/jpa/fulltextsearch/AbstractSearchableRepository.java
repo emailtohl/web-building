@@ -52,7 +52,7 @@ public class AbstractSearchableRepository<T> implements SearchableRepository<T> 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Page<SearchResult<T>> search(String query, Pageable pageable) {
-		// entityManagerProxy.getTargetEntityManager()： retrieve the actual Hibernate ORM EntityManager implementation
+		// Search.getFullTextEntityManager接收具体的实现，而不是Spring的代理
 		FullTextEntityManager manager = Search.getFullTextEntityManager(this.entityManagerProxy.getTargetEntityManager());
 
 		QueryBuilder builder = manager.getSearchFactory().buildQueryBuilder().forEntity(ForumPost.class).get();

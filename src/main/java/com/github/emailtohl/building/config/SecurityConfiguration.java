@@ -142,6 +142,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.antMatchers("/admin/**").hasAuthority("ADMIN")
 					.antMatchers("/secure/**").hasAnyAuthority("ADMIN", "MANAGER")
 					.antMatchers("/user/**").fullyAuthenticated()
+					.antMatchers("/forum/**").fullyAuthenticated()
 					.antMatchers("/authentication/**").fullyAuthenticated()
 					.antMatchers(HttpMethod.DELETE, "/user/**").hasAnyAuthority("ADMIN", "MANAGER")
 					.antMatchers(HttpMethod.POST, "/user/**").hasAnyAuthority("ADMIN", "MANAGER")

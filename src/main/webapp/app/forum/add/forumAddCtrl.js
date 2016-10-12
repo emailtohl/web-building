@@ -5,14 +5,17 @@ define(['forum/module', 'forum/add/service', 'ckeditor'], function(forumModule) 
 		var self = this;
 		$scope.getAuthentication();
 		util.loadasync('lib/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css');
-
-		// Replace the <textarea id="editor1"> with a CKEditor
-		// instance, using default configuration.
-		CKEDITOR.replace('editor1');
-		// bootstrap WYSIHTML5 - text editor
-//		$(".textarea").wysihtml5();
 		
 		self.forumPost = {};
+		
+		// Replace the <textarea id="editor1"> with a CKEditor
+		// instance, using default configuration.
+		var editor = CKEDITOR.replace('editor1');
+		editor.on('change', function(event) {
+			self.forumPost.body = this.getData();// 内容
+			$scope.$apply();
+		});
+		
 		self.submit = function() {
 			forumAddService.add(self.forumPost).success(function(data) {
 				self.forumPost = {};
