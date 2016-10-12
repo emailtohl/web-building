@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,7 +46,7 @@ public class ForumPostController {
 	}
 */
 	@RequestMapping(value = "", method = RequestMethod.POST)
-	public void add(@Valid ForumPostDto form, Errors e) {
+	public void add(@RequestBody @Valid ForumPostDto form, Errors e) {
 		if (e.hasErrors()) {
 			for (ObjectError oe : e.getAllErrors()) {
 				logger.info(oe);
