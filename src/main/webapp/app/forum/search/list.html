@@ -14,10 +14,18 @@
   
       <div class="box box-info" ng-repeat="x in ctrl.pager.content" repeat-finish="ctrl.renderFinish()">
         <div class="box-header">
-          <h3 class="box-title">{{x.entity.title}}
-            <small>关键字：{{x.entity.keywords}}</small>
-            <small>相关度：{{x.relevance}}</small>
-          </h3>
+          <div class="pull-left image">
+            <img width="39" height="50" src="{{x.entity.user.iconSrc}}" class="img-circle" alt="User Image">
+          </div>
+          <div class="pull-left info">
+            <p>{{x.entity.user.username}}</p>
+          </div>
+          <div class="pull-left box-body">
+            <h3 class="box-title">{{x.entity.title}}
+              <small>关键字：{{x.entity.keywords}}</small>
+              <small>相关度：{{x.relevance}}</small>
+            </h3>
+          </div>
           <!-- tools box -->
           <div class="pull-right box-tools">
             <button type="button" class="btn btn-info btn-sm" data-widget="collapse" data-toggle="tooltip" title="Collapse">
