@@ -11,9 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.github.emailtohl.building.common.fulltextsearch.SearchResult;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.dao.ForumPostRepository;
-import com.github.emailtohl.building.site.dao.SearchResult;
 import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.dto.ForumPostDto;
 import com.github.emailtohl.building.site.dto.UserDto;
