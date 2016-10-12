@@ -14,12 +14,12 @@ import javax.transaction.Transactional;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Service;
 
-import com.github.emailtohl.building.bootspring.SpringUtils;
+import com.github.emailtohl.building.bootspring.Spring;
 
 @Service
 @Transactional
 public class CreateTable2 {
-	private static AnnotationConfigApplicationContext ctx = SpringUtils.context;
+	private static AnnotationConfigApplicationContext ctx = Spring.context;
 	@PersistenceContext
 	protected EntityManager entityManager;
 	

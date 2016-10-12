@@ -12,7 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import com.github.emailtohl.building.bootspring.SpringUtils;
+import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.AbstractCriterionQueryRepository;
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.SearchCriteria;
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.Criterion;
@@ -25,7 +25,7 @@ public class AbstractSearchableJpaRepositoryTest {
 	@Before
 	public void setUp() {
 		concrete = new Concrete();
-		AutowireCapableBeanFactory factory = SpringUtils.context.getAutowireCapableBeanFactory();
+		AutowireCapableBeanFactory factory = Spring.context.getAutowireCapableBeanFactory();
 		factory.autowireBeanProperties(concrete, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
 		factory.initializeBean(concrete, "concreteSearchableJpaRepository");
 	}

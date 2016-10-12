@@ -10,7 +10,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.github.emailtohl.building.bootspring.SpringUtils;
+import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.site.dao.UserRepository;
 
 public class UserTest {
@@ -26,7 +26,7 @@ public class UserTest {
 	@Test
 	public void testGetIcon() throws FileNotFoundException, IOException {
 		ClassLoader cl = UserTest.class.getClassLoader();
-		AnnotationConfigApplicationContext ctx = SpringUtils.context;
+		AnnotationConfigApplicationContext ctx = Spring.context;
 		UserRepository userRepository = ctx.getBean(UserRepository.class);
 		User u = userRepository.findByEmail("emailtohl@163.com");
 		try (InputStream is = cl.getResourceAsStream("img/icon-head-emailtohl.png")) {

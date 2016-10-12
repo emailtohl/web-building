@@ -39,6 +39,12 @@ import com.github.emailtohl.building.site.entities.ForumPost;
 public class AbstractSearchableRepository<T> implements SearchableRepository<T> {
 	@PersistenceContext
 	protected EntityManager entityManager;
+	/**
+	 * Spring 注入的EntityManager实际上就是EntityManagerProxy
+	 * 但是本程序需要访问entityManagerProxy.getTargetEntityManager()获取
+	 * “actual Hibernate ORM EntityManager implementation”
+	 * 所以在注入EntityManager后，将其向下转型为EntityManagerProxy
+	 */
 	protected EntityManagerProxy entityManagerProxy;
 	protected Class<T> entityClass;
 	protected String[] onFields;
@@ -46,6 +52,7 @@ public class AbstractSearchableRepository<T> implements SearchableRepository<T> 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Page<SearchResult<T>> search(String query, Pageable pageable) {
+		// entityManagerProxy.getTargetEntityManager()： retrieve the actual Hibernate ORM EntityManager implementation
 		FullTextEntityManager manager = Search.getFullTextEntityManager(this.entityManagerProxy.getTargetEntityManager());
 
 		QueryBuilder builder = manager.getSearchFactory().buildQueryBuilder().forEntity(ForumPost.class).get();

@@ -28,7 +28,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-import com.github.emailtohl.building.bootspring.SpringUtils;
+import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.Authority;
@@ -110,7 +110,7 @@ public class AuthenticationCtrlTest {
 		authenticationCtrl.setAuthenticationService(authenticationService);
 		authenticationCtrl.setUserService(userService);
 		authenticationCtrl.setEmailService(emailService);
-		authenticationCtrl.setTaskScheduler(SpringUtils.context.getBean(ThreadPoolTaskScheduler.class));
+		authenticationCtrl.setTaskScheduler(Spring.context.getBean(ThreadPoolTaskScheduler.class));
 		mockMvc = standaloneSetup(authenticationCtrl).setViewResolvers(viewResolver).build();
 	}
 

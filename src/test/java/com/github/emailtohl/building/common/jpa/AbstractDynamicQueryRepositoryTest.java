@@ -20,7 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
-import com.github.emailtohl.building.bootspring.SpringUtils;
+import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.common.jpa.AbstractDynamicQueryRepository;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.AbstractDynamicQueryRepository.JpqlAndArgs;
@@ -69,7 +69,7 @@ public class AbstractDynamicQueryRepositoryTest {
 	@Before
 	public void setUp() throws Exception {
 		concrete = new Concrete();
-		AutowireCapableBeanFactory factory = SpringUtils.context.getAutowireCapableBeanFactory();
+		AutowireCapableBeanFactory factory = Spring.context.getAutowireCapableBeanFactory();
 		factory.autowireBeanProperties(concrete, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
 		factory.initializeBean(concrete, "concreteDynamicQueryRepository");
 		// 将对象注册到Spring中，即可获得该对象所需的依赖

@@ -17,7 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 
-import com.github.emailtohl.building.bootspring.SpringUtils;
+import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.BeanTools;
 import com.github.emailtohl.building.site.dto.UserDto;
@@ -35,8 +35,8 @@ public class AuthenticationServiceImplTest {
 	
 	@Before
 	public void setUp() {
-		authenticationService = SpringUtils.context.getBean(AuthenticationService.class);
-		userService = SpringUtils.context.getBean(UserService.class);
+		authenticationService = Spring.context.getBean(AuthenticationService.class);
+		userService = Spring.context.getBean(UserService.class);
 	}
 	
 	@Test

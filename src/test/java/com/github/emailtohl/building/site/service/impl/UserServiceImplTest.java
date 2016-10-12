@@ -23,7 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 
-import com.github.emailtohl.building.bootspring.SpringUtils;
+import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.Validator;
 import com.github.emailtohl.building.site.dto.UserDto;
@@ -43,8 +43,8 @@ public class UserServiceImplTest {
 	
 	@Before
 	public void setUp() {
-		userService = SpringUtils.context.getBean(UserService.class);
-		authenticationService = SpringUtils.context.getBean(AuthenticationService.class);
+		userService = Spring.context.getBean(UserService.class);
+		authenticationService = Spring.context.getBean(AuthenticationService.class);
 		u = new UserDto();
 		u.setAddress("四川路");
 		u.setAge(20);

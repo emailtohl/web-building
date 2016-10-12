@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
-import com.github.emailtohl.building.bootspring.SpringUtils;
+import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.common.jpa.AbstractJpaRepository;
 import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.User;
@@ -43,7 +43,7 @@ public class CriteriaTest {
 	@Before
 	public void setUp() {
 		concrete = new Concrete();
-		AutowireCapableBeanFactory factory = SpringUtils.context.getAutowireCapableBeanFactory();
+		AutowireCapableBeanFactory factory = Spring.context.getAutowireCapableBeanFactory();
 		factory.autowireBeanProperties(concrete, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
 		factory.initializeBean(concrete, "criteriaTest");
 	}

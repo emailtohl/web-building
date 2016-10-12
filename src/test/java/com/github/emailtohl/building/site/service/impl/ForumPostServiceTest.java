@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.data.domain.PageRequest;
 
-import com.github.emailtohl.building.bootspring.SpringUtils;
+import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.fulltextsearch.SearchResult;
 import com.github.emailtohl.building.site.dao.UserRepository;
@@ -27,7 +27,7 @@ import com.github.emailtohl.building.site.service.ForumPostService;
  */
 public class ForumPostServiceTest {
 	static final Logger logger = LogManager.getLogger();
-	AnnotationConfigApplicationContext ctx = SpringUtils.context;
+	AnnotationConfigApplicationContext ctx = Spring.context;
 	ForumPostService forumPostService = ctx.getBean(ForumPostService.class);
 	UserRepository userRepository = ctx.getBean(UserRepository.class);
 	ForumPostDto p1 = new ForumPostDto(), p2 = new ForumPostDto(), p3 = new ForumPostDto();

@@ -24,7 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.TransactionSystemException;
 
-import com.github.emailtohl.building.bootspring.SpringUtils;
+import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.Validator;
 import com.github.emailtohl.building.initdb.PersistenceData;
@@ -35,7 +35,7 @@ import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.entities.User.Gender;
 
 public class UserRepositoryTest {
-	AnnotationConfigApplicationContext ctx = SpringUtils.context;
+	AnnotationConfigApplicationContext ctx = Spring.context;
 	UserRepository userRepository = ctx.getBean(UserRepository.class);
 	SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD");
 	static final Logger logger = LogManager.getLogger();
