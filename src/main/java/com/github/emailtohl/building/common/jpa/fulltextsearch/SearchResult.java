@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.common.fulltextsearch;
+package com.github.emailtohl.building.common.jpa.fulltextsearch;
 
 /**
  * 存储全文搜索的结果

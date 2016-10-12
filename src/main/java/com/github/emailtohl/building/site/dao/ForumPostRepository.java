@@ -2,7 +2,7 @@ package com.github.emailtohl.building.site.dao;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.github.emailtohl.building.common.fulltextsearch.SearchableRepository;
+import com.github.emailtohl.building.common.jpa.fulltextsearch.SearchableRepository;
 import com.github.emailtohl.building.site.entities.ForumPost;
 /**
  * 论坛帖子搜索接口

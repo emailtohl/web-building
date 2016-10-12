@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.common.fulltextsearch;
+package com.github.emailtohl.building.common.jpa.fulltextsearch;
 
 import java.beans.IntrospectionException;
 import java.beans.Introspector;

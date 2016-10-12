@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.emailtohl.building.common.fulltextsearch.SearchResult;
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.common.jpa.fulltextsearch.SearchResult;
 import com.github.emailtohl.building.site.dto.ForumPostDto;
 import com.github.emailtohl.building.site.service.ForumPostService;
 

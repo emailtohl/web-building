@@ -14,8 +14,8 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.data.domain.PageRequest;
 
 import com.github.emailtohl.building.bootspring.SpringUtils;
-import com.github.emailtohl.building.common.fulltextsearch.SearchResult;
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.common.jpa.fulltextsearch.SearchResult;
 import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.dto.ForumPostDto;
 import com.github.emailtohl.building.site.service.ForumPostService;

@@ -18,8 +18,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.orm.jpa.EntityManagerProxy;
 
-import com.github.emailtohl.building.common.fulltextsearch.SearchResult;
-import com.github.emailtohl.building.common.fulltextsearch.SearchableRepository;
+import com.github.emailtohl.building.common.jpa.fulltextsearch.SearchResult;
+import com.github.emailtohl.building.common.jpa.fulltextsearch.SearchableRepository;
 import com.github.emailtohl.building.site.entities.ForumPost;
 
 public class ForumPostRepositoryImpl implements SearchableRepository<ForumPost> {
