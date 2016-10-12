@@ -19,6 +19,7 @@ import org.hibernate.search.annotations.IndexedEmbedded;
  * 
  * @author HeLei
  */
+@SuppressWarnings("unused")
 @Entity
 @Table(name = "t_Post")
 @Indexed
