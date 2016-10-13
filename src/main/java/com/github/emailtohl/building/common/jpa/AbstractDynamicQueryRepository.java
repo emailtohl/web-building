@@ -132,7 +132,7 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 		logger.debug("SELECT Query: \n" + jpql + "\n" + "Arguments: \n" + Arrays.toString(args) + "\n"
 				+ "firstResult: \n" + startPosition + "\n" + "maxResults: \n" + pageSize);
 		List<E> singlePage = pagedQuery.getResultList();
-		Pager<E> p = new Pager<E>(singlePage, totalElements, pageSize);
+		Pager<E> p = new Pager<E>(singlePage, totalElements, pageNumber, pageSize);
 		p.setPageNumber(pageNumber);
 		return p;
 	}
@@ -192,7 +192,7 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 		logger.debug("SELECT Query: \n" + jpql + "\n" + "Arguments: \n" + args + "\n" + "firstResult: \n"
 				+ startPosition + "\n" + "maxResults: \n" + pageSize);
 		List<E> singlePage = pagedQuery.getResultList();
-		Pager<E> p = new Pager<E>(singlePage, totalElements, pageSize);
+		Pager<E> p = new Pager<E>(singlePage, totalElements, pageNumber, pageSize);
 		p.setPageNumber(pageNumber);
 		return p;
 	}

@@ -71,18 +71,18 @@ public class ForumPostController {
 */
 	@RequestMapping(value = "search", method = RequestMethod.GET)
 	public Pager<SearchResult<ForumPostDto>> search(@RequestParam String query,
-			@PageableDefault(page = 0, size = 20, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
+			@PageableDefault(page = 0, size = 5, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
 		return this.forumPostService.search(query, pageable);
 	}
 
 	@RequestMapping(value = "pager", method = RequestMethod.GET)
-	Pager<SearchResult<ForumPostDto>> searchPager(@PageableDefault(page = 0, size = 20, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
+	Pager<SearchResult<ForumPostDto>> searchPager(@PageableDefault(page = 0, size = 5, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
 		Pager<ForumPostDto> p = forumPostService.getPager(pageable);
 		List<SearchResult<ForumPostDto>> ls = new ArrayList<SearchResult<ForumPostDto>>();
 		p.getContent().forEach(dto -> {
 			ls.add(new SearchResult<ForumPostDto>(dto, 1));
 		});
-		return new Pager<SearchResult<ForumPostDto>>(ls, p.getTotalElements(), p.getPageSize());
+		return new Pager<SearchResult<ForumPostDto>>(ls, p.getTotalElements(), pageable.getPageNumber(), p.getPageSize());
 	}
 	
 }

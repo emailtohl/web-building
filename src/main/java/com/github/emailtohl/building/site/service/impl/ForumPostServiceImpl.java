@@ -46,19 +46,16 @@ public class ForumPostServiceImpl implements ForumPostService {
 			SearchResult<ForumPostDto> s2 = new SearchResult<ForumPostDto>(dto, s1.getRelevance());
 			ls.add(s2);
 		});
-		return new Pager<SearchResult<ForumPostDto>>(ls, page.getTotalElements(), page.getSize());
+		return new Pager<SearchResult<ForumPostDto>>(ls, page.getTotalElements(), pageable.getPageNumber(), page.getSize());
 	}
 	
 	@Override
 	public Pager<ForumPostDto> getPager(Pageable pageable) {
+		Page<ForumPost> page = forumPostRepository.findAll(pageable);
 		List<ForumPostDto> ls = new ArrayList<ForumPostDto>();
-		int i = 0;
-		for (ForumPost entity : forumPostRepository.findAll(pageable)) {
-			ls.add(convert(entity));
-			i++;
-		}
-		return new Pager<ForumPostDto>(ls, i, pageable.getPageSize());
-	} 
+		page.getContent().forEach(e -> ls.add(convert(e)));
+		return new Pager<ForumPostDto>(ls, page.getTotalElements(), pageable.getPageNumber(), pageable.getPageSize());
+	}
 	
 	@Override
 	public ForumPostDto getForumPostByTitle(String title) {

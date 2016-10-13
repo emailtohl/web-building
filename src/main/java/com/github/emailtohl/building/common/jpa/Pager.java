@@ -42,18 +42,37 @@ public class Pager<T> implements Serializable {
 	 */
 	private int offset;
 
+	/**
+	 * totalElements默认是List的size
+	 * @param content
+	 */
 	public Pager(List<T> content) {
 		this(content, content.size());
 	}
 	
+	/**
+	 * pageNumber默认是第0页
+	 * @param content
+	 * @param totalElements
+	 */
 	public Pager(List<T> content, long totalElements) {
-		// 默认每页20条
-		this(content, totalElements, 20);
+		this(content, totalElements, 0);
 	}
 	
-	public Pager(List<T> content, long totalElements, int pageSize) {
+	/**
+	 * pageSize默认是20页
+	 * @param content
+	 * @param totalElements
+	 * @param pageNumber
+	 */
+	public Pager(List<T> content, long totalElements, int pageNumber) {
+		this(content, totalElements, pageNumber, 20);
+	}
+	
+	public Pager(List<T> content, long totalElements, int pageNumber, int pageSize) {
 		this.content = content;
 		this.totalElements = totalElements;
+		this.pageNumber = pageNumber;
 		this.pageSize = pageSize;
 		this.totalPages = (int) ((this.totalElements + this.pageSize - 1) / this.pageSize);
 	}

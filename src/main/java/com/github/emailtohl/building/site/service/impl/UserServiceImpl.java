@@ -159,7 +159,7 @@ public class UserServiceImpl implements UserService {
 	public Pager<UserDto> getUserPager(UserDto u, Pageable pageable) {
 		Pager<User> pe = userRepository.dynamicQuery(u, pageable.getPageNumber());
 		List<UserDto> ls = convert(pe.getContent());
-		Pager<UserDto> pd = new Pager<UserDto>(ls, pe.getTotalElements(), pe.getPageSize());
+		Pager<UserDto> pd = new Pager<UserDto>(ls, pe.getTotalElements(), pageable.getPageNumber(), pe.getPageSize());
 		return pd;
 	}
 

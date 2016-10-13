@@ -171,7 +171,7 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 				BeanUtils.copyProperties(u, target, "password", "icon", "subsidiary", "iconSrc");
 				dest.add(target);
 			}
-			return new Pager<UserDto>(dest, p.getTotalElements(), p.getPageSize());
+			return new Pager<UserDto>(dest, p.getTotalElements(), pageable.getPageNumber(), p.getPageSize());
 		}
 		// 如果是经理的情况
 		if (hasAuthority(MANAGER)) {
@@ -184,7 +184,7 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 				BeanUtils.copyProperties(u, target, "password", "icon", "subsidiary", "iconSrc");
 				dest.add(target);
 			}
-			return new Pager<UserDto>(dest, p.getTotalElements(), p.getPageSize());
+			return new Pager<UserDto>(dest, p.getTotalElements(), pageable.getPageNumber(), p.getPageSize());
 		} else {// 其他情况
 			for (User u : src) {
 				// 过滤管理员的信息
@@ -195,7 +195,7 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 				BeanUtils.copyProperties(u, target, "password", "icon", "subsidiary", "iconSrc");
 				dest.add(target);
 			}
-			return new Pager<UserDto>(dest, p.getTotalElements(), p.getPageSize());
+			return new Pager<UserDto>(dest, p.getTotalElements(), pageable.getPageNumber(), p.getPageSize());
 		}
 	}
 	
