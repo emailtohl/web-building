@@ -53,7 +53,7 @@ public class ForumPostServiceImpl implements ForumPostService {
 	public Pager<ForumPostDto> getPager(Pageable pageable) {
 		List<ForumPostDto> ls = new ArrayList<ForumPostDto>();
 		int i = 0;
-		for (ForumPost entity : forumPostRepository.findAll()) {
+		for (ForumPost entity : forumPostRepository.findAll(pageable)) {
 			ls.add(convert(entity));
 			i++;
 		}

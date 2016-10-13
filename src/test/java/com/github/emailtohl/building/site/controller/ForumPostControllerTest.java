@@ -21,7 +21,10 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.github.emailtohl.building.site.dto.ForumPostDto;
+import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.service.ForumPostService;
+import com.google.gson.Gson;
 
 public class ForumPostControllerTest {
 	MockMvc mockMvc;
@@ -50,9 +53,19 @@ public class ForumPostControllerTest {
 	}
 	@Test
 	public void testAdd() throws Exception {
+		UserDto u = new UserDto();
+		u.setEmail("foo@test.com");
+		u.setName("foo");
+		ForumPostDto dto = new ForumPostDto();
+		dto.setEmail("foo@test.com");
+		dto.setUser(u);
+		dto.setTitle("hello world");
+		dto.setBody("hello world");
+		dto.setKeywords("hello world");
 		mockMvc.perform(post("/forum")
 				.characterEncoding("UTF-8")  
-		        .contentType(MediaType.APPLICATION_JSON))
+		        .contentType(MediaType.APPLICATION_JSON)
+		        .content(new Gson().toJson(dto)))
 				.andExpect(status().isOk());
 	}
 

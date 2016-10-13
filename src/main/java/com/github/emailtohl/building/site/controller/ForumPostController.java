@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.fulltextsearch.SearchResult;
 import com.github.emailtohl.building.site.dto.ForumPostDto;
+import com.github.emailtohl.building.site.entities.BaseEntity;
 import com.github.emailtohl.building.site.service.ForumPostService;
 
 /**
@@ -69,12 +71,12 @@ public class ForumPostController {
 */
 	@RequestMapping(value = "search", method = RequestMethod.GET)
 	public Pager<SearchResult<ForumPostDto>> search(@RequestParam String query,
-			@PageableDefault(page = 0, size = 20, sort = "id=desc") Pageable pageable) {
+			@PageableDefault(page = 0, size = 20, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
 		return this.forumPostService.search(query, pageable);
 	}
 
 	@RequestMapping(value = "pager", method = RequestMethod.GET)
-	Pager<SearchResult<ForumPostDto>> searchPager(@PageableDefault(page = 0, size = 20, sort = "id=desc") Pageable pageable) {
+	Pager<SearchResult<ForumPostDto>> searchPager(@PageableDefault(page = 0, size = 20, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
 		Pager<ForumPostDto> p = forumPostService.getPager(pageable);
 		List<SearchResult<ForumPostDto>> ls = new ArrayList<SearchResult<ForumPostDto>>();
 		p.getContent().forEach(dto -> {

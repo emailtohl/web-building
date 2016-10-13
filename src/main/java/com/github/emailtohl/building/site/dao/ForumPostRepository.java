@@ -1,6 +1,6 @@
 package com.github.emailtohl.building.site.dao;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.github.emailtohl.building.common.jpa.fulltextsearch.SearchableRepository;
 import com.github.emailtohl.building.site.entities.ForumPost;
@@ -8,6 +8,6 @@ import com.github.emailtohl.building.site.entities.ForumPost;
  * 论坛帖子搜索接口
  * @author HeLei
  */
-public interface ForumPostRepository extends CrudRepository<ForumPost, Long>, SearchableRepository<ForumPost> {
+public interface ForumPostRepository extends JpaRepository<ForumPost, Long>, SearchableRepository<ForumPost> {
 	ForumPost findByTitle(String title);
 }

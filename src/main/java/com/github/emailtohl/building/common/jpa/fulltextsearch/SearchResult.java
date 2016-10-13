@@ -1,23 +1,25 @@
 package com.github.emailtohl.building.common.jpa.fulltextsearch;
 
+import java.io.Serializable;
+
 /**
  * 存储全文搜索的结果
  * @author HeLei
  *
- * @param <T>
+ * @param <E extends Serializable>
  */
-public class SearchResult<T> {
+public class SearchResult<E extends Serializable> {
 	/**
 	 * 结果存储的实体
 	 */
-	private final T entity;
+	private final E entity;
 	
 	/**
 	 * 与查询匹配的关联度
 	 */
 	private final double relevance;
 
-	public SearchResult(T entity, double relevance) {
+	public SearchResult(E entity, double relevance) {
 		this.entity = entity;
 		this.relevance = relevance;
 	}
@@ -26,7 +28,7 @@ public class SearchResult<T> {
 		return relevance;
 	}
 
-	public T getEntity() {
+	public E getEntity() {
 		return entity;
 	}
 }

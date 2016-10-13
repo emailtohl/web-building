@@ -15,7 +15,7 @@
       <div class="box box-info" ng-repeat="x in ctrl.pager.content" repeat-finish="ctrl.renderFinish()">
         <div class="box-header">
           <div class="pull-left image">
-            <img width="39" height="50" src="{{x.entity.user.iconSrc}}" class="img-circle" alt="User Image">
+            <img width="39" height="50" ng-src="{{x.entity.user.iconSrc}}" class="img-circle" alt="User Image">
           </div>
           <div class="pull-left info">
             <p>{{x.entity.user.username}}</p>

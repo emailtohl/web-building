@@ -28,5 +28,11 @@ define(['forum/module', 'forum/search/service'], function(forumModule) {
 				self.pager = data;
 			});
 		};
+		
+		self.getIconSrc = function(obj) {
+			return obj.entity
+			&& obj.entity.user
+			&& obj.entity.user.iconSrc;
+		};
 	}]);
 });

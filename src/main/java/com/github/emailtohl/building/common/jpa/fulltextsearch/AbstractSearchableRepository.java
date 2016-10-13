@@ -3,6 +3,7 @@ package com.github.emailtohl.building.common.jpa.fulltextsearch;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -26,6 +27,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.orm.jpa.EntityManagerProxy;
 
+import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.AbstractCriterionQueryRepository;
 import com.github.emailtohl.building.site.entities.ForumPost;
 
 /**
@@ -34,9 +36,9 @@ import com.github.emailtohl.building.site.entities.ForumPost;
  * 
  * @author HeLei
  *
- * @param <T> 存储搜索结果的实体类
+ * @param <E extends Serializable> 存储搜索结果的实体类
  */
-public class AbstractSearchableRepository<T> implements SearchableRepository<T> {
+public abstract class AbstractSearchableRepository<E extends Serializable> extends AbstractCriterionQueryRepository<E> implements SearchableRepository<E> {
 	@PersistenceContext
 	protected EntityManager entityManager;
 	/**
@@ -46,12 +48,12 @@ public class AbstractSearchableRepository<T> implements SearchableRepository<T> 
 	 * 所以在注入EntityManager后，将其向下转型为EntityManagerProxy
 	 */
 	protected EntityManagerProxy entityManagerProxy;
-	protected Class<T> entityClass;
+	protected Class<E> entityClass;
 	protected String[] onFields;
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public Page<SearchResult<T>> search(String query, Pageable pageable) {
+	public Page<SearchResult<E>> search(String query, Pageable pageable) {
 		// Search.getFullTextEntityManager接收具体的实现，而不是Spring的代理
 		FullTextEntityManager manager = Search.getFullTextEntityManager(this.entityManagerProxy.getTargetEntityManager());
 
@@ -67,8 +69,8 @@ public class AbstractSearchableRepository<T> implements SearchableRepository<T> 
 		q.setFirstResult(pageable.getOffset()).setMaxResults(pageable.getPageSize());
 
 		List<Object[]> results = q.getResultList();
-		List<SearchResult<T>> list = new ArrayList<>();
-		results.forEach(o -> list.add(new SearchResult<>((T) o[0], (Float) o[1])));
+		List<SearchResult<E>> list = new ArrayList<>();
+		results.forEach(o -> list.add(new SearchResult<>((E) o[0], (Float) o[1])));
 		
 		return new PageImpl<>(list, pageable, total);
 	}
@@ -88,7 +90,7 @@ public class AbstractSearchableRepository<T> implements SearchableRepository<T> 
 		}
 		ParameterizedType type = (ParameterizedType) genericSuperclass;
 		Type[] arguments = type.getActualTypeArguments();
-		this.entityClass = (Class<T>) arguments[0];
+		this.entityClass = (Class<E>) arguments[0];
 		
 		// 初始化索引域
 		List<String> fields = new ArrayList<>();

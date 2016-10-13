@@ -21,6 +21,7 @@ import javax.validation.constraints.Min;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -41,6 +42,7 @@ import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.exception.ResourceNotFoundException;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.Authority;
+import com.github.emailtohl.building.site.entities.BaseEntity;
 import com.github.emailtohl.building.site.mail.EmailService;
 import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
@@ -229,7 +231,8 @@ public class AuthenticationCtrl {
 	@RequestMapping(value = "authentication/page", method = GET)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	public Pager<UserDto> getPageByAuthorities(@ModelAttribute UserDto u, @PageableDefault(sort = "id=desc") Pageable pageable) {
+	public Pager<UserDto> getPageByAuthorities(@ModelAttribute UserDto u,
+			@PageableDefault(page = 0, size = 20, sort = BaseEntity.MODIFY_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
 		return authenticationService.getPageByAuthorities(u, pageable);
 	}
 	
