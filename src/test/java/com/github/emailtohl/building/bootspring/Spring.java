@@ -7,7 +7,7 @@ import com.github.emailtohl.building.config.RootContextConfiguration;
 /**
  * 加载main环境下的spring配置
  * 
- * 单元测试中可能设置Spring环境，例如添加Bean进去：
+ * 单元测试中可能会在Spring已经启动好后设置Spring环境，例如添加Bean进容器：
  * AutowireCapableBeanFactory factory = Spring.context.getAutowireCapableBeanFactory();
  * factory.autowireBeanProperties(this, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
  * factory.initializeBean(this, "testBean");
@@ -17,7 +17,7 @@ import com.github.emailtohl.building.config.RootContextConfiguration;
  * @ContextConfiguration(classes = RootContextConfiguration.class)
  * 注解可能不满足需要
  * 
- * 这时候还是使用本类中的静态域：context，它只加载一次，并在虚拟机运行时均可使用Spring容器
+ * 所以还需要手动创建Spring上下文，本类将Spring上下文设置到静态域，它是只加载一次的单例，可在虚拟机运行时一直存在
  * 
  * @author HeLei
  */

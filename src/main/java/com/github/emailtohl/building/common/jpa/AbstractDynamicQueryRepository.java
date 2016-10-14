@@ -40,7 +40,7 @@ import org.apache.logging.log4j.Logger;
  * 应用程序既可以直接继承以Spring data的提供的JpaRepository作为BaseRepository，也可以自定义BaseRepository
  * 本方案基于JPQL，提供分页查询功能
  * @param <E> 实体类，ID统一为Long型
- * @author Helei
+ * @author HeLei
  * @date 2016.09.08
  */
 public abstract class AbstractDynamicQueryRepository<E extends Serializable> extends AbstractJpaRepository<Long, E> implements DynamicQueryRepository<E> {
@@ -455,7 +455,7 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 	/**
 	 * 将实体对象分析成JPQL和对应的参数数组 支持普通嵌入类型、一对一、多对一，但不支持多对多，嵌入集合等复杂数据
 	 * 
-	 * @author Helei
+	 * @author HeLei
 	 */
 	protected static class JpqlAndArgs {
 		public final String jpql;

@@ -20,7 +20,7 @@ import javax.websocket.server.ServerEndpoint;
 import com.github.emailtohl.building.websocket.Configurator;
 /**
  * websocket，模拟群集的服务端点
- * @author Helei
+ * @author HeLei
  */
 @ServerEndpoint(value = "/chat/clusterNodeSocket/{nodeId}", encoders = ChatMessageCoder.class, decoders = ChatMessageCoder.class, configurator = Configurator.class)
 public class ClusterNodeEndpoint {

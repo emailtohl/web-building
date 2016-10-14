@@ -23,7 +23,7 @@ import com.github.emailtohl.building.websocket.Configurator;
 import com.google.gson.Gson;
 /**
  * websocket，聊天程序的服务端
- * @author Helei
+ * @author HeLei
  */
 @ServerEndpoint(value = "/chat/{username}", configurator = Configurator.class)
 public class ChatEndpoint {
@@ -76,6 +76,7 @@ public class ChatEndpoint {
 				s.getBasicRemote().sendText(str);
 			} catch (IOException e) {
 				e.printStackTrace();
+				map.remove(s.getId());
 			}
 		}
 		map.remove(session.getId());

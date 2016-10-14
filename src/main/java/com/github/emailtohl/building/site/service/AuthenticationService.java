@@ -21,7 +21,7 @@ import com.github.emailtohl.building.site.entities.Authority;
  * 认证和授权服务
  * 本接口还声明了那些复杂的权限逻辑，例如授权，这些逻辑的安全权限不能简单地在接口中声明，只能放在实现类中
  * 
- * @author Helei
+ * @author HeLei
  */
 @Validated
 @Transactional

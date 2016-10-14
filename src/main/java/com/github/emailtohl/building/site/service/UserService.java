@@ -22,7 +22,7 @@ import com.github.emailtohl.building.site.dto.UserDto;
  * 所以新增User时，不会添加该属性，更新User时，也不会更新这些属性
  * 关于授权，需要在涉及权限的接口中定义
  * 
- * @author Helei
+ * @author HeLei
  */
 @Transactional
 @Validated

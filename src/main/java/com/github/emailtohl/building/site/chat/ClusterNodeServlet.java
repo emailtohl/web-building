@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebInitParam;
@@ -22,10 +23,12 @@ import javax.websocket.DeploymentException;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.Session;
+
+import com.github.emailtohl.building.site.chat.ChatMessage.Type;
 /**
  * websocket，模拟群集的客户端点
  * 它同时也是一个servlet，首先接收前端传来的消息，然后将消息推送给后台服务端
- * @author Helei
+ * @author HeLei
  */
 @WebServlet(initParams = {
 		@WebInitParam(name = "nodeId", value = "clientNode", description = "websocket终端") }, description = "利用websocket组建群集", urlPatterns = {
@@ -75,6 +78,8 @@ public class ClusterNodeServlet extends HttpServlet {
 		ChatMessage message = new ChatMessage();
 		message.setUser("server");
 		message.setTimestamp(Instant.now());
+		message.setUserContent(UUID.randomUUID().toString());
+		message.setType(Type.TEXT);
 		try (OutputStream output = this.session.getBasicRemote().getSendStream();
 				ObjectOutputStream stream = new ObjectOutputStream(output)) {
 			stream.writeObject(message);

@@ -8,6 +8,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.hibernate.search.annotations.Analyzer;
 import org.hibernate.search.annotations.Boost;
 import org.hibernate.search.annotations.Field;
@@ -19,11 +20,10 @@ import org.hibernate.search.annotations.IndexedEmbedded;
  * 
  * @author HeLei
  */
-@SuppressWarnings("unused")
 @Entity
 @Table(name = "t_Post")
 @Indexed
-//@Analyzer(impl = IKAnalyzer.class)
+@Analyzer(impl = StandardAnalyzer.class)
 public class ForumPost extends BaseEntity {
 	private static final long serialVersionUID = 5500398003740322853L;
 	private User user;

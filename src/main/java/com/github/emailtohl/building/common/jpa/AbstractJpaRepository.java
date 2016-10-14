@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
  * 管理JPA资源的基础仓库，包括：
  * 实体管理器工厂（EntityManagerFactory）、实体管理器（EntityManager） 、
  * id的class以及实体class的管理和初始化。
- * @author Helei
+ * @author HeLei
  * @date 2016.09.08
  */
 public abstract class AbstractJpaRepository<I extends Serializable, E extends Serializable> {

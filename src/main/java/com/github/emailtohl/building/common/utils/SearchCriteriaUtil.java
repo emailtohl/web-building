@@ -11,7 +11,7 @@ import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.Criterion.Oper
 /**
  * 前端传入的可能是一个对象，对象里面各个属性值，作为AND的组合条件查询，这时候不需要每个属性去探测是否为null
  * 本工具将这种对象的中不为null的属性组合成SearchCriteria共AbstractSearchableJpaRepository.searche()方法使用
- * @author Helei
+ * @author HeLei
  */
 public final class SearchCriteriaUtil {
 	/**

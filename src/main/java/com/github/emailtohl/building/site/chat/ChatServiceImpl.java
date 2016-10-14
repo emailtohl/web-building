@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 /**
  * 聊天程序接口的实现类，受spring管理
- * @author Helei
+ * @author HeLei
  */
 @Service
 public class ChatServiceImpl implements ChatService {

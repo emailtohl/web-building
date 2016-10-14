@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.time.Instant;
 /**
  * 被websocket序列化的类
- * @author Helei
+ * @author HeLei
  */
 public class ChatMessage implements Cloneable, Serializable {
 	private static final long serialVersionUID = -8697529922899865254L;

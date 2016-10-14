@@ -15,7 +15,7 @@ import javax.persistence.TemporalType;
 /**
  * Entity 基类
  * 
- * @author Helei
+ * @author HeLei
  */
 @EntityListeners(EntityListener.class)
 /*

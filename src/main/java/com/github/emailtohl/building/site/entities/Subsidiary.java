@@ -6,7 +6,7 @@ import javax.persistence.Embeddable;
 
 /**
  * User的附属属性进行统一管理
- * @author Helei
+ * @author HeLei
  */
 @Embeddable
 public class Subsidiary implements Serializable {

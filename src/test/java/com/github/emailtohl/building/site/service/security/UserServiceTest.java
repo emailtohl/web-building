@@ -18,7 +18,7 @@ import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.service.UserService;
 /**
  * 测试spring security的配置
- * @author Helei
+ * @author HeLei
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SecurityTestConfig.class)

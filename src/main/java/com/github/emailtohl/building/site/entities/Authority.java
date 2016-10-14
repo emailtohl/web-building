@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 /**
  * 用户的权限，符合spring security的授权方式
- * @author Helei
+ * @author HeLei
  */
 public enum Authority {
 	ADMIN("系统管理员"), EMPLOYEE("职员"), MANAGER("经理"), USER("普通用户");

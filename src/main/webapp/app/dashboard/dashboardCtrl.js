@@ -9,6 +9,7 @@ define(['angular', 'dashboard/module', 'sparkline'], function(angular) {
 		self.chatlist = [];
 		
 		$scope.getAuthentication(function(data) {
+			var callee = arguments.callee;
 			if (!data || !data.username) {
 				return;
 			}
@@ -43,6 +44,7 @@ define(['angular', 'dashboard/module', 'sparkline'], function(angular) {
 			self.send = function() {
 		    	if (connection.readyState != WebSocket.OPEN) {
 					alert('WebSocket is Not Open, current state is： ' + connection.readyState);
+					callee(data);
 					return;
 				}
 		    	connection.send(self.message); // 通过套接字传递该内容

@@ -45,7 +45,7 @@ import com.github.emailtohl.building.site.service.AuthenticationService;
 /**
  * 认证服务的实现类
  * 主要是为了实践自定义的AuthenticationProvider，用于spring security的配置中
- * @author Helei
+ * @author HeLei
  */
 @Service
 @Transactional

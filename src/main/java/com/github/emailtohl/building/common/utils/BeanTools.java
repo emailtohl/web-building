@@ -40,7 +40,7 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * 未归类的方法
- * @author Helei
+ * @author HeLei
  */
 public final class BeanTools {
 	private static final Logger logger = LogManager.getLogger();

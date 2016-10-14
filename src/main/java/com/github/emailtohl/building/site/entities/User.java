@@ -42,7 +42,7 @@ import com.github.emailtohl.building.common.Constant;
 /**
  * Entity 用户
  * javax校验的注解在field上，JPA约束的注解写在JavaBean属性上
- * @author Helei
+ * @author HeLei
  */
 @Entity
 @Table(name = "t_user")

@@ -42,7 +42,7 @@ import com.google.gson.Gson;
 
 /**
  * 用户管理的控制器
- * @author Helei
+ * @author HeLei
  */
 @Controller
 @RequestMapping("user")

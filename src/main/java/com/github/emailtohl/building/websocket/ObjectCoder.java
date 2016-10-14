@@ -20,7 +20,7 @@ import javax.websocket.EndpointConfig;
 /**
  * 为websocket提供序列化支持，可在@ServerEndpoint的参数encoders和decoders中声明继承了本类的类
  * 
- * @author Helei
+ * @author HeLei
  * @date 2016.06.11
  *
  * @param <T extends Serializable> 被序列化的类

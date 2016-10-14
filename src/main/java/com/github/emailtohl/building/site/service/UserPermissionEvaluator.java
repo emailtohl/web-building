@@ -16,7 +16,7 @@ import org.springframework.security.core.Authentication;
  * public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission)
  * 第二个参数targetDomainObject就是users，第三个参数permission就是'delete'
  * 
- * @author Helei
+ * @author HeLei
  */
 public class UserPermissionEvaluator implements PermissionEvaluator {
 	private static final Logger logger = LogManager.getLogger();

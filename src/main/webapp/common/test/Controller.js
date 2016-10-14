@@ -91,7 +91,11 @@ define(['angular', 'test/module'], function(angular) {
 			self.modal.content = result;
 			self.modal.open = true;
 			$scope.$apply();
-		}
+		};
+		// 测试websocket群集
+		self.websocket = function() {
+			$http.get('chat/node');
+		};
 	}])
 	.controller('TestZtreeCtrl', ['$rootScope', '$scope', '$http', '$state', 'ztreeutil', function($rootScope, $scope, $http, $state, ztreeutil) {
 		var self = this;

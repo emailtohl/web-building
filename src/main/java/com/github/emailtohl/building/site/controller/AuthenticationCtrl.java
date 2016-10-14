@@ -48,7 +48,7 @@ import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
 /**
  * 认证控制器，管理用户注册，更改密码，授权等功能
- * @author Helei
+ * @author HeLei
  */
 @Controller
 public class AuthenticationCtrl {

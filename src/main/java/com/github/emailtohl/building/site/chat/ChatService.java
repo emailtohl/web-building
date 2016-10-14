@@ -1,7 +1,7 @@
 package com.github.emailtohl.building.site.chat;
 /**
  * 聊天程序的接口
- * @author Helei
+ * @author HeLei
  */
 public interface ChatService {
 	/**
