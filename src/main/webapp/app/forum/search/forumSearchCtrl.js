@@ -19,7 +19,9 @@ define(['forum/module', 'forum/search/service'], function(forumModule) {
 			CKEDITOR.replaceAll($('textarea'));
 			CKEDITOR.on('instanceReady', function(ev) {
 				var editor = ev.editor;
-				editor.setReadOnly(true);
+				if (editor.name != 'editor1') {
+					editor.setReadOnly(true);
+				}
 			});
 		};
 		

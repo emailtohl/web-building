@@ -4,7 +4,7 @@ define(['forum/module', 'forum/add/service', 'ckeditor'], function(forumModule) 
 	                         , function($scope, $http, $state, forumAddService, util) {
 		var self = this;
 		$scope.getAuthentication();
-		util.loadasync('lib/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css');
+//		util.loadasync('lib/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css');
 		
 		self.forumPost = {};
 		
