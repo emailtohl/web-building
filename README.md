@@ -1,6 +1,6 @@
 # web-building项目
 
-**Java JavaScript 业务框架 spring springmvc springsecurity springdata JPA Hibernate angularjs1.×**
+**Java JavaScript 业务框架 spring springmvc springsecurity springdata JPA Hibernate search angularjs1.×**
 
 ## 一、 说明
 此项目被称为“building”，意指“不断完善”的项目，我将日常学习或自己开发的工具、框架整合在一起。这不仅是一个总结，同时还可以在此基础上开发业务项目。
@@ -59,7 +59,21 @@ xml的DTD、scheme校验很繁琐，项目尽可能避免使用xml，在配置�
 - module.js：当RequireJS加载并执行完后，内存中就创建出了Angular管理的模块
 - router：使用ui-router对Angular的模块进行整合
 
-## 四、 如何阅读
+## 四、进入项目
+### 1. 导入项目
+项目基于maven构建，先导出为eclipse项目，当依赖包完全下载好后，根据前面介绍配置好本地数据库，本项目使用的数据库是postgresql，若要改为MySQL，则需要进com.github.emailtohl.building.config.JPAConfiguration中配置。
+
+### 2. 初始化数据库
+完成数据库配置后，执行src/test/java/com.github.emailtohl.building.initdb.CreateTable1，JPA Hibernate会自动创建数据表和初始的测试数据，创建的数据见com.github.emailtohl.building.initdb.PersistenceData，可自行创建自己的账户
+
+### 3. 登录系统
+打开浏览器连接到系统后，可进入首页，当访问授权地址时要求用户登录，用户可使用com.github.emailtohl.building.initdb.PersistenceData中配置的测试账户登录，也可以在登录页面中注册新的账户。
+
+> 注意：注册用户会根据用户的邮箱发激活邮件，邮箱的配置在src/main/resources/config.properties中
+
+登录成功后，对账户授权，最后根据用户的权限展示出不同的功能。
+
+## 五、 如何阅读
 ### 1. 后端
 #### 1.1 bootstrap包
 有三个启动文件：他们继承了spring的适配器，容器（这里是tomcat）可以在初始化时调用他们的onStartup()方法，这三个文件会根据@Order注解顺序执行。
@@ -95,7 +109,7 @@ xml的DTD、scheme校验很繁琐，项目尽可能避免使用xml，在配置�
 系统设计关键在于接口，是service包中不仅定义了接口功能，作为契约，接口还定义了校验、安全等切面功能，他们都由spring提供支持。
 
 ### 2. 前端
-前端的lib存放第三方框架或工具，common中是我基于angular1.×编写的框架。
+前端的lib存放第三方框架或工具，common是公共模块，基于angular1.×编写的service、util、directive等。
 其中，directive中定义了日常开发中最常使用的分页Pager、select、文件上传、日期选择等指令，可以在模板页面中通用，具体可以在common/test中见使用方法。
 
 common/service里面主要提到interceptors.js，这是一个面向切面的拦截器，在提交AJAX请求时，它提供统一的CSRF令牌，前后端页码转换，日志等功能。
@@ -105,7 +119,7 @@ common/service里面主要提到interceptors.js，这是一个面向切面的拦
 ### 3. 详情
 README仅简述了项目概况，该项目是我学习所用，如何配置和运行的都详细注释在源文件中，可在项目中查看项目运行实际情况。
 
-## 五、 持续开发
+## 六、 持续开发
 目前框架搭建以及基础组件以及创建完毕：如对用户、授权的实体建模，基础数据访问仓库，通用工具，通用过滤器，通用组件等，前端的拦截器、分页、select2等angular指令也都已齐备。
 
 现在业务代码方面基本完成用户管理，用户认证与授权，论坛全文搜索，项目持续进行中……
