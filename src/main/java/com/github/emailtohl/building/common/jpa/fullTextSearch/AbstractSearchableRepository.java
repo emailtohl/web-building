@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.common.jpa.fulltextsearch;
+package com.github.emailtohl.building.common.jpa.fullTextSearch;
 
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -51,6 +51,10 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 	protected Class<E> entityClass;
 	protected String[] onFields;
 	
+	/**
+	 * Lucene的默认排序是按照Document的得分进行排序的
+	 * 所以调用本接口，不会使用Pageable中的sort属性
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public Page<SearchResult<E>> search(String query, Pageable pageable) {
@@ -74,7 +78,6 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 		
 		return new PageImpl<>(list, pageable, total);
 	}
-
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected AbstractSearchableRepository() {

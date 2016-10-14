@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.common.jpa.fulltextsearch;
+package com.github.emailtohl.building.common.jpa.fullTextSearch;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -13,6 +13,7 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.github.emailtohl.building.bootspring.Spring;
+import com.github.emailtohl.building.common.jpa.fullTextSearch.AbstractSearchableRepository;
 import com.github.emailtohl.building.common.jpa.relationEntities.Relation1;
 import com.github.emailtohl.building.site.entities.ForumPost;
 

@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.common.jpa.fulltextsearch;
+package com.github.emailtohl.building.common.jpa.fullTextSearch;
 
 import java.io.Serializable;
 

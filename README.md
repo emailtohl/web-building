@@ -9,8 +9,8 @@
 #### Java
  - 容器：spring、spring mvc、Websocket
  - 安全：spring security
- - 数据访问层：JPA Hibernate，spring data
- - 其他：Hibernate校验、Hibernate Search（全文搜索）等
+ - 数据访问层：JPA Hibernate、spring data
+ - 其他：Hibernate校验、Hibernate Search（全文搜索）、lucence等
  
 #### JavaScript
 - bootstrap
@@ -108,4 +108,4 @@ README仅简述了项目概况，该项目是我学习所用，如何配置和�
 ## 五、 持续开发
 目前框架搭建以及基础组件以及创建完毕：如对用户、授权的实体建模，基础数据访问仓库，通用工具，通用过滤器，通用组件等，前端的拦截器、分页、select2等angular指令也都已齐备。
 
-现在业务代码方面基本完成用户管理功能，用户授权功能的基础功能，项目持续进行中……
+现在业务代码方面基本完成用户管理，用户认证与授权，论坛全文搜索，项目持续进行中……

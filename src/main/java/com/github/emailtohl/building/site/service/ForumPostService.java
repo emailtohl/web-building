@@ -3,7 +3,7 @@ package com.github.emailtohl.building.site.service;
 import org.springframework.data.domain.Pageable;
 
 import com.github.emailtohl.building.common.jpa.Pager;
-import com.github.emailtohl.building.common.jpa.fulltextsearch.SearchResult;
+import com.github.emailtohl.building.common.jpa.fullTextSearch.SearchResult;
 import com.github.emailtohl.building.site.dto.ForumPostDto;
 /**
  * 论坛接口
