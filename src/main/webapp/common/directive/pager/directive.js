@@ -1,10 +1,10 @@
 /**
  * 分页组件：生成页码按钮
- * 实际上生成页码按钮，必要信息只有当前页和总页数，可以通过代码一次性生成，例如mine中提供的createPageItems方法
+ * 实际上生成页码按钮，必要信息只有当前页和总页数，可以通过代码一次性生成
  * 不过这是静态的，但是当点击页码按钮后，查询结果会更新，这就需要重新生成页码按钮，这不符合angular的编程风格
  * 定义angular的指令后，只需监控当前页pageNumber和总页数totalPages，指令会自动更新页码按钮
  * 
- * @author Helei
+ * @author HeLei
  */
 define([ 'common/module' ], function(common) {
 	common

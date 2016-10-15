@@ -1,6 +1,6 @@
 /**
  * ng-repeat结束后执行
- * author helei
+ * author HeLei
  */
 define([ 'common/module' ], function(common) {
 	common.directive('repeatFinish', [ function() {

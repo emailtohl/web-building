@@ -476,7 +476,7 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 	/**
 	 * 对于多对多，嵌入集合等复杂场景，需要手写JPQL，本类仅提供动态查询语句
 	 * 
-	 * @author helei
+	 * @author HeLei
 	 *
 	 */
 	protected static class PredicateAndArgs {

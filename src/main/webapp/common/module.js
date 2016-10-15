@@ -1,7 +1,7 @@
 /**
  * 定义公共基础模块
- * author helei
+ * author HeLei
  */
-define([ 'angular', 'mine'], function(angular) {
+define([ 'angular', 'jquery'], function(angular) {
 	return angular.module('commonModule', []);
 });

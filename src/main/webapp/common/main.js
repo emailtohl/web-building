@@ -1,6 +1,6 @@
 /**
  * main.js这个文件做的事情就是：由requirejs异步载入所有文件
- * author helei
+ * author HeLei
  */
 require.config({
 	/**
@@ -19,7 +19,7 @@ require.config({
 		test : '../common/test',
 		
 		// 配置baseUrl下的文件
-		'mine' : '../lib/mine',
+//		'mine' : '../lib/mine',
 		'jquery' : '../lib/jquery/jquery-2.2.3.min',
 		'jqueryui' : '../lib/jqueryui/jquery-ui.min',
 		'bootstrap' : '../lib/bootstrap/js/bootstrap.min',

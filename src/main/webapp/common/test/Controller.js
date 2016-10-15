@@ -71,7 +71,7 @@ define(['angular', 'test/module'], function(angular) {
 			self.open = true;
 		}
 		self.confirm = function() {
-			alert('确认后关闭模态框');
+			alert('确认后关闭模态框，注意可能引起底层异常，但是关注self.open状态，该状态是正常的');
 		};
 	}])
 	.controller('TestFileuploadCtrl', ['$rootScope', '$scope', '$http', '$state', function($rootScope, $scope, $http, $state) {

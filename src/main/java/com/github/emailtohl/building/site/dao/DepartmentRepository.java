@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.github.emailtohl.building.site.entities.Department;
 /**
  * 
- * @author helei
+ * @author HeLei
  */
 public interface DepartmentRepository extends JpaRepository<Department, Long> {
 	Department findByName(String name);

@@ -1,5 +1,5 @@
-define([ 'user/module', 'mine' ], function(userModule) {
-	return userModule.factory('userService', [ '$http', function($http) {
+define([ 'user/module', 'common/context' ], function(userModule) {
+	return userModule.factory('userService', [ '$http', 'util', function($http, util) {
 		return {
 			getUserById : function(id) {
 				return $http.get('user/id/' + id);
@@ -11,7 +11,7 @@ define([ 'user/module', 'mine' ], function(userModule) {
 			 * query对象中含有查询页码：pageNumber，pageSize
 			 */
 			getUserPager : function(params) {
-				return $http.get('user/pager?' + mine.encodeUrlParams(params));
+				return $http.get('user/pager?' + util.encodeUrlParams(params));
 			},
 			addUser : function(user) {
 				return $http.post('user', user);

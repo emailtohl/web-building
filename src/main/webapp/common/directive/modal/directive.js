@@ -1,6 +1,6 @@
 /**
  * 模态框指令
- * author helei
+ * author HeLei
  */
 define([ 'common/module', 'bootstrap' ], function(common) {
 	common.directive('modal', [ '$document', function($document) {

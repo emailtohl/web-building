@@ -1,7 +1,7 @@
 /**
  * 文件上传指令
  * 可在上传成功后执行回调，例如在回调中弹出上传成功或失败的模态框
- * author helei
+ * author HeLei
  */
 define([ 'common/module', 'common/service/util' ], function(commonModule) {
 	commonModule.directive('upload', [ 'util', function(util) {

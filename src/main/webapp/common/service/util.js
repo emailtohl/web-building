@@ -1,6 +1,6 @@
 /**
  * 工具类，提供基础功能
- * author helei
+ * author HeLei
  */
 define([ 'common/module' ], function(commonModule) {
 	return commonModule.factory('util', [ function() {

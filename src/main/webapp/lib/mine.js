@@ -2,7 +2,7 @@
  * 我的工具箱，不依赖任何库
  * 需要注意的是，使用了很多HTML5特性，不支持低版本浏览器
  * version v2.0
- * author helei
+ * author HeLei
  * date 2016.06.25
  */
 var mine = (function(){

@@ -1,6 +1,6 @@
 /**
  * jqueryui的插件
- * author helei
+ * author HeLei
  */
 define([ 'common/module', 'jquery', 'jqueryui' ], function(commonModule) {
 	commonModule.directive('datepicker', [ function() {

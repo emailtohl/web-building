@@ -1,6 +1,6 @@
 /**
  * 封装ztree
- * author helei
+ * author HeLei
  */
 define([ 'common/module', 'jquery', 'ztree', 'common/service/util' ], function(commonModule, $) {
 	commonModule.directive('ztree', ['util', function(util) {

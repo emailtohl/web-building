@@ -6,9 +6,9 @@
  * 4. 在ajax请求的头信息中添加CSRF的token
  * 5. 前端的页码是从第1页开始，而后端为了跟Spring data统一，页码从第0页开始，发送请求前和发送请求后进行统一转换
  * 
- * author helei
+ * author HeLei
  */
-define([ 'common/module' ], function(commonModule) {
+define([ 'common/module', 'common/service/util' ], function(commonModule) {
 	return commonModule
 	.factory('LoggingInterceptor', [ '$q', function($q) {
 		return {
@@ -88,11 +88,11 @@ define([ 'common/module' ], function(commonModule) {
 			}
 		};
 	} ])
-	.factory('csrfTokenInterceptor', [ '$q', function($q) {
+	.factory('csrfTokenInterceptor', [ '$q', 'util', function($q, util) {
 		return {
 			request : function(config) {
 				if (!config.headers['X-XSRF-TOKEN']) {
-					var token = mine.getCookie('XSRF-TOKEN');
+					var token = util.getCookie('XSRF-TOKEN');
 					if (token) {
 						config.headers['X-XSRF-TOKEN'] = token;
 					}

@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.github.emailtohl.building.site.entities.Company;
 /**
  * 
- * @author helei
+ * @author HeLei
  */
 public interface CompanyRepository extends JpaRepository<Company, Long> {
 	Company findByName(String name);
