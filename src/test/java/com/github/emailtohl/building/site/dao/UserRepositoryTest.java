@@ -162,7 +162,26 @@ public class UserRepositoryTest {
 		s.setCity("西安");
 		u.setSubsidiary(s);
 		u.setAuthorities(new HashSet<Authority>(Arrays.asList(Authority.MANAGER)));
-		Pager<User> p = userRepository.getPageByAuthorities(u, pageable);
+		Pager<User> p = userRepository.getPagerByAuthorities(u, pageable);
+		System.out.println(p);
+		logger.debug("getNumber:" + p.getPageNumber());
+		logger.debug("getNumberOfElements:" + p.getTotalElements());
+		logger.debug("getSize:" + p.getPageSize());
+		logger.debug("getTotalElements:" + p.getTotalElements());
+		logger.debug("getTotalPages:" + p.getTotalPages());
+		logger.debug("hasContent:" + p.getContent());
+	}
+	
+	@Test
+	public void testGetPagerByCriteria() {
+		PageRequest pageable = new PageRequest(0, 20);
+		User u = new User();
+		u.setEmail("foo@test.com");
+		Subsidiary s = new Subsidiary();
+		s.setCity("西安");
+		u.setSubsidiary(s);
+		u.setAuthorities(new HashSet<Authority>(Arrays.asList(Authority.MANAGER)));
+		Pager<User> p = userRepository.getPagerByCriteria(u, pageable);
 		System.out.println(p);
 		logger.debug("getNumber:" + p.getPageNumber());
 		logger.debug("getNumberOfElements:" + p.getTotalElements());

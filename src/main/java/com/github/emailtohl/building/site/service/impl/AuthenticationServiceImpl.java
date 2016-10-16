@@ -160,7 +160,7 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 	 */
 	@Override
 	public Pager<UserDto> getPageByAuthorities(UserDto user, Pageable pageable) {
-		Pager<User> p = userRepository.getPageByAuthorities(user, pageable);
+		Pager<User> p = userRepository.getPagerByCriteria(user, pageable);
 		List<User> src = p.getContent();
 		List<UserDto> dest = new ArrayList<UserDto>();
 

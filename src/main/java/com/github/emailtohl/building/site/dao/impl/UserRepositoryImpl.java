@@ -1,6 +1,7 @@
 package com.github.emailtohl.building.site.dao.impl;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ import javax.persistence.criteria.Root;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.stereotype.Repository;
 
 import com.github.emailtohl.building.common.jpa.Pager;
@@ -38,15 +40,14 @@ public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> i
 	}
 	
 	@Override
-	public Pager<User> getPageByAuthorities(User user, Pageable pageable) {
+	public Pager<User> getPagerByAuthorities(User user, Pageable pageable) {
+		
 		StringBuilder jpql = new StringBuilder("SELECT DISTINCT u FROM User u WHERE 1 = 1");
 		String email = user.getEmail();
 		Set<Authority> authorities = user.getAuthorities();
 		Map<String, Object> args = new HashMap<String, Object>();
 		if (authorities != null && authorities.size() > 0) {
-			/*
-			 * 仅当有一对多关系存在时再插入JOIN语句，否则底层SQL语句就只能查找存在外联关系的数据了
-			 */
+			// 仅当有一对多关系存在时再插入JOIN语句，否则底层SQL语句就只能查找存在外联关系的数据了
 			int i = jpql.indexOf("WHERE");
 			jpql.insert(i, "JOIN u.authorities a ").append(" AND a IN :authorities");
 			args.put("authorities", authorities);
@@ -56,6 +57,33 @@ public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> i
 			args.put("email", email);
 		}
 		return super.getPager(jpql.toString(), args, pageable.getPageNumber(), pageable.getPageSize());
+	}
+	
+	@Override
+	public Pager<User> getPagerByCriteria(User user, Pageable pageable) {
+		CriteriaBuilder b1 = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Long> q1 = b1.createQuery(Long.class);
+		Root<User> r1 = q1.from(entityClass);
+		q1.select(b1.count(r1)).where(
+				b1.like(r1.get("email"), user.getEmail())
+				, r1.join("authorities").in(user.getAuthorities())
+				).distinct(true);
+		Long count = entityManager.createQuery(q1).getSingleResult();
+		
+		CriteriaBuilder b2 = entityManager.getCriteriaBuilder();
+		CriteriaQuery<User> q2 = b2.createQuery(entityClass);
+		Root<User> r2 = q2.from(entityClass);
+		q2.select(r2).where(
+				b2.like(r2.get("email"), user.getEmail())
+				, r2.join("authorities").in(user.getAuthorities())
+				)
+		.distinct(true)
+		.orderBy(QueryUtils.toOrders(pageable.getSort(), r2, b2));
+		List<User> ls = entityManager.createQuery(q2)
+				.setFirstResult(pageable.getOffset())
+				.setMaxResults(pageable.getPageSize())
+				.getResultList();
+		return new Pager<User>(ls, count, pageable.getPageNumber(), pageable.getPageSize());
 	}
 
 	/**
