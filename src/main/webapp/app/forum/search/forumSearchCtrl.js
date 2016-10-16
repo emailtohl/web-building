@@ -5,6 +5,8 @@ define(['forum/module', 'forum/search/service'], function(forumModule) {
 		var self = this;
 		$scope.getAuthentication();
 		console.log($state.params);
+		var queryInput = $('form[name="fulltextsearch"]').find('input[name="search"]');
+		
 		if ($state.params.query) {
 			forumSearchService.search($state.params.query, 1).success(function(data) {
 				self.pager = data;
@@ -26,7 +28,8 @@ define(['forum/module', 'forum/search/service'], function(forumModule) {
 		};
 		
 		self.search = function(pageNumber) {
-			forumSearchService.get(pageNumber).success(function(data) {
+			var query = queryInput.val();
+			forumSearchService.search(query, pageNumber).success(function(data) {
 				self.pager = data;
 			});
 		};
