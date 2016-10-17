@@ -189,6 +189,19 @@ public class UserRepositoryTest {
 		logger.debug("getTotalElements:" + p.getTotalElements());
 		logger.debug("getTotalPages:" + p.getTotalPages());
 		logger.debug("hasContent:" + p.getContent());
+		assertEquals(1, p.getTotalElements());
+		
+		u.setEmail(null);
+		u.getAuthorities().clear();
+		p = userRepository.getPagerByCriteria(u, pageable);
+		System.out.println(p);
+		logger.debug("getNumber:" + p.getPageNumber());
+		logger.debug("getNumberOfElements:" + p.getTotalElements());
+		logger.debug("getSize:" + p.getPageSize());
+		logger.debug("getTotalElements:" + p.getTotalElements());
+		logger.debug("getTotalPages:" + p.getTotalPages());
+		logger.debug("hasContent:" + p.getContent());
+		assertEquals(3, p.getTotalElements());
 	}
 	
 	/**

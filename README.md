@@ -19,6 +19,7 @@
 - 其他组件：如select2,datepicker,ztree,codemirror等等
 
 ## 二、部署
+本项目基于JDK8环境开发，框架部分为了兼容之前的JDK并未用JDK8的语法和新的时间类，但site包下的业务程序则需要调整才能兼容之前的JDK版本。
 ### 1. 数据源
 由于属于学习研究型项目，所以本系统中存在3份数据源配置，要保持一致（真实生产环境可以简化为一份）：
 ###(1) 位于src/main/resources/database.properties

@@ -1,5 +1,6 @@
 package com.github.emailtohl.building.site.dao.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Set;
 import javax.persistence.AccessType;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.springframework.data.domain.Page;
@@ -61,28 +63,44 @@ public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> i
 	
 	@Override
 	public Pager<User> getPagerByCriteria(User user, Pageable pageable) {
-		CriteriaBuilder b1 = entityManager.getCriteriaBuilder();
-		CriteriaQuery<Long> q1 = b1.createQuery(Long.class);
-		Root<User> r1 = q1.from(entityClass);
-		q1.select(b1.count(r1)).where(
-				b1.like(r1.get("email"), user.getEmail())
-				, r1.join("authorities").in(user.getAuthorities())
-				).distinct(true);
-		Long count = entityManager.createQuery(q1).getSingleResult();
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		
-		CriteriaBuilder b2 = entityManager.getCriteriaBuilder();
-		CriteriaQuery<User> q2 = b2.createQuery(entityClass);
+		CriteriaQuery<Long> q1 = cb.createQuery(Long.class);
+		Root<User> r1 = q1.from(entityClass);
+		
+		List<Predicate> lp = new ArrayList<Predicate>();
+		if (user.getEmail() != null && !user.getEmail().isEmpty()) {
+			lp.add(cb.like(r1.get("email"), user.getEmail()));
+		}
+		if (!user.getAuthorities().isEmpty()) {
+			lp.add(r1.join("authorities").in(user.getAuthorities()));
+		}
+		Predicate[] ps = lp.toArray(new Predicate[lp.size()]);
+		
+		q1.distinct(true).select(cb.count(r1)).where(ps);
+		
+		Long count = entityManager.createQuery(q1).getSingleResult();
+
+		CriteriaQuery<User> q2 = cb.createQuery(entityClass);
 		Root<User> r2 = q2.from(entityClass);
-		q2.select(r2).where(
-				b2.like(r2.get("email"), user.getEmail())
-				, r2.join("authorities").in(user.getAuthorities())
-				)
-		.distinct(true)
-		.orderBy(QueryUtils.toOrders(pageable.getSort(), r2, b2));
+		
+		lp.clear();
+		if (user.getEmail() != null && !user.getEmail().isEmpty()) {
+			lp.add(cb.like(r2.get("email"), user.getEmail()));
+		}
+		if (!user.getAuthorities().isEmpty()) {
+			lp.add(r2.join("authorities").in(user.getAuthorities()));
+		}
+		ps = lp.toArray(new Predicate[lp.size()]);
+		
+		q2.distinct(true).select(r2).where(ps)
+		.orderBy(QueryUtils.toOrders(pageable.getSort(), r2, cb));
+
 		List<User> ls = entityManager.createQuery(q2)
 				.setFirstResult(pageable.getOffset())
 				.setMaxResults(pageable.getPageSize())
 				.getResultList();
+		
 		return new Pager<User>(ls, count, pageable.getPageNumber(), pageable.getPageSize());
 	}
 

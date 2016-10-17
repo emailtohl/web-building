@@ -105,22 +105,14 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 				idClass);
 		if (args != null) {
 			for (int i = 0; i < args.length; i++) {
-				if (args[i] instanceof String) {
-					countQuery.setParameter(i + 1, "%" + args[i] + "%");
-				} else {
-					countQuery.setParameter(i + 1, args[i]);
-				}
+				countQuery.setParameter(i + 1, args[i]);
 			}
 		}
 		Long totalElements = countQuery.getSingleResult();
 		TypedQuery<E> pagedQuery = entityManager.createQuery(jpql, entityClass);
 		if (args != null) {
 			for (int i = 0; i < args.length; i++) {
-				if (args[i] instanceof String) {
-					pagedQuery.setParameter(i + 1, "%" + args[i] + "%");
-				} else {
-					pagedQuery.setParameter(i + 1, args[i]);
-				}
+				pagedQuery.setParameter(i + 1, args[i]);
 			}
 		}
 //		 这是从第1页起的计算方式
@@ -166,22 +158,14 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 				idClass);
 		if (args != null) {
 			for (Map.Entry<String, Object> entry : args.entrySet()) {
-				if (entry.getValue() instanceof String) {
-					countQuery.setParameter(entry.getKey(), "%" + entry.getValue() + "%");
-				} else {
-					countQuery.setParameter(entry.getKey(), entry.getValue());
-				}
+				countQuery.setParameter(entry.getKey(), entry.getValue());
 			}
 		}
 		Long totalElements = countQuery.getSingleResult();
 		TypedQuery<E> pagedQuery = entityManager.createQuery(jpql, entityClass);
 		if (args != null) {
 			for (Map.Entry<String, Object> entry : args.entrySet()) {
-				if (entry.getValue() instanceof String) {
-					pagedQuery.setParameter(entry.getKey(), "%" + entry.getValue() + "%");
-				} else {
-					pagedQuery.setParameter(entry.getKey(), entry.getValue());
-				}
+				pagedQuery.setParameter(entry.getKey(), entry.getValue());
 			}
 		}
 //		 这是从第1页起的计算方式
