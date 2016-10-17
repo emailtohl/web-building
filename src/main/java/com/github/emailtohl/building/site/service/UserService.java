@@ -38,7 +38,7 @@ public interface UserService {
 	 * @param u
 	 * @return 新增User的id
 	 */
-	@PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
+//	@PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
 	Long addUser(@Valid UserDto u);
 	
 	/**
