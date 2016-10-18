@@ -135,12 +135,11 @@ public abstract class BaseEntity implements Serializable {
 		if (!(thisClass.isAssignableFrom(otherClass) || otherClass.isAssignableFrom(thisClass)))
 			return false;
 		BaseEntity other = (BaseEntity) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
+		if (id == null || other.id == null) {
 			return false;
-		return true;
+		} else {
+			return id.equals(other.id);
+		}
 	}
 
 }
