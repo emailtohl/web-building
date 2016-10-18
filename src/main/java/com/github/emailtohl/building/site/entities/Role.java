@@ -3,6 +3,7 @@ package com.github.emailtohl.building.site.entities;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -75,7 +76,7 @@ public class Role extends BaseEntity {
 		this.users = users;
 	}
 	
-	@ManyToMany(targetEntity = Authority.class, fetch = FetchType.EAGER)
+	@ManyToMany(targetEntity = Authority.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "t_role_authority"
 	, joinColumns = { @JoinColumn(name = "role_id", referencedColumnName = "id") }
 	, inverseJoinColumns = { @JoinColumn(name = "authority_id", referencedColumnName = "id") })

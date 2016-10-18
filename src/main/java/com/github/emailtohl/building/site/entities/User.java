@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -231,7 +232,7 @@ public class User extends BaseEntity {
 	}
 	*/
 	
-	@ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER)
+	@ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "t_user_role"
 	, joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") }
 	, inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName = "id") })
