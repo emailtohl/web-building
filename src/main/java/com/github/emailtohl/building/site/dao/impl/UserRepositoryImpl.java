@@ -21,8 +21,8 @@ import org.springframework.stereotype.Repository;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.AbstractCriterionQueryRepository;
 import com.github.emailtohl.building.site.dao.UserRepositoryCustomization;
-import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.Employee;
+import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
 
 /**
@@ -46,13 +46,12 @@ public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> i
 		
 		StringBuilder jpql = new StringBuilder("SELECT DISTINCT u FROM User u WHERE 1 = 1");
 		String email = user.getEmail();
-		Set<Authority> authorities = user.getAuthorities();
+		Set<Role> roles = user.getRoles();
 		Map<String, Object> args = new HashMap<String, Object>();
-		if (authorities != null && authorities.size() > 0) {
+		if (roles != null && roles.size() > 0) {
 			// 仅当有一对多关系存在时再插入JOIN语句，否则底层SQL语句就只能查找存在外联关系的数据了
 			int i = jpql.indexOf("WHERE");
-			jpql.insert(i, "JOIN u.authorities a ").append(" AND a IN :authorities");
-			args.put("authorities", authorities);
+			jpql.insert(i, "JOIN u.roles r ").append(" AND r IN :roles");
 		}
 		if (email != null && email.length() > 0) {
 			jpql.append(" AND u.email LIKE :email");
@@ -72,8 +71,8 @@ public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> i
 		if (user.getEmail() != null && !user.getEmail().isEmpty()) {
 			lp.add(cb.like(r1.get("email"), user.getEmail()));
 		}
-		if (!user.getAuthorities().isEmpty()) {
-			lp.add(r1.join("authorities").in(user.getAuthorities()));
+		if (!user.getRoles().isEmpty()) {
+			lp.add(r1.join("roles").in(user.getRoles()));
 		}
 		Predicate[] ps = lp.toArray(new Predicate[lp.size()]);
 		
@@ -88,8 +87,8 @@ public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> i
 		if (user.getEmail() != null && !user.getEmail().isEmpty()) {
 			lp.add(cb.like(r2.get("email"), user.getEmail()));
 		}
-		if (!user.getAuthorities().isEmpty()) {
-			lp.add(r2.join("authorities").in(user.getAuthorities()));
+		if (!user.getRoles().isEmpty()) {
+			lp.add(r2.join("roles").in(user.getRoles()));
 		}
 		ps = lp.toArray(new Predicate[lp.size()]);
 		

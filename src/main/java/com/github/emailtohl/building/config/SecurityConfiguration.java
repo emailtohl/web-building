@@ -102,7 +102,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		/* 基于数据库的配置 */
 		builder.jdbcAuthentication().dataSource(dataSource)
 				.usersByUsernameQuery("SELECT t.email as username, t.password, t.enabled FROM t_user AS t WHERE t.email = ?")
-				.authoritiesByUsernameQuery("SELECT u.email AS username, ua.authority FROM t_user u INNER JOIN t_user_authority ua ON u.id = ua.user_id WHERE u.email = ?")
+				.authoritiesByUsernameQuery("SELECT u.email AS username, a.name AS authority FROM t_user u INNER JOIN t_user_role ur ON u.id = ur.user_id INNER JOIN t_role_authority ra ON ur.role_id = ra.role_id INNER JOIN t_authority a ON ra.authority_id = a.id WHERE u.email = ?")
 				.passwordEncoder(new BCryptPasswordEncoder());
 	}
 	/**

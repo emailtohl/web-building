@@ -1,5 +1,4 @@
 package com.github.emailtohl.building.site.service.security;
-
 import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_DEVELPMENT;
 import static org.junit.Assert.assertTrue;
 
@@ -22,7 +21,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.github.emailtohl.building.site.dto.UserDto;
-import com.github.emailtohl.building.site.entities.Authority;
+import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
 /**
@@ -43,14 +42,14 @@ public class AuthenticationServiceTest {
 	public void testGetPageByAuthorities1() {
 		SecurityContextHolder.clearContext();
 		UserDto u = new UserDto();
-		authenticationService.getPageByAuthorities(u, new PageRequest(0, 20));
+		authenticationService.getPageByRoles(u, new PageRequest(0, 20));
 	}
 
 	@Test(expected = AccessDeniedException.class)
 	public void testGetPageByAuthorities2() {
 		setBar();
 		UserDto u = new UserDto();
-		authenticationService.getPageByAuthorities(u, new PageRequest(0, 20));
+		authenticationService.getPageByRoles(u, new PageRequest(0, 20));
 	}
 
 	@Test
@@ -58,7 +57,7 @@ public class AuthenticationServiceTest {
 		setEmailtohl();
 		UserDto u = new UserDto();
 		u.setEmail("bar@test.com");
-		authenticationService.getPageByAuthorities(u, new PageRequest(0, 20));
+		authenticationService.getPageByRoles(u, new PageRequest(0, 20));
 	}
 
 	@Test
@@ -82,13 +81,13 @@ public class AuthenticationServiceTest {
 	@Test
 	public void testGrantedAuthority3() {
 		setFoo();
-		authenticationService.grantedAuthority(1000L, new HashSet<Authority>(Arrays.asList(Authority.ADMIN, Authority.MANAGER)));
+		authenticationService.grantedRoles(1000L, new HashSet<String>(Arrays.asList(Role.ADMIN, Role.MANAGER)));
 	}
 
 	@Test
 	public void testGrantedAuthority4() {
 		setEmailtohl();
-		authenticationService.grantedAuthority(1000L, new HashSet<Authority>(Arrays.asList(Authority.ADMIN, Authority.MANAGER)));
+		authenticationService.grantedRoles(1000L, new HashSet<String>(Arrays.asList(Role.ADMIN, Role.MANAGER)));
 	}
 	
 	@Test

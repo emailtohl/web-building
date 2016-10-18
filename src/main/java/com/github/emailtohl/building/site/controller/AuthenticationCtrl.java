@@ -41,8 +41,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.exception.ResourceNotFoundException;
 import com.github.emailtohl.building.site.dto.UserDto;
-import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.BaseEntity;
+import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.mail.EmailService;
 import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
@@ -196,7 +196,7 @@ public class AuthenticationCtrl {
 	public String enable(long id) {
 		userService.enableUser(id);
 		// 注意，若未给用户授权，则spring security自带的认证器会认为认证失败，所以初始化时必须给予一定权限
-		authenticationService.grantedAuthority(id, new HashSet<Authority>(Arrays.asList(Authority.USER)));
+		authenticationService.grantedRoles(id, new HashSet<String>(Arrays.asList(Role.USER)));
 		return "login";
 	}
 
@@ -233,7 +233,7 @@ public class AuthenticationCtrl {
 	@ResponseStatus(HttpStatus.OK)
 	public Pager<UserDto> getPageByAuthorities(@ModelAttribute UserDto u,
 			@PageableDefault(page = 0, size = 20, sort = BaseEntity.MODIFY_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
-		return authenticationService.getPageByAuthorities(u, pageable);
+		return authenticationService.getPageByRoles(u, pageable);
 	}
 	
 	/**
@@ -243,8 +243,8 @@ public class AuthenticationCtrl {
 	 */
 	@RequestMapping(value = "authentication/authorize/{id}", method = RequestMethod.PUT)
 	@ResponseBody
-	public void authorize(@PathVariable @Min(1L) Long id, @RequestBody Set<Authority> authorities) {
-		authenticationService.grantedAuthority(id, authorities);
+	public void authorize(@PathVariable @Min(1L) Long id, @RequestBody Set<String> roles) {
+		authenticationService.grantedRoles(id, roles);
 	}
 	
 	/**

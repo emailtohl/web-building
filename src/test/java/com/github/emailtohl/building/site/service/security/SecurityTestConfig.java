@@ -186,10 +186,6 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 				return authenticationManager.authenticate(token);
 			}
 
-			@Override
-			public void grantedAuthority(Long id, Set<Authority> authorities) {
-				logger.debug("grantedAuthority invoked");
-			}
 
 			@Override
 			public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -211,7 +207,7 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 			}
 			
 			@Override
-			public Pager<UserDto> getPageByAuthorities(UserDto user, Pageable pageable) {
+			public Pager<UserDto> getPageByRoles(UserDto user, Pageable pageable) {
 				logger.debug("getUserPager invoked");
 				Pager<UserDto> p = new Pager<UserDto>(Arrays.asList(emailtohlDto, fooDto, barDto), 100L);
 				return p;
@@ -230,13 +226,18 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 			public void changePassword(String email, String newPassword) {
 				logger.debug("changePassword invoked");
 			}
-			
+
 			@Override
-			public long updateUserType(long id, Authority a) {
-				logger.debug("updateType invoked");
-				return 1000L;
+			public void grantedRoles(Long id, Set<String> roleNames) {
+				logger.debug("grantedAuthority invoked");
 			}
 
+			@Override
+			public long updateUserType(long id, String role) {
+				logger.debug("updateUserType invoked");
+				return 0;
+			}
+			
 		};
 	}
 }

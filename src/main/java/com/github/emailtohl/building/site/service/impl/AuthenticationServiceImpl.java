@@ -1,15 +1,21 @@
 package com.github.emailtohl.building.site.service.impl;
 
-import static com.github.emailtohl.building.site.entities.Authority.*;
+import static com.github.emailtohl.building.site.entities.Role.ADMIN;
+import static com.github.emailtohl.building.site.entities.Role.EMPLOYEE;
+import static com.github.emailtohl.building.site.entities.Role.MANAGER;
+import static com.github.emailtohl.building.site.entities.Role.USER;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
@@ -17,7 +23,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -33,11 +38,13 @@ import org.springframework.stereotype.Service;
 import com.github.emailtohl.building.common.Constant;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.BCryptUtil;
+import com.github.emailtohl.building.site.dao.RoleRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.Employee;
 import com.github.emailtohl.building.site.entities.Manager;
+import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.mail.EmailService;
 import com.github.emailtohl.building.site.service.AuthenticationService;
@@ -53,6 +60,22 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 	private static final Logger logger = LogManager.getLogger();
 	@Inject UserRepository userRepository;
 	@Inject EmailService emailService;
+	@Inject RoleRepository roleRepository;
+	
+	Role admin, employee, manager, user;
+	Map<String, Role> roleMap = new HashMap<String, Role>();
+	
+	@PostConstruct
+	public void setRoles() {
+		admin = roleRepository.findByName(ADMIN);
+		employee = roleRepository.findByName(EMPLOYEE);
+		manager = roleRepository.findByName(MANAGER);
+		user = roleRepository.findByName(USER);
+		roleMap.put(ADMIN, admin);
+		roleMap.put(EMPLOYEE, employee);
+		roleMap.put(MANAGER, manager);
+		roleMap.put(USER, user);
+	}
 	
 	@Override
 	public Authentication authenticate(String email, String password) {
@@ -76,7 +99,11 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 
 			@Override
 			public Collection<? extends GrantedAuthority> getAuthorities() {
-				return AuthorityUtils.createAuthorityList(Authority.toStringArray(u.getAuthorities()));
+				Set<String> authorities = new HashSet<String>();
+				for (Authority a : u.getAuthorities()) {
+					authorities.add(a.getName());
+				}
+				return AuthorityUtils.createAuthorityList(authorities.toArray(new String[authorities.size()]));
 			}
 
 			@Override
@@ -135,10 +162,10 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 		boolean result = false;
 		Authentication a = SecurityContextHolder.getContext().getAuthentication();
 		if (a != null) {
-			Set<String> roles = getGrantedAuthoritySet(a.getAuthorities());
+			Set<String> grantedAuthoritySet = getGrantedAuthoritySet(a.getAuthorities());
 			for (int i = 0; i < authorities.length; i++) {
-				String authority = authorities[i].name();
-				if (roles.contains(authority)) {
+				String authority = authorities[i].getName();
+				if (grantedAuthoritySet.contains(authority)) {
 					result = true;
 					break;
 				}
@@ -159,7 +186,7 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 	 * 查询用户权限，根据用户权限过滤信息
 	 */
 	@Override
-	public Pager<UserDto> getPageByAuthorities(UserDto user, Pageable pageable) {
+	public Pager<UserDto> getPageByRoles(UserDto user, Pageable pageable) {
 		String email = user.getEmail();
 		if (email != null && !email.isEmpty()) {
 			email = '%' + email + '%';
@@ -168,49 +195,20 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 		Pager<User> p = userRepository.getPagerByCriteria(user, pageable);
 		List<User> src = p.getContent();
 		List<UserDto> dest = new ArrayList<UserDto>();
-
-		// 如果是管理员的情况
-		if (hasAuthority(ADMIN)) {
-			for (User u : src) {
-				UserDto target = new UserDto();
-				BeanUtils.copyProperties(u, target, "password", "icon", "subsidiary", "iconSrc");
-				dest.add(target);
-			}
-			return new Pager<UserDto>(dest, p.getTotalElements(), pageable.getPageNumber(), p.getPageSize());
-		}
-		// 如果是经理的情况
-		if (hasAuthority(MANAGER)) {
-			for (User u : src) {
-				// 过滤管理员的信息
-				if (u.getAuthorities().contains(Authority.ADMIN)) {
-					continue;
-				}
-				UserDto target = new UserDto();
-				BeanUtils.copyProperties(u, target, "password", "icon", "subsidiary", "iconSrc");
-				dest.add(target);
-			}
-			return new Pager<UserDto>(dest, p.getTotalElements(), pageable.getPageNumber(), p.getPageSize());
-		} else {// 其他情况
-			for (User u : src) {
-				// 过滤管理员的信息
-				if (u.getAuthorities().contains(Authority.ADMIN) || u.getAuthorities().contains(Authority.MANAGER)) {
-					continue;
-				}
-				UserDto target = new UserDto();
-				BeanUtils.copyProperties(u, target, "password", "icon", "subsidiary", "iconSrc");
-				dest.add(target);
-			}
-			return new Pager<UserDto>(dest, p.getTotalElements(), pageable.getPageNumber(), p.getPageSize());
-		}
+		src.forEach(u -> {
+			UserDto target = new UserDto();
+			BeanUtils.copyProperties(u, target, "password", "icon", "subsidiary", "iconSrc");
+		});
+		return new Pager<UserDto>(dest, p.getTotalElements(), pageable.getPageNumber(), p.getPageSize());
 	}
 	
 	/**
 	 * 给用户授权
 	 */
 	@Override
-	public void grantedAuthority(Long id, Set<Authority> authorities) {
+	public void grantedRoles(Long id, Set<String> roleNames) {
 		// 用户注册时，不含任何权限，但是需要授予普通用户（User）权限，所以只要含有ADMIN, MANAGER, EMPLOYEE中任意一个权限，则抛异常
-		if (!hasAuthority(ADMIN, MANAGER, EMPLOYEE, USER) && !(authorities.contains(ADMIN) || authorities.contains(MANAGER) || authorities.contains(EMPLOYEE))) {
+		/*if (!hasAuthority(ADMIN, MANAGER, EMPLOYEE, USER) && !(authorities.contains(ADMIN) || authorities.contains(MANAGER) || authorities.contains(EMPLOYEE))) {
 			throw new AccessDeniedException("没有授予" + authorities + "的权限");
 		}
 		// 如果没有ADMIN的权限，则不能授予ADMIN的权限
@@ -220,8 +218,12 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 		// 如果既不包含ADMIN也不包含MANAGER的权限，那么就不能授予MANAGER权限
 		if (!hasAuthority(ADMIN, MANAGER) && (authorities.contains(MANAGER))) {
 			throw new AccessDeniedException("没有权限添加MANAGER权限");
-		}
-		userRepository.findOne(id).setAuthorities(authorities);
+		}*/
+		Set<Role> roles = new HashSet<Role>();
+		roleNames.forEach(s -> {
+			roles.add(roleMap.get(s));
+		});
+		userRepository.findOne(id).setRoles(roles);
 	}
 	
 	/**
@@ -289,8 +291,8 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 			this.username = this.email;
 			this.enabled = u.getEnabled();
 			this.iconSrc = u.getIconSrc();
-			String[] roles = Authority.toStringArray(u.getAuthorities());
-			this.authorities = AuthorityUtils.createAuthorityList(roles);
+			Set<String> stringAuthorities = u.getStringAuthorities();
+			this.authorities = AuthorityUtils.createAuthorityList(stringAuthorities.toArray(new String[stringAuthorities.size()]));
 			
 		}
 		/**
@@ -368,10 +370,10 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 	}
 
 	@Override
-	public long updateUserType(long id, Authority a) {
+	public long updateUserType(long id, String role) {
 		User persist = userRepository.getOne(id);
 		User entity;
-		switch (a) {
+		switch (role) {
 		case EMPLOYEE :
 			entity = new Employee();
 			break;

@@ -1,5 +1,6 @@
 package com.github.emailtohl.building.test.jpa;
 
+import static com.github.emailtohl.building.initdb.PersistenceData.admin;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -15,12 +16,13 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.common.jpa.AbstractJpaRepository;
-import com.github.emailtohl.building.site.entities.Authority;
+import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
 
 public class CriteriaTest {
 	Concrete concrete;
 	String jpql = "select u from User u join u.authorities a where u.email = 'emailtohl@163.com' and a in ('ADMIN')";
+	
 	class Concrete extends AbstractJpaRepository<User, Long> {
 		@SuppressWarnings("unchecked")
 		List<User> searchByJpql() {
@@ -34,7 +36,7 @@ public class CriteriaTest {
 //			Join<User, Authority> join = root.join("authorities");
 			q.select(root).where(
 				b.equal(root.get("email"), "emailtohl@163.com"),
-				b.isMember(Authority.ADMIN, root.<Set<Authority>>get("authorities"))
+				b.isMember(admin, root.<Set<Role>>get("roles"))
 			);
 			return entityManager.createQuery(q).getResultList();
 		}

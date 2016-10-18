@@ -1,9 +1,9 @@
 package com.github.emailtohl.building.site.service.impl;
 
-import static com.github.emailtohl.building.site.entities.Authority.ADMIN;
-import static com.github.emailtohl.building.site.entities.Authority.EMPLOYEE;
-import static com.github.emailtohl.building.site.entities.Authority.MANAGER;
-import static com.github.emailtohl.building.site.entities.Authority.USER;
+import static com.github.emailtohl.building.site.entities.Role.ADMIN;
+import static com.github.emailtohl.building.site.entities.Role.EMPLOYEE;
+import static com.github.emailtohl.building.site.entities.Role.MANAGER;
+import static com.github.emailtohl.building.site.entities.Role.USER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -21,7 +21,6 @@ import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.BeanTools;
 import com.github.emailtohl.building.site.dto.UserDto;
-import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
 /**
@@ -59,7 +58,7 @@ public class AuthenticationServiceImplTest {
 		UserDto u = new UserDto();
 		u.setEmail("foo@test.com");
 		// 查询页从第0页开始
-		Pager<UserDto> p = authenticationService.getPageByAuthorities(u, new PageRequest(0, 20));
+		Pager<UserDto> p = authenticationService.getPageByRoles(u, new PageRequest(0, 20));
 		assertTrue(p.getContent().size() > 0);
 	}
 	
@@ -67,10 +66,10 @@ public class AuthenticationServiceImplTest {
 //	@Test
 	public void testGrantedAuthority() {
 		Long id = userService.getUserByEmail("foo@test.com").getId();
-			authenticationService.grantedAuthority(id,
-					new HashSet<Authority>(Arrays.asList(ADMIN, MANAGER)));
-		authenticationService.grantedAuthority(id,
-				new HashSet<Authority>(Arrays.asList(EMPLOYEE)));
+			authenticationService.grantedRoles(id,
+					new HashSet<String>(Arrays.asList(ADMIN, MANAGER)));
+		authenticationService.grantedRoles(id,
+				new HashSet<String>(Arrays.asList(EMPLOYEE)));
 //		User u = userService.getUser(id);
 //		assertTrue(u.getAuthorities().containsAll(Arrays.asList(ADMIN, USER)));
 	}

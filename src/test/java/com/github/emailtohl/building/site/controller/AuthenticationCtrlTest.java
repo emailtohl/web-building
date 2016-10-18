@@ -31,7 +31,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.dto.UserDto;
-import com.github.emailtohl.building.site.entities.Authority;
+import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.mail.EmailService;
 import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
@@ -76,7 +76,7 @@ public class AuthenticationCtrlTest {
 			public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
 			}}
 		);
-		when(authenticationService.getPageByAuthorities(fooDto, new PageRequest(0, 10))).thenReturn(new Pager<UserDto>(Arrays.asList(fooDto)));
+		when(authenticationService.getPageByRoles(fooDto, new PageRequest(0, 10))).thenReturn(new Pager<UserDto>(Arrays.asList(fooDto)));
 		when(authenticationService.isExist(foo.getEmail())).thenReturn(true);
 		
 		/*Answer<Object> answer = new Answer<Object>() {
@@ -90,7 +90,7 @@ public class AuthenticationCtrlTest {
 			return "called with arguments: " + args;
 		};
 
-		doAnswer(answer).when(authenticationService).grantedAuthority(100L, new HashSet<Authority>(Arrays.asList(Authority.MANAGER)));
+		doAnswer(answer).when(authenticationService).grantedRoles(100L, new HashSet<String>(Arrays.asList(Role.MANAGER)));
 		
 		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setPrefix("/WEB-INF/jsp/view/");
@@ -199,7 +199,7 @@ public class AuthenticationCtrlTest {
 
 	@Test
 	public void testAuthorize() throws Exception {
-		String authorities = new Gson().toJson(Arrays.asList(Authority.MANAGER));
+		String authorities = new Gson().toJson(Arrays.asList(Role.MANAGER));
 		mockMvc.perform(put("/authentication/authorize/100")
 				.characterEncoding("UTF-8")  
 		        .contentType(MediaType.APPLICATION_JSON)  

@@ -5,16 +5,16 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Basic;
-import javax.persistence.CollectionTable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
-import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -23,7 +23,9 @@ import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -85,7 +87,8 @@ public class User extends BaseEntity {
 	protected String iconSrc;
 	@Size(max = 300)
 	protected String description;
-	protected Set<Authority> authorities = new HashSet<Authority>();
+//	protected Set<Authority> authorities = new HashSet<Authority>();
+	Set<Role> roles = new HashSet<Role>();
 	
 	@Field
 	public String getName() {
@@ -210,7 +213,7 @@ public class User extends BaseEntity {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+/*	
 	// 此属性暂时为目前配置的spring security提供服务
 	@ElementCollection(targetClass = Authority.class, fetch = FetchType.EAGER)
 	// @CollectionTable是可选项，若不做注解，JPA提供者则会根据自动生成连接表的表名以及对应的列名
@@ -227,7 +230,9 @@ public class User extends BaseEntity {
 	public void setAuthorities(Set<Authority> authorities) {
 		this.authorities = authorities;
 	}
-/*	@ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	*/
+	
+	@ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "t_user_role"
 	, joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") }
 	, inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName = "id") })
@@ -236,13 +241,35 @@ public class User extends BaseEntity {
 	}
 	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
-	}*/
+	}
+	
+	/**
+	 * 由于多对多关系，可通过本方法直接获取该用户的授权
+	 * @return
+	 */
+	public Set<Authority> getAuthorities() {
+		Set<Authority> set = new HashSet<Authority>();
+		for (Role r : roles) {
+			set.addAll(r.getAuthorities());
+		}
+		return set;
+	}
+	
+	/**
+	 * 由于多对多关系，可通过本方法直接获取该用户的授权
+	 * @return
+	 */
+	public Set<String> getStringAuthorities() {
+		Set<Authority> set = getAuthorities();
+		return set.stream().map(a -> a.getName()).collect(Collectors.toSet());
+	}
+	
 	@Override
 	public String toString() {
 		return "User [name=" + name + ", username=" + username + ", email=" + email + ", address=" + address
 				+ ", telephone=" + telephone + ", enabled=" + enabled + ", birthday=" + birthday + ", age=" + age
 				+ ", gender=" + gender + ", subsidiary=" + subsidiary + ", iconSrc=" + iconSrc + ", description="
-				+ description + ", authorities=" + authorities + ", id=" + id + ", createDate=" + createDate
-				+ ", modifyDate=" + modifyDate + "]";
+				+ description + ", roles=" + roles + "]";
 	}
+	
 }

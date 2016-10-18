@@ -1,6 +1,12 @@
 package com.github.emailtohl.building.common.jpa;
 
-import static org.junit.Assert.*;
+import static com.github.emailtohl.building.site.entities.Role.ADMIN;
+import static com.github.emailtohl.building.site.entities.Role.EMPLOYEE;
+import static com.github.emailtohl.building.site.entities.Role.USER;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,14 +27,13 @@ import org.junit.Test;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 
 import com.github.emailtohl.building.bootspring.Spring;
-import com.github.emailtohl.building.common.jpa.AbstractDynamicQueryRepository;
-import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.AbstractDynamicQueryRepository.JpqlAndArgs;
 import com.github.emailtohl.building.common.jpa.AbstractDynamicQueryRepository.PredicateAndArgs;
 import com.github.emailtohl.building.common.jpa.relationEntities.Relation1;
 import com.github.emailtohl.building.common.jpa.relationEntities.Relation2;
 import com.github.emailtohl.building.common.jpa.relationEntities.TestRelationRepository;
-import com.github.emailtohl.building.site.entities.Authority;
+import com.github.emailtohl.building.site.dao.RoleRepository;
+import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.Subsidiary;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.entities.User.Gender;
@@ -39,6 +44,7 @@ public class AbstractDynamicQueryRepositoryTest {
 	class Concrete extends AbstractDynamicQueryRepository<User> {}
 	Concrete concrete;
 	TestUser u;
+	Role role_admin, role_employee, role_user;
 	
 	class TestUser extends User {
 		private static final long serialVersionUID = 7043142959549948986L;
@@ -74,9 +80,13 @@ public class AbstractDynamicQueryRepositoryTest {
 		factory.initializeBean(concrete, "concreteDynamicQueryRepository");
 		// 将对象注册到Spring中，即可获得该对象所需的依赖
 		logger.debug(concrete.entityManager);
+		RoleRepository roleRepository = Spring.context.getBean(RoleRepository.class);
+		role_admin = roleRepository.findByName(ADMIN);
+		role_employee = roleRepository.findByName(EMPLOYEE);
+		role_user = roleRepository.findByName(USER);
 		
 		u = new TestUser();
-		u.setAuthorities(new HashSet<Authority>(Arrays.asList(Authority.EMPLOYEE, Authority.ADMIN)));
+		u.setRoles(new HashSet<Role>(Arrays.asList(role_admin, role_employee)));
 		u.setEnabled(true);
 		u.setEmail("emailtohl@163.com");
 		u.setGender(Gender.MALE);
@@ -96,7 +106,7 @@ public class AbstractDynamicQueryRepositoryTest {
 		Date d = sdf.parse("1982-01-01");
 		//序列可以倒着写
 		String jpql = "select u from User u join u.authorities a where u.enabled = ?2 and u.birthday > ?1 and a = ?3";
-		Pager<User> pager = concrete.getPager(jpql, new Object[] { d, true, Authority.USER }, 0, 10);
+		Pager<User> pager = concrete.getPager(jpql, new Object[] { d, true, role_user }, 0, 10);
 		List<User> ls = pager.getContent();
 		assertFalse(ls.isEmpty());
 		for (User u : ls) {
@@ -115,7 +125,7 @@ public class AbstractDynamicQueryRepositoryTest {
 		String jpql = "SELECT DISTINCT u FROM User u JOIN u.authorities a WHERE u.email LIKE :email AND a IN :authorities";
 		Map<String, Object> args = new HashMap<String, Object>();
 		args.put("email", "emailtohl@163.com");
-		args.put("authorities", Arrays.asList(Authority.ADMIN, Authority.USER));
+		args.put("authorities", Arrays.asList(role_admin, role_user));
 		Pager<User> pager = concrete.getPager(jpql, args, 0, 10);
 		List<User> ls = pager.getContent();
 		assertFalse(ls.isEmpty());

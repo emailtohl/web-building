@@ -50,7 +50,7 @@ public interface AuthenticationService extends AuthenticationProvider {
 	 */
 	@NotNull
 	@PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
-	Pager<UserDto> getPageByAuthorities(UserDto user, Pageable pageable);
+	Pager<UserDto> getPageByRoles(UserDto user, Pageable pageable);
 	
 	/**
 	 * 为用户授权
@@ -61,7 +61,7 @@ public interface AuthenticationService extends AuthenticationProvider {
 	 * @param authorities
 	 */
 //	@PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
-	void grantedAuthority(@Min(value = 1L) Long id, @NotNull Set<Authority> authorities);
+	void grantedRoles(@Min(value = 1L) Long id, @NotNull Set<String> roleNames);
 
 	/**
 	 * 检查该邮箱是否注册
@@ -81,9 +81,9 @@ public interface AuthenticationService extends AuthenticationProvider {
 	 * 更改User的类型，例如将职员提升为经理
 	 * 先删除原实体，然后再重新生成新实体，所以会返回新的实体id
 	 * @param id
-	 * @param a
+	 * @param role
 	 * return 新生成实体的id
 	 */
-	long updateUserType(long id, Authority a);
+	long updateUserType(long id, String role);
 	
 }

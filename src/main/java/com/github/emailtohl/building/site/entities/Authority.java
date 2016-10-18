@@ -1,38 +1,99 @@
 package com.github.emailtohl.building.site.entities;
 
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 /**
- * 用户的权限，符合spring security的授权方式
+ * 角色关联的授权
  * @author HeLei
  */
-public enum Authority {
-	ADMIN("系统管理员"), EMPLOYEE("职员"), MANAGER("经理"), USER("普通用户");
+@Entity
+@Table(name = "t_authority")
+public class Authority extends BaseEntity {
+	private static final long serialVersionUID = 2353467451352218773L;
+	/**
+	 * 创建普通账号，用于用户自行注册时
+	 */
+	public static final String USER_CREATE_ORDINARY = "user_create_ordinary";
+	/**
+	 * 创建有一定权限的账号，用于管理员创建时
+	 */
+	public static final String USER_CREATE_SPECIAL = "user_create_special";
+	/**
+	 * 激活账号
+	 */
+	public static final String USER_ENABLE = "user_enable";
+	/**
+	 * 禁用账号
+	 */
+	public static final String USER_DISABLE = "user_disable";
+	/**
+	 * 读取所有用户的权限
+	 */
+	public static final String USER_READ_ALL = "user_read_all";
+	/**
+	 * 读取自己账号信息
+	 */
+	public static final String USER_READ_SELF = "user_read_self";
+	/**
+	 * 修改所有用户的权限，用于管理员
+	 */
+	public static final String USER_UPDATE_ALL = "user_update_all";
+	/**
+	 * 修改自己账号的权限，用于普通用户
+	 */
+	public static final String USER_UPDATE_SELF = "user_update_self";
+	/**
+	 * 删除用户的权限
+	 */
+	public static final String USER_DELETE = "user_delete";
 	
-	private String zhName;
-	Authority(String zhName) {
-		this.zhName = zhName;
+	public Authority() {
+		super();
+	}
+	public Authority(String name, String description) {
+		super();
+		this.name = name;
+		this.description = description;
+	}
+	
+	@NotNull
+	private String name;
+	private String description;
+	private Set<Role> roles = new HashSet<Role>();
+	
+	@Column(nullable = false, unique = true)
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+	@ManyToMany(targetEntity = Role.class, fetch = FetchType.LAZY, mappedBy = "authorities")
+	public Set<Role> getRoles() {
+		return roles;
+	}
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
 	}
 	
 	@Override
 	public String toString() {
-		return this.zhName;
+		return "Authority [name=" + name + "]";
 	}
 	
-	/**
-	 * 将枚举集合转换为字符串数组
-	 * @param collection
-	 * @return
-	 */
-	public static String[] toStringArray(Collection<Authority> collection) {
-		Iterator<Authority> i = collection.iterator();
-		String[] arr = new String[collection.size()];
-		int j = 0;
-		while (i.hasNext()) {
-			arr[j] = i.next().name();
-			j++;
-		}
-		return arr;
-	}
 }

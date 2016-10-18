@@ -1,5 +1,6 @@
 package com.github.emailtohl.building.site.service.impl;
-
+import static com.github.emailtohl.building.initdb.PersistenceData.admin;
+import static com.github.emailtohl.building.initdb.PersistenceData.employee;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -28,7 +29,7 @@ import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.Validator;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.dto.UserDto.UserType;
-import com.github.emailtohl.building.site.entities.Authority;
+import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.Subsidiary;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.entities.User.Gender;
@@ -48,7 +49,7 @@ public class UserServiceImplTest {
 		u = new UserDto();
 		u.setAddress("四川路");
 		u.setAge(20);
-		u.setAuthorities(new HashSet<Authority>(Arrays.asList(Authority.EMPLOYEE, Authority.ADMIN)));
+		u.setRoles(new HashSet<Role>(Arrays.asList(employee, admin)));
 		u.setBirthday(Date.from(Instant.now().minus(Duration.ofDays(10000))));
 		u.setDescription("test");
 		u.setEmail("test@test.com");
@@ -76,7 +77,7 @@ public class UserServiceImplTest {
 			assertEquals(u.getEmail(), qu.getEmail());
 			// test update
 			UserDto uu = new UserDto();
-			uu.setAuthorities(null);
+			uu.setRoles(null);
 			uu.setDescription("已修改");
 			userService.mergeUser(id, uu);
 			qu = userService.getUser(id);

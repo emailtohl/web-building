@@ -1,5 +1,8 @@
 package com.github.emailtohl.building.site.dao;
 
+import static com.github.emailtohl.building.initdb.PersistenceData.admin;
+import static com.github.emailtohl.building.initdb.PersistenceData.employee;
+import static com.github.emailtohl.building.initdb.PersistenceData.manager;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -28,17 +31,17 @@ import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.Validator;
 import com.github.emailtohl.building.initdb.PersistenceData;
-import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.Manager;
+import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.Subsidiary;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.entities.User.Gender;
 
 public class UserRepositoryTest {
+	static final Logger logger = LogManager.getLogger();
 	AnnotationConfigApplicationContext ctx = Spring.context;
 	UserRepository userRepository = ctx.getBean(UserRepository.class);
 	SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD");
-	static final Logger logger = LogManager.getLogger();
 	
 	/**
 	 * 测试spring data中的命名方法
@@ -67,7 +70,7 @@ public class UserRepositoryTest {
 		User u = new Manager();
 		u.setAddress("四川路");
 		u.setAge(20);
-		u.setAuthorities(new HashSet<Authority>(Arrays.asList(Authority.EMPLOYEE, Authority.ADMIN)));
+		u.setRoles(new HashSet<Role>(Arrays.asList(employee, admin)));
 		u.setBirthday(Date.from(Instant.now().minus(Duration.ofDays(10000))));
 		u.setDescription("test");
 		u.setEmail("test@test.com");
@@ -129,7 +132,7 @@ public class UserRepositoryTest {
 		Subsidiary s = new Subsidiary();
 		s.setCity("西安");
 		u.setSubsidiary(s);
-		u.setAuthorities(new HashSet<Authority>(Arrays.asList(Authority.MANAGER)));
+		u.setRoles(new HashSet<Role>(Arrays.asList(manager)));
 		Page<User> p = userRepository.getPage(u, pageable);
 		logger.debug("getNumber:" + p.getNumber());
 		logger.debug("getNumberOfElements:" + p.getNumberOfElements());
@@ -161,7 +164,7 @@ public class UserRepositoryTest {
 		Subsidiary s = new Subsidiary();
 		s.setCity("西安");
 		u.setSubsidiary(s);
-		u.setAuthorities(new HashSet<Authority>(Arrays.asList(Authority.MANAGER)));
+		u.setRoles(new HashSet<Role>(Arrays.asList(manager)));
 		Pager<User> p = userRepository.getPagerByAuthorities(u, pageable);
 		System.out.println(p);
 		logger.debug("getNumber:" + p.getPageNumber());
@@ -180,7 +183,7 @@ public class UserRepositoryTest {
 		Subsidiary s = new Subsidiary();
 		s.setCity("西安");
 		u.setSubsidiary(s);
-		u.setAuthorities(new HashSet<Authority>(Arrays.asList(Authority.MANAGER)));
+		u.setRoles(new HashSet<Role>(Arrays.asList(manager)));
 		Pager<User> p = userRepository.getPagerByCriteria(u, pageable);
 		System.out.println(p);
 		logger.debug("getNumber:" + p.getPageNumber());

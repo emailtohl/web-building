@@ -16,12 +16,13 @@ import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.BCryptUtil;
 import com.github.emailtohl.building.common.utils.BeanTools;
 import com.github.emailtohl.building.site.dao.DepartmentRepository;
+import com.github.emailtohl.building.site.dao.RoleRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.dto.UserDto;
-import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.Department;
 import com.github.emailtohl.building.site.entities.Employee;
 import com.github.emailtohl.building.site.entities.Manager;
+import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
 
@@ -39,6 +40,8 @@ public class UserServiceImpl implements UserService {
 	UserRepository userRepository;
 	@Inject
 	DepartmentRepository departmentRepository;
+	@Inject
+	RoleRepository roleRepository;
 	
 	@Override
 	public Long addUser(UserDto u) {
@@ -77,7 +80,8 @@ public class UserServiceImpl implements UserService {
 	private synchronized User newUser(UserDto u) {
 		User entity = new User();
 		copyProperties(u, entity);
-		entity.getAuthorities().add(Authority.USER);
+		Role r = roleRepository.findByName(Role.USER);
+		entity.getRoles().add(r);
 		return entity;
 	}
 	/**
@@ -93,7 +97,8 @@ public class UserServiceImpl implements UserService {
 			max = 0;
 		}
 		e.setEmpNum(++max);
-		e.getAuthorities().add(Authority.EMPLOYEE);
+		Role r = roleRepository.findByName(Role.EMPLOYEE);
+		e.getRoles().add(r);
 		Department d = u.getDepartment();
 		if (d != null && d.getName() != null) {
 			d = departmentRepository.findByName(d.getName());
@@ -114,7 +119,8 @@ public class UserServiceImpl implements UserService {
 			max = 0;
 		}
 		m.setEmpNum(++max);
-		m.getAuthorities().add(Authority.MANAGER);
+		Role r = roleRepository.findByName(Role.MANAGER);
+		m.getRoles().add(r);
 		Department d = u.getDepartment();
 		if (d != null && d.getName() != null) {
 			d = departmentRepository.findByName(d.getName());
@@ -151,7 +157,7 @@ public class UserServiceImpl implements UserService {
 	public void deleteUser(Long id) {
 		User entity = userRepository.findOne(id);
 		// 先删除外联关系
-		entity.setAuthorities(null);
+		entity.setRoles(null);
 		userRepository.delete(entity);
 	}
 
@@ -183,7 +189,7 @@ public class UserServiceImpl implements UserService {
 	public void mergeUser(Long id, UserDto u) {
 		User entity = userRepository.findOne(id);
 		// 修改密码，启用/禁用账户，授权功能，不走此接口，所以在调用merge方法前，先将其设置为null
-		u.setAuthorities(null);
+		u.setRoles(null);
 		u.setPassword(null);
 		u.setEnabled(null);
 		Department d = u.getDepartment();
