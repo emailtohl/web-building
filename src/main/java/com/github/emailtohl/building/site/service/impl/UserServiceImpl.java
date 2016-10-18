@@ -133,7 +133,7 @@ public class UserServiceImpl implements UserService {
 	 * 统一定义复制属性
 	 */
 	private void copyProperties(UserDto src, User dest) {
-		BeanUtils.copyProperties(src, dest, "authorities", "enabled", "password", "department");
+		BeanUtils.copyProperties(src, dest, "roles", "enabled", "password", "department");
 	}
 	
 	@Override

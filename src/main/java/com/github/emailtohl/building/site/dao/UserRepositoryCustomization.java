@@ -18,7 +18,7 @@ public interface UserRepositoryCustomization extends CriterionQueryRepository<Us
 	 * @param pageable
 	 * @return
 	 */
-	Pager<User> getPagerByAuthorities(User user, Pageable pageable);
+	Pager<User> getPagerByRoles(User user, Pageable pageable);
 	
 	/**
 	 * 通过JPA2.1的标准查询（Criteria）方式获取Pager，支持排序

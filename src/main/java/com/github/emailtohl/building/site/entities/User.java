@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -232,7 +231,7 @@ public class User extends BaseEntity {
 	}
 	*/
 	
-	@ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER)
 	@JoinTable(name = "t_user_role"
 	, joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") }
 	, inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName = "id") })
@@ -247,7 +246,7 @@ public class User extends BaseEntity {
 	 * 由于多对多关系，可通过本方法直接获取该用户的授权
 	 * @return
 	 */
-	public Set<Authority> getAuthorities() {
+	public Set<Authority> authoritySet() {
 		Set<Authority> set = new HashSet<Authority>();
 		for (Role r : roles) {
 			set.addAll(r.getAuthorities());
@@ -259,8 +258,8 @@ public class User extends BaseEntity {
 	 * 由于多对多关系，可通过本方法直接获取该用户的授权
 	 * @return
 	 */
-	public Set<String> getStringAuthorities() {
-		Set<Authority> set = getAuthorities();
+	public Set<String> authorities() {
+		Set<Authority> set = authoritySet();
 		return set.stream().map(a -> a.getName()).collect(Collectors.toSet());
 	}
 	

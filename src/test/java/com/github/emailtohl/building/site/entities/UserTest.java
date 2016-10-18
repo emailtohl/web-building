@@ -1,5 +1,7 @@
 package com.github.emailtohl.building.site.entities;
 
+import static org.junit.Assert.*;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +13,7 @@ import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.github.emailtohl.building.bootspring.Spring;
+import com.github.emailtohl.building.initdb.PersistenceData;
 import com.github.emailtohl.building.site.dao.UserRepository;
 
 public class UserTest {
@@ -37,5 +40,10 @@ public class UserTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	@Test
+	public void testAuthorities() {
+		assertTrue(PersistenceData.emailtohl.authorities().contains(Authority.USER_DELETE));
 	}
 }

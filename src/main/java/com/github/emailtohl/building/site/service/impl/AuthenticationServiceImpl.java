@@ -100,7 +100,7 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 			@Override
 			public Collection<? extends GrantedAuthority> getAuthorities() {
 				Set<String> authorities = new HashSet<String>();
-				for (Authority a : u.getAuthorities()) {
+				for (Authority a : u.authoritySet()) {
 					authorities.add(a.getName());
 				}
 				return AuthorityUtils.createAuthorityList(authorities.toArray(new String[authorities.size()]));
@@ -291,7 +291,7 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 			this.username = this.email;
 			this.enabled = u.getEnabled();
 			this.iconSrc = u.getIconSrc();
-			Set<String> stringAuthorities = u.getStringAuthorities();
+			Set<String> stringAuthorities = u.authorities();
 			this.authorities = AuthorityUtils.createAuthorityList(stringAuthorities.toArray(new String[stringAuthorities.size()]));
 			
 		}

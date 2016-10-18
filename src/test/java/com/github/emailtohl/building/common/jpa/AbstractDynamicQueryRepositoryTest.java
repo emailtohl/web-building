@@ -16,7 +16,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 
 import javax.persistence.AccessType;
 
@@ -105,8 +107,8 @@ public class AbstractDynamicQueryRepositoryTest {
 	public void testGetPagerStringObjectArrayIntegerInteger() throws ParseException {
 		Date d = sdf.parse("1982-01-01");
 		//序列可以倒着写
-		String jpql = "select u from User u join u.authorities a where u.enabled = ?2 and u.birthday > ?1 and a = ?3";
-		Pager<User> pager = concrete.getPager(jpql, new Object[] { d, true, role_user }, 0, 10);
+		String jpql = "select u from User u join u.roles r where u.enabled = ?2 and u.birthday > ?1 and r.name = ?3";
+		Pager<User> pager = concrete.getPager(jpql, new Object[] { d, true, Role.USER }, 0, 10);
 		List<User> ls = pager.getContent();
 		assertFalse(ls.isEmpty());
 		for (User u : ls) {
@@ -122,10 +124,10 @@ public class AbstractDynamicQueryRepositoryTest {
 	@Test
 	public void testGetPagerStringMapOfStringObjectIntegerInteger() {
 		//序列可以倒着写
-		String jpql = "SELECT DISTINCT u FROM User u JOIN u.authorities a WHERE u.email LIKE :email AND a IN :authorities";
+		String jpql = "SELECT DISTINCT u FROM User u JOIN u.roles r WHERE u.email LIKE :email AND r.name IN :roleNames";
 		Map<String, Object> args = new HashMap<String, Object>();
 		args.put("email", "emailtohl@163.com");
-		args.put("authorities", Arrays.asList(role_admin, role_user));
+		args.put("roleNames", Arrays.asList(Role.ADMIN, Role.USER));
 		Pager<User> pager = concrete.getPager(jpql, args, 0, 10);
 		List<User> ls = pager.getContent();
 		assertFalse(ls.isEmpty());

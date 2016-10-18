@@ -67,7 +67,7 @@ public class Authority extends BaseEntity {
 	@NotNull
 	private String name;
 	private String description;
-	private Set<Role> roles = new HashSet<Role>();
+	private transient Set<Role> roles = new HashSet<Role>();
 	
 	@Column(nullable = false, unique = true)
 	public String getName() {

@@ -1,13 +1,13 @@
 package com.github.emailtohl.building.test.jpa;
 
-import static com.github.emailtohl.building.initdb.PersistenceData.admin;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Root;
 
 import org.junit.Before;
@@ -21,7 +21,7 @@ import com.github.emailtohl.building.site.entities.User;
 
 public class CriteriaTest {
 	Concrete concrete;
-	String jpql = "select u from User u join u.authorities a where u.email = 'emailtohl@163.com' and a in ('ADMIN')";
+	String jpql = "select u from User u join u.roles r where u.email = 'emailtohl@163.com' and r.name in ('" + Role.ADMIN + "')";
 	
 	class Concrete extends AbstractJpaRepository<User, Long> {
 		@SuppressWarnings("unchecked")
@@ -33,10 +33,10 @@ public class CriteriaTest {
 			CriteriaBuilder b = entityManager.getCriteriaBuilder();
 			CriteriaQuery<User> q = b.createQuery(User.class);
 			Root<User> root = q.from(User.class);
-//			Join<User, Authority> join = root.join("authorities");
+			Join<User, Role> join = root.join("roles");
 			q.select(root).where(
 				b.equal(root.get("email"), "emailtohl@163.com"),
-				b.isMember(admin, root.<Set<Role>>get("roles"))
+				join.get("name").in(Arrays.asList(Role.ADMIN))
 			);
 			return entityManager.createQuery(q).getResultList();
 		}

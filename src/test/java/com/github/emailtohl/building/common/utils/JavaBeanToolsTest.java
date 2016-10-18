@@ -63,7 +63,7 @@ public class JavaBeanToolsTest {
 		assertTrue((boolean) map.get("enabled"));
 		assertEquals("emailtohl@163.com", map.get("email"));
 		assertEquals(emailtohl.getSubsidiary(), map.get("subsidiary"));
-		assertEquals(emailtohl.getAuthorities(), map.get("authorities"));
+		assertEquals(emailtohl.getRoles(), map.get("roles"));
 	}
 	
 	@Test
@@ -77,14 +77,14 @@ public class JavaBeanToolsTest {
 	public void testFieldMap() {
 		Pattern p = Pattern.compile("<(\\w+(\\.\\w+)*)>");
 		Map<String, Field> map = getFieldMap(emailtohl);
-		Field f = map.get("authorities");
+		Field f = map.get("roles");
 		Type t = f.getGenericType();
 		logger.debug(t);
 		
 		Matcher m = p.matcher(t.toString());
 		if (m.find())
 			logger.debug(m.group(1));
-		assertEquals("com.github.emailtohl.building.site.entities.Authority", m.group(1));
+		assertEquals("com.github.emailtohl.building.site.entities.Role", m.group(1));
 		
 		f = map.get("email");
 		t = f.getGenericType();
@@ -103,7 +103,7 @@ public class JavaBeanToolsTest {
 
 	@Test
 	public void testGetDeclaredField() {
-		Field f = getDeclaredField(foo, "authorities");
+		Field f = getDeclaredField(foo, "roles");
 		Class<?> c = f.getType();
 		assertTrue(c.isAssignableFrom(Set.class));
 	}
@@ -128,11 +128,11 @@ public class JavaBeanToolsTest {
 		User clone;
 		clone = copyProperties(foo, User.class);
 		// 普通复制的是对象的引用，所以内存地址相等
-		assertTrue(clone.getAuthorities() == foo.getAuthorities());
+		assertTrue(clone.getRoles() == foo.getRoles());
 		// 深度复制出来的对象，内存地址不相等
 		clone = deepCopy(foo);
 		logger.debug(clone);
-		assertFalse(clone.getAuthorities() == foo.getAuthorities());
+		assertFalse(clone.getRoles() == foo.getRoles());
 
 		Relation1 r1 = new Relation1();
 		Relation2 r2 = new Relation2();
@@ -375,7 +375,7 @@ public class JavaBeanToolsTest {
 
 	@Test
 	public void testCompareProperties() {
-		boolean b = compareProperties(foo, new String[] {"gender", "roles"}, emailtohl);
+		boolean b = compareProperties(foo, new String[] {"gender"}, emailtohl);
 		assertTrue(b);
 	}
 	

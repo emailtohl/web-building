@@ -120,7 +120,7 @@ public class UserCtrlTest {
 	@Test
 	public void testAddUser() throws Exception {
 		mockMvc.perform(post("/user")
-		.characterEncoding("UTF-8")  
+		.characterEncoding("UTF-8")
         .contentType(MediaType.APPLICATION_JSON)  
         .content(gson.toJson(foo).getBytes()))
 		.andExpect(status().is(HttpStatus.CREATED.value()));
@@ -151,7 +151,7 @@ public class UserCtrlTest {
 	@Test
 	public void testUpdate() throws Exception {
 		mockMvc.perform(put("/user/100")
-		.characterEncoding("UTF-8")  
+		.characterEncoding("UTF-8")
         .contentType(MediaType.APPLICATION_JSON)  
         .content(gson.toJson(foo).getBytes()))
 		.andExpect(status().is(HttpStatus.NO_CONTENT.value()));

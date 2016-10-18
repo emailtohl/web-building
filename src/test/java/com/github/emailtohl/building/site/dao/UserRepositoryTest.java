@@ -1,7 +1,5 @@
 package com.github.emailtohl.building.site.dao;
 
-import static com.github.emailtohl.building.initdb.PersistenceData.admin;
-import static com.github.emailtohl.building.initdb.PersistenceData.employee;
 import static com.github.emailtohl.building.initdb.PersistenceData.manager;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -67,6 +65,11 @@ public class UserRepositoryTest {
 	 */
 	@Test
 	public void testCRUD() {
+		Role employee, admin;
+		RoleRepository roleRepository = Spring.context.getBean(RoleRepository.class);
+		employee = roleRepository.findByName(Role.EMPLOYEE);
+		admin = roleRepository.findByName(Role.ADMIN);
+		
 		User u = new Manager();
 		u.setAddress("四川路");
 		u.setAge(20);
@@ -157,7 +160,7 @@ public class UserRepositoryTest {
 	}
 	
 	@Test
-	public void testGetPageByAuthorities() {
+	public void testGetPagerByRoles() {
 		PageRequest pageable = new PageRequest(0, 20);
 		User u = new User();
 		u.setEmail("foo@test.com");
@@ -165,14 +168,16 @@ public class UserRepositoryTest {
 		s.setCity("西安");
 		u.setSubsidiary(s);
 		u.setRoles(new HashSet<Role>(Arrays.asList(manager)));
-		Pager<User> p = userRepository.getPagerByAuthorities(u, pageable);
-		System.out.println(p);
+		Pager<User> p = userRepository.getPagerByRoles(u, pageable);
 		logger.debug("getNumber:" + p.getPageNumber());
 		logger.debug("getNumberOfElements:" + p.getTotalElements());
 		logger.debug("getSize:" + p.getPageSize());
 		logger.debug("getTotalElements:" + p.getTotalElements());
 		logger.debug("getTotalPages:" + p.getTotalPages());
 		logger.debug("hasContent:" + p.getContent());
+		assertEquals(0, p.getPageNumber());
+		assertEquals(1, p.getTotalElements());
+		assertEquals(1, p.getTotalPages());
 	}
 	
 	@Test
@@ -195,9 +200,8 @@ public class UserRepositoryTest {
 		assertEquals(1, p.getTotalElements());
 		
 		u.setEmail(null);
-		u.getAuthorities().clear();
+		u.getRoles().clear();
 		p = userRepository.getPagerByCriteria(u, pageable);
-		System.out.println(p);
 		logger.debug("getNumber:" + p.getPageNumber());
 		logger.debug("getNumberOfElements:" + p.getTotalElements());
 		logger.debug("getSize:" + p.getPageSize());

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.AccessType;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -42,16 +43,18 @@ public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> i
 	}
 	
 	@Override
-	public Pager<User> getPagerByAuthorities(User user, Pageable pageable) {
+	public Pager<User> getPagerByRoles(User user, Pageable pageable) {
 		
 		StringBuilder jpql = new StringBuilder("SELECT DISTINCT u FROM User u WHERE 1 = 1");
 		String email = user.getEmail();
 		Set<Role> roles = user.getRoles();
 		Map<String, Object> args = new HashMap<String, Object>();
 		if (roles != null && roles.size() > 0) {
+			Set<String> roleNames = roles.stream().map(r -> r.getName()).collect(Collectors.toSet());
 			// 仅当有一对多关系存在时再插入JOIN语句，否则底层SQL语句就只能查找存在外联关系的数据了
 			int i = jpql.indexOf("WHERE");
-			jpql.insert(i, "JOIN u.roles r ").append(" AND r IN :roles");
+			jpql.insert(i, "JOIN u.roles r ").append(" AND r.name IN :roleNames");
+			args.put("roleNames", roleNames);
 		}
 		if (email != null && email.length() > 0) {
 			jpql.append(" AND u.email LIKE :email");
@@ -72,7 +75,8 @@ public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> i
 			lp.add(cb.like(r1.get("email"), user.getEmail()));
 		}
 		if (!user.getRoles().isEmpty()) {
-			lp.add(r1.join("roles").in(user.getRoles()));
+			Set<String> roleNames = user.getRoles().stream().map(r -> r.getName()).collect(Collectors.toSet());
+			lp.add(r1.join("roles").get("name").in(roleNames));
 		}
 		Predicate[] ps = lp.toArray(new Predicate[lp.size()]);
 		
@@ -88,7 +92,8 @@ public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> i
 			lp.add(cb.like(r2.get("email"), user.getEmail()));
 		}
 		if (!user.getRoles().isEmpty()) {
-			lp.add(r2.join("roles").in(user.getRoles()));
+			Set<String> roleNames = user.getRoles().stream().map(r -> r.getName()).collect(Collectors.toSet());
+			lp.add(r2.join("roles").get("name").in(roleNames));
 		}
 		ps = lp.toArray(new Predicate[lp.size()]);
 		
