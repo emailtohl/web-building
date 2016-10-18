@@ -74,6 +74,8 @@ public class UserRepositoryTest {
 		u.setAddress("四川路");
 		u.setAge(20);
 		u.setRoles(new HashSet<Role>(Arrays.asList(employee, admin)));
+		employee.getUsers().add(u);
+		admin.getUsers().add(u);
 		u.setBirthday(Date.from(Instant.now().minus(Duration.ofDays(10000))));
 		u.setDescription("test");
 		u.setEmail("test@test.com");

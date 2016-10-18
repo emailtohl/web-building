@@ -82,6 +82,7 @@ public class UserServiceImpl implements UserService {
 		copyProperties(u, entity);
 		Role r = roleRepository.findByName(Role.USER);
 		entity.getRoles().add(r);
+		r.getUsers().add(entity);
 		return entity;
 	}
 	/**
@@ -99,6 +100,7 @@ public class UserServiceImpl implements UserService {
 		e.setEmpNum(++max);
 		Role r = roleRepository.findByName(Role.EMPLOYEE);
 		e.getRoles().add(r);
+		r.getUsers().add(e);
 		Department d = u.getDepartment();
 		if (d != null && d.getName() != null) {
 			d = departmentRepository.findByName(d.getName());
@@ -121,6 +123,7 @@ public class UserServiceImpl implements UserService {
 		m.setEmpNum(++max);
 		Role r = roleRepository.findByName(Role.MANAGER);
 		m.getRoles().add(r);
+		r.getUsers().add(m);
 		Department d = u.getDepartment();
 		if (d != null && d.getName() != null) {
 			d = departmentRepository.findByName(d.getName());

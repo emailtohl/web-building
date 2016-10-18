@@ -30,9 +30,11 @@ public class PersistenceData {
 	static SecureRandom r = new SecureRandom();
 	static final int HASHING_ROUNDS = 10;
 	
-	public final static Authority user_create_ordinary = new Authority(USER_CREATE_ORDINARY, "创建普通账号，用于用户自行注册时"),
+	public final static Authority
+			user_create_ordinary = new Authority(USER_CREATE_ORDINARY, "创建普通账号，用于用户自行注册时"),
 			user_create_special = new Authority(USER_CREATE_SPECIAL, "创建有一定权限的账号，用于管理员创建时"),
-			user_enable = new Authority(USER_ENABLE, "激活账号"), user_disable = new Authority(USER_DISABLE, "禁用账号"),
+			user_enable = new Authority(USER_ENABLE, "激活账号"),
+			user_disable = new Authority(USER_DISABLE, "禁用账号"),
 			user_read_all = new Authority(USER_READ_ALL, "读取所有用户的权限"),
 			user_read_self = new Authority(USER_READ_SELF, "读取自己账号信息"),
 			user_update_all = new Authority(USER_UPDATE_ALL, "修改所有用户的权限，用于管理员"),

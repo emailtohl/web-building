@@ -68,7 +68,7 @@ public class Role extends BaseEntity {
 		this.description = description;
 	}
 	
-	@ManyToMany(targetEntity = User.class, fetch = FetchType.LAZY, mappedBy = "roles")
+	@ManyToMany(targetEntity = User.class, fetch = FetchType.LAZY, mappedBy = "roles", cascade = CascadeType.ALL)
 	public Set<User> getUsers() {
 		return users;
 	}

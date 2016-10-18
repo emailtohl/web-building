@@ -17,6 +17,7 @@ import static com.github.emailtohl.building.initdb.PersistenceData.user_disable;
 import static com.github.emailtohl.building.initdb.PersistenceData.user_enable;
 import static com.github.emailtohl.building.initdb.PersistenceData.user_read_all;
 import static com.github.emailtohl.building.initdb.PersistenceData.user_read_self;
+import static com.github.emailtohl.building.initdb.PersistenceData.user_update_all;
 import static com.github.emailtohl.building.initdb.PersistenceData.user_update_self;
 
 import javax.persistence.EntityManager;
@@ -35,6 +36,7 @@ public class CreateTable1 {
 		entityManager.persist(user_disable);
 		entityManager.persist(user_read_all);
 		entityManager.persist(user_read_self);
+		entityManager.persist(user_update_all);
 		entityManager.persist(user_update_self);
 		entityManager.persist(user_delete);
 		
