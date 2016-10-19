@@ -22,15 +22,15 @@ import javax.validation.constraints.NotNull;
 public class Role extends BaseEntity {
 	private static final long serialVersionUID = 5715974372158270885L;
 	/**
-	 * 管理员
+	 * 系统管理员
 	 */
 	public static final String ADMIN = "admin";
 	/**
-	 * 经理
+	 * 管理人员
 	 */
 	public static final String MANAGER = "manager";
 	/**
-	 * 雇员
+	 * 普通雇员
 	 */
 	public static final String EMPLOYEE = "employee";
 	/**

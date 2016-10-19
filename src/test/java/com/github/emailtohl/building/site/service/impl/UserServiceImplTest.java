@@ -14,19 +14,25 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.Validator;
+import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.dto.UserDto.UserType;
 import com.github.emailtohl.building.site.entities.Role;
@@ -36,16 +42,17 @@ import com.github.emailtohl.building.site.entities.User.Gender;
 import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = RootContextConfiguration.class)
+@ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
 public class UserServiceImplTest {
 	static final Logger logger = LogManager.getLogger();
-	UserService userService;
-	AuthenticationService authenticationService;
+	@Inject UserService userService;
+	@Inject AuthenticationService authenticationService;
 	UserDto u;
 	
 	@Before
 	public void setUp() {
-		userService = Spring.context.getBean(UserService.class);
-		authenticationService = Spring.context.getBean(AuthenticationService.class);
 		u = new UserDto();
 		u.setAddress("四川路");
 		u.setAge(20);

@@ -42,8 +42,6 @@ import com.github.emailtohl.building.site.dao.RoleRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.Authority;
-import com.github.emailtohl.building.site.entities.Employee;
-import com.github.emailtohl.building.site.entities.Manager;
 import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.mail.EmailService;
@@ -368,7 +366,7 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 		User u = userRepository.findByEmail(email);
 		u.setPassword(hashPw);
 	}
-
+/*
 	@Override
 	public long updateUserType(long id, String role) {
 		User persist = userRepository.getOne(id);
@@ -390,5 +388,5 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 		userRepository.save(entity);
 		return entity.getId();
 	}
-
+*/
 }

@@ -3,7 +3,6 @@ package com.github.emailtohl.building.site.service.impl;
 import static com.github.emailtohl.building.site.entities.Role.ADMIN;
 import static com.github.emailtohl.building.site.entities.Role.EMPLOYEE;
 import static com.github.emailtohl.building.site.entities.Role.MANAGER;
-import static com.github.emailtohl.building.site.entities.Role.USER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -11,15 +10,20 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.junit.Before;
+import javax.inject.Inject;
+
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.BeanTools;
+import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
@@ -27,16 +31,13 @@ import com.github.emailtohl.building.site.service.UserService;
  * 对实现的测试，接口上对安全注解的测试在不含在内
  * @author HeLei
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = RootContextConfiguration.class)
+@ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
 public class AuthenticationServiceImplTest {
-	AuthenticationService authenticationService;
-	UserService userService;
+	@Inject AuthenticationService authenticationService;
+	@Inject UserService userService;
 	AuthenticationManager authenticationManager;
-	
-	@Before
-	public void setUp() {
-		authenticationService = Spring.context.getBean(AuthenticationService.class);
-		userService = Spring.context.getBean(UserService.class);
-	}
 	
 	@Test
 	public void testAuthenticate() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
@@ -92,9 +93,9 @@ public class AuthenticationServiceImplTest {
 // 这种更改类应该不是JPA Hibernate的方式，还是需求其他解决方案，以后设计尽量避免使用继承结构
 //	@Test
 	public void testUpdateUserType() {
-		long id = userService.getUserByEmail("emailtohl@163.com").getId();
-		id = authenticationService.updateUserType(id, EMPLOYEE);
-		id = authenticationService.updateUserType(id, MANAGER);
-		id = authenticationService.updateUserType(id, USER);
+//		long id = userService.getUserByEmail("emailtohl@163.com").getId();
+//		id = authenticationService.updateUserType(id, EMPLOYEE);
+//		id = authenticationService.updateUserType(id, MANAGER);
+//		id = authenticationService.updateUserType(id, USER);
 	}
 }

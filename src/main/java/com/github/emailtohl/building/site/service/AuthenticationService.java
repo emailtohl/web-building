@@ -84,6 +84,6 @@ public interface AuthenticationService extends AuthenticationProvider {
 	 * @param role
 	 * return 新生成实体的id
 	 */
-	long updateUserType(long id, String role);
+//	long updateUserType(long id, String role);
 	
 }

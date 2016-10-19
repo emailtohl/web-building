@@ -36,6 +36,10 @@ public class Authority extends BaseEntity {
 	 */
 	public static final String USER_DISABLE = "user_disable";
 	/**
+	 * 授予用户角色
+	 */
+	public static final String USER_GRANT_ROLES = "user_grant_roles";
+	/**
 	 * 读取所有用户的权限
 	 */
 	public static final String USER_READ_ALL = "user_read_all";

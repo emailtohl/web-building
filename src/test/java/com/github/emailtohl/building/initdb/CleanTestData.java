@@ -14,11 +14,11 @@ public class CleanTestData {
 	
 	public static void main(String[] args) {
 		
-		UserRepository userRepository = Spring.context.getBean(UserRepository.class);
-		DepartmentRepository departmentRepository = Spring.context.getBean(DepartmentRepository.class);
-		CompanyRepository companyRepository = Spring.context.getBean(CompanyRepository.class);
+		UserRepository userRepository = Spring.getApplicationContext().getBean(UserRepository.class);
+		DepartmentRepository departmentRepository = Spring.getApplicationContext().getBean(DepartmentRepository.class);
+		CompanyRepository companyRepository = Spring.getApplicationContext().getBean(CompanyRepository.class);
 		for (User u : userRepository.findAll()) {
-			if (emailtohl.getEmail().equals(u.getEmail()) || foo.getEmail().equals(u.getEmail()) || bar.getEmail().equals(u.getEmail())) {
+			if (emailtohl.getEmail().equals(u.getEmail()) || foo.getEmail().equals(u.getEmail()) || bar.getEmail().equals(u.getEmail()) || baz.getEmail().equals(u.getEmail())) {
 				userRepository.delete(u);
 			}
 		}

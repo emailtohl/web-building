@@ -42,6 +42,7 @@ import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.exception.ResourceNotFoundException;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.BaseEntity;
+import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.mail.EmailService;
 import com.github.emailtohl.building.site.service.AuthenticationService;
@@ -104,7 +105,8 @@ public class AuthenticationCtrl {
 		}
 		try {
 			// 第二步，添加该用户，若报运行时异常，则抛出，告诉用户该账号不能注册
-			long id = userService.addUser(u);
+			Customer c = new Customer();
+			long id = userService.addCustomer(c);
 			
 			// 第三步，邮件通知用户，让其激活该账号
 			String url = requet.getScheme() + "://" + requet.getServerName() + ":" + requet.getServerPort() + requet.getContextPath() + "/enable?id=" + id;

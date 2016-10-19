@@ -48,6 +48,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -72,6 +73,8 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 import org.springframework.web.client.RestTemplate;
 
+import com.github.emailtohl.building.site.service.UserService;
+import com.github.emailtohl.building.stub.ServiceStub;
 import com.google.gson.Gson;
 /**
  * spring容器的配置类，它依赖数据源配置类和安全配置类
@@ -342,4 +345,16 @@ public class RootContextConfiguration
 		return mailSender;
 	}
 	
+	@Profile(PROFILE_DEVELPMENT)
+	@Bean
+	public ServiceStub serviceStub() {
+		return new ServiceStub();
+	}
+	
+	@Profile(PROFILE_DEVELPMENT)
+	@Bean
+	public UserService userServiceMock() {
+		return serviceStub().getUserService();
+	}
+
 }

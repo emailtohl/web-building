@@ -1,6 +1,6 @@
 package com.github.emailtohl.building.site.service.security;
 
-import static com.github.emailtohl.building.initdb.PersistenceData.bar;
+import static com.github.emailtohl.building.initdb.PersistenceData.*;
 import static com.github.emailtohl.building.initdb.PersistenceData.emailtohl;
 import static com.github.emailtohl.building.initdb.PersistenceData.foo;
 
@@ -13,8 +13,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
@@ -34,6 +32,8 @@ import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserPermissionEvaluator;
 import com.github.emailtohl.building.site.service.UserService;
+import com.github.emailtohl.building.stub.SecurityContextManager;
+import com.github.emailtohl.building.stub.ServiceStub;
 /**
  * 为测试spring security注解在方法级别的配置
  * @author HeLei
@@ -95,78 +95,20 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 	}
 	
 	@Bean
-	public UserService userService() throws Exception {
-		return new UserService() {
-			private final Logger logger = LogManager.getLogger();
-			UserDto emailtohlDto = new UserDto(), fooDto = new UserDto(), barDto = new UserDto();
-			{
-				BeanUtils.copyProperties(emailtohl, emailtohlDto);
-				BeanUtils.copyProperties(foo, fooDto);
-				BeanUtils.copyProperties(bar, barDto);
-			}
-			@Override
-			public Long addUser(UserDto u) {
-				logger.debug("addUser invoked");
-				return 1000L;
-			}
-
-			@Override
-			public void enableUser(Long id) {
-				logger.debug("enableUser invoked");
-			}
-
-			@Override
-			public void disableUser(Long id) {
-				logger.debug("disableUser invoked");
-			}
-
-			@Override
-			public void mergeUser(Long id, UserDto u) {
-				logger.debug("mergeUser invoked");
-			}
-
-			@Override
-			public void changePassword(String email, String newPassword) {
-				logger.debug("changePassword invoked");
-			}
-
-			@Override
-			public void deleteUser(Long id) {
-				logger.debug("deleteUser invoked");
-			}
-
-			@Override
-			public UserDto getUser(Long id) {
-				logger.debug("getUser invoked");
-				if (id == 1000L) {
-					return emailtohlDto;
-				} else {
-					return barDto;
-				}
-			}
-
-			@Override
-			public Pager<UserDto> getUserPager(UserDto u, Pageable pageable) {
-				logger.debug("getUserPager invoked");
-				Pager<UserDto> p = new Pager<UserDto>(Arrays.asList(emailtohlDto, fooDto, barDto), 100L);
-				return p;
-			}
-
-			@Override
-			public Page<UserDto> getUserPage(UserDto u, Pageable pageable) {
-				logger.debug("getUserPage invoked");
-				Pager<UserDto> p = this.getUserPager(u, pageable);
-				return new PageImpl<UserDto>(p.getContent(), pageable, p.getTotalElements());
-			}
-
-			@Override
-			public UserDto getUserByEmail(String email) {
-				return emailtohlDto;
-			}
-
-		};
+	public ServiceStub serviceStub() {
+		return new ServiceStub();
 	}
-
+	
+	@Bean
+	public UserService userService() {
+		return serviceStub().getUserService();
+	}
+	
+	@Bean
+	public SecurityContextManager securityContextManager() throws Exception {
+		return new SecurityContextManager(authenticationManager());
+	}
+	
 	@Bean
 	public AuthenticationService authenticationService() throws Exception {
 		AuthenticationManager authenticationManager = authenticationManager();
@@ -232,11 +174,11 @@ public class SecurityTestConfig extends GlobalMethodSecurityConfiguration {
 				logger.debug("grantedAuthority invoked");
 			}
 
-			@Override
+			/*@Override
 			public long updateUserType(long id, String role) {
 				logger.debug("updateUserType invoked");
 				return 0;
-			}
+			}*/
 			
 		};
 	}

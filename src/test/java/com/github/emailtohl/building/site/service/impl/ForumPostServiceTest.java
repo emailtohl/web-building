@@ -5,17 +5,22 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.junit.runner.RunWith;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.fullTextSearch.SearchResult;
+import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.dto.ForumPostDto;
 import com.github.emailtohl.building.site.service.ForumPostService;
@@ -25,11 +30,13 @@ import com.github.emailtohl.building.site.service.ForumPostService;
  * 
  * @author HeLei
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = RootContextConfiguration.class)
+@ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
 public class ForumPostServiceTest {
 	static final Logger logger = LogManager.getLogger();
-	AnnotationConfigApplicationContext ctx = Spring.context;
-	ForumPostService forumPostService = ctx.getBean(ForumPostService.class);
-	UserRepository userRepository = ctx.getBean(UserRepository.class);
+	@Inject ForumPostService forumPostService;
+	@Inject UserRepository userRepository;
 	ForumPostDto p1 = new ForumPostDto(), p2 = new ForumPostDto(), p3 = new ForumPostDto();
 	static String TITLE_EMAILTOHL = "emailtohl's post", TITLE_FOO = "foo's post", TITLE_BAR = "bar's post";
 	@Before

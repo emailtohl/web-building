@@ -1,6 +1,5 @@
 package com.github.emailtohl.building.config;
-import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_PRODUCTION;
-import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_QA;
+import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_DEVELPMENT;
 
 import java.io.IOException;
 
@@ -43,11 +42,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
 import com.github.emailtohl.building.site.service.UserPermissionEvaluator;
+import com.github.emailtohl.building.stub.SecurityContextManager;
 /**
  * spring security 的编程风格的配置，它不仅被RootContextConfiguration导入，并且也依赖于RootContextConfiguration中的Bean
  * @author HeLei
  */
-@Profile({ PROFILE_PRODUCTION, PROFILE_QA })
 @Configuration
 // 启动安全过滤器
 @EnableWebSecurity
@@ -249,4 +248,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		}
 	}
 	
+	@Profile(PROFILE_DEVELPMENT)
+	@Bean
+	public SecurityContextManager securityContextManager() throws Exception {
+		return new SecurityContextManager(authenticationManager());
+	}
 }

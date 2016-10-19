@@ -12,26 +12,33 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.junit.runner.RunWith;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.TransactionSystemException;
 
-import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.initdb.PersistenceData;
-import com.github.emailtohl.building.site.entities.Manager;
+import com.github.emailtohl.building.site.entities.Employee;
 import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.Subsidiary;
 import com.github.emailtohl.building.site.entities.User;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = RootContextConfiguration.class)
+@ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
 public class UserRepositoryTest {
 	static final Logger logger = LogManager.getLogger();
-	AnnotationConfigApplicationContext ctx = Spring.context;
-	UserRepository userRepository = ctx.getBean(UserRepository.class);
+	@Inject UserRepository userRepository;
 	SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD");
 	
 	/**
@@ -157,7 +164,7 @@ public class UserRepositoryTest {
 	 */
 	@Test(expected = TransactionSystemException.class)
 	public void testNotNull() {
-		User u = new Manager();
+		User u = new Employee();
 		userRepository.save(u);
 	}
 }

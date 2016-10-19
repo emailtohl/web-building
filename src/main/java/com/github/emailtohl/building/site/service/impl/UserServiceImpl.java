@@ -18,10 +18,9 @@ import com.github.emailtohl.building.common.utils.BeanTools;
 import com.github.emailtohl.building.site.dao.DepartmentRepository;
 import com.github.emailtohl.building.site.dao.RoleRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
-import com.github.emailtohl.building.site.dto.UserDto;
+import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.Department;
 import com.github.emailtohl.building.site.entities.Employee;
-import com.github.emailtohl.building.site.entities.Manager;
 import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
@@ -35,110 +34,65 @@ import com.github.emailtohl.building.site.service.UserService;
 public class UserServiceImpl implements UserService {
 	@SuppressWarnings("unused")
 	private static final Logger logger = LogManager.getLogger();
-
-	@Inject
-	UserRepository userRepository;
-	@Inject
-	DepartmentRepository departmentRepository;
-	@Inject
-	RoleRepository roleRepository;
+	@Inject UserRepository userRepository;
+	@Inject RoleRepository roleRepository;
+	@Inject DepartmentRepository departmentRepository;
 	
 	@Override
-	public Long addUser(UserDto u) {
-		User entity;
-		if (u.getUserType() != null) {
-			switch (u.getUserType()) {
-			case EMPLOYEE :
-				entity = newEmployee(u);
-				break;
-			case MANAGER :
-				entity = newManager(u);
-				break;
-			default :
-				entity = newUser(u);
-			}
-		} else {
-			entity = newUser(u);
-		}
-		// 新建时，账户处于未激活状态，通过授权接口进行激活
-		entity.setEnabled(false);
-		String hashPw;
-		if (u.getPlainPassword() == null) {
-			hashPw = BCryptUtil.hash("123456");// 设置默认密码
-		} else {
-			hashPw = BCryptUtil.hash(u.getPlainPassword());
-		}
-		entity.setPassword(hashPw);
-		userRepository.save(entity);
-		return entity.getId();
-	}
-	/**
-	 * 获取普通的User实体，初始化默认授权
-	 * @param u
-	 * @return
-	 */
-	private synchronized User newUser(UserDto u) {
-		User entity = new User();
-		copyProperties(u, entity);
-		Role r = roleRepository.findByName(Role.USER);
-		entity.getRoles().add(r);
-		r.getUsers().add(entity);
-		return entity;
-	}
-	/**
-	 * 获取的Employee含emp_no，初始化默认授权
-	 * @param u
-	 * @return
-	 */
-	private synchronized Employee newEmployee(UserDto u) {
+	public Long addEmployee(Employee u) {
 		Employee e = new Employee();
-		copyProperties(u, e);
-		Integer max = userRepository.getMaxEmpNo();
-		if (max == null) {
-			max = 0;
+		BeanUtils.copyProperties(u, e, "roles", "enabled", "password", "department");
+		// 关于工号
+		synchronized (this) {
+			Integer max = userRepository.getMaxEmpNo();
+			if (max == null) {
+				max = 0;
+			}
+			e.setEmpNum(++max);
 		}
-		e.setEmpNum(++max);
+		// 关于初始授权
 		Role r = roleRepository.findByName(Role.EMPLOYEE);
 		e.getRoles().add(r);
 		r.getUsers().add(e);
+		// 关于部门
 		Department d = u.getDepartment();
 		if (d != null && d.getName() != null) {
 			d = departmentRepository.findByName(d.getName());
 			e.setDepartment(d);
 		}
-		return e;
-	}
-	/**
-	 * 获取的Manager含emp_no，初始化默认授权
-	 * @param u
-	 * @return
-	 */
-	private synchronized Manager newManager(UserDto u) {
-		Manager m = new Manager();
-		copyProperties(u, m);
-		Integer max = userRepository.getMaxEmpNo();
-		if (max == null) {
-			max = 0;
+		// 创建雇员时，可以直接激活可用
+		e.setEnabled(true);
+		String hashPw;
+		if (u.getPassword() == null) {
+			hashPw = BCryptUtil.hash("123456");// 设置默认密码
+		} else {
+			hashPw = BCryptUtil.hash(u.getPassword());
 		}
-		m.setEmpNum(++max);
-		Role r = roleRepository.findByName(Role.MANAGER);
-		m.getRoles().add(r);
-		r.getUsers().add(m);
-		Department d = u.getDepartment();
-		if (d != null && d.getName() != null) {
-			d = departmentRepository.findByName(d.getName());
-			m.setDepartment(d);
+		e.setPassword(hashPw);
+		userRepository.save(e);
+		return e.getId();
+	}
+
+	@Override
+	public Long addCustomer(Customer u) {	
+		Customer e = new Customer();
+		BeanUtils.copyProperties(u, e, "roles", "enabled", "password", "department");
+		Role r = roleRepository.findByName(Role.USER);
+		e.getRoles().add(r);
+		r.getUsers().add(e);
+		// 用户注册时，还未激活
+		e.setEnabled(false);
+		String hashPw;
+		if (u.getPassword() == null) {
+			hashPw = BCryptUtil.hash("123456");// 设置默认密码
+		} else {
+			hashPw = BCryptUtil.hash(u.getPassword());
 		}
-		return m;
+		e.setPassword(hashPw);
+		userRepository.save(e);
+		return e.getId();
 	}
-	
-	/**
-	 * 统一定义复制属性
-	 */
-	private void copyProperties(UserDto src, User dest) {
-		BeanUtils.copyProperties(src, dest, "roles", "enabled", "password", "department");
-	}
-	
+
 	@Override
 	public void enableUser(Long id) {
 		userRepository.findOne(id).setEnabled(true);
@@ -150,10 +104,28 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
+	public void grantRoles(long id, String... roleNames) {
+		User u = userRepository.findOne(id);
+		for (String name : roleNames) {
+			Role r = roleRepository.findByName(name);
+			if (r == null) {
+				throw new IllegalArgumentException("没有这个角色名： " + name);
+			}
+			u.getRoles().add(r);
+			r.getUsers().add(u);
+		}
+	}
+
+	@Override
 	public void changePassword(String email, String newPassword) {
 		String hashPw = BCryptUtil.hash(newPassword);
 		User u = userRepository.findByEmail(email);
 		u.setPassword(hashPw);
+	}
+
+	@Override
+	public void changePasswordByEmail(String email, String newPassword) {
+		changePassword(email, newPassword);
 	}
 
 	@Override
@@ -165,42 +137,45 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Pager<UserDto> getUserPager(UserDto u, Pageable pageable) {
-		Pager<User> pe = userRepository.dynamicQuery(u, pageable.getPageNumber());
-		List<UserDto> ls = convert(pe.getContent());
-		Pager<UserDto> pd = new Pager<UserDto>(ls, pe.getTotalElements(), pageable.getPageNumber(), pe.getPageSize());
-		return pd;
-	}
-
-	@Override
-	public Page<UserDto> getUserPage(UserDto u, Pageable pageable) {
-		Pager<UserDto> p = this.getUserPager(u, pageable);
-		return new PageImpl<UserDto>(p.getContent(), pageable, p.getTotalElements());
-	}
-	
-	@Override
-	public UserDto getUser(Long id) {
+	public User getUser(Long id) {
 		return convert(userRepository.findOne(id));
 	}
 
 	@Override
-	public UserDto getUserByEmail(String email) {
+	public User getUserByEmail(String email) {
 		return convert(userRepository.findByEmail(email));
 	}
-
+	
 	@Override
-	public void mergeUser(Long id, UserDto u) {
-		User entity = userRepository.findOne(id);
+	public void mergeUser(String email, User u) {
+		User entity = userRepository.findByEmail(email);
 		// 修改密码，启用/禁用账户，授权功能，不走此接口，所以在调用merge方法前，先将其设置为null
 		u.setRoles(null);
 		u.setPassword(null);
 		u.setEnabled(null);
-		Department d = u.getDepartment();
-		if (d != null && d.getName() != null) {
-			u.setDepartment(departmentRepository.findByName(d.getName()));
+		if (u instanceof Employee) {
+			Employee emp = (Employee) u;
+			Department d = emp.getDepartment();
+			if (d != null && d.getName() != null) {
+				emp.setDepartment(departmentRepository.findByName(d.getName()));
+			}
 		}
 		BeanTools.merge(entity, u);
 		userRepository.save(entity);
+	}
+
+	@Override
+	public Pager<User> getUserPager(User u, Pageable pageable) {
+		Pager<User> pe = userRepository.dynamicQuery(u, pageable.getPageNumber());
+		List<User> ls = convert(pe.getContent());
+		Pager<User> pd = new Pager<User>(ls, pe.getTotalElements(), pageable.getPageNumber(), pe.getPageSize());
+		return pd;
+	}
+
+	@Override
+	public Page<User> getUserPage(User u, Pageable pageable) {
+		Pager<User> p = this.getUserPager(u, pageable);
+		return new PageImpl<User>(p.getContent(), pageable, p.getTotalElements());
 	}
 	
 	/**
@@ -208,12 +183,19 @@ public class UserServiceImpl implements UserService {
 	 * @param users
 	 * @return
 	 */
-	private List<UserDto> convert(List<? extends User> users) {
-		List<UserDto> ls = new ArrayList<UserDto>();
+	private List<User> convert(List<? extends User> users) {
+		List<User> ls = new ArrayList<User>();
 		users.forEach(u -> {
-			UserDto dto = new UserDto();
-			BeanUtils.copyProperties(u, dto, "password", "authorities");
-			ls.add(dto);
+			User result;
+			if (u instanceof Employee) {
+				result = new Employee();
+			} else if (u instanceof Customer) {
+				result = new Customer();
+			} else {
+				result = new User();
+			}
+			BeanUtils.copyProperties(u, result, "password", "authorities");
+			ls.add(result);
 		});
 		return ls;
 	}
@@ -223,11 +205,16 @@ public class UserServiceImpl implements UserService {
 	 * @param users
 	 * @return
 	 */
-	private UserDto convert(User user) {
-		// Manager对象能获取最完整的信息
-		UserDto dto = new UserDto();
-		BeanUtils.copyProperties(user, dto, "password");
-		return dto;
+	private User convert(User user) {
+		User result;
+		if (user instanceof Employee) {
+			result = new Employee();
+		} else if (user instanceof Customer) {
+			result = new Customer();
+		} else {
+			result = new User();
+		}
+		BeanUtils.copyProperties(user, result, "password");
+		return result;
 	}
-
 }

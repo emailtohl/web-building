@@ -17,7 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.query.QueryUtils;
-import org.springframework.stereotype.Repository;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.AbstractCriterionQueryRepository;
@@ -28,13 +27,12 @@ import com.github.emailtohl.building.site.entities.User;
 
 /**
  * spring data扫描到接口UserRepository时，会认为UserRepository+Impl作为自定义实现
- * 
  * 当调用UserRepositoryImpl中的方法时，不再代理，而是直接将方法交给UserRepositoryImpl
  * 
  * @author HeLei
  *
  */
-@Repository //不由spring管理，而是由spring data管理
+//@Repository //不由spring管理，而是由spring data管理
 public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> implements UserRepositoryCustomization {
 
 	@Override

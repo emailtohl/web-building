@@ -1,196 +1,213 @@
 package com.github.emailtohl.building.site.service.security;
+import static com.github.emailtohl.building.initdb.PersistenceData.baz;
+import static com.github.emailtohl.building.initdb.PersistenceData.foo;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.github.emailtohl.building.site.dto.UserDto;
+import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.service.UserService;
+import com.github.emailtohl.building.stub.SecurityContextManager;
+import com.github.emailtohl.building.stub.ServiceStub;
 /**
  * 测试spring security的配置
  * @author HeLei
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = SecurityTestConfig.class)
+@ContextConfiguration(classes = RootContextConfiguration.class)
+@ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
 public class UserServiceTest {
+	/**
+	 * serviceStub.testUserDto引用的是baz
+	 */
+	@Inject ServiceStub serviceStub;
+	@Inject SecurityContextManager securityContextManager;
 	@Inject
+	@Named("userServiceMock")
 	UserService userService;
-	@Inject
-	AuthenticationManager authenticationManager;
 
-	private void setEmailtohl() {
-		SecurityContextHolder.clearContext();
-		String name = "emailtohl@163.com";
-		String password = "123456";
-		Authentication token = new UsernamePasswordAuthenticationToken(name, password);
-		Authentication authentication = authenticationManager.authenticate(token);
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-	}
-	private void setFoo() {
-		SecurityContextHolder.clearContext();
-		String name = "foo@test.com";
-		String password = "123456";
-		Authentication token = new UsernamePasswordAuthenticationToken(name, password);
-		Authentication authentication = authenticationManager.authenticate(token);
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-	}
-	private void setBar() {
-		SecurityContextHolder.clearContext();
-		String name = "bar@test.com";
-		String password = "123456";
-		Authentication token = new UsernamePasswordAuthenticationToken(name, password);
-		Authentication authentication = authenticationManager.authenticate(token);
-		SecurityContextHolder.getContext().setAuthentication(authentication);
+	@Test(expected = AuthenticationCredentialsNotFoundException.class)
+	public void testAddEmployee1() {
+		securityContextManager.clearContext();
+		userService.addEmployee(foo);
 	}
 	
-	@Test(/*expected = AccessDeniedException.class*/)
-	public void testAddUser1() {
-		userService.addUser(new UserDto());
-	}
-	
-	@Test(/*expected = AccessDeniedException.class*/)
-	public void testAddUser2() {
-		setBar();
-		userService.addUser(new UserDto());
+	@Test(expected = AccessDeniedException.class)
+	public void testAddEmployee2() {
+		securityContextManager.setBar();
+		userService.addEmployee(foo);
 	}
 	
 	@Test
-	public void testAddUser3() {
-		setFoo();
-		userService.addUser(new UserDto());
-		setEmailtohl();
-		userService.addUser(new UserDto());
+	public void testAddEmployee3() {
+		securityContextManager.setFoo();
+		userService.addEmployee(foo);
+		securityContextManager.setEmailtohl();
+		userService.addEmployee(foo);
 	}
-
+	
+	@Test
+	public void testaddCustomer() {
+		userService.addCustomer(baz);
+	}
+	
 	@Test
 	public void testEnableUser() {
-		userService.enableUser(1000L);
+		userService.enableUser(serviceStub.testId);
 	}
 
 	@Test(expected = AuthenticationCredentialsNotFoundException.class)
 	public void testDisableUser1() {
-		SecurityContextHolder.clearContext();
-		userService.deleteUser(1000L);
+		securityContextManager.clearContext();
+		userService.deleteUser(serviceStub.testId);
 	}
 	
 	@Test(expected = AccessDeniedException.class)
 	public void testDisableUser2() {
-		setBar();
-		userService.deleteUser(1000L);
+		securityContextManager.setBar();
+		userService.deleteUser(serviceStub.testId);
 	}
 
 	@Test
 	public void testDisableUser3() {
-		setEmailtohl();
-		userService.deleteUser(1000L);
+		securityContextManager.setEmailtohl();
+		userService.deleteUser(serviceStub.testId);
 	}
-
+	
+	
 	@Test(expected = AuthenticationCredentialsNotFoundException.class)
-	public void testMergeUser1() {
-		SecurityContextHolder.clearContext();
-		UserDto u = new UserDto();
-		userService.mergeUser(1000L, u);
+	public void testGrantRoles1() {
+		securityContextManager.clearContext();
+		userService.grantRoles(serviceStub.testId);
 	}
 	
 	@Test(expected = AccessDeniedException.class)
-	public void testMergeUser2() {
-		setBar();
-		UserDto u = new UserDto();
-		userService.mergeUser(1000L, u);
+	public void testGrantRoles2() {
+		securityContextManager.setBaz();
+		userService.grantRoles(serviceStub.testId);
+	}
+
+	@Test
+	public void testGrantRoles3() {
+		securityContextManager.setEmailtohl();
+		userService.grantRoles(serviceStub.testId);
 	}
 	
-	@Test
-	public void testMergeUser3() {
-		setEmailtohl();
-		UserDto u = new UserDto();
-		u.setEmail("bar@test.com");
-		userService.mergeUser(1000L, u);
-	}
-	
-	@Test
+	@Test(expected = AuthenticationCredentialsNotFoundException.class)
 	public void testChangePassword1() {
-		setEmailtohl();
-		userService.changePassword("emailtohl@163.com", "987654321");
+		securityContextManager.clearContext();
+		userService.changePassword(serviceStub.testUserDto.getEmail(), serviceStub.testPassword);
 	}
 	
 	@Test(expected = AccessDeniedException.class)
 	public void testChangePassword2() {
-		setEmailtohl();
-		userService.changePassword("foo@test.com", "987654321");
+		securityContextManager.setEmailtohl();
+		userService.changePassword(serviceStub.testUserDto.getEmail(), serviceStub.testPassword);
 	}
 	
+	@Test
+	public void testChangePassword3() {
+		securityContextManager.setBaz();
+		userService.changePassword(serviceStub.testUserDto.getEmail(), serviceStub.testPassword);
+	}
+	
+	@Test
+	public void testChangePasswordByEmail() {
+		securityContextManager.clearContext();
+		userService.changePasswordByEmail(serviceStub.testUserDto.getEmail(), serviceStub.testPassword);
+	}
+
 	@Test(expected = AuthenticationCredentialsNotFoundException.class)
 	public void testDeleteUser1() {
 		SecurityContextHolder.clearContext();
-		userService.deleteUser(1000L);
+		userService.deleteUser(serviceStub.testId);
 	}
 	
 	@Test(expected = AccessDeniedException.class)
 	public void testDeleteUser2() {
-		setFoo();
-		userService.deleteUser(1000L);
+		securityContextManager.setFoo();
+		userService.deleteUser(serviceStub.testId);
 	}
 	
 	@Test
 	public void testDeleteUser3() {
-		setEmailtohl();
-		userService.deleteUser(1000L);
+		securityContextManager.setEmailtohl();
+		userService.deleteUser(serviceStub.testId);
 	}
-
+	
 	@Test(expected = AuthenticationCredentialsNotFoundException.class)
 	public void testGetUser1() {
 		SecurityContextHolder.clearContext();
-		userService.getUser(1000L);
+		userService.getUser(serviceStub.testId);
 	}
 	
-	@Test(expected = AccessDeniedException.class)
+	@Test
 	public void testGetUser2() {
-		setBar();
-		userService.getUser(1000L);
+		securityContextManager.setBaz();
+		userService.getUser(serviceStub.testId);
 	}
 	
 	@Test
 	public void testGetUser3() {
-		setBar();
-		userService.getUser(2000L);
-	}
-	
-	@Test
-	public void testGetUser4() {
-		setFoo();
-		userService.getUser(1000L);
-		setEmailtohl();
-		userService.getUser(1000L);
+		securityContextManager.setBar();
+		userService.getUser(serviceStub.testId);
 	}
 	
 	@Test(expected = AuthenticationCredentialsNotFoundException.class)
 	public void testGetUserByEmail1() {
 		SecurityContextHolder.clearContext();
-		userService.getUserByEmail("emailtohl@163.com");
+		userService.getUserByEmail(serviceStub.testUserDto.getEmail());
 	}
 	
 	@Test(expected = AccessDeniedException.class)
 	public void testGetUserByEmail2() {
-		setBar();
-		userService.getUserByEmail("emailtohl@163.com");
+		securityContextManager.setBar();
+		userService.getUserByEmail(serviceStub.testUserDto.getEmail());
 	}
 	
 	@Test
 	public void testGetUserByEmail3() {
-		setEmailtohl();
-		userService.getUserByEmail("emailtohl@163.com");
+		securityContextManager.setBaz();
+		userService.getUserByEmail(baz.getEmail());
+	}
+	
+	@Test
+	public void testGetUserByEmail4() {
+		securityContextManager.setEmailtohl();
+		userService.getUserByEmail(baz.getEmail());
 	}
 
+	@Test(expected = AuthenticationCredentialsNotFoundException.class)
+	public void testMergeUser1() {
+		SecurityContextHolder.clearContext();
+		userService.mergeUser(serviceStub.testUserDto.getEmail(), serviceStub.testUserDto);
+	}
+	
+	@Test(expected = AccessDeniedException.class)
+	public void testMergeUser2() {
+		securityContextManager.setBar();
+		userService.mergeUser(serviceStub.testUserDto.getEmail(), serviceStub.testUserDto);
+	}
+	
+	@Test
+	public void testMergeUser3() {
+		securityContextManager.setBaz();
+		userService.mergeUser(serviceStub.testUserDto.getEmail(), serviceStub.testUserDto);
+		
+		securityContextManager.setEmailtohl();
+		userService.mergeUser(serviceStub.testUserDto.getEmail(), serviceStub.testUserDto);
+	}
+	
 	@Test(expected = AuthenticationCredentialsNotFoundException.class)
 	public void testGetUserPager1() {
 		SecurityContextHolder.clearContext();
@@ -199,20 +216,20 @@ public class UserServiceTest {
 	
 	@Test
 	public void testGetUserPager2() {
-		setBar();
-		userService.getUserPager(new UserDto(), new PageRequest(10, 20));
+		securityContextManager.setBar();
+		userService.getUserPager(serviceStub.testUserDto, new PageRequest(10, 20));
 	}
 	
 	@Test(expected = AuthenticationCredentialsNotFoundException.class)
 	public void testGetUserPage1() {
 		SecurityContextHolder.clearContext();
-		userService.getUserPage(new UserDto(), new PageRequest(10, 20));
+		userService.getUserPage(serviceStub.testUserDto, new PageRequest(10, 20));
 	}
 	
 	@Test
 	public void testGetUserPage2() {
-		setBar();
-		userService.getUserPage(new UserDto(), new PageRequest(10, 20));
+		securityContextManager.setBar();
+		userService.getUserPage(serviceStub.testUserDto, new PageRequest(10, 20));
 	}
 
 }

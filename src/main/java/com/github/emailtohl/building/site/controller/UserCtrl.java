@@ -36,6 +36,7 @@ import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.exception.ResourceNotFoundException;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.BaseEntity;
+import com.github.emailtohl.building.site.entities.Employee;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
 import com.google.gson.Gson;
@@ -137,8 +138,9 @@ public class UserCtrl {
 	@RequestMapping(value = "pager", method = GET)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	public Pager<UserDto> getUserPager(@ModelAttribute UserDto u, 
+	public Pager<User> getUserPager(@ModelAttribute UserDto form, 
 			@PageableDefault(page = 0, size = 20, sort = BaseEntity.ID_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
+		User u = new User();
 		return userService.getUserPager(u, pageable);
 	}
 	
@@ -150,19 +152,20 @@ public class UserCtrl {
 	 * @return
 	 */
 	@RequestMapping(value = "", method = POST)
-	public ResponseEntity<?> addUser(@RequestBody @Valid UserDto u, Errors e) {
+	public ResponseEntity<?> addUser(@RequestBody @Valid UserDto form, Errors e) {
 		if (e.hasErrors()) {
 			for (ObjectError oe : e.getAllErrors()) {
 				logger.info(oe);
 			}
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
-		Long id = userService.addUser(u);
+		Employee emp = new Employee();
+		Long id = userService.addEmployee(emp);
 		String uri = ServletUriComponentsBuilder.fromCurrentServletMapping().path("/user/{id}")
 				.buildAndExpand(id).toString();
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Location", uri);
-		return new ResponseEntity<>(u, headers, HttpStatus.CREATED);
+		return new ResponseEntity<>(emp, headers, HttpStatus.CREATED);
 	}
 	
 	/**
@@ -198,7 +201,8 @@ public class UserCtrl {
 			}
 			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
 		}
-		userService.mergeUser(id, user);
+		User u = userService.getUser(id);
+		userService.mergeUser(u.getEmail(), user);
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
 	
