@@ -7,15 +7,10 @@ import static org.junit.Assert.assertNotNull;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,13 +22,11 @@ import org.springframework.transaction.TransactionSystemException;
 
 import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.common.jpa.Pager;
-import com.github.emailtohl.building.common.utils.Validator;
 import com.github.emailtohl.building.initdb.PersistenceData;
 import com.github.emailtohl.building.site.entities.Manager;
 import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.Subsidiary;
 import com.github.emailtohl.building.site.entities.User;
-import com.github.emailtohl.building.site.entities.User.Gender;
 
 public class UserRepositoryTest {
 	static final Logger logger = LogManager.getLogger();
@@ -58,60 +51,6 @@ public class UserRepositoryTest {
 		Date end = format.parse("1983-01-01");
 		List<User> ls = userRepository.findByBirthdayBetween(begin, end);
 		assertFalse(ls.isEmpty());
-	}
-
-	/**
-	 * 测试增删改查
-	 */
-	@Test
-	public void testCRUD() {
-		Role employee, admin;
-		RoleRepository roleRepository = Spring.context.getBean(RoleRepository.class);
-		employee = roleRepository.findByName(Role.EMPLOYEE);
-		admin = roleRepository.findByName(Role.ADMIN);
-		
-		User u = new Manager();
-		u.setAddress("四川路");
-		u.setAge(20);
-		u.setRoles(new HashSet<Role>(Arrays.asList(employee, admin)));
-		employee.getUsers().add(u);
-		admin.getUsers().add(u);
-		u.setBirthday(Date.from(Instant.now().minus(Duration.ofDays(10000))));
-		u.setDescription("test");
-		u.setEmail("test@test.com");
-		u.setPassword("1234567890");
-		u.setEnabled(true);
-		u.setName("name");
-		u.setTelephone("123456789");
-		u.setUsername("username");
-		u.setGender(Gender.MALE);
-		Subsidiary c = new Subsidiary();
-		c.setCity("成都");
-		c.setCountry("中国");
-		c.setLanguage("zh");
-		c.setProvince("四川");
-		Set<ConstraintViolation<User>> set = Validator.validate(u);
-		logger.debug(set);
-		// test add
-		userRepository.save(u);
-		Long id = u.getId();
-		try {
-			assertNotNull(id);
-			// test query
-			User qu = userRepository.findOne(id);
-			assertEquals(u, qu);
-			// test update
-			qu.setDescription("已修改");
-			userRepository.save(qu);
-			userRepository.flush();
-			qu = userRepository.findOne(id);
-			assertEquals("已修改", qu.getDescription());
-		} catch (Exception e) {
-			throw e;
-		} finally {
-			userRepository.delete(id);
-		}
-		assertFalse(userRepository.exists(id));
 	}
 
 	/**
