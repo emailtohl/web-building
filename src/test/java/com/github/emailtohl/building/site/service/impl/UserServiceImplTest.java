@@ -129,11 +129,11 @@ public class UserServiceImplTest {
 			// test enable
 			userService.enableUser(id);
 			qu = userService.getUser(id);
-			assertTrue(qu.getEnabled());
+			assertTrue(qu.isEnabled());
 			// test disable
 			userService.disableUser(id);
 			qu = userService.getUser(id);
-			assertFalse(qu.getEnabled());
+			assertFalse(qu.isEnabled());
 			// test grantRoles
 			userService.grantRoles(id, Role.USER, Role.MANAGER);
 			qu = userService.getUser(id);
@@ -165,11 +165,11 @@ public class UserServiceImplTest {
 			// test enable
 			userService.enableUser(id);
 			qu = userService.getUser(id);
-			assertTrue(qu.getEnabled());
+			assertTrue(qu.isEnabled());
 			// test disable
 			userService.disableUser(id);
 			qu = userService.getUser(id);
-			assertFalse(qu.getEnabled());
+			assertFalse(qu.isEnabled());
 			// test grantRoles
 			userService.grantRoles(id, Role.EMPLOYEE, Role.MANAGER);
 			qu = userService.getUser(id);

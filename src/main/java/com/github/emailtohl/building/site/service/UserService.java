@@ -9,6 +9,8 @@ import static com.github.emailtohl.building.site.entities.Authority.USER_READ_SE
 import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_ALL;
 import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_SELF;
 
+import java.util.Set;
+
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -20,11 +22,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.method.P;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.validation.annotation.Validated;
 
+import com.github.emailtohl.building.common.Constant;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.Employee;
+import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
 
 /**
@@ -34,7 +41,7 @@ import com.github.emailtohl.building.site.entities.User;
  */
 @Transactional
 @Validated
-public interface UserService {
+public interface UserService extends AuthenticationProvider, UserDetailsService {
 
 	/**
 	 * 创建雇员账号
@@ -164,4 +171,28 @@ public interface UserService {
 	@PreAuthorize("isAuthenticated()")
 	Page<User> getUserPage(User u, Pageable pageable);
 	
+	/**
+	 * 检查该邮箱是否注册
+	 * @param email
+	 * @return
+	 */
+	boolean isExist(@Pattern(regexp = Constant.PATTERN_EMAIL, flags = { Pattern.Flag.CASE_INSENSITIVE }) String email);
+	
+	/**
+	 * 通过用户邮箱名和角色名组合查询Pager
+	 * @param email
+	 * @param roles
+	 * @param pageable
+	 * @return
+	 */
+	@PreAuthorize("isAuthenticated()")
+	Pager<User> getPageByRoles(String email, Set<Role> roles, Pageable pageable);
+
+	/**
+	 * 认证（登录）
+	 * @param email
+	 * @param password
+	 * @return
+	 */
+	Authentication authenticate(String email, String password);
 }

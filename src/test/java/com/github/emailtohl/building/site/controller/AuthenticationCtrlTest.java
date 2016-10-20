@@ -16,8 +16,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
@@ -25,19 +29,31 @@ import org.springframework.http.MediaType;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.mail.EmailService;
 import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
+import com.github.emailtohl.building.stub.SecurityContextManager;
+import com.github.emailtohl.building.stub.ServiceStub;
 import com.google.gson.Gson;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = RootContextConfiguration.class)
+@ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
 public class AuthenticationCtrlTest {
+	@Inject ServiceStub serviceStub;
+	@Inject @Named("userServiceMock") UserService userService;
+	@Inject SecurityContextManager securityContextManager;
 	MockMvc mockMvc;
 	
 	@Before
@@ -98,7 +114,7 @@ public class AuthenticationCtrlTest {
 		
 		
 		UserService userService = mock(UserService.class);
-		when(userService.addUser(fooDto)).thenReturn(100L);
+//		when(userService.addUser(fooDto)).thenReturn(100L);
 		doAnswer(answer).when(userService).enableUser(100L);
 		
 		EmailService emailService = mock(EmailService.class);
@@ -110,7 +126,7 @@ public class AuthenticationCtrlTest {
 		authenticationCtrl.setAuthenticationService(authenticationService);
 		authenticationCtrl.setUserService(userService);
 		authenticationCtrl.setEmailService(emailService);
-		authenticationCtrl.setTaskScheduler(Spring.context.getBean(ThreadPoolTaskScheduler.class));
+//		authenticationCtrl.setTaskScheduler(Spring.context.getBean(ThreadPoolTaskScheduler.class));
 		mockMvc = standaloneSetup(authenticationCtrl).setViewResolvers(viewResolver).build();
 	}
 

@@ -61,7 +61,7 @@ import com.github.emailtohl.building.common.Constant;
 @DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
 //指定User实体对应的记录在辨别者列的值是“user”
 @DiscriminatorValue("user") // 若不注解，则默认使用实体名
-public class User extends BaseEntity implements Authentication/* 实现Authentication接口可以被Spring security的安全管理器使用 */ {
+public class User extends BaseEntity implements Authentication, UserDetails/* 实现Authentication和UserDetails接口可以被Spring security的安全管理器使用 */ {
 	private static final long serialVersionUID = -2648409468140926726L;
 	public enum Gender {
 		MALE, FEMALE, UNSPECIFIED
@@ -135,7 +135,7 @@ public class User extends BaseEntity implements Authentication/* 实现Authentic
 		this.telephone = telephone;
 	}
 	
-    public Boolean getEnabled() {
+    public boolean isEnabled() {
 		return enabled;
 	}
 	public void setEnabled(Boolean enabled) {
@@ -311,6 +311,24 @@ public class User extends BaseEntity implements Authentication/* 实现Authentic
 	}
 	
 	@Transient
+	private boolean accountNonExpired = true;
+	@Transient
+	private boolean credentialsNonExpired = true;
+	@Transient
+	private boolean accountNonLocked = true;
+	@Transient
+	public void setAccountNonExpired(boolean accountNonExpired) {
+		this.accountNonExpired = accountNonExpired;
+	}
+	@Transient
+	public void setAccountNonLocked(boolean accountNonLocked) {
+		this.accountNonLocked = accountNonLocked;
+	}
+	@Transient
+	public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+		this.credentialsNonExpired = credentialsNonExpired;
+	}
+	@Transient
 	@Override
 	public Object getPrincipal() {
 		/*
@@ -340,35 +358,19 @@ public class User extends BaseEntity implements Authentication/* 实现Authentic
 				return username;
 			}
 
-			@SuppressWarnings("unused")
-			private boolean accountNonExpired = true;
 			@Override
 			public boolean isAccountNonExpired() {
-				return true;
+				return accountNonExpired;
 			}
-			@SuppressWarnings("unused")
-			public void setAccountNonExpired(boolean accountNonExpired) {
-				this.accountNonExpired = accountNonExpired;
-			}
-
-			private boolean accountNonLocked = true;
+			
 			@Override
 			public boolean isAccountNonLocked() {
 				return accountNonLocked;
 			}
-			@SuppressWarnings("unused")
-			public void setAccountNonLocked(boolean accountNonLocked) {
-				this.accountNonLocked = accountNonLocked;
-			}
-
-			private boolean credentialsNonExpired = true;
+			
 			@Override
 			public boolean isCredentialsNonExpired() {
 				return credentialsNonExpired;
-			}
-			@SuppressWarnings("unused")
-			public void setCredentialsNonExpired(boolean credentialsNonExpired) {
-				this.credentialsNonExpired = credentialsNonExpired;
 			}
 
 			@Override
@@ -391,6 +393,25 @@ public class User extends BaseEntity implements Authentication/* 实现Authentic
 	@Override
 	public void setAuthenticated(boolean authenticated) throws IllegalArgumentException {
 		this.authenticated = authenticated;
+	}
+	
+	/**
+	 * 下面是实现UserDetails的方法
+	 */
+	@Transient
+	@Override
+	public boolean isAccountNonExpired() {
+		return accountNonExpired;
+	}
+	@Transient
+	@Override
+	public boolean isAccountNonLocked() {
+		return accountNonLocked;
+	}
+	@Transient
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return credentialsNonExpired;
 	}
 	
 }

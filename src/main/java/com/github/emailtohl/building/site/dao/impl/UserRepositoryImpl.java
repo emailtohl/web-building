@@ -41,11 +41,8 @@ public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> i
 	}
 	
 	@Override
-	public Pager<User> getPagerByRoles(User user, Pageable pageable) {
-		
+	public Pager<User> getPagerByRoles(String email, Set<Role> roles, Pageable pageable) {
 		StringBuilder jpql = new StringBuilder("SELECT DISTINCT u FROM User u WHERE 1 = 1");
-		String email = user.getEmail();
-		Set<Role> roles = user.getRoles();
 		Map<String, Object> args = new HashMap<String, Object>();
 		if (roles != null && roles.size() > 0) {
 			Set<String> roleNames = roles.stream().map(r -> r.getName()).collect(Collectors.toSet());
@@ -62,18 +59,18 @@ public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> i
 	}
 	
 	@Override
-	public Pager<User> getPagerByCriteria(User user, Pageable pageable) {
+	public Pager<User> getPagerByCriteria(String email, Set<Role> roles, Pageable pageable) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		
 		CriteriaQuery<Long> q1 = cb.createQuery(Long.class);
 		Root<User> r1 = q1.from(entityClass);
 		
 		List<Predicate> lp = new ArrayList<Predicate>();
-		if (user.getEmail() != null && !user.getEmail().isEmpty()) {
-			lp.add(cb.like(r1.get("email"), user.getEmail()));
+		if (email != null && !email.isEmpty()) {
+			lp.add(cb.like(r1.get("email"), email));
 		}
-		if (!user.getRoles().isEmpty()) {
-			Set<String> roleNames = user.getRoles().stream().map(r -> r.getName()).collect(Collectors.toSet());
+		if (roles != null && !roles.isEmpty()) {
+			Set<String> roleNames = roles.stream().map(r -> r.getName()).collect(Collectors.toSet());
 			lp.add(r1.join("roles").get("name").in(roleNames));
 		}
 		Predicate[] ps = lp.toArray(new Predicate[lp.size()]);
@@ -86,11 +83,11 @@ public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> i
 		Root<User> r2 = q2.from(entityClass);
 		
 		lp.clear();
-		if (user.getEmail() != null && !user.getEmail().isEmpty()) {
-			lp.add(cb.like(r2.get("email"), user.getEmail()));
+		if (email != null && !email.isEmpty()) {
+			lp.add(cb.like(r2.get("email"), email));
 		}
-		if (!user.getRoles().isEmpty()) {
-			Set<String> roleNames = user.getRoles().stream().map(r -> r.getName()).collect(Collectors.toSet());
+		if (roles != null && !roles.isEmpty()) {
+			Set<String> roleNames = roles.stream().map(r -> r.getName()).collect(Collectors.toSet());
 			lp.add(r2.join("roles").get("name").in(roleNames));
 		}
 		ps = lp.toArray(new Predicate[lp.size()]);

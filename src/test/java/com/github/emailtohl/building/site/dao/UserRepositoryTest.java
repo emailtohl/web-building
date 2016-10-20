@@ -116,7 +116,7 @@ public class UserRepositoryTest {
 		s.setCity("西安");
 		u.setSubsidiary(s);
 		u.setRoles(new HashSet<Role>(Arrays.asList(manager)));
-		Pager<User> p = userRepository.getPagerByRoles(u, pageable);
+		Pager<User> p = userRepository.getPagerByRoles(u.getEmail(), u.getRoles(), pageable);
 		logger.debug("getNumber:" + p.getPageNumber());
 		logger.debug("getNumberOfElements:" + p.getTotalElements());
 		logger.debug("getSize:" + p.getPageSize());
@@ -137,7 +137,7 @@ public class UserRepositoryTest {
 		s.setCity("西安");
 		u.setSubsidiary(s);
 		u.setRoles(new HashSet<Role>(Arrays.asList(manager)));
-		Pager<User> p = userRepository.getPagerByCriteria(u, pageable);
+		Pager<User> p = userRepository.getPagerByCriteria(u.getEmail(), u.getRoles(), pageable);
 		System.out.println(p);
 		logger.debug("getNumber:" + p.getPageNumber());
 		logger.debug("getNumberOfElements:" + p.getTotalElements());
@@ -149,7 +149,7 @@ public class UserRepositoryTest {
 		
 		u.setEmail(null);
 		u.getRoles().clear();
-		p = userRepository.getPagerByCriteria(u, pageable);
+		p = userRepository.getPagerByCriteria(u.getEmail(), u.getRoles(), pageable);
 		logger.debug("getNumber:" + p.getPageNumber());
 		logger.debug("getNumberOfElements:" + p.getTotalElements());
 		logger.debug("getSize:" + p.getPageSize());

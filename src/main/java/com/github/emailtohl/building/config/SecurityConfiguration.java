@@ -62,6 +62,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	 * com.github.emailtohl.building.site.service.impl.AuthenticationServiceImpl中找到的
 	 */
 	@Inject
+	@Named("userServiceImpl")
 	AuthenticationProvider authenticationProvider;
 	
 	/**
@@ -70,6 +71,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	 * com.github.emailtohl.building.site.service.impl.AuthenticationServiceImpl时实例化的
 	 */
 	@Inject
+	@Named("userServiceImpl")
 	UserDetailsService userDetailsService;
 	
 	/**

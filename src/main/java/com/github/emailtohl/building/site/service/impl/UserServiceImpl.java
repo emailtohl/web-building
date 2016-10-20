@@ -1,6 +1,9 @@
 package com.github.emailtohl.building.site.service.impl;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
@@ -10,8 +13,15 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import com.github.emailtohl.building.common.Constant;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.BCryptUtil;
 import com.github.emailtohl.building.common.utils.BeanTools;
@@ -32,7 +42,6 @@ import com.github.emailtohl.building.site.service.UserService;
  */
 @Service
 public class UserServiceImpl implements UserService {
-	@SuppressWarnings("unused")
 	private static final Logger logger = LogManager.getLogger();
 	@Inject UserRepository userRepository;
 	@Inject RoleRepository roleRepository;
@@ -200,6 +209,54 @@ public class UserServiceImpl implements UserService {
 		Pager<User> p = this.getUserPager(u, pageable);
 		return new PageImpl<User>(p.getContent(), pageable, p.getTotalElements());
 	}
+
+	@Override
+	public boolean isExist(String email) {
+		if (userRepository.findByEmail(email) == null) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public Pager<User> getPageByRoles(String email, Set<Role> roles, Pageable pageable) {
+		return userRepository.getPagerByCriteria(email, roles, pageable);
+	}
+
+	
+	@Override
+	public Authentication authenticate(String email, String password) {
+		User u = userRepository.findByEmail(email);
+		if (u == null) {
+			logger.warn("Authentication failed for non-existent user {}.", email);
+			return null;
+		}
+		if (!BCrypt.checkpw(password, u.getPassword())) {
+			logger.warn("Authentication failed for user {}.", email);
+			return null;
+		}
+		logger.debug("User {} successfully authenticated.", email);
+		return u;
+	}
+	/**
+	 * 下面是实现AuthenticationProvider，可以供Spring Security框架使用
+	 */
+	@Override
+	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+		UsernamePasswordAuthenticationToken credentials = (UsernamePasswordAuthenticationToken) authentication;
+		String email = credentials.getPrincipal().toString();
+		String password = credentials.getCredentials().toString();
+		// 用户名和密码用完后，记得擦除
+		credentials.eraseCredentials();
+		return authenticate(email, password);
+	}
+
+	@Override
+	public boolean supports(Class<?> authentication) {
+		return authentication == UsernamePasswordAuthenticationToken.class;
+	}
+
 	
 	/**
 	 * JPA提供者能根据用户的类型确定到底是User、Employ还是Manager
@@ -239,5 +296,20 @@ public class UserServiceImpl implements UserService {
 		}
 		BeanUtils.copyProperties(user, result, "password");
 		return result;
+	}
+
+	/**
+	 * 实现UserDetailsService
+	 */
+	private Pattern p = Pattern.compile("username=(" + Constant.PATTERN_EMAIL.substring(1, Constant.PATTERN_EMAIL.length() - 1) + ')');
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		Matcher m = p.matcher(username);
+		if (!m.find()) {
+			return null;
+		}
+		String email = m.group(1);
+		User u = userRepository.findByEmail(email);
+		return u;
 	}
 }

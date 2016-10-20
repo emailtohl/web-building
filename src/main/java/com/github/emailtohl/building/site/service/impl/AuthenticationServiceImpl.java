@@ -190,7 +190,7 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 			email = '%' + email + '%';
 		}
 		user.setEmail(email);
-		Pager<User> p = userRepository.getPagerByCriteria(user, pageable);
+		Pager<User> p = userRepository.getPagerByCriteria(user.getEmail(), user.getRoles(), pageable);
 		List<User> src = p.getContent();
 		List<UserDto> dest = new ArrayList<UserDto>();
 		src.forEach(u -> {
@@ -287,7 +287,7 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 			this.id = u.getId();
 			this.email = u.getEmail();
 			this.username = this.email;
-			this.enabled = u.getEnabled();
+			this.enabled = u.isEnabled();
 			this.iconSrc = u.getIconSrc();
 			Set<String> stringAuthorities = u.authorities();
 			this.authorities = AuthorityUtils.createAuthorityList(stringAuthorities.toArray(new String[stringAuthorities.size()]));

@@ -1,6 +1,5 @@
 package com.github.emailtohl.building.site.controller;
 
-import static com.github.emailtohl.building.initdb.PersistenceData.foo;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
@@ -8,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -40,15 +40,22 @@ public class UserCtrlTest {
 	@Inject @Named("userServiceMock") UserService userService;
 	@Inject SecurityContextManager securityContextManager;
 	
-	Gson gson = new Gson();
+	@Inject Gson gson;
+	
 	MockMvc mockMvc;
 	MockHttpServletRequest request = new MockHttpServletRequest();
     MockHttpServletResponse response = new MockHttpServletResponse();
-    UserDto fooDto = new UserDto();
+    UserDto empDto = new UserDto(), cusDto = new UserDto();
 	
 	@Before
 	public void setUp() {
-		BeanUtils.copyProperties(foo, fooDto);
+		UserCtrl userCtrl = new UserCtrl();
+		userCtrl.setGson(gson);
+		userCtrl.setUserService(userService);
+		mockMvc = standaloneSetup(userCtrl).build();
+		
+		BeanUtils.copyProperties(serviceStub.employee, empDto);
+		BeanUtils.copyProperties(serviceStub.customer, cusDto);
 		securityContextManager.setEmailtohl();
 	}
 	
@@ -61,18 +68,18 @@ public class UserCtrlTest {
 
 	@Test
 	public void testDiscoverLong() throws Exception {
-		mockMvc.perform(options("/user/100"))
+		mockMvc.perform(options("/user/" + serviceStub.customerId))
 		.andExpect(status().is(HttpStatus.NO_CONTENT.value()))
 		.andExpect(header().stringValues("Allow", "OPTIONS,HEAD,GET,PUT,DELETE"));
 	}
 
 	@Test
 	public void testGetUserById() throws Exception {
-		mockMvc.perform(get("/user/id/100"))
+		mockMvc.perform(get("/user/id/" + serviceStub.customerId))
 		.andExpect(status().isOk());
-		
+		/* id为0会触发service层的约束异常，大于0不能确定是否存在User
 		mockMvc.perform(get("/user/id/0"))
-		.andExpect(status().is(HttpStatus.NOT_FOUND.value()));
+		.andExpect(status().is(HttpStatus.NOT_FOUND.value()));*/
 	}
 
 	@Test
@@ -94,23 +101,38 @@ public class UserCtrlTest {
 	}
 
 	@Test
-	public void testAddUser() throws Exception {
-		mockMvc.perform(post("/user")
+	public void testAddEmployee() throws Exception {
+		mockMvc.perform(post("/user/employee")
 		.characterEncoding("UTF-8")
         .contentType(MediaType.APPLICATION_JSON)  
-        .content(gson.toJson(foo).getBytes()))
+        .content(gson.toJson(empDto).getBytes()))
 		.andExpect(status().is(HttpStatus.CREATED.value()));
 		
-		mockMvc.perform(post("/user")
+		mockMvc.perform(post("/user/employee")
 		.characterEncoding("UTF-8")  
         .contentType(MediaType.APPLICATION_JSON)  
-        .content("{username:foo}".getBytes()))
+        .content("{username:\"foo\"}".getBytes()))
+		.andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+	}
+	
+	@Test
+	public void testAddCustomer() throws Exception {
+		mockMvc.perform(post("/user/customer")
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)  
+				.content(gson.toJson(cusDto).getBytes()))
+		.andExpect(status().is(HttpStatus.CREATED.value()));
+		
+		mockMvc.perform(post("/user/customer")
+				.characterEncoding("UTF-8")  
+				.contentType(MediaType.APPLICATION_JSON)  
+				.content("{username:\"foo\"}".getBytes()))
 		.andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
 	}
 	
 	@Test
 	public void testEnableUser() throws Exception {
-		mockMvc.perform(put("/user/enableUser/100")
+		mockMvc.perform(put("/user/enableUser/" + serviceStub.customerId)
 				.characterEncoding("UTF-8")  
 				.contentType(MediaType.APPLICATION_JSON))
 		.andExpect(status().isOk());
@@ -118,30 +140,45 @@ public class UserCtrlTest {
 	
 	@Test
 	public void testDisableUser() throws Exception {
-		mockMvc.perform(put("/user/disableUser/100")
+		mockMvc.perform(put("/user/disableUser/"  + serviceStub.customerId)
 				.characterEncoding("UTF-8")  
 				.contentType(MediaType.APPLICATION_JSON))
 		.andExpect(status().isOk());
 	}
 
 	@Test
-	public void testUpdate() throws Exception {
-		mockMvc.perform(put("/user/100")
+	public void testUpdateEmployee() throws Exception {
+		mockMvc.perform(put("/user/employee/" + serviceStub.employeeId)
 		.characterEncoding("UTF-8")
         .contentType(MediaType.APPLICATION_JSON)  
-        .content(gson.toJson(foo).getBytes()))
+        .content(gson.toJson(empDto).getBytes()))
 		.andExpect(status().is(HttpStatus.NO_CONTENT.value()));
 		
-		mockMvc.perform(put("/user/100")
+		mockMvc.perform(put("/user/employee/" + serviceStub.employeeId)
 		.characterEncoding("UTF-8")  
         .contentType(MediaType.APPLICATION_JSON)  
-        .content("{username:foo}".getBytes()))
+        .content("{username:\"foo\"}".getBytes()))
+		.andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+	}
+	
+	@Test
+	public void testUpdateCustomer() throws Exception {
+		mockMvc.perform(put("/user/customer/" + serviceStub.customerId)
+				.characterEncoding("UTF-8")
+				.contentType(MediaType.APPLICATION_JSON)  
+				.content(gson.toJson(cusDto).getBytes()))
+		.andExpect(status().is(HttpStatus.NO_CONTENT.value()));
+		
+		mockMvc.perform(put("/user/customer/" + serviceStub.customerId)
+				.characterEncoding("UTF-8")  
+				.contentType(MediaType.APPLICATION_JSON)  
+				.content("{username:\"baz\"}".getBytes()))
 		.andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
 	}
 
 	@Test
 	public void testDelete() throws Exception {
-		mockMvc.perform(delete("/user/100"))
+		mockMvc.perform(delete("/user/" + serviceStub.customerId))
 		.andExpect(status().is(HttpStatus.NO_CONTENT.value()));
 	}
 
