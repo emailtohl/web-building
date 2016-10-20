@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -12,14 +13,23 @@ import javax.persistence.criteria.Root;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.common.jpa.AbstractJpaRepository;
+import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = RootContextConfiguration.class)
+@ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
 public class CriteriaTest {
+	@Inject ApplicationContext context;
 	Concrete concrete;
 	String jpql = "select u from User u join u.roles r where u.email = 'emailtohl@163.com' and r.name in ('" + Role.ADMIN + "')";
 	
@@ -45,7 +55,7 @@ public class CriteriaTest {
 	@Before
 	public void setUp() {
 		concrete = new Concrete();
-		AutowireCapableBeanFactory factory = Spring.context.getAutowireCapableBeanFactory();
+		AutowireCapableBeanFactory factory = context.getAutowireCapableBeanFactory();
 		factory.autowireBeanProperties(concrete, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
 		factory.initializeBean(concrete, "criteriaTest");
 	}

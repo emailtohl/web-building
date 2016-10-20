@@ -1,9 +1,6 @@
 package com.github.emailtohl.building.site.controller;
 
 import static com.github.emailtohl.building.initdb.PersistenceData.foo;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
@@ -11,29 +8,38 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
-import java.util.Arrays;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.stubbing.Answer;
+import org.junit.runner.RunWith;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.service.UserService;
+import com.github.emailtohl.building.stub.SecurityContextManager;
+import com.github.emailtohl.building.stub.ServiceStub;
 import com.google.gson.Gson;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = RootContextConfiguration.class)
+@ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
 public class UserCtrlTest {
+	@Inject ServiceStub serviceStub;
+	@Inject @Named("userServiceMock") UserService userService;
+	@Inject SecurityContextManager securityContextManager;
+	
 	Gson gson = new Gson();
 	MockMvc mockMvc;
 	MockHttpServletRequest request = new MockHttpServletRequest();
@@ -42,38 +48,8 @@ public class UserCtrlTest {
 	
 	@Before
 	public void setUp() {
-		BeanUtils.copyProperties(fooDto, fooDto);
-		
-		UserService userService = mock(UserService.class);
-		/*Answer<Object> answer = new Answer<Object>() {
-			public Object answer(InvocationOnMock invocation) {
-				Object[] args = invocation.getArguments();
-				return "called with arguments: " + args;
-			}
-		};*/
-		Answer<Object> answer = invocation -> {
-			Object[] args = invocation.getArguments();
-			return "called with arguments: " + args;
-		};
-
-		when(userService.addUser(fooDto)).thenReturn(100L);
-		doAnswer(answer).when(userService).enableUser(100L);
-		doAnswer(answer).when(userService).disableUser(100L);
-		doAnswer(answer).when(userService).changePassword("foo@test.com", "123456");
-		doAnswer(answer).when(userService).deleteUser(100L);
-		when(userService.getUser(100L)).thenReturn(fooDto);
-		when(userService.getUserByEmail("foo@test.com")).thenReturn(fooDto);
-		doAnswer(answer).when(userService).mergeEmployee(100L, fooDto);
-		Pager<UserDto> pager = new Pager<UserDto>(Arrays.asList(fooDto));
-		when(userService.getUserPager(fooDto, new PageRequest(0, 20))).thenReturn(pager);
-		Page<UserDto> page = new PageImpl<UserDto>(Arrays.asList(fooDto));
-		when(userService.getUserPage(fooDto, new PageRequest(0, 20))).thenReturn(page);
-	
-		UserCtrl userCtrl = new UserCtrl();
-		userCtrl.setGson(gson);
-		userCtrl.setUserService(userService);
-		mockMvc = standaloneSetup(userCtrl).build();
-	
+		BeanUtils.copyProperties(foo, fooDto);
+		securityContextManager.setEmailtohl();
 	}
 	
 	@Test
