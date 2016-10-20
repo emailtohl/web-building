@@ -16,32 +16,40 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
-import java.util.stream.Collectors;
 
+import javax.inject.Inject;
 import javax.persistence.AccessType;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.common.jpa.AbstractDynamicQueryRepository.JpqlAndArgs;
 import com.github.emailtohl.building.common.jpa.AbstractDynamicQueryRepository.PredicateAndArgs;
 import com.github.emailtohl.building.common.jpa.relationEntities.Relation1;
 import com.github.emailtohl.building.common.jpa.relationEntities.Relation2;
 import com.github.emailtohl.building.common.jpa.relationEntities.TestRelationRepository;
+import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.dao.RoleRepository;
 import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.Subsidiary;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.entities.User.Gender;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = RootContextConfiguration.class)
+@ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
 public class AbstractDynamicQueryRepositoryTest {
 	private static final Logger logger = LogManager.getLogger();
+	@Inject ApplicationContext context;
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	class Concrete extends AbstractDynamicQueryRepository<User> {}
 	Concrete concrete;
@@ -77,12 +85,12 @@ public class AbstractDynamicQueryRepositoryTest {
 	@Before
 	public void setUp() throws Exception {
 		concrete = new Concrete();
-		AutowireCapableBeanFactory factory = Spring.context.getAutowireCapableBeanFactory();
+		AutowireCapableBeanFactory factory = context.getAutowireCapableBeanFactory();
 		factory.autowireBeanProperties(concrete, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
 		factory.initializeBean(concrete, "concreteDynamicQueryRepository");
 		// 将对象注册到Spring中，即可获得该对象所需的依赖
 		logger.debug(concrete.entityManager);
-		RoleRepository roleRepository = Spring.context.getBean(RoleRepository.class);
+		RoleRepository roleRepository = context.getBean(RoleRepository.class);
 		role_admin = roleRepository.findByName(ADMIN);
 		role_employee = roleRepository.findByName(EMPLOYEE);
 		role_user = roleRepository.findByName(USER);

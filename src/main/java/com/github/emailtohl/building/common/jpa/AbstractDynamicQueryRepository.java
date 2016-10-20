@@ -4,8 +4,8 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.beans.Transient;
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -31,6 +31,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 
 import org.apache.logging.log4j.LogManager;
@@ -216,7 +217,25 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 		class Predicate {
 			boolean first = true;
 			int position = 1;
-
+			
+			/**
+			 * 从JavaBean属性描述器中获取注解
+			 * @param descriptor
+			 * @param annotationClass
+			 * @return
+			 */
+			<A extends Annotation> A getAnnotation(PropertyDescriptor descriptor, Class<A> annotationClass) {
+				Method read = descriptor.getReadMethod(), write = descriptor.getWriteMethod();
+				A a = null;
+				if (read != null) {
+					a = read.getAnnotation(annotationClass);
+				}
+				if (a == null && write != null) {
+					a = write.getAnnotation(annotationClass);
+				}
+				return a;
+			}
+			
 			void predicate(Object o, String prefix) {
 				Class<?> clz;
 				// 如果是本实体继承树上的类，则只分析基类的属性
@@ -242,7 +261,7 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 				}
 				PropertyDescriptor[] descriptors = info.getPropertyDescriptors();
 				for (PropertyDescriptor descriptor : descriptors) {
-					if (descriptor.getPropertyType().getAnnotationsByType(Transient.class) != null) {
+					if (getAnnotation(descriptor, Transient.class) != null) {
 						continue;
 					}
 					Object value = null;
@@ -279,28 +298,9 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 						args.add(value);
 						position++;
 					} else {
-						Method read = descriptor.getReadMethod(), write = descriptor.getWriteMethod();
-						ManyToOne manyToOne = null;
-						if (read != null) {
-							manyToOne = read.getAnnotation(ManyToOne.class);
-						}
-						if (manyToOne == null && write != null) {
-							manyToOne = write.getAnnotation(ManyToOne.class);
-						}
-						OneToOne oneToOne = null;
-						if (read != null) {
-							oneToOne = read.getAnnotation(OneToOne.class);
-						}
-						if (oneToOne == null && write != null) {
-							oneToOne = write.getAnnotation(OneToOne.class);
-						}
-						Embedded embedded = null;
-						if (read != null) {
-							embedded = read.getAnnotation(Embedded.class);
-						}
-						if (embedded == null && write != null) {
-							embedded = write.getAnnotation(Embedded.class);
-						}
+						ManyToOne manyToOne = getAnnotation(descriptor, ManyToOne.class);
+						OneToOne oneToOne =getAnnotation(descriptor, OneToOne.class);
+						Embedded embedded = getAnnotation(descriptor, Embedded.class);
 						if (manyToOne != null || oneToOne != null || embedded != null) {
 							if (set.contains(o)) {// 若遇到相互关联的情况，则终止递归
 								return;

@@ -1,21 +1,23 @@
 package com.github.emailtohl.building.site.service.impl;
-import static com.github.emailtohl.building.initdb.PersistenceData.*;
+import static com.github.emailtohl.building.initdb.PersistenceData.bar;
 import static com.github.emailtohl.building.initdb.PersistenceData.employee;
+import static com.github.emailtohl.building.initdb.PersistenceData.foo;
+import static com.github.emailtohl.building.initdb.PersistenceData.manager;
+import static com.github.emailtohl.building.initdb.PersistenceData.user;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.transaction.Transactional;
 import javax.validation.ConstraintViolation;
 
 import org.apache.logging.log4j.LogManager;
@@ -23,6 +25,7 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
@@ -33,8 +36,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.Validator;
 import com.github.emailtohl.building.config.RootContextConfiguration;
-import com.github.emailtohl.building.site.dto.UserDto;
-import com.github.emailtohl.building.site.dto.UserDto.UserType;
+import com.github.emailtohl.building.site.dao.RoleRepository;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.Employee;
 import com.github.emailtohl.building.site.entities.Role;
@@ -44,16 +46,17 @@ import com.github.emailtohl.building.site.entities.User.Gender;
 import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
 import com.github.emailtohl.building.stub.SecurityContextManager;
-import com.github.emailtohl.building.stub.ServiceStub;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = RootContextConfiguration.class)
 @ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
+@Transactional
 public class UserServiceImplTest {
 	static final Logger logger = LogManager.getLogger();
 	@Inject @Named("userServiceImpl") UserService userService;
 	@Inject AuthenticationService authenticationService;
 	@Inject SecurityContextManager securityContextManager;
+	@Inject RoleRepository roleRepository;
 	Employee emp;
 	Customer cus;
 	
@@ -131,6 +134,11 @@ public class UserServiceImplTest {
 			userService.disableUser(id);
 			qu = userService.getUser(id);
 			assertFalse(qu.getEnabled());
+			// test grantRoles
+			userService.grantRoles(id, Role.USER, Role.MANAGER);
+			qu = userService.getUser(id);
+			assertTrue(qu.getRoles().contains(roleRepository.findByName(Role.USER)));
+			assertTrue(qu.getRoles().contains(roleRepository.findByName(Role.MANAGER)));
 		} catch (Exception e) {
 			throw e;
 		} finally {
@@ -162,6 +170,12 @@ public class UserServiceImplTest {
 			userService.disableUser(id);
 			qu = userService.getUser(id);
 			assertFalse(qu.getEnabled());
+			// test grantRoles
+			userService.grantRoles(id, Role.EMPLOYEE, Role.MANAGER);
+			qu = userService.getUser(id);
+			assertTrue(qu.getRoles().contains(roleRepository.findByName(Role.EMPLOYEE)));
+			assertTrue(qu.getRoles().contains(roleRepository.findByName(Role.MANAGER)));
+			assertFalse(qu.getRoles().contains(roleRepository.findByName(Role.USER)));
 		} catch (Exception e) {
 			throw e;
 		} finally {
@@ -184,14 +198,18 @@ public class UserServiceImplTest {
 	@Test
 	public void testGetUserPager() {
 		// 查询页从第0页开始
-		Pager<User> p = userService.getUserPager(foo, new PageRequest(0, 20));
+		User u = new User();
+		BeanUtils.copyProperties(foo, u, "iconSrc", "icon", "password");
+		Pager<User> p = userService.getUserPager(u, new PageRequest(0, 20));
 		assertTrue(p.getContent().size() > 0);
 	}
 	
 	@Test
 	public void testGetUserPage() {
 		// 查询页从第0页开始
-		Page<User> p = userService.getUserPage(bar, new PageRequest(0, 20));
+		User u = new User();
+		BeanUtils.copyProperties(foo, u, "iconSrc", "icon", "password");
+		Page<User> p = userService.getUserPage(u, new PageRequest(0, 20));
 		assertTrue(p.getContent().size() > 0);
 	}
 	

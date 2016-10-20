@@ -106,9 +106,16 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void grantRoles(long id, String... roleNames) {
 		User u = userRepository.findOne(id);
+		// 先删除原有的
+		for (Role r : u.getRoles()) {
+			r.getUsers().remove(u);
+			u.getRoles().remove(r);
+		}
+		// 再添加新增的
 		for (String name : roleNames) {
 			Role r = roleRepository.findByName(name);
 			if (r == null) {
+				// 抛出异常后，事务会回滚
 				throw new IllegalArgumentException("没有这个角色名： " + name);
 			}
 			u.getRoles().add(r);
