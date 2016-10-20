@@ -114,7 +114,7 @@ public interface UserService {
 	 * @return
 	 */
 	@PostAuthorize("hasAuthority('" + USER_READ_ALL + "') || (hasAuthority('" + USER_READ_SELF + "') && #email == principal.username)")
-	User getUserByEmail(@NotNull String email);
+	User getUserByEmail(@NotNull @P("email") String email);
 	
 	/**
 	 * 修改用户
@@ -125,7 +125,18 @@ public interface UserService {
 	 * @param u中的id不能为null， u中属性不为null的值为修改项
 	 */
 	@PreAuthorize("hasAuthority('" + USER_UPDATE_ALL + "') || (hasAuthority('" + USER_UPDATE_SELF + "') && #email == principal.username)")
-	void mergeUser(@NotNull @P("email") String email, User u/* 用最大范围接收数据 */);
+	void mergeEmployee(@NotNull @P("email") String email, Employee emp);
+	
+	/**
+	 * 修改用户
+	 * 这里的方法名使用的是merge，传入的User参数只存储需要更新的属性，不更新的属性值为null
+	 * 
+	 * 修改密码，启用/禁用账户，授权功能，不走此接口
+	 * 
+	 * @param u中的id不能为null， u中属性不为null的值为修改项
+	 */
+	@PreAuthorize("hasAuthority('" + USER_UPDATE_ALL + "') || (hasAuthority('" + USER_UPDATE_SELF + "') && #email == principal.username)")
+	void mergeCustomer(@NotNull @P("email") String email, Customer cus);
 	
 	/**
 	 * 获取用户Pager

@@ -63,7 +63,7 @@ public class UserCtrlTest {
 		doAnswer(answer).when(userService).deleteUser(100L);
 		when(userService.getUser(100L)).thenReturn(fooDto);
 		when(userService.getUserByEmail("foo@test.com")).thenReturn(fooDto);
-		doAnswer(answer).when(userService).mergeUser(100L, fooDto);
+		doAnswer(answer).when(userService).mergeEmployee(100L, fooDto);
 		Pager<UserDto> pager = new Pager<UserDto>(Arrays.asList(fooDto));
 		when(userService.getUserPager(fooDto, new PageRequest(0, 20))).thenReturn(pager);
 		Page<UserDto> page = new PageImpl<UserDto>(Arrays.asList(fooDto));

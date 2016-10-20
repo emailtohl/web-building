@@ -653,14 +653,20 @@ public final class BeanTools {
 				try {
 					type = entry.getValue().getPropertyType();
 					value = entry.getValue().getReadMethod().invoke(t, new Object[] {});
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				} catch (IllegalAccessException | IllegalArgumentException e) {
 					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					// 如果没有getter方法时
+					continue;
 				}
 				if (value != null && type != null && destMap.containsKey(name)) {
 					PropertyDescriptor pd = destMap.get(name);
 					if (pd.getPropertyType().isAssignableFrom(type)) {
 						try {
-							pd.getWriteMethod().invoke(dest, value);
+							Method w = pd.getWriteMethod();
+							if (w != null) {
+								w.invoke(dest, value);
+							}
 						} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 							e.printStackTrace();
 						}

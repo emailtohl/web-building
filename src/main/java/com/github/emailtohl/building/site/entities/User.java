@@ -2,6 +2,7 @@ package com.github.emailtohl.building.site.entities;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,6 +30,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -38,6 +40,10 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.search.annotations.Field;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.github.emailtohl.building.common.Constant;
 
@@ -55,7 +61,7 @@ import com.github.emailtohl.building.common.Constant;
 @DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
 //指定User实体对应的记录在辨别者列的值是“user”
 @DiscriminatorValue("user") // 若不注解，则默认使用实体名
-public class User extends BaseEntity {
+public class User extends BaseEntity implements Authentication/* 实现Authentication接口可以被Spring security的安全管理器使用 */ {
 	private static final long serialVersionUID = -2648409468140926726L;
 	public enum Gender {
 		MALE, FEMALE, UNSPECIFIED
@@ -270,6 +276,121 @@ public class User extends BaseEntity {
 				+ ", telephone=" + telephone + ", enabled=" + enabled + ", birthday=" + birthday + ", age=" + age
 				+ ", gender=" + gender + ", subsidiary=" + subsidiary + ", iconSrc=" + iconSrc + ", description="
 				+ description + ", roles=" + roles + "]";
+	}
+	
+	/**
+	 * 下面是实现Authentication的方法
+	 */
+	@Transient
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		Set<String> set = authorities();
+		return AuthorityUtils.createAuthorityList(set.toArray(new String[set.size()]));
+	}
+	@Transient
+	@Override
+	public Object getCredentials() {
+		// 认证的时候存储密码，用过之后会擦除，所以直接返回null
+		return password;
+	}
+	
+	@Transient
+	private Object details;
+	@Transient
+	@Override
+	public Object getDetails() {
+		/*
+		 * Stores additional details about the authentication request.
+		 * These might be an IP address, certificate serial number etc.
+		 */
+		return details;
+	}
+	@Transient
+	public void setDetails(Object details) {
+		this.details = details;
+	}
+	
+	@Transient
+	@Override
+	public Object getPrincipal() {
+		/*
+		 * The identity of the principal being authenticated. In the
+		 * case of an authentication request with username and password,
+		 * this would be the username. Callers are expected to populate
+		 * the principal for an authentication request.
+		 * 按照描述，getPrincipal()返回的应该是某种形式的用户名
+		 * 但是spring security需要在这个返回中获取更多的用户信息，结构是
+		 * org.springframework.security.core.userdetails.UserDetails
+		 */
+		return new UserDetails() {
+			private static final long serialVersionUID = -6107779964176713375L;
+
+			@Override
+			public Collection<? extends GrantedAuthority> getAuthorities() {
+				return getAuthorities();
+			}
+
+			@Override
+			public String getPassword() {
+				return password;
+			}
+
+			@Override
+			public String getUsername() {
+				return username;
+			}
+
+			@SuppressWarnings("unused")
+			private boolean accountNonExpired = true;
+			@Override
+			public boolean isAccountNonExpired() {
+				return true;
+			}
+			@SuppressWarnings("unused")
+			public void setAccountNonExpired(boolean accountNonExpired) {
+				this.accountNonExpired = accountNonExpired;
+			}
+
+			private boolean accountNonLocked = true;
+			@Override
+			public boolean isAccountNonLocked() {
+				return accountNonLocked;
+			}
+			@SuppressWarnings("unused")
+			public void setAccountNonLocked(boolean accountNonLocked) {
+				this.accountNonLocked = accountNonLocked;
+			}
+
+			private boolean credentialsNonExpired = true;
+			@Override
+			public boolean isCredentialsNonExpired() {
+				return credentialsNonExpired;
+			}
+			@SuppressWarnings("unused")
+			public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+				this.credentialsNonExpired = credentialsNonExpired;
+			}
+
+			@Override
+			public boolean isEnabled() {
+				return enabled;
+			}
+			
+		};
+		
+	}
+	
+	@Transient
+	private boolean authenticated = false;
+	@Transient
+	@Override
+	public boolean isAuthenticated() {
+		return authenticated;
+	}
+	@Transient
+	@Override
+	public void setAuthenticated(boolean authenticated) throws IllegalArgumentException {
+		this.authenticated = authenticated;
 	}
 	
 }

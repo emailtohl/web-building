@@ -16,9 +16,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.dto.UserDto;
+import com.github.emailtohl.building.site.entities.Customer;
+import com.github.emailtohl.building.site.entities.Employee;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
 
@@ -29,9 +32,12 @@ import com.github.emailtohl.building.site.service.UserService;
 @SuppressWarnings("unused")
 public class ServiceStub {
 	private static final Logger logger = LogManager.getLogger();
-	public final User testUserDto = baz;
-	public final long testId = 100L;
+	public final Employee employee = foo;
+	public final long employeeId = 200L;
+	public final Customer customer = baz;
+	public final long customerId = 100L;
 	public final String testPassword = "123456";
+	public final Pageable pageable = new PageRequest(0, 20);
 	
 	public UserService getUserService() {
 		UserService userService = mock(UserService.class);
@@ -40,21 +46,25 @@ public class ServiceStub {
 			logger.debug(invocation.getArguments());
 			return invocation.getMock();
 		};
-		when(userService.addEmployee(foo)).thenReturn(testId);
-		when(userService.addCustomer(baz)).thenReturn(testId);
-		doAnswer(answer).when(userService).enableUser(testId);
-		doAnswer(answer).when(userService).disableUser(testId);
-		doAnswer(answer).when(userService).grantRoles(testId);
-		doAnswer(answer).when(userService).changePassword(testUserDto.getEmail(), testPassword);
-		doAnswer(answer).when(userService).changePasswordByEmail(testUserDto.getEmail(), testPassword);
-		doAnswer(answer).when(userService).deleteUser(testId);
-		when(userService.getUser(testId)).thenReturn(testUserDto);
-		when(userService.getUserByEmail(testUserDto.getEmail())).thenReturn(testUserDto);
-		doAnswer(answer).when(userService).mergeUser(testUserDto.getEmail(), testUserDto);
-		Pager<User> pager = new Pager<User>(Arrays.asList(testUserDto));
-		when(userService.getUserPager(testUserDto, new PageRequest(0, 20))).thenReturn(pager);
-		Page<User> page = new PageImpl<User>(Arrays.asList(testUserDto));
-		when(userService.getUserPage(testUserDto, new PageRequest(0, 20))).thenReturn(page);
+		when(userService.addEmployee(employee)).thenReturn(employeeId);
+		when(userService.addCustomer(customer)).thenReturn(customerId);
+		doAnswer(answer).when(userService).enableUser(customerId);
+		doAnswer(answer).when(userService).disableUser(customerId);
+		doAnswer(answer).when(userService).grantRoles(customerId);
+		doAnswer(answer).when(userService).changePassword(customer.getEmail(), testPassword);
+		doAnswer(answer).when(userService).changePasswordByEmail(customer.getEmail(), testPassword);
+		doAnswer(answer).when(userService).deleteUser(customerId);
+		when(userService.getUser(customerId)).thenReturn(customer);
+		when(userService.getUserByEmail(customer.getEmail())).thenReturn(customer);
+		doAnswer(answer).when(userService).mergeEmployee(employee.getEmail(), employee);
+		Pager<User> employeePager = new Pager<User>(Arrays.asList(employee));
+		Pager<User> customerPager = new Pager<User>(Arrays.asList(customer));
+		when(userService.getUserPager(employee, pageable)).thenReturn(employeePager);
+		when(userService.getUserPager(customer, pageable)).thenReturn(customerPager);
+		Page<User> employeePage = new PageImpl<User>(Arrays.asList(employee));
+		Page<User> customerPage = new PageImpl<User>(Arrays.asList(customer));
+		when(userService.getUserPage(employee, pageable)).thenReturn(employeePage);
+		when(userService.getUserPage(customer, pageable)).thenReturn(customerPage);
 		return userService;
 	}
 	

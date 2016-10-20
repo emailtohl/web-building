@@ -147,20 +147,36 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public void mergeUser(String email, User u) {
-		User entity = userRepository.findByEmail(email);
-		// 修改密码，启用/禁用账户，授权功能，不走此接口，所以在调用merge方法前，先将其设置为null
-		u.setRoles(null);
-		u.setPassword(null);
-		u.setEnabled(null);
-		if (u instanceof Employee) {
-			Employee emp = (Employee) u;
-			Department d = emp.getDepartment();
-			if (d != null && d.getName() != null) {
-				emp.setDepartment(departmentRepository.findByName(d.getName()));
-			}
+	public void mergeEmployee(String email, Employee emp) {
+		User u = userRepository.findByEmail(email);
+		if (!(u instanceof Employee)) {
+			throw new IllegalArgumentException("未找到该职员");
 		}
-		BeanTools.merge(entity, u);
+		Employee entity = (Employee) u;
+		// 修改密码，启用/禁用账户，授权功能，不走此接口，所以在调用merge方法前，先将其设置为null
+		emp.setRoles(null);
+		emp.setPassword(null);
+		emp.setEnabled(null);
+		emp.setDepartment(null);
+		BeanTools.merge(entity, emp);
+		Department d = emp.getDepartment();
+		if (d != null && d.getName() != null) {
+			entity.setDepartment(departmentRepository.findByName(d.getName()));
+		}
+		userRepository.save(entity);
+	}
+	
+	public void mergeCustomer(String email, Customer cus) {
+		User u = userRepository.findByEmail(email);
+		if (!(u instanceof Customer)) {
+			throw new IllegalArgumentException("未找到该客户");
+		}
+		Customer entity = (Customer) u;
+		// 修改密码，启用/禁用账户，授权功能，不走此接口，所以在调用merge方法前，先将其设置为null
+		cus.setRoles(null);
+		cus.setPassword(null);
+		cus.setEnabled(null);
+		BeanTools.merge(entity, cus);
 		userRepository.save(entity);
 	}
 

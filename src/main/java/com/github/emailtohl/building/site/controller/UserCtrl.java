@@ -202,7 +202,7 @@ public class UserCtrl {
 			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
 		}
 		User u = userService.getUser(id);
-		userService.mergeUser(u.getEmail(), user);
+		userService.mergeEmployee(u.getEmail(), user);
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
 	

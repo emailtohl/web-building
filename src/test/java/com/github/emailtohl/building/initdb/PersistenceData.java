@@ -72,12 +72,12 @@ public class PersistenceData {
 		user_grant_roles.getRoles().addAll(Arrays.asList(admin, manager));
 		user_read_all.getRoles().addAll(Arrays.asList(admin, manager, employee));
 		user_read_self.getRoles().addAll(Arrays.asList(admin, manager, employee, user));
-		user_update_all.getRoles().addAll(Arrays.asList(admin, manager));
+		user_update_all.getRoles().addAll(Arrays.asList(admin));
 		user_update_self.getRoles().addAll(Arrays.asList(admin, manager, employee, user));
 		user_delete.getRoles().add(admin);
 		
 		admin.getAuthorities().addAll(Arrays.asList(user_create_ordinary, user_create_special, user_enable, user_disable, user_grant_roles, user_read_all, user_read_self, user_update_all, user_update_self, user_delete));
-		manager.getAuthorities().addAll(Arrays.asList(user_create_ordinary, user_create_special, user_enable, user_disable, user_grant_roles, user_read_all, user_read_self, user_update_all, user_update_self));
+		manager.getAuthorities().addAll(Arrays.asList(user_create_ordinary, user_create_special, user_enable, user_disable, user_grant_roles, user_read_all, user_read_self, user_update_self));
 		employee.getAuthorities().addAll(Arrays.asList(user_create_ordinary, user_enable, user_read_all, user_read_self, user_update_self));
 		user.getAuthorities().addAll(Arrays.asList(user_create_ordinary, user_enable, user_read_self, user_update_self));
 		

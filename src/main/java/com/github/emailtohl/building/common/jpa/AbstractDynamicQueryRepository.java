@@ -4,6 +4,7 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.beans.Transient;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -241,9 +242,16 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 				}
 				PropertyDescriptor[] descriptors = info.getPropertyDescriptors();
 				for (PropertyDescriptor descriptor : descriptors) {
+					if (descriptor.getPropertyType().getAnnotationsByType(Transient.class) != null) {
+						continue;
+					}
 					Object value = null;
 					try {
-						value = descriptor.getReadMethod().invoke(o);
+						Method m = descriptor.getReadMethod();
+						if (m == null) {
+							continue;
+						}
+						value = m.invoke(o);
 					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 						e.printStackTrace();
 					}
@@ -272,16 +280,25 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 						position++;
 					} else {
 						Method read = descriptor.getReadMethod(), write = descriptor.getWriteMethod();
-						ManyToOne manyToOne = read.getAnnotation(ManyToOne.class);
-						if (manyToOne == null) {
+						ManyToOne manyToOne = null;
+						if (read != null) {
+							manyToOne = read.getAnnotation(ManyToOne.class);
+						}
+						if (manyToOne == null && write != null) {
 							manyToOne = write.getAnnotation(ManyToOne.class);
 						}
-						OneToOne oneToOne = read.getAnnotation(OneToOne.class);
-						if (oneToOne == null) {
+						OneToOne oneToOne = null;
+						if (read != null) {
+							oneToOne = read.getAnnotation(OneToOne.class);
+						}
+						if (oneToOne == null && write != null) {
 							oneToOne = write.getAnnotation(OneToOne.class);
 						}
-						Embedded embedded = read.getAnnotation(Embedded.class);
-						if (embedded == null) {
+						Embedded embedded = null;
+						if (read != null) {
+							embedded = read.getAnnotation(Embedded.class);
+						}
+						if (embedded == null && write != null) {
 							embedded = write.getAnnotation(Embedded.class);
 						}
 						if (manyToOne != null || oneToOne != null || embedded != null) {
@@ -343,7 +360,7 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 					for (int i = 0; i < fields.length; i++) {
 						Field field = fields[i];
 						int modifiers = field.getModifiers();
-						if (Modifier.isStatic(modifiers) || Modifier.isTransient(modifiers)) {
+						if (Modifier.isStatic(modifiers) || Modifier.isTransient(modifiers) || field.getAnnotation(Transient.class) != null) {
 							continue;
 						}
 						field.setAccessible(true);
