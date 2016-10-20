@@ -156,7 +156,7 @@ public class UserRepositoryTest {
 		logger.debug("getTotalElements:" + p.getTotalElements());
 		logger.debug("getTotalPages:" + p.getTotalPages());
 		logger.debug("hasContent:" + p.getContent());
-		assertEquals(3, p.getTotalElements());
+		assertEquals(4, p.getTotalElements());
 	}
 	
 	/**

@@ -91,7 +91,6 @@ public class ServiceStub {
 		when(userService.authenticate(employee)).thenReturn(employee);
 		when(userService.authenticate(customer)).thenReturn(customer);
 		
-		
 		return userService;
 	}
 	

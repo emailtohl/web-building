@@ -26,7 +26,6 @@ import org.mockito.stubbing.Answer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.test.context.ActiveProfiles;
@@ -35,7 +34,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.dto.UserDto;
@@ -169,7 +167,7 @@ public class LoginCtrlTest {
 				)
 		.andExpect(status().is(404));
 		mockMvc.perform(post("/forgetPassword")
-				.param("email", foo.getEmail())
+				.param("email", serviceStub.employee.getEmail())
 				.param("_csrf", "_csrf")
 				)
 		.andExpect(status().isOk());
