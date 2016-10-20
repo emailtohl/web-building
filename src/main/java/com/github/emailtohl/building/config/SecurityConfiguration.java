@@ -58,8 +58,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	/**
 	 * 自定义AuthenticationProvider，可用它来定制如何认证用户
-	 * 该实例是在RootContextConfiguration扫描包时，在
-	 * com.github.emailtohl.building.site.service.impl.AuthenticationServiceImpl中找到的
 	 */
 	@Inject
 	@Named("userServiceImpl")
@@ -67,8 +65,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	/**
 	 * 自定义认证方式所需要的依赖
-	 * 它同样是在RootContextConfiguration扫描
-	 * com.github.emailtohl.building.site.service.impl.AuthenticationServiceImpl时实例化的
 	 */
 	@Inject
 	@Named("userServiceImpl")

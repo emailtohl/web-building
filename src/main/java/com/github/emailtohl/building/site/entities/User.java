@@ -136,7 +136,7 @@ public class User extends BaseEntity implements Authentication, UserDetails/* хо
 	}
 	
     public boolean isEnabled() {
-		return enabled;
+		return enabled == null ? false : enabled;
 	}
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;

@@ -213,4 +213,8 @@ public class UserServiceImplTest {
 		assertTrue(p.getContent().size() > 0);
 	}
 	
+	@Test
+	public void testAuthenticate() {
+		userService.authenticate(foo.getEmail(), foo.getPassword());
+	}
 }
