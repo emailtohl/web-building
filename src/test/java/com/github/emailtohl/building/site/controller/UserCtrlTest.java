@@ -84,11 +84,17 @@ public class UserCtrlTest {
 
 	@Test
 	public void testGetUserByEmail() throws Exception {
-		mockMvc.perform(get("/user/email?email=foo@test.com"))
+		mockMvc.perform(get("/user/email?email=" + empDto.getEmail()))
 		.andExpect(status().isOk());
 		
-		mockMvc.perform(get("/user/email?email=bar@test.com"))
+		mockMvc.perform(get("/user/email?email=aaa@test.com"))
 		.andExpect(status().is(HttpStatus.NOT_FOUND.value()));
+	}
+	
+	@Test
+	public void testGetPageByRoles() throws Exception {
+		mockMvc.perform(get("/user/pageByRoles?email=" + empDto.getEmail()))
+		.andExpect(status().isOk());
 	}
 
 //	@Test

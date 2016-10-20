@@ -135,10 +135,13 @@ public class UserServiceImplTest {
 			qu = userService.getUser(id);
 			assertFalse(qu.isEnabled());
 			// test grantRoles
-			userService.grantRoles(id, Role.USER, Role.MANAGER);
+			userService.grantRoles(id, Role.EMPLOYEE, Role.MANAGER);
 			qu = userService.getUser(id);
-			assertTrue(qu.getRoles().contains(roleRepository.findByName(Role.USER)));
+			assertTrue(qu.getRoles().contains(roleRepository.findByName(Role.EMPLOYEE)));
 			assertTrue(qu.getRoles().contains(roleRepository.findByName(Role.MANAGER)));
+			
+			userService.grantUserRole(id);
+			assertTrue(qu.getRoles().contains(roleRepository.findByName(Role.USER)));
 		} catch (Exception e) {
 			throw e;
 		} finally {
@@ -170,6 +173,9 @@ public class UserServiceImplTest {
 			userService.disableUser(id);
 			qu = userService.getUser(id);
 			assertFalse(qu.isEnabled());
+			
+			userService.grantUserRole(id);
+			assertTrue(qu.getRoles().contains(roleRepository.findByName(Role.USER)));
 			// test grantRoles
 			userService.grantRoles(id, Role.EMPLOYEE, Role.MANAGER);
 			qu = userService.getUser(id);

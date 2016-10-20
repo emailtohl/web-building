@@ -135,6 +135,20 @@ public class UserCtrl {
 	}
 	
 	/**
+	 * 获取用户权限列表
+	 * @param form
+	 * @param pageable
+	 * @return
+	 */
+	@RequestMapping(value = "pageByRoles", method = GET)
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	public Pager<User> getPageByRoles(@ModelAttribute UserDto form,
+			@PageableDefault(page = 0, size = 20, sort = BaseEntity.MODIFY_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
+		return userService.getPageByRoles(form.getEmail(), form.getRoles(), pageable);
+	}
+	
+	/**
 	 * 新增一个Employee
 	 * 适用于管理员操作，或RestFull风格的调用，受安全策略保护
 	 * 若注册页面中新增一个用户，可用/register，POST添加

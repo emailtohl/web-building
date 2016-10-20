@@ -131,7 +131,15 @@ public class UserServiceImpl implements UserService {
 			r.getUsers().add(u);
 		}
 	}
-
+	
+	@Override
+	public void grantUserRole(long id) {
+		User u = userRepository.findOne(id);
+		Role r = roleRepository.findByName(Role.USER);
+		u.getRoles().add(r);
+		r.getUsers().add(u);
+	}
+	
 	@Override
 	public void changePassword(String email, String newPassword) {
 		String hashPw = BCryptUtil.hash(newPassword);

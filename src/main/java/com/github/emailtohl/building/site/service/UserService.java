@@ -81,6 +81,12 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	void grantRoles(long id, String... roleNames);
 	
 	/**
+	 * 新建用户时，授予普通用户角色
+	 * @param id
+	 */
+	void grantUserRole(long id);
+	
+	/**
 	 * 修改密码，限制只能本人才能修改
 	 * 登录页面中通过邮箱方式修改密码在AuthenticationService接口中
 	 * authentication是直接从SecurityContextHolder中获取的对象

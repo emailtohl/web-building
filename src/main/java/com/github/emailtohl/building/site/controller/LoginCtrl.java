@@ -4,12 +4,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -43,26 +40,23 @@ import com.github.emailtohl.building.exception.ResourceNotFoundException;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.BaseEntity;
 import com.github.emailtohl.building.site.entities.Customer;
-import com.github.emailtohl.building.site.entities.Role;
+import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.mail.EmailService;
-import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
 /**
  * 认证控制器，管理用户注册，更改密码，授权等功能
  * @author HeLei
  */
 @Controller
-public class AuthenticationCtrl {
+public class LoginCtrl {
 	private static final Logger logger = LogManager.getLogger();
-	@Inject AuthenticationService authenticationService;
-	@Inject UserService userService;
-	@Inject EmailService emailService;
-	@Inject ThreadPoolTaskScheduler taskScheduler;
+	@Inject private UserService userService;
+	@Inject private EmailService emailService;
+	@Inject private ThreadPoolTaskScheduler taskScheduler;
 	/**
 	 * 忘记密码时，当发送邮件时，会记录一个token，该token有时效，过期会被清除
 	 */
-	Map<String, String> tokenMap = new ConcurrentHashMap<String, String>();
-	
+	private Map<String, String> tokenMap = new ConcurrentHashMap<String, String>();
 	
 	/**
 	 * GET方法获取登录页面
@@ -92,7 +86,7 @@ public class AuthenticationCtrl {
 	 * @throws UnsupportedEncodingException 
 	 */
 	@RequestMapping(value = "register", method = RequestMethod.POST, produces = {"text/html;charset=UTF-8"})
-	public String register(HttpServletRequest requet, @Valid UserDto u, org.springframework.validation.Errors e) {
+	public String register(HttpServletRequest requet, @Valid UserDto form, org.springframework.validation.Errors e) {
 		// 第一步，判断提交表单是否有效
 		if (e.hasErrors()) {
 			StringBuilder s = new StringBuilder();
@@ -105,12 +99,12 @@ public class AuthenticationCtrl {
 		}
 		try {
 			// 第二步，添加该用户，若报运行时异常，则抛出，告诉用户该账号不能注册
-			Customer c = new Customer();
+			Customer c = form.convertCustomer();
 			long id = userService.addCustomer(c);
 			
 			// 第三步，邮件通知用户，让其激活该账号
 			String url = requet.getScheme() + "://" + requet.getServerName() + ":" + requet.getServerPort() + requet.getContextPath() + "/enable?id=" + id;
-			emailService.enableUser(url, u.getEmail());
+			emailService.enableUser(url, form.getEmail());
 			return "login";
 		} catch (RuntimeException e1) {
 			return "redirect:register?error=" + encode("邮箱重复");
@@ -138,7 +132,7 @@ public class AuthenticationCtrl {
 	 */
 	@RequestMapping(value = "forgetPassword", method = RequestMethod.POST)
 	public void forgetPassword(HttpServletRequest requet, String email, String _csrf) {
-		if (!authenticationService.isExist(email)) {
+		if (!userService.isExist(email)) {
 			throw new ResourceNotFoundException();
 		}
 		String token = UUID.randomUUID().toString();
@@ -185,7 +179,7 @@ public class AuthenticationCtrl {
 		if (!email.equals(tokenMap.get(token))) {
 			return "redirect:login?error=expire";
 		}
-		authenticationService.changePassword(email, password);
+		userService.changePasswordByEmail(email, password);
 		return "login";
 	}
 	
@@ -198,7 +192,7 @@ public class AuthenticationCtrl {
 	public String enable(long id) {
 		userService.enableUser(id);
 		// 注意，若未给用户授权，则spring security自带的认证器会认为认证失败，所以初始化时必须给予一定权限
-		authenticationService.grantedRoles(id, new HashSet<String>(Arrays.asList(Role.USER)));
+		userService.grantUserRole(id);
 		return "login";
 	}
 
@@ -223,21 +217,6 @@ public class AuthenticationCtrl {
 		return map;
 	}
 	
-	
-	/**
-	 * 获取用户权限列表
-	 * @param u
-	 * @param pageable
-	 * @return
-	 */
-	@RequestMapping(value = "authentication/page", method = GET)
-	@ResponseBody
-	@ResponseStatus(HttpStatus.OK)
-	public Pager<UserDto> getPageByAuthorities(@ModelAttribute UserDto u,
-			@PageableDefault(page = 0, size = 20, sort = BaseEntity.MODIFY_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
-		return authenticationService.getPageByRoles(u, pageable);
-	}
-	
 	/**
 	 * 对用户授权，权限识别由service控制
 	 * @param id
@@ -245,8 +224,8 @@ public class AuthenticationCtrl {
 	 */
 	@RequestMapping(value = "authentication/authorize/{id}", method = RequestMethod.PUT)
 	@ResponseBody
-	public void authorize(@PathVariable @Min(1L) Long id, @RequestBody Set<String> roles) {
-		authenticationService.grantedRoles(id, roles);
+	public void authorize(@PathVariable @Min(1L) Long id, @RequestBody String[] roles) {
+		userService.grantRoles(id, roles);
 	}
 	
 	/**
@@ -256,10 +235,6 @@ public class AuthenticationCtrl {
 	@RequestMapping({ "secure" })
 	public String securePage() {
 		return "secure";
-	}
-
-	public void setAuthenticationService(AuthenticationService authenticationService) {
-		this.authenticationService = authenticationService;
 	}
 
 	public void setUserService(UserService userService) {

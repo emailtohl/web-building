@@ -50,7 +50,7 @@ import com.google.gson.Gson;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = RootContextConfiguration.class)
 @ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
-public class AuthenticationCtrlTest {
+public class LoginCtrlTest {
 	@Inject ServiceStub serviceStub;
 	@Inject @Named("userServiceMock") UserService userService;
 	@Inject SecurityContextManager securityContextManager;
@@ -122,8 +122,7 @@ public class AuthenticationCtrlTest {
 		doAnswer(answer).when(emailService).enableUser("http://localhost:8080/building/register", "emailtohl@163.com");
 		doAnswer(answer).when(emailService).updatePassword("http://localhost:8080/building/register", "emailtohl@163.com", "test", "test");
 		
-		AuthenticationCtrl authenticationCtrl = new AuthenticationCtrl();
-		authenticationCtrl.setAuthenticationService(authenticationService);
+		LoginCtrl authenticationCtrl = new LoginCtrl();
 		authenticationCtrl.setUserService(userService);
 		authenticationCtrl.setEmailService(emailService);
 //		authenticationCtrl.setTaskScheduler(Spring.context.getBean(ThreadPoolTaskScheduler.class));

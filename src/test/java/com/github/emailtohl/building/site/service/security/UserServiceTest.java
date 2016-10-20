@@ -99,6 +99,12 @@ public class UserServiceTest {
 		userService.grantRoles(serviceStub.customerId);
 	}
 	
+	@Test
+	public void testGrantUserRole() {
+		securityContextManager.clearContext();
+		userService.grantUserRole(serviceStub.customerId);
+	}
+	
 	@Test(expected = AuthenticationCredentialsNotFoundException.class)
 	public void testChangePassword1() {
 		securityContextManager.clearContext();
