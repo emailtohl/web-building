@@ -1,4 +1,7 @@
 package com.github.emailtohl.building.site.service.security;
+import static com.github.emailtohl.building.site.entities.Authority.USER_DELETE;
+import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_ALL;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -251,4 +254,9 @@ public class UserServiceTest {
 		userService.getUserPage(serviceStub.customer, serviceStub.pageable);
 	}
 
+	@Test
+	public void testHasAuthority() {
+		securityContextManager.clearContext();
+		userService.hasAuthority(USER_DELETE, USER_UPDATE_ALL);
+	}
 }

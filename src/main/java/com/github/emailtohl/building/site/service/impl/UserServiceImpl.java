@@ -1,10 +1,16 @@
 package com.github.emailtohl.building.site.service.impl;
+import static com.github.emailtohl.building.site.entities.Authority.USER_DELETE;
+import static com.github.emailtohl.building.site.entities.Role.ADMIN;
+
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
@@ -16,6 +22,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -47,6 +55,12 @@ public class UserServiceImpl implements UserService {
 	@Inject UserRepository userRepository;
 	@Inject RoleRepository roleRepository;
 	@Inject DepartmentRepository departmentRepository;
+	private Role admin;
+	
+	@PostConstruct
+	public void setRoles() {
+		admin = roleRepository.findByName(ADMIN);
+	}
 	
 	@Override
 	public Long addEmployee(Employee u) {
@@ -115,6 +129,8 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public void grantRoles(long id, String... roleNames) {
+		// 能进此接口的拥有USER_GRANT_ROLES权限，现在认为含有删除用户的权限的人就拥有ADMIN角色
+		boolean isAdmin = hasAuthority(USER_DELETE);
 		User u = userRepository.findOne(id);
 		// 先删除原有的
 		for (Role r : u.getRoles()) {
@@ -124,6 +140,9 @@ public class UserServiceImpl implements UserService {
 		// 再添加新增的
 		for (String name : roleNames) {
 			Role r = roleRepository.findByName(name);
+			if (!isAdmin && r.equals(admin)) {
+				throw new IllegalArgumentException("你没有权限分配ADMIN角色");
+			}
 			if (r == null) {
 				// 抛出异常后，事务会回滚
 				throw new IllegalArgumentException("没有这个角色名： " + name);
@@ -233,6 +252,29 @@ public class UserServiceImpl implements UserService {
 		return userRepository.getPagerByCriteria(email, roles, pageable);
 	}
 
+	@Override
+	public boolean hasAuthority(String ... authorities) {
+		boolean result = false;
+		Authentication a = SecurityContextHolder.getContext().getAuthentication();
+		if (a != null) {
+			Set<String> grantedAuthoritySet = getGrantedAuthoritySet(a.getAuthorities());
+			for (int i = 0; i < authorities.length; i++) {
+				if (grantedAuthoritySet.contains(authorities[i])) {
+					result = true;
+					break;
+				}
+			}
+		}
+		return result;
+	}
+	
+	private Set<String> getGrantedAuthoritySet(Collection<? extends GrantedAuthority> collection) {
+		Set<String> set = new HashSet<String>();
+		for (GrantedAuthority g : collection) {
+			set.add(g.getAuthority());
+		}
+		return set;
+	}
 	
 	@Override
 	public Authentication authenticate(String email, String password) {
@@ -324,4 +366,5 @@ public class UserServiceImpl implements UserService {
 		User u = userRepository.findByEmail(email);
 		return u.getUserDetails();
 	}
+
 }

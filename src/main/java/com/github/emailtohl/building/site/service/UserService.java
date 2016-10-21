@@ -195,10 +195,18 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	Pager<User> getPageByRoles(String email, Set<Role> roles, Pageable pageable);
 
 	/**
+	 * 判断用户是否具有该权限
+	 * @param authorities
+	 * @return
+	 */
+	boolean hasAuthority(String... authorities);
+	
+	/**
 	 * 认证（登录）
 	 * @param email
 	 * @param password
 	 * @return
 	 */
 	Authentication authenticate(String email, String password);
+
 }

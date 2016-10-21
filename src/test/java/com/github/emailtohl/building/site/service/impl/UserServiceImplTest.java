@@ -1,4 +1,6 @@
 package com.github.emailtohl.building.site.service.impl;
+
+import static com.github.emailtohl.building.site.entities.Authority.*;
 import static com.github.emailtohl.building.initdb.PersistenceData.bar;
 import static com.github.emailtohl.building.initdb.PersistenceData.employee;
 import static com.github.emailtohl.building.initdb.PersistenceData.foo;
@@ -42,7 +44,6 @@ import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.Subsidiary;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.entities.User.Gender;
-import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
 import com.github.emailtohl.building.stub.SecurityContextManager;
 
@@ -53,7 +54,6 @@ import com.github.emailtohl.building.stub.SecurityContextManager;
 public class UserServiceImplTest {
 	static final Logger logger = LogManager.getLogger();
 	@Inject @Named("userServiceImpl") UserService userService;
-	@Inject AuthenticationService authenticationService;
 	@Inject SecurityContextManager securityContextManager;
 	@Inject RoleRepository roleRepository;
 	Employee emp;
@@ -197,7 +197,7 @@ public class UserServiceImplTest {
 		String old = "123456";
 		String pw = "987654321";
 		userService.changePassword(bar.getEmail(), pw);
-		Authentication a = authenticationService.authenticate(bar.getEmail(), pw);
+		Authentication a = userService.authenticate(bar.getEmail(), pw);
 		assertNotNull(a);
 		assertEquals(bar.getUsername(), a.getName());
 		userService.changePassword(bar.getEmail(), old);
@@ -223,6 +223,19 @@ public class UserServiceImplTest {
 		u.setEmail(foo.getEmail());
 		Page<User> p = userService.getUserPage(u, new PageRequest(0, 20));
 		assertTrue(p.getContent().size() > 0);
+	}
+	
+	@Test
+	public void testHasAuthority() {
+		securityContextManager.clearContext();
+		assertFalse(userService.hasAuthority(USER_DELETE, USER_UPDATE_ALL));
+		securityContextManager.setEmailtohl();
+		assertTrue(userService.hasAuthority(USER_DELETE, USER_UPDATE_ALL));
+		securityContextManager.setFoo();
+		assertTrue(userService.hasAuthority(USER_READ_ALL));
+		securityContextManager.setBaz();
+		assertFalse(userService.hasAuthority(USER_READ_ALL));
+		
 	}
 	
 	@Test
