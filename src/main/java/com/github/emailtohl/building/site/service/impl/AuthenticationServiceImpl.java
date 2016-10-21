@@ -284,7 +284,7 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 			this.id = u.getId();
 			this.email = u.getEmail();
 			this.username = this.email;
-			this.enabled = u.isEnabled();
+			this.enabled = u.getEnabled();
 			this.iconSrc = u.getIconSrc();
 			Set<String> stringAuthorities = u.authorities();
 			this.authorities = AuthorityUtils.createAuthorityList(stringAuthorities.toArray(new String[stringAuthorities.size()]));

@@ -138,14 +138,14 @@ public class User extends BaseEntity {
 		this.telephone = telephone;
 	}
 	
-    public Boolean isEnabled() {
+    public Boolean getEnabled() {
 		return enabled;
 	}
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
 	}
 	
-	public Boolean isAccountNonExpired() {
+	public Boolean getAccountNonExpired() {
 		return accountNonExpired;
 	}
 	
@@ -153,7 +153,7 @@ public class User extends BaseEntity {
 		this.accountNonExpired = accountNonExpired;
 	}
 	
-	public Boolean isCredentialsNonExpired() {
+	public Boolean getCredentialsNonExpired() {
 		return credentialsNonExpired;
 	}
 	
@@ -161,7 +161,7 @@ public class User extends BaseEntity {
 		this.credentialsNonExpired = credentialsNonExpired;
 	}
 	
-	public Boolean isAccountNonLocked() {
+	public Boolean getAccountNonLocked() {
 		return accountNonLocked;
 	}
 	
@@ -399,17 +399,17 @@ public class User extends BaseEntity {
 
 		@Override
 		public boolean isAccountNonExpired() {
-			return accountNonExpired;
+			return accountNonExpired == null ? false : accountNonExpired;
 		}
 
 		@Override
 		public boolean isAccountNonLocked() {
-			return accountNonLocked;
+			return accountNonLocked == null ? false : accountNonLocked;
 		}
 
 		@Override
 		public boolean isCredentialsNonExpired() {
-			return credentialsNonExpired;
+			return credentialsNonExpired == null ? false : credentialsNonExpired;
 		}
 
 		@Override

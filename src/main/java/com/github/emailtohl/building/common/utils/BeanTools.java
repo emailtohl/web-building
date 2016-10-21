@@ -671,11 +671,12 @@ public final class BeanTools {
 				Object value = null;
 				try {
 					type = entry.getValue().getPropertyType();
-					value = entry.getValue().getReadMethod().invoke(t, new Object[] {});
-				} catch (IllegalAccessException | IllegalArgumentException e) {
+					Method m = entry.getValue().getReadMethod();
+					if (m != null) {
+						value = m.invoke(t, new Object[] {});
+					}
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// 如果没有getter方法时
 					continue;
 				}
 				if (value != null && type != null && destMap.containsKey(name)) {

@@ -14,7 +14,6 @@ import com.github.emailtohl.building.bootspring.Spring;
 @Service
 @Transactional
 public class CreateTable2 {
-	private static AnnotationConfigApplicationContext ctx = Spring.getApplicationContext();
 	@PersistenceContext
 	protected EntityManager entityManager;
 	
@@ -44,6 +43,7 @@ public class CreateTable2 {
 		entityManager.persist(baz);
 	}
 	public static void main(String[] args) throws Exception {
+		AnnotationConfigApplicationContext ctx = Spring.getApplicationContext();
 		CreateTable2 ct = ctx.getBean(CreateTable2.class);
 		ct.init();
 		System.exit(0);

@@ -129,11 +129,11 @@ public class UserServiceImplTest {
 			// test enable
 			userService.enableUser(id);
 			qu = userService.getUser(id);
-			assertTrue(qu.isEnabled());
+			assertTrue(qu.getEnabled());
 			// test disable
 			userService.disableUser(id);
 			qu = userService.getUser(id);
-			assertFalse(qu.isEnabled());
+			assertFalse(qu.getEnabled());
 			// test grantRoles
 			userService.grantRoles(id, Role.EMPLOYEE, Role.MANAGER);
 			qu = userService.getUser(id);
@@ -143,6 +143,7 @@ public class UserServiceImplTest {
 			userService.grantUserRole(id);
 			assertTrue(qu.getRoles().contains(roleRepository.findByName(Role.USER)));
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw e;
 		} finally {
 			userService.deleteUser(id);
@@ -168,11 +169,11 @@ public class UserServiceImplTest {
 			// test enable
 			userService.enableUser(id);
 			qu = userService.getUser(id);
-			assertTrue(qu.isEnabled());
+			assertTrue(qu.getEnabled());
 			// test disable
 			userService.disableUser(id);
 			qu = userService.getUser(id);
-			assertFalse(qu.isEnabled());
+			assertFalse(qu.getEnabled());
 			
 			userService.grantUserRole(id);
 			assertTrue(qu.getRoles().contains(roleRepository.findByName(Role.USER)));
@@ -183,6 +184,7 @@ public class UserServiceImplTest {
 			assertTrue(qu.getRoles().contains(roleRepository.findByName(Role.MANAGER)));
 			assertFalse(qu.getRoles().contains(roleRepository.findByName(Role.USER)));
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw e;
 		} finally {
 			userService.deleteUser(id);
@@ -214,7 +216,7 @@ public class UserServiceImplTest {
 	public void testGetUserPage() {
 		// 查询页从第0页开始
 		User u = new User();
-		BeanUtils.copyProperties(foo, u, "iconSrc", "icon", "password");
+		BeanUtils.copyProperties(foo, u, "iconSrc", "icon", "password", "accountNonExpired");
 		Page<User> p = userService.getUserPage(u, new PageRequest(0, 20));
 		assertTrue(p.getContent().size() > 0);
 	}

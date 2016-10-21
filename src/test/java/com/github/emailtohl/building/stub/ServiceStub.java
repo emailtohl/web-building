@@ -1,43 +1,31 @@
 package com.github.emailtohl.building.stub;
 
-import static com.github.emailtohl.building.initdb.PersistenceData.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
+import static com.github.emailtohl.building.initdb.PersistenceData.baz;
+import static com.github.emailtohl.building.initdb.PersistenceData.foo;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import com.github.emailtohl.building.common.jpa.Pager;
-import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.Employee;
-import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
-import com.github.emailtohl.building.site.mail.EmailService;
-import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
 
 /**
  * 为项目测试提供统一的桩支持
  * @author HeLei
  */
-@SuppressWarnings("unused")
 public class ServiceStub {
 	private static final Logger logger = LogManager.getLogger();
 	public final Employee employee = foo;
