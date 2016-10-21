@@ -1,4 +1,6 @@
 package com.github.emailtohl.building.config;
+
+import static com.github.emailtohl.building.site.entities.Authority.*;
 import java.io.IOException;
 
 import javax.inject.Inject;
@@ -115,12 +117,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity security) throws Exception {
 		String[] permitUrl = {
 			"/"/* 首页 */,
-			"/register"/* 获取注册页面 */,
-			"/enable"/* 激活账号 */,
+			"/register"/* 获取注册页面GET以及注册新用户POST */,
+			"/user/customer"/* 注册新用户 */,
+			"/user/enable"/* 激活账号 */,
 			"/forgetPassword"/* 在邮箱中获取忘记密码页面 */,
 			"/getUpdatePasswordPage"/* 在邮箱中获取忘记密码页面 */,
-			"/updatePassword"/* 修改密码 */,
-			"/authenticate"/* 登录时的认证 */,
+			"/updatePassword"/* 修改密码，自己修改自己的密码，是否允许是根据token，而非权限 */,
+			"/enable"/* 获取激活页 */,
 			"/authentication"/* 获取认证信息 */,
 			"/index.html",
 			"/home.html",
@@ -132,15 +135,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		security
 				.authorizeRequests()
 					.antMatchers(permitUrl).permitAll()
-					.antMatchers("/admin/**").hasAuthority("ADMIN")
-					.antMatchers("/secure/**").hasAnyAuthority("ADMIN", "MANAGER")
 					.antMatchers("/user/**").fullyAuthenticated()
+					.antMatchers("/secure").fullyAuthenticated()
 					.antMatchers("/forum/**").fullyAuthenticated()
-					.antMatchers("/authentication/**").fullyAuthenticated()
-					.antMatchers(HttpMethod.DELETE, "/user/**").hasAnyAuthority("ADMIN", "MANAGER")
-					.antMatchers(HttpMethod.POST, "/user/**").hasAnyAuthority("ADMIN", "MANAGER")
-					.antMatchers(HttpMethod.PUT, "/user/**").hasAnyAuthority("ADMIN", "MANAGER")
-					.antMatchers(HttpMethod.POST, "/fileUploadServer/**").hasAnyAuthority("ADMIN", "MANAGER", "EMPLOYEE", "USER")
+					.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+					.antMatchers(HttpMethod.GET, "/user/**").hasAnyAuthority(USER_READ_ALL, USER_READ_SELF)
+					.antMatchers(HttpMethod.DELETE, "/user/**").hasAnyAuthority(USER_DELETE)
+					.antMatchers(HttpMethod.POST, "/user/employee").hasAuthority(USER_CREATE_SPECIAL)
+					.antMatchers(HttpMethod.PUT, "/user/**").hasAnyAuthority(USER_UPDATE_ALL, USER_UPDATE_SELF)
+					.antMatchers(HttpMethod.PUT, "/user/grantRoles/**").hasAuthority(USER_GRANT_ROLES)
+					.antMatchers(HttpMethod.PUT, "/user/disableUser/**").hasAuthority(USER_DISABLE)
+					.antMatchers(HttpMethod.POST, "/fileUploadServer/**").fullyAuthenticated()
 					.anyRequest().authenticated()
 				// HTTP Basic Authentication是基于REST风格，通过HTTP状态码与访问它的应用程序进行沟通
 				/*.and().httpBasic()*/

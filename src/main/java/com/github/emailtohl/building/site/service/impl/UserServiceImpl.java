@@ -2,6 +2,7 @@ package com.github.emailtohl.building.site.service.impl;
 import static com.github.emailtohl.building.site.entities.Authority.USER_DELETE;
 import static com.github.emailtohl.building.site.entities.Role.ADMIN;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -15,6 +16,7 @@ import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -291,6 +293,36 @@ public class UserServiceImpl implements UserService {
 		AuthenticationImpl a = u.getAuthentication();
 		a.setAuthenticated(true);
 		a.eraseCredentials();
+		@SuppressWarnings("unused")
+		class Details implements Serializable {
+			private static final long serialVersionUID = -7461854984848054398L;
+			String remoteAddress;
+			String sessionId;
+			String certificateSerialNumber;
+			public String getRemoteAddress() {
+				return remoteAddress;
+			}
+			public void setRemoteAddress(String remoteAddress) {
+				this.remoteAddress = remoteAddress;
+			}
+			public String getSessionId() {
+				return sessionId;
+			}
+			public void setSessionId(String sessionId) {
+				this.sessionId = sessionId;
+			}
+			public String getCertificateSerialNumber() {
+				return certificateSerialNumber;
+			}
+			public void setCertificateSerialNumber(String certificateSerialNumber) {
+				this.certificateSerialNumber = certificateSerialNumber;
+			}
+		}
+		
+		Details d = new Details();
+		d.setSessionId(ThreadContext.get("sessionId"));
+		d.setRemoteAddress(ThreadContext.get("remoteAddress"));
+		a.setDetails(d);
 		return a;
 	}
 	/**

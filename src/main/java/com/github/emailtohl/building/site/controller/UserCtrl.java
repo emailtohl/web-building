@@ -234,7 +234,7 @@ public class UserCtrl {
 	 * @param user
 	 */
 	@RequestMapping(value = "employee/{id}", method = PUT)
-	public ResponseEntity<Void> updateEmployee(@PathVariable("id") @Min(1L) long id, @Valid @RequestBody UserDto form/* 用最大范围来接收表单数据 */, Errors e) {
+	public ResponseEntity<Void> updateEmployee(@PathVariable("id") @Min(1L) long id, @Valid @RequestBody UserDto form, Errors e) {
 		if (e.hasErrors()) {
 			for (ObjectError oe : e.getAllErrors()) {
 				logger.info(oe);
@@ -253,7 +253,7 @@ public class UserCtrl {
 	 * @param user
 	 */
 	@RequestMapping(value = "customer/{id}", method = PUT)
-	public ResponseEntity<Void> updateCustomer(@PathVariable("id") @Min(1L) long id, @Valid @RequestBody UserDto form/* 用最大范围来接收表单数据 */, Errors e) {
+	public ResponseEntity<Void> updateCustomer(@PathVariable("id") @Min(1L) long id, @Valid @RequestBody UserDto form, Errors e) {
 		if (e.hasErrors()) {
 			for (ObjectError oe : e.getAllErrors()) {
 				logger.info(oe);
