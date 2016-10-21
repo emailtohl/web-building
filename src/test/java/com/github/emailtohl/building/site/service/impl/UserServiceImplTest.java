@@ -25,7 +25,6 @@ import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
@@ -139,7 +138,7 @@ public class UserServiceImplTest {
 			qu = userService.getUser(id);
 			assertTrue(qu.getRoles().contains(roleRepository.findByName(Role.EMPLOYEE)));
 			assertTrue(qu.getRoles().contains(roleRepository.findByName(Role.MANAGER)));
-			
+
 			userService.grantUserRole(id);
 			assertTrue(qu.getRoles().contains(roleRepository.findByName(Role.USER)));
 		} catch (Exception e) {
@@ -148,6 +147,7 @@ public class UserServiceImplTest {
 		} finally {
 			userService.deleteUser(id);
 		}
+
 	}
 	
 	@Test
@@ -174,7 +174,7 @@ public class UserServiceImplTest {
 			userService.disableUser(id);
 			qu = userService.getUser(id);
 			assertFalse(qu.getEnabled());
-			
+
 			userService.grantUserRole(id);
 			assertTrue(qu.getRoles().contains(roleRepository.findByName(Role.USER)));
 			// test grantRoles
@@ -207,7 +207,9 @@ public class UserServiceImplTest {
 	public void testGetUserPager() {
 		// 查询页从第0页开始
 		User u = new User();
-		BeanUtils.copyProperties(foo, u, "iconSrc", "icon", "password");
+		u.setUsername(foo.getUsername());
+		u.setRoles(foo.getRoles());
+		u.setEmail(foo.getEmail());
 		Pager<User> p = userService.getUserPager(u, new PageRequest(0, 20));
 		assertTrue(p.getContent().size() > 0);
 	}
@@ -216,7 +218,9 @@ public class UserServiceImplTest {
 	public void testGetUserPage() {
 		// 查询页从第0页开始
 		User u = new User();
-		BeanUtils.copyProperties(foo, u, "iconSrc", "icon", "password", "accountNonExpired");
+		u.setUsername(foo.getUsername());
+		u.setRoles(foo.getRoles());
+		u.setEmail(foo.getEmail());
 		Page<User> p = userService.getUserPage(u, new PageRequest(0, 20));
 		assertTrue(p.getContent().size() > 0);
 	}
