@@ -19,16 +19,10 @@ public class Spring {
 		if (context == null) {
 			context = new AnnotationConfigApplicationContext();
 			context.getEnvironment().setActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT);
-			context.register(RootContextConfiguration.class);
+			context.register(SpringConfigForTest.class);
 			context.refresh();
 		}
 		return context;
 	}
 	
-	// 测试
-	public static void main(String[] args) {
-		@SuppressWarnings("unused")
-		AnnotationConfigApplicationContext ctx = Spring.getApplicationContext();
-		System.exit(0);
-	}
 }

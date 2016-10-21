@@ -32,6 +32,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.common.jpa.AbstractDynamicQueryRepository.JpqlAndArgs;
 import com.github.emailtohl.building.common.jpa.AbstractDynamicQueryRepository.PredicateAndArgs;
 import com.github.emailtohl.building.common.jpa.relationEntities.Relation1;
@@ -45,7 +46,7 @@ import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.entities.User.Gender;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = RootContextConfiguration.class)
+@ContextConfiguration(classes = SpringConfigForTest.class)
 @ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
 public class AbstractDynamicQueryRepositoryTest {
 	private static final Logger logger = LogManager.getLogger();

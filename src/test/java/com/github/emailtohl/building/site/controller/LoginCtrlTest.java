@@ -31,6 +31,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.util.NestedServletException;
 
+import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.mail.EmailService;
@@ -40,7 +41,7 @@ import com.github.emailtohl.building.stub.ServiceStub;
 import com.google.gson.Gson;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = RootContextConfiguration.class)
+@ContextConfiguration(classes = SpringConfigForTest.class)
 @ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
 public class LoginCtrlTest {
 	private static final Logger logger = LogManager.getLogger();

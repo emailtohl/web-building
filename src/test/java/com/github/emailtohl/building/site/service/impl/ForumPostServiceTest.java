@@ -18,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.fullTextSearch.SearchResult;
 import com.github.emailtohl.building.config.RootContextConfiguration;
@@ -31,7 +32,7 @@ import com.github.emailtohl.building.site.service.ForumPostService;
  * @author HeLei
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = RootContextConfiguration.class)
+@ContextConfiguration(classes = SpringConfigForTest.class)
 @ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
 public class ForumPostServiceTest {
 	static final Logger logger = LogManager.getLogger();

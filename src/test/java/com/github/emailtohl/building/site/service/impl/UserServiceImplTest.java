@@ -1,11 +1,13 @@
 package com.github.emailtohl.building.site.service.impl;
 
-import static com.github.emailtohl.building.site.entities.Authority.*;
 import static com.github.emailtohl.building.initdb.PersistenceData.bar;
 import static com.github.emailtohl.building.initdb.PersistenceData.employee;
 import static com.github.emailtohl.building.initdb.PersistenceData.foo;
 import static com.github.emailtohl.building.initdb.PersistenceData.manager;
 import static com.github.emailtohl.building.initdb.PersistenceData.user;
+import static com.github.emailtohl.building.site.entities.Authority.USER_DELETE;
+import static com.github.emailtohl.building.site.entities.Authority.USER_READ_ALL;
+import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_ALL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -34,6 +36,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.Validator;
 import com.github.emailtohl.building.config.RootContextConfiguration;
@@ -46,9 +49,10 @@ import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.entities.User.Gender;
 import com.github.emailtohl.building.site.service.UserService;
 import com.github.emailtohl.building.stub.SecurityContextManager;
+import com.google.gson.Gson;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = RootContextConfiguration.class)
+@ContextConfiguration(classes = SpringConfigForTest.class)
 @ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
 @Transactional
 public class UserServiceImplTest {
@@ -56,6 +60,7 @@ public class UserServiceImplTest {
 	@Inject @Named("userServiceImpl") UserService userService;
 	@Inject SecurityContextManager securityContextManager;
 	@Inject RoleRepository roleRepository;
+	@Inject Gson gson;
 	Employee emp;
 	Customer cus;
 	
@@ -199,7 +204,8 @@ public class UserServiceImplTest {
 		userService.changePassword(bar.getEmail(), pw);
 		Authentication a = userService.authenticate(bar.getEmail(), pw);
 		assertNotNull(a);
-		assertEquals(bar.getUsername(), a.getName());
+		logger.debug(gson.toJson(a));
+		assertEquals(bar.getName(), a.getName());
 		userService.changePassword(bar.getEmail(), old);
 	}
 	

@@ -1,6 +1,4 @@
 package com.github.emailtohl.building.config;
-import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_DEVELPMENT;
-
 import java.io.IOException;
 
 import javax.inject.Inject;
@@ -16,7 +14,6 @@ import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
@@ -42,7 +39,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
 import com.github.emailtohl.building.site.service.UserPermissionEvaluator;
-import com.github.emailtohl.building.stub.SecurityContextManager;
 /**
  * spring security 的编程风格的配置，它不仅被RootContextConfiguration导入，并且也依赖于RootContextConfiguration中的Bean
  * @author HeLei
@@ -246,9 +242,4 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		}
 	}
 	
-	@Profile(PROFILE_DEVELPMENT)
-	@Bean
-	public SecurityContextManager securityContextManager() throws Exception {
-		return new SecurityContextManager(authenticationManager());
-	}
 }

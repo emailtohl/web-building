@@ -1,6 +1,6 @@
 package com.github.emailtohl.building.common.jpa.jpaCriterionQuery;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 
 import javax.inject.Inject;
 
@@ -19,14 +19,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.AbstractCriterionQueryRepository;
-import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.SearchCriteria;
+import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
-import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.Criterion;
 import com.github.emailtohl.building.site.entities.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = RootContextConfiguration.class)
+@ContextConfiguration(classes = SpringConfigForTest.class)
 @ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
 public class AbstractSearchableJpaRepositoryTest {
 	private static final Logger logger = LogManager.getLogger();
