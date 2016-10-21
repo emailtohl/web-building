@@ -97,10 +97,7 @@ public class AuthenticationServiceImpl implements AuthenticationService, UserDet
 
 			@Override
 			public Collection<? extends GrantedAuthority> getAuthorities() {
-				Set<String> authorities = new HashSet<String>();
-				for (Authority a : u.authoritySet()) {
-					authorities.add(a.getName());
-				}
+				Set<String> authorities = u.authorities();
 				return AuthorityUtils.createAuthorityList(authorities.toArray(new String[authorities.size()]));
 			}
 

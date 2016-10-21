@@ -4,6 +4,7 @@ import static com.github.emailtohl.building.common.utils.BeanTools.compareProper
 import static com.github.emailtohl.building.common.utils.BeanTools.copyList;
 import static com.github.emailtohl.building.common.utils.BeanTools.copyProperties;
 import static com.github.emailtohl.building.common.utils.BeanTools.deepCopy;
+import static com.github.emailtohl.building.common.utils.BeanTools.getAnnotation;
 import static com.github.emailtohl.building.common.utils.BeanTools.getDeclaredField;
 import static com.github.emailtohl.building.common.utils.BeanTools.getFieldMap;
 import static com.github.emailtohl.building.common.utils.BeanTools.getFieldNameValueMap;
@@ -40,9 +41,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.management.relation.Role;
+import javax.persistence.Embedded;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.search.annotations.IndexedEmbedded;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -108,6 +113,17 @@ public class JavaBeanToolsTest {
 		assertTrue(c.isAssignableFrom(Set.class));
 	}
 
+	@Test
+	public void testGetAnnotation() throws IntrospectionException {
+		for (PropertyDescriptor p : Introspector.getBeanInfo(User.class, Object.class).getPropertyDescriptors()) {
+			getAnnotation(p, ManyToOne.class);
+			getAnnotation(p, OneToOne.class);
+			getAnnotation(p, Embedded.class);
+			getAnnotation(p, IndexedEmbedded.class);
+		}
+		logger.debug("分析结束，没有异常");
+	}
+	
 	@Test
 	public void testCopyProperties() {
 		User u = copyProperties(bar, User.class);

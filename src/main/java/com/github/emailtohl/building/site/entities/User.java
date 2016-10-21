@@ -61,7 +61,7 @@ import com.github.emailtohl.building.common.Constant;
 @DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
 //指定User实体对应的记录在辨别者列的值是“user”
 @DiscriminatorValue("user") // 若不注解，则默认使用实体名
-public class User extends BaseEntity implements Authentication, UserDetails/* 实现Authentication和UserDetails接口可以被Spring security的安全管理器使用 */ {
+public class User extends BaseEntity {
 	private static final long serialVersionUID = -2648409468140926726L;
 	public enum Gender {
 		MALE, FEMALE, UNSPECIFIED
@@ -80,6 +80,9 @@ public class User extends BaseEntity implements Authentication, UserDetails/* �
 	@Pattern(regexp = "^[^\\s&\"<>]+$")
 	protected transient String password;
 	protected Boolean enabled;
+	protected Boolean accountNonExpired = true;
+	protected Boolean credentialsNonExpired = true;
+	protected Boolean accountNonLocked = true;
 	@Past// 校验，日期相对于当前较早
 	protected Date birthday;
 	@Min(value = 1)
@@ -135,11 +138,35 @@ public class User extends BaseEntity implements Authentication, UserDetails/* �
 		this.telephone = telephone;
 	}
 	
-    public boolean isEnabled() {
-		return enabled == null ? false : enabled;
+    public Boolean isEnabled() {
+		return enabled;
 	}
 	public void setEnabled(Boolean enabled) {
 		this.enabled = enabled;
+	}
+	
+	public Boolean isAccountNonExpired() {
+		return accountNonExpired;
+	}
+	
+	public void setAccountNonExpired(Boolean accountNonExpired) {
+		this.accountNonExpired = accountNonExpired;
+	}
+	
+	public Boolean isCredentialsNonExpired() {
+		return credentialsNonExpired;
+	}
+	
+	public void setCredentialsNonExpired(Boolean credentialsNonExpired) {
+		this.credentialsNonExpired = credentialsNonExpired;
+	}
+	
+	public Boolean isAccountNonLocked() {
+		return accountNonLocked;
+	}
+	
+	public void setAccountNonLocked(Boolean accountNonLocked) {
+		this.accountNonLocked = accountNonLocked;
 	}
 	
 	@Column(nullable = false)
@@ -253,165 +280,142 @@ public class User extends BaseEntity implements Authentication, UserDetails/* �
 	 * 由于多对多关系，可通过本方法直接获取该用户的授权
 	 * @return
 	 */
-	public Set<Authority> authoritySet() {
-		Set<Authority> set = new HashSet<Authority>();
-		for (Role r : roles) {
-			set.addAll(r.getAuthorities());
-		}
-		return set;
-	}
-	
-	/**
-	 * 由于多对多关系，可通过本方法直接获取该用户的授权
-	 * @return
-	 */
 	public Set<String> authorities() {
-		Set<Authority> set = authoritySet();
+		Set<Authority> set = new HashSet<Authority>();
+		roles.forEach(r -> set.addAll(r.getAuthorities()));
 		return set.stream().map(a -> a.getName()).collect(Collectors.toSet());
 	}
+	
+	@Transient
+	public AuthenticationImpl getAuthentication() {
+		return new AuthenticationImpl();
+	}
+	
+	@Transient
+	public UserDetailsImpl getUserDetails() {
+		return new UserDetailsImpl();
+	}
+	
 	
 	@Override
 	public String toString() {
 		return "User [name=" + name + ", username=" + username + ", email=" + email + ", address=" + address
-				+ ", telephone=" + telephone + ", enabled=" + enabled + ", birthday=" + birthday + ", age=" + age
-				+ ", gender=" + gender + ", subsidiary=" + subsidiary + ", iconSrc=" + iconSrc + ", description="
-				+ description + ", roles=" + roles + "]";
+				+ ", telephone=" + telephone + ", enabled=" + enabled + ", accountNonExpired=" + accountNonExpired
+				+ ", credentialsNonExpired=" + credentialsNonExpired + ", accountNonLocked=" + accountNonLocked
+				+ ", birthday=" + birthday + ", age=" + age + ", gender=" + gender + ", subsidiary=" + subsidiary
+				+ ", iconSrc=" + iconSrc + ", description=" + description + ", roles=" + roles + "]";
 	}
-	
+
 	/**
-	 * 下面是实现Authentication的方法
+	 * 下面是获取Authentication和UserDetails的方法
+	 * 本类并没有直接实现Authentication和UserDetails的原因是考虑传输到前台的认证信息不需要过多携带User类中的信息
 	 */
-	@Transient
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		Set<String> set = authorities();
-		return AuthorityUtils.createAuthorityList(set.toArray(new String[set.size()]));
-	}
-	@Transient
-	@Override
-	public Object getCredentials() {
-		// 认证的时候存储密码，用过之后会擦除，所以直接返回null
-		return password;
-	}
-	
-	@Transient
-	private Object details;
-	@Transient
-	@Override
-	public Object getDetails() {
-		/*
-		 * Stores additional details about the authentication request.
-		 * These might be an IP address, certificate serial number etc.
-		 */
-		return details;
-	}
-	@Transient
-	public void setDetails(Object details) {
-		this.details = details;
-	}
-	
-	@Transient
-	private boolean accountNonExpired = true;
-	@Transient
-	private boolean credentialsNonExpired = true;
-	@Transient
-	private boolean accountNonLocked = true;
-	@Transient
-	public void setAccountNonExpired(boolean accountNonExpired) {
-		this.accountNonExpired = accountNonExpired;
-	}
-	@Transient
-	public void setAccountNonLocked(boolean accountNonLocked) {
-		this.accountNonLocked = accountNonLocked;
-	}
-	@Transient
-	public void setCredentialsNonExpired(boolean credentialsNonExpired) {
-		this.credentialsNonExpired = credentialsNonExpired;
-	}
-	@Transient
-	@Override
-	public Object getPrincipal() {
-		/*
-		 * The identity of the principal being authenticated. In the
-		 * case of an authentication request with username and password,
-		 * this would be the username. Callers are expected to populate
-		 * the principal for an authentication request.
-		 * 按照描述，getPrincipal()返回的应该是某种形式的用户名
-		 * 但是spring security需要在这个返回中获取更多的用户信息，结构是
-		 * org.springframework.security.core.userdetails.UserDetails
-		 */
-		return new UserDetails() {
-			private static final long serialVersionUID = -6107779964176713375L;
+	public class AuthenticationImpl implements Authentication {
+		private static final long serialVersionUID = -1446199832307837361L;
+		private UserDetailsImpl userDetailsImpl;
+		private Object details;
+		private boolean authenticated;
+		
+		public AuthenticationImpl() {
+			userDetailsImpl = new UserDetailsImpl();
+		}
+		
+		@Override
+		public String getName() {
+			return name;
+		}
 
-			@Override
-			public Collection<? extends GrantedAuthority> getAuthorities() {
-				return getAuthorities();
-			}
+		@Override
+		public Collection<? extends GrantedAuthority> getAuthorities() {
+			return userDetailsImpl.getAuthorities();
+		}
 
-			@Override
-			public String getPassword() {
-				return password;
-			}
+		@Override
+		public Object getCredentials() {
+			// 认证的时候存储密码，用过之后会擦除
+			return password;
+		}
+		
+		public void eraseCredentials() {
+			password = null;
+		}
 
-			@Override
-			public String getUsername() {
-				return username;
-			}
+		@Override
+		public Object getDetails() {
+			/*
+			 * Stores additional details about the authentication request.
+			 * These might be an IP address, certificate serial number etc.
+			 */
+			return details;
+		}
+		public void setDetails(Object details) {
+			this.details = details;
+		}
 
-			@Override
-			public boolean isAccountNonExpired() {
-				return accountNonExpired;
-			}
-			
-			@Override
-			public boolean isAccountNonLocked() {
-				return accountNonLocked;
-			}
-			
-			@Override
-			public boolean isCredentialsNonExpired() {
-				return credentialsNonExpired;
-			}
+		@Override
+		public Object getPrincipal() {
+			/*
+			 * The identity of the principal being authenticated. In the
+			 * case of an authentication request with username and password,
+			 * this would be the username. Callers are expected to populate
+			 * the principal for an authentication request.
+			 * 按照描述，getPrincipal()返回的应该是某种形式的用户名
+			 * 但是spring security需要在这个返回中获取更多的用户信息，结构是
+			 * org.springframework.security.core.userdetails.UserDetails
+			 */
+			return new UserDetailsImpl();
+		}
 
-			@Override
-			public boolean isEnabled() {
-				return enabled;
-			}
-			
-		};
+		@Override
+		public boolean isAuthenticated() {
+			return authenticated;
+		}
+
+		@Override
+		public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
+			this.authenticated = isAuthenticated;
+		}
 		
 	}
 	
-	@Transient
-	private boolean authenticated = false;
-	@Transient
-	@Override
-	public boolean isAuthenticated() {
-		return authenticated;
+	public class UserDetailsImpl implements UserDetails {
+		private static final long serialVersionUID = -2808344559121367648L;
+
+		@Override
+		public Collection<? extends GrantedAuthority> getAuthorities() {
+			Set<String> set = authorities();
+			return AuthorityUtils.createAuthorityList(set.toArray(new String[set.size()]));
+		}
+
+		@Override
+		public String getPassword() {
+			return password;
+		}
+
+		@Override
+		public String getUsername() {
+			return username;
+		}
+
+		@Override
+		public boolean isAccountNonExpired() {
+			return accountNonExpired;
+		}
+
+		@Override
+		public boolean isAccountNonLocked() {
+			return accountNonLocked;
+		}
+
+		@Override
+		public boolean isCredentialsNonExpired() {
+			return credentialsNonExpired;
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return enabled == null ? false : enabled;
+		}
+		
 	}
-	@Transient
-	@Override
-	public void setAuthenticated(boolean authenticated) throws IllegalArgumentException {
-		this.authenticated = authenticated;
-	}
-	
-	/**
-	 * 下面是实现UserDetails的方法
-	 */
-	@Transient
-	@Override
-	public boolean isAccountNonExpired() {
-		return accountNonExpired;
-	}
-	@Transient
-	@Override
-	public boolean isAccountNonLocked() {
-		return accountNonLocked;
-	}
-	@Transient
-	@Override
-	public boolean isCredentialsNonExpired() {
-		return credentialsNonExpired;
-	}
-	
 }

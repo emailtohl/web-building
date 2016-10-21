@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -173,6 +174,24 @@ public final class BeanTools {
 			}
 		} while (clz != null);
 		return f;
+	}
+	
+	/**
+	 * 从JavaBean属性描述器中获取注解
+	 * @param descriptor
+	 * @param annotationClass
+	 * @return
+	 */
+	public static <A extends Annotation> A getAnnotation(PropertyDescriptor descriptor, Class<A> annotationClass) {
+		Method read = descriptor.getReadMethod(), write = descriptor.getWriteMethod();
+		A a = null;
+		if (read != null) {
+			a = read.getAnnotation(annotationClass);
+		}
+		if (a == null && write != null) {
+			a = write.getAnnotation(annotationClass);
+		}
+		return a;
 	}
 
 	/**

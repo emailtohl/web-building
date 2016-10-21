@@ -5,7 +5,6 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -36,6 +35,8 @@ import javax.persistence.TypedQuery;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.github.emailtohl.building.common.utils.BeanTools;
 
 /**
  * JPA的实体管理器entityManager已经提供了简便的增、删、改功能，所以很容易封装，这里主要提供自定义的动态查询解决方案
@@ -218,24 +219,6 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 			boolean first = true;
 			int position = 1;
 			
-			/**
-			 * 从JavaBean属性描述器中获取注解
-			 * @param descriptor
-			 * @param annotationClass
-			 * @return
-			 */
-			<A extends Annotation> A getAnnotation(PropertyDescriptor descriptor, Class<A> annotationClass) {
-				Method read = descriptor.getReadMethod(), write = descriptor.getWriteMethod();
-				A a = null;
-				if (read != null) {
-					a = read.getAnnotation(annotationClass);
-				}
-				if (a == null && write != null) {
-					a = write.getAnnotation(annotationClass);
-				}
-				return a;
-			}
-			
 			void predicate(Object o, String prefix) {
 				Class<?> clz;
 				// 如果是本实体继承树上的类，则只分析基类的属性
@@ -261,7 +244,7 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 				}
 				PropertyDescriptor[] descriptors = info.getPropertyDescriptors();
 				for (PropertyDescriptor descriptor : descriptors) {
-					if (getAnnotation(descriptor, Transient.class) != null) {
+					if (BeanTools.getAnnotation(descriptor, Transient.class) != null) {
 						continue;
 					}
 					Object value = null;
@@ -298,9 +281,9 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 						args.add(value);
 						position++;
 					} else {
-						ManyToOne manyToOne = getAnnotation(descriptor, ManyToOne.class);
-						OneToOne oneToOne =getAnnotation(descriptor, OneToOne.class);
-						Embedded embedded = getAnnotation(descriptor, Embedded.class);
+						ManyToOne manyToOne = BeanTools.getAnnotation(descriptor, ManyToOne.class);
+						OneToOne oneToOne = BeanTools.getAnnotation(descriptor, OneToOne.class);
+						Embedded embedded = BeanTools.getAnnotation(descriptor, Embedded.class);
 						if (manyToOne != null || oneToOne != null || embedded != null) {
 							if (set.contains(o)) {// 若遇到相互关联的情况，则终止递归
 								return;

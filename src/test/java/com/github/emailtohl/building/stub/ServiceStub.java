@@ -86,10 +86,10 @@ public class ServiceStub {
 		when(userService.isExist(customer.getEmail())).thenReturn(true);
 		when(userService.getPageByRoles(employee.getEmail(), employee.getRoles(), pageable)).thenReturn(employeePager);
 		when(userService.getPageByRoles(customer.getEmail(), customer.getRoles(), pageable)).thenReturn(customerPager);
-		when(userService.authenticate(employee.getEmail(), testPassword)).thenReturn(employee);
-		when(userService.authenticate(customer.getEmail(), testPassword)).thenReturn(customer);
-		when(userService.authenticate(employee)).thenReturn(employee);
-		when(userService.authenticate(customer)).thenReturn(customer);
+		when(userService.authenticate(employee.getEmail(), testPassword)).thenReturn(employee.getAuthentication());
+		when(userService.authenticate(customer.getEmail(), testPassword)).thenReturn(customer.getAuthentication());
+		when(userService.authenticate(employee.getAuthentication())).thenReturn(employee.getAuthentication());
+		when(userService.authenticate(customer.getAuthentication())).thenReturn(customer.getAuthentication());
 		
 		return userService;
 	}

@@ -33,6 +33,7 @@ import com.github.emailtohl.building.site.entities.Department;
 import com.github.emailtohl.building.site.entities.Employee;
 import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.entities.User.AuthenticationImpl;
 import com.github.emailtohl.building.site.service.UserService;
 
 /**
@@ -245,7 +246,10 @@ public class UserServiceImpl implements UserService {
 			return null;
 		}
 		logger.debug("User {} successfully authenticated.", email);
-		return u;
+		AuthenticationImpl a = u.getAuthentication();
+		a.setAuthenticated(true);
+		a.eraseCredentials();
+		return a;
 	}
 	/**
 	 * 下面是实现AuthenticationProvider，可以供Spring Security框架使用
@@ -318,6 +322,6 @@ public class UserServiceImpl implements UserService {
 		}
 		String email = m.group(1);
 		User u = userRepository.findByEmail(email);
-		return u;
+		return u.getUserDetails();
 	}
 }
