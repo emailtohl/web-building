@@ -6,12 +6,9 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
-
-import java.util.Arrays;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -22,7 +19,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.stubbing.Answer;
-import org.springframework.http.MediaType;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,12 +29,10 @@ import org.springframework.web.util.NestedServletException;
 
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
-import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.mail.EmailService;
 import com.github.emailtohl.building.site.service.UserService;
 import com.github.emailtohl.building.stub.SecurityContextManager;
 import com.github.emailtohl.building.stub.ServiceStub;
-import com.google.gson.Gson;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SpringConfigForTest.class)
@@ -159,16 +153,6 @@ public class LoginCtrlTest {
 //	@Test
 	public void testGetPageByAuthorities() {
 		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testAuthorize() throws Exception {
-		String authorities = new Gson().toJson(Arrays.asList(Role.MANAGER));
-		mockMvc.perform(put("/authentication/authorize/100")
-				.characterEncoding("UTF-8")  
-		        .contentType(MediaType.APPLICATION_JSON)  
-		        .content(authorities.getBytes()))
-		.andExpect(status().isOk());
 	}
 
 	@Test

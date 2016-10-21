@@ -196,7 +196,7 @@ public class UserServiceImplTest {
 		}
 	}
 
-	@Test
+//	@Test
 	public void testChangePassword() {
 		securityContextManager.setBar();
 		String old = "123456";
@@ -204,7 +204,6 @@ public class UserServiceImplTest {
 		userService.changePassword(bar.getEmail(), pw);
 		Authentication a = userService.authenticate(bar.getEmail(), pw);
 		assertNotNull(a);
-		logger.debug(gson.toJson(a));
 		assertEquals(bar.getName(), a.getName());
 		userService.changePassword(bar.getEmail(), old);
 	}
@@ -246,6 +245,8 @@ public class UserServiceImplTest {
 	
 	@Test
 	public void testAuthenticate() {
-		userService.authenticate(foo.getEmail(), foo.getPassword());
+		Authentication a = userService.authenticate(foo.getEmail(), "123456");
+		// 查看认证结果
+		logger.debug(gson.toJson(a));
 	}
 }

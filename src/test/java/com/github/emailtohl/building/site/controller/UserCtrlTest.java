@@ -28,6 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.dto.UserDto;
+import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.service.UserService;
 import com.github.emailtohl.building.stub.SecurityContextManager;
 import com.github.emailtohl.building.stub.ServiceStub;
@@ -153,6 +154,16 @@ public class UserCtrlTest {
 		.andExpect(status().isOk());
 	}
 
+	@Test
+	public void testGrantRoles() throws Exception {
+		String[] authorities = new String[] { Role.MANAGER, Role.EMPLOYEE };
+		mockMvc.perform(put("/user/grantRoles/" + serviceStub.employeeId)
+				.characterEncoding("UTF-8")  
+		        .contentType(MediaType.APPLICATION_JSON)  
+		        .content(gson.toJson(authorities).getBytes()))
+		.andExpect(status().isOk());
+	}
+	
 	@Test
 	public void testUpdateEmployee() throws Exception {
 		mockMvc.perform(put("/user/employee/" + serviceStub.employeeId)

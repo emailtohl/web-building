@@ -11,7 +11,7 @@ define(['user/module'], function(userModule) {
 			authorities : []
 		};
 		self.query = function() {
-			authorityService.getPagerByAuthories(self.params).success(function(data, status, fun, obj) {
+			authorityService.getPageByRoles(self.params).success(function(data, status, fun, obj) {
 				self.pager = data;
 				console.log(data);
 			});
@@ -31,7 +31,7 @@ define(['user/module'], function(userModule) {
 			fail : {open : false},
 		};
 		self.onChange = function(id, value) {
-			authorityService.authorize(id, value).then(function(respose) {
+			authorityService.grantRoles(id, value).then(function(respose) {
 				self.modal.success.open = true;
 			}, function(respose) {
 				self.modal.fail.open = true;

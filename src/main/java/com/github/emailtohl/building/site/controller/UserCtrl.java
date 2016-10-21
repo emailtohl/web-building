@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -214,6 +215,17 @@ public class UserCtrl {
 	@ResponseBody
 	public void disableUser(@PathVariable(value = "id") long id) {
 		userService.disableUser(id);
+	}
+	
+	/**
+	 * 对用户授权，权限识别由service控制
+	 * @param id
+	 * @param authorities
+	 */
+	@RequestMapping(value = "grantRoles/{id}", method = RequestMethod.PUT)
+	@ResponseBody
+	public void grantRoles(@PathVariable @Min(1L) Long id, @RequestBody String[] roles) {
+		userService.grantRoles(id, roles);
 	}
 	
 	/**

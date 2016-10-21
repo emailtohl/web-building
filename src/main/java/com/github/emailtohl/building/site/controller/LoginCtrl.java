@@ -11,7 +11,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,8 +20,6 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -92,7 +89,7 @@ public class LoginCtrl {
 			long id = userService.addCustomer(c);
 			
 			// 第三步，邮件通知用户，让其激活该账号
-			String url = requet.getScheme() + "://" + requet.getServerName() + ":" + requet.getServerPort() + requet.getContextPath() + "/enable?id=" + id;
+			String url = requet.getScheme() + "://" + requet.getServerName() + ":" + requet.getServerPort() + requet.getContextPath() + "/user/enableUser?id=" + id;
 			emailService.enableUser(url, form.getEmail());
 			return "login";
 		} catch (RuntimeException e1) {
@@ -204,17 +201,6 @@ public class LoginCtrl {
 			}
 		}
 		return map;
-	}
-	
-	/**
-	 * 对用户授权，权限识别由service控制
-	 * @param id
-	 * @param authorities
-	 */
-	@RequestMapping(value = "authentication/authorize/{id}", method = RequestMethod.PUT)
-	@ResponseBody
-	public void authorize(@PathVariable @Min(1L) Long id, @RequestBody String[] roles) {
-		userService.grantRoles(id, roles);
 	}
 	
 	/**

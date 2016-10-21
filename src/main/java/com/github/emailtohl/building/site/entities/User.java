@@ -292,8 +292,8 @@ public class User extends BaseEntity {
 	}
 	
 	@Transient
-	public UserDetailsImpl getUserDetails() {
-		return new UserDetailsImpl();
+	public Principal getUserDetails() {
+		return new Principal();
 	}
 	
 	
@@ -310,19 +310,90 @@ public class User extends BaseEntity {
 	 * 下面是获取Authentication和UserDetails的方法
 	 * 本类并没有直接实现Authentication和UserDetails的原因是考虑传输到前台的认证信息不需要过多携带User类中的信息
 	 */
+	public class Principal implements UserDetails {
+		private static final long serialVersionUID = -2808344559121367648L;
+		/**
+		 * Gson序列化对象是根据对象的Field字段而不是根据JavaBean属性，所以这里还需有Field字段
+		 */
+		Long id;
+		String username;
+		String email;
+		Set<String> authorities;
+		String password;
+		
+		public Principal() {
+			this.id = User.this.id;
+			this.username = User.this.username;
+			this.email = User.this.email;
+			this.authorities = User.this.authorities();
+			this.password = User.this.password;
+		}
+		
+		@Override
+		public Collection<? extends GrantedAuthority> getAuthorities() {
+			return AuthorityUtils.createAuthorityList(this.authorities.toArray(new String[this.authorities.size()]));
+		}
+
+		@Override
+		public String getPassword() {
+			return password;
+		}
+
+		@Override
+		public String getUsername() {
+			return this.username;
+		}
+		
+		public Long getId() {
+			return this.id;
+		}
+
+		public String getEmail() {
+			return this.email;
+		}
+		
+		@Override
+		public boolean isAccountNonExpired() {
+			return accountNonExpired == null ? false : accountNonExpired;
+		}
+
+		@Override
+		public boolean isAccountNonLocked() {
+			return accountNonLocked == null ? false : accountNonLocked;
+		}
+
+		@Override
+		public boolean isCredentialsNonExpired() {
+			return credentialsNonExpired == null ? false : credentialsNonExpired;
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return enabled == null ? false : enabled;
+		}
+		
+	}
+	
 	public class AuthenticationImpl implements Authentication {
 		private static final long serialVersionUID = -1446199832307837361L;
-		private UserDetailsImpl userDetailsImpl;
+		private Principal userDetailsImpl;
+		/**
+		 * Gson序列化对象是根据对象的Field字段而不是根据JavaBean属性，所以这里还需有Field字段
+		 */
+		String name;
+		Set<String> authorities;
 		private Object details;
 		private boolean authenticated;
 		
 		public AuthenticationImpl() {
-			userDetailsImpl = new UserDetailsImpl();
+			userDetailsImpl = new Principal();
+			this.name = userDetailsImpl.getUsername();
+			this.authorities = userDetailsImpl.authorities;
 		}
 		
 		@Override
 		public String getName() {
-			return name;
+			return this.name;
 		}
 
 		@Override
@@ -363,7 +434,7 @@ public class User extends BaseEntity {
 			 * 但是spring security需要在这个返回中获取更多的用户信息，结构是
 			 * org.springframework.security.core.userdetails.UserDetails
 			 */
-			return new UserDetailsImpl();
+			return new Principal();
 		}
 
 		@Override
@@ -377,45 +448,5 @@ public class User extends BaseEntity {
 		}
 		
 	}
-	
-	public class UserDetailsImpl implements UserDetails {
-		private static final long serialVersionUID = -2808344559121367648L;
 
-		@Override
-		public Collection<? extends GrantedAuthority> getAuthorities() {
-			Set<String> set = authorities();
-			return AuthorityUtils.createAuthorityList(set.toArray(new String[set.size()]));
-		}
-
-		@Override
-		public String getPassword() {
-			return password;
-		}
-
-		@Override
-		public String getUsername() {
-			return username;
-		}
-
-		@Override
-		public boolean isAccountNonExpired() {
-			return accountNonExpired == null ? false : accountNonExpired;
-		}
-
-		@Override
-		public boolean isAccountNonLocked() {
-			return accountNonLocked == null ? false : accountNonLocked;
-		}
-
-		@Override
-		public boolean isCredentialsNonExpired() {
-			return credentialsNonExpired == null ? false : credentialsNonExpired;
-		}
-
-		@Override
-		public boolean isEnabled() {
-			return enabled == null ? false : enabled;
-		}
-		
-	}
 }
