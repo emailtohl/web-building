@@ -145,6 +145,7 @@ public class User extends BaseEntity {
 		this.enabled = enabled;
 	}
 	
+	@Column(name = "account_non_expired")
 	public Boolean getAccountNonExpired() {
 		return accountNonExpired;
 	}
@@ -153,6 +154,7 @@ public class User extends BaseEntity {
 		this.accountNonExpired = accountNonExpired;
 	}
 	
+	@Column(name = "credentials_non_expired")
 	public Boolean getCredentialsNonExpired() {
 		return credentialsNonExpired;
 	}
@@ -161,6 +163,7 @@ public class User extends BaseEntity {
 		this.credentialsNonExpired = credentialsNonExpired;
 	}
 	
+	@Column(name = "account_non_locked")
 	public Boolean getAccountNonLocked() {
 		return accountNonLocked;
 	}
@@ -232,6 +235,7 @@ public class User extends BaseEntity {
 		this.icon = icon;
 	}
 	
+	@Column(name = "icon_src")
 	public String getIconSrc() {
 		return iconSrc;
 	}
@@ -381,6 +385,7 @@ public class User extends BaseEntity {
 		 * Gson序列化对象是根据对象的Field字段而不是根据JavaBean属性，所以这里还需有Field字段
 		 */
 		String name;
+		String password;
 		Set<String> authorities;
 		private Object details;
 		private boolean authenticated;
@@ -388,6 +393,7 @@ public class User extends BaseEntity {
 		public AuthenticationImpl() {
 			userDetailsImpl = new Principal();
 			this.name = userDetailsImpl.getUsername();
+			this.password = userDetailsImpl.password;
 			this.authorities = userDetailsImpl.authorities;
 		}
 		
@@ -404,11 +410,11 @@ public class User extends BaseEntity {
 		@Override
 		public Object getCredentials() {
 			// 认证的时候存储密码，用过之后会擦除
-			return password;
+			return this.password;
 		}
 		
 		public void eraseCredentials() {
-			password = null;
+			this.password = null;
 		}
 
 		@Override

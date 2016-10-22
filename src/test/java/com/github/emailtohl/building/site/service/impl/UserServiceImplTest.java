@@ -21,7 +21,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.transaction.Transactional;
 import javax.validation.ConstraintViolation;
 
 import org.apache.logging.log4j.LogManager;
@@ -54,7 +53,6 @@ import com.google.gson.Gson;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SpringConfigForTest.class)
 @ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
-@Transactional
 public class UserServiceImplTest {
 	static final Logger logger = LogManager.getLogger();
 	@Inject @Named("userServiceImpl") UserService userService;
@@ -145,6 +143,7 @@ public class UserServiceImplTest {
 			assertTrue(qu.getRoles().contains(roleRepository.findByName(Role.MANAGER)));
 
 			userService.grantUserRole(id);
+			qu = userService.getUser(id);
 			assertTrue(qu.getRoles().contains(roleRepository.findByName(Role.USER)));
 		} catch (Exception e) {
 			e.printStackTrace();

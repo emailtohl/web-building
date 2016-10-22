@@ -78,7 +78,7 @@ public abstract class BaseEntity implements Serializable {
 	 * 获取创建日期
 	 * @return 创建日期
 	 */
-	@Column(nullable = false, updatable = false)
+	@Column(nullable = false, updatable = false, name = "create_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getCreateDate() {
 		return createDate;
@@ -96,7 +96,7 @@ public abstract class BaseEntity implements Serializable {
 	 * 获取修改日期
 	 * @return 修改日期
 	 */
-	@Column(nullable = false)
+	@Column(nullable = false, name = "modify_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getModifyDate() {
 		return modifyDate;
