@@ -294,38 +294,38 @@ public class UserServiceImpl implements UserService {
 		AuthenticationImpl a = u.getAuthentication();
 		a.setAuthenticated(true);
 		a.eraseCredentials();
-		@SuppressWarnings("unused")
-		class Details implements Serializable {
-			private static final long serialVersionUID = -7461854984848054398L;
-			String remoteAddress;
-			String sessionId;
-			String certificateSerialNumber;
-			public String getRemoteAddress() {
-				return remoteAddress;
-			}
-			public void setRemoteAddress(String remoteAddress) {
-				this.remoteAddress = remoteAddress;
-			}
-			public String getSessionId() {
-				return sessionId;
-			}
-			public void setSessionId(String sessionId) {
-				this.sessionId = sessionId;
-			}
-			public String getCertificateSerialNumber() {
-				return certificateSerialNumber;
-			}
-			public void setCertificateSerialNumber(String certificateSerialNumber) {
-				this.certificateSerialNumber = certificateSerialNumber;
-			}
-		}
-		
 		Details d = new Details();
 		d.setSessionId(ThreadContext.get("sessionId"));
 		d.setRemoteAddress(ThreadContext.get("remoteAddress"));
 		a.setDetails(d);
 		return a;
 	}
+	
+	public class Details implements Serializable {
+		private static final long serialVersionUID = -7461854984848054398L;
+		String remoteAddress;
+		String sessionId;
+		String certificateSerialNumber;
+		public String getRemoteAddress() {
+			return remoteAddress;
+		}
+		public void setRemoteAddress(String remoteAddress) {
+			this.remoteAddress = remoteAddress;
+		}
+		public String getSessionId() {
+			return sessionId;
+		}
+		public void setSessionId(String sessionId) {
+			this.sessionId = sessionId;
+		}
+		public String getCertificateSerialNumber() {
+			return certificateSerialNumber;
+		}
+		public void setCertificateSerialNumber(String certificateSerialNumber) {
+			this.certificateSerialNumber = certificateSerialNumber;
+		}
+	}
+	
 	/**
 	 * 下面是实现AuthenticationProvider，可以供Spring Security框架使用
 	 */

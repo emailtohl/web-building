@@ -90,7 +90,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.and().withUser("bar@test.com").password("123456").authorities("EMPLOYEE");
 		*/
 		
-//		自定义的AuthenticationProvider，作为示例，对返回Authentication下的details信息还不完善，最好还是使用Spring Security自带的AuthenticationProvider
+//		自定义的AuthenticationProvider和UserDetailsService
 		builder.authenticationProvider(authenticationProvider)
 				.userDetailsService(userDetailsService);
 		

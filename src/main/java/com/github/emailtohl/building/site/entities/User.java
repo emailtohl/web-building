@@ -326,11 +326,11 @@ public class User extends BaseEntity {
 		String password;
 		
 		public Principal() {
-			this.id = User.this.id;
-			this.username = User.this.username;
-			this.email = User.this.email;
+			this.id = new Long(User.this.id);
+			this.username = new String(User.this.username);
+			this.email = new String(User.this.email);
+			this.password = new String(User.this.password);
 			this.authorities = User.this.authorities();
-			this.password = User.this.password;
 		}
 		
 		@Override
@@ -340,7 +340,7 @@ public class User extends BaseEntity {
 
 		@Override
 		public String getPassword() {
-			return password;
+			return this.password;
 		}
 
 		@Override
@@ -375,26 +375,25 @@ public class User extends BaseEntity {
 		public boolean isEnabled() {
 			return enabled == null ? false : enabled;
 		}
-		
 	}
 	
 	public class AuthenticationImpl implements Authentication {
 		private static final long serialVersionUID = -1446199832307837361L;
-		private Principal userDetailsImpl;
 		/**
 		 * Gson序列化对象是根据对象的Field字段而不是根据JavaBean属性，所以这里还需有Field字段
 		 */
 		String name;
 		String password;
 		Set<String> authorities;
-		private Object details;
-		private boolean authenticated;
+		Object details;
+		Principal principal;
+		boolean authenticated;
 		
 		public AuthenticationImpl() {
-			userDetailsImpl = new Principal();
-			this.name = userDetailsImpl.getUsername();
-			this.password = userDetailsImpl.password;
-			this.authorities = userDetailsImpl.authorities;
+			this.principal = new Principal();
+			this.name = principal.username;
+			this.password = principal.password;
+			this.authorities = principal.authorities;
 		}
 		
 		@Override
@@ -404,17 +403,18 @@ public class User extends BaseEntity {
 
 		@Override
 		public Collection<? extends GrantedAuthority> getAuthorities() {
-			return userDetailsImpl.getAuthorities();
+			return principal.getAuthorities();
 		}
 
 		@Override
 		public Object getCredentials() {
-			// 认证的时候存储密码，用过之后会擦除
 			return this.password;
 		}
 		
+		// 认证的时候存储密码，用过之后会擦除
 		public void eraseCredentials() {
 			this.password = null;
+			this.principal.password = null;
 		}
 
 		@Override
@@ -423,7 +423,7 @@ public class User extends BaseEntity {
 			 * Stores additional details about the authentication request.
 			 * These might be an IP address, certificate serial number etc.
 			 */
-			return details;
+			return this.details;
 		}
 		public void setDetails(Object details) {
 			this.details = details;
@@ -440,7 +440,7 @@ public class User extends BaseEntity {
 			 * 但是spring security需要在这个返回中获取更多的用户信息，结构是
 			 * org.springframework.security.core.userdetails.UserDetails
 			 */
-			return new Principal();
+			return this.principal;
 		}
 
 		@Override
