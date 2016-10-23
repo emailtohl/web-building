@@ -8,12 +8,24 @@ define(['user/module'], function(userModule) {
 			page : 1,
 			pageSize : 20,
 			email : '',
-			authorities : []
+			roles : []
 		};
 		self.query = function() {
 			authorityService.getPageByRoles(self.params).success(function(data, status, fun, obj) {
 				self.pager = data;
-				console.log(data);
+				for (var i = 0; i < self.pager.content.length; i++) {
+					bindRoleNames(self.pager.content[i]);
+				}
+				console.log(self.pager);
+				/**
+				 * 用户的角色是一个对象，为了在页面显示出来，所以再为用户模型绑上字符串的角色数组
+				 */
+				function bindRoleNames(user) {
+					user.roleNames = [];
+					for (var i = 0; i < user.roles.length; i++) {
+						user.roleNames.push(user.roles[i].name);
+					}
+				}
 			});
 		}
 		self.query();
@@ -34,6 +46,7 @@ define(['user/module'], function(userModule) {
 			authorityService.grantRoles(id, value).then(function(respose) {
 				self.modal.success.open = true;
 			}, function(respose) {
+				self.query();
 				self.modal.fail.open = true;
 			});
 		};

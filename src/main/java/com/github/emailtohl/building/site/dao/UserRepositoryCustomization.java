@@ -22,7 +22,7 @@ public interface UserRepositoryCustomization extends CriterionQueryRepository<Us
 	 * @param pageable
 	 * @return
 	 */
-	Pager<User> getPagerByRoles(String email, Set<Role> roles, Pageable pageable);
+	Pager<User> getPagerByRoles(String email, Set<String> roleNames, Pageable pageable);
 	
 	/**
 	 * 通过JPA2.1的标准查询（Criteria）方式获取Pager，支持排序
@@ -31,7 +31,7 @@ public interface UserRepositoryCustomization extends CriterionQueryRepository<Us
 	 * @param pageable
 	 * @return
 	 */
-	Pager<User> getPagerByCriteria(String email, Set<Role> roles, Pageable pageable);
+	Pager<User> getPagerByCriteria(String email, Set<String> roleNames, Pageable pageable);
 	
 	/**
 	 * 添加Spring data的分页功能，暂不支持Pageable中的排序功能

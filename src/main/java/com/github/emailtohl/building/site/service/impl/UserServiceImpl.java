@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -136,15 +137,19 @@ public class UserServiceImpl implements UserService {
 		boolean isAdmin = hasAuthority(USER_DELETE);
 		User u = userRepository.findOne(id);
 		// 先删除原有的
-		for (Role r : u.getRoles()) {
+		/* 虽然在User实体上已定义了级联关系，但从业务逻辑理解和保险的角度上来看，还是手工操作关系的删除
+		u.getRoles().clear();
+		*/
+		for (Iterator<Role> i = u.getRoles().iterator(); i.hasNext();) {
+			Role r = i.next();
 			r.getUsers().remove(u);
-			u.getRoles().remove(r);
+			i.remove();
 		}
 		// 再添加新增的
 		for (String name : roleNames) {
 			Role r = roleRepository.findByName(name);
 			if (!isAdmin && r.equals(admin)) {
-				throw new IllegalArgumentException("你没有权限分配ADMIN角色");
+				throw new IllegalArgumentException("你没有权限分配ADMIN角色或改动ADMIN角色的账户");
 			}
 			if (r == null) {
 				// 抛出异常后，事务会回滚
@@ -251,8 +256,8 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Pager<User> getPageByRoles(String email, Set<Role> roles, Pageable pageable) {
-		return userRepository.getPagerByCriteria(email, roles, pageable);
+	public Pager<User> getPageByRoles(String email, Set<String> roleNames, Pageable pageable) {
+		return userRepository.getPagerByCriteria(email, roleNames, pageable);
 	}
 
 	@Override

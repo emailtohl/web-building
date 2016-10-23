@@ -6,6 +6,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.OPTIONS;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -144,9 +147,9 @@ public class UserCtrl {
 	@RequestMapping(value = "pageByRoles", method = GET)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	public Pager<User> getPageByRoles(@ModelAttribute UserDto form,
+	public Pager<User> getPageByRoles(String email, Set<String> roles,
 			@PageableDefault(page = 0, size = 20, sort = BaseEntity.MODIFY_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
-		return userService.getPageByRoles(form.getEmail(), form.getRoles(), pageable);
+		return userService.getPageByRoles(email, roles, pageable);
 	}
 	
 	/**

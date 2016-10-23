@@ -1,21 +1,22 @@
 package com.github.emailtohl.building.site.dao;
 
-import static com.github.emailtohl.building.initdb.PersistenceData.manager;
+import static com.github.emailtohl.building.initdb.PersistenceData.foo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.data.domain.Page;
@@ -23,32 +24,42 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.TransactionSystemException;
 
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.common.utils.BeanTools;
 import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.initdb.PersistenceData;
-import com.github.emailtohl.building.site.entities.Employee;
-import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.Subsidiary;
 import com.github.emailtohl.building.site.entities.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SpringConfigForTest.class)
 @ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
+@Transactional
 public class UserRepositoryTest {
 	static final Logger logger = LogManager.getLogger();
 	@Inject UserRepository userRepository;
 	SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-DD");
+	User u;
+	PageRequest pageable = new PageRequest(0, 20);
+	
+	@Before
+	public void setUp() {
+		u = new User();
+		u.setEmail(foo.getEmail());
+		Subsidiary s = BeanTools.deepCopy(foo.getSubsidiary());
+		u.setSubsidiary(s);
+		u.setRoles(BeanTools.deepCopy(foo.getRoles()));
+	}
 	
 	/**
 	 * 测试spring data中的命名方法
 	 */
 	@Test
 	public void testFindByEmail() {
-		User user = userRepository.findByEmail("emailtohl@163.com");
-		assertEquals("emailtohl@163.com", user.getEmail());
+		User user = userRepository.findByEmail(u.getEmail());
+		assertEquals(u.getEmail(), user.getEmail());
 	}
 	/**
 	 * 测试spring data中的命名方法
@@ -67,7 +78,7 @@ public class UserRepositoryTest {
 	@Test
 	public void testDynamicQuery() {
 		Pager<User> p = userRepository.dynamicQuery(PersistenceData.foo, 1);
-		System.out.println(p.getContent());
+		logger.debug(p.getContent());
 		assertNotNull(p.getContent());
 	}
 	
@@ -78,13 +89,6 @@ public class UserRepositoryTest {
 	 */
 	@Test
 	public void testGetPage() {
-		PageRequest pageable = new PageRequest(0, 20);
-		User u = new User();
-		u.setEmail("foo@test.com");
-		Subsidiary s = new Subsidiary();
-		s.setCity("西安");
-		u.setSubsidiary(s);
-		u.setRoles(new HashSet<Role>(Arrays.asList(manager)));
 		Page<User> p = userRepository.getPage(u, pageable);
 		logger.debug("getNumber:" + p.getNumber());
 		logger.debug("getNumberOfElements:" + p.getNumberOfElements());
@@ -110,14 +114,7 @@ public class UserRepositoryTest {
 	
 	@Test
 	public void testGetPagerByRoles() {
-		PageRequest pageable = new PageRequest(0, 20);
-		User u = new User();
-		u.setEmail("foo@test.com");
-		Subsidiary s = new Subsidiary();
-		s.setCity("西安");
-		u.setSubsidiary(s);
-		u.setRoles(new HashSet<Role>(Arrays.asList(manager)));
-		Pager<User> p = userRepository.getPagerByRoles(u.getEmail(), u.getRoles(), pageable);
+		Pager<User> p = userRepository.getPagerByRoles(u.getEmail(), u.getRoles().stream().map(r -> r.getName()).collect(Collectors.toSet()), pageable);
 		logger.debug("getNumber:" + p.getPageNumber());
 		logger.debug("getNumberOfElements:" + p.getTotalElements());
 		logger.debug("getSize:" + p.getPageSize());
@@ -131,15 +128,7 @@ public class UserRepositoryTest {
 	
 	@Test
 	public void testGetPagerByCriteria() {
-		PageRequest pageable = new PageRequest(0, 20);
-		User u = new User();
-		u.setEmail("foo@test.com");
-		Subsidiary s = new Subsidiary();
-		s.setCity("西安");
-		u.setSubsidiary(s);
-		u.setRoles(new HashSet<Role>(Arrays.asList(manager)));
-		Pager<User> p = userRepository.getPagerByCriteria(u.getEmail(), u.getRoles(), pageable);
-		System.out.println(p);
+		Pager<User> p = userRepository.getPagerByCriteria(u.getEmail(), u.getRoles().stream().map(r -> r.getName()).collect(Collectors.toSet()), pageable);
 		logger.debug("getNumber:" + p.getPageNumber());
 		logger.debug("getNumberOfElements:" + p.getTotalElements());
 		logger.debug("getSize:" + p.getPageSize());
@@ -150,7 +139,7 @@ public class UserRepositoryTest {
 		
 		u.setEmail(null);
 		u.getRoles().clear();
-		p = userRepository.getPagerByCriteria(u.getEmail(), u.getRoles(), pageable);
+		p = userRepository.getPagerByCriteria(u.getEmail(), u.getRoles().stream().map(r -> r.getName()).collect(Collectors.toSet()), pageable);
 		logger.debug("getNumber:" + p.getPageNumber());
 		logger.debug("getNumberOfElements:" + p.getTotalElements());
 		logger.debug("getSize:" + p.getPageSize());
@@ -160,12 +149,4 @@ public class UserRepositoryTest {
 		assertEquals(4, p.getTotalElements());
 	}
 	
-	/**
-	 * 测试需要校验的
-	 */
-	@Test(expected = TransactionSystemException.class)
-	public void testNotNull() {
-		User u = new Employee();
-		userRepository.save(u);
-	}
 }

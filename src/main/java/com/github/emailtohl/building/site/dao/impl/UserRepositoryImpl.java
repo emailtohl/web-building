@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.persistence.AccessType;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -22,7 +21,6 @@ import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.AbstractCriterionQueryRepository;
 import com.github.emailtohl.building.site.dao.UserRepositoryCustomization;
 import com.github.emailtohl.building.site.entities.Employee;
-import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
 
 /**
@@ -41,11 +39,10 @@ public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> i
 	}
 	
 	@Override
-	public Pager<User> getPagerByRoles(String email, Set<Role> roles, Pageable pageable) {
+	public Pager<User> getPagerByRoles(String email, Set<String> roleNames, Pageable pageable) {
 		StringBuilder jpql = new StringBuilder("SELECT DISTINCT u FROM User u WHERE 1 = 1");
 		Map<String, Object> args = new HashMap<String, Object>();
-		if (roles != null && roles.size() > 0) {
-			Set<String> roleNames = roles.stream().map(r -> r.getName()).collect(Collectors.toSet());
+		if (roleNames != null && roleNames.size() > 0) {
 			// 仅当有一对多关系存在时再插入JOIN语句，否则底层SQL语句就只能查找存在外联关系的数据了
 			int i = jpql.indexOf("WHERE");
 			jpql.insert(i, "JOIN u.roles r ").append(" AND r.name IN :roleNames");
@@ -59,7 +56,7 @@ public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> i
 	}
 	
 	@Override
-	public Pager<User> getPagerByCriteria(String email, Set<Role> roles, Pageable pageable) {
+	public Pager<User> getPagerByCriteria(String email, Set<String> roleNames, Pageable pageable) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		
 		CriteriaQuery<Long> q1 = cb.createQuery(Long.class);
@@ -69,8 +66,7 @@ public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> i
 		if (email != null && !email.isEmpty()) {
 			lp.add(cb.like(r1.get("email"), email));
 		}
-		if (roles != null && !roles.isEmpty()) {
-			Set<String> roleNames = roles.stream().map(r -> r.getName()).collect(Collectors.toSet());
+		if (roleNames != null && !roleNames.isEmpty()) {
 			lp.add(r1.join("roles").get("name").in(roleNames));
 		}
 		Predicate[] ps = lp.toArray(new Predicate[lp.size()]);
@@ -86,8 +82,7 @@ public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> i
 		if (email != null && !email.isEmpty()) {
 			lp.add(cb.like(r2.get("email"), email));
 		}
-		if (roles != null && !roles.isEmpty()) {
-			Set<String> roleNames = roles.stream().map(r -> r.getName()).collect(Collectors.toSet());
+		if (roleNames != null && !roleNames.isEmpty()) {
 			lp.add(r2.join("roles").get("name").in(roleNames));
 		}
 		ps = lp.toArray(new Predicate[lp.size()]);

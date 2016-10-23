@@ -18,9 +18,9 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 		self.getDetail($state.params.id);
 		
 		self.dictionary = {
-			'ADMIN' : '系统管理员',
-			'EMPLOYEE' : '职员',
-			'MANAGER' : '经理',
+//			'ADMIN' : '系统管理员',
+//			'EMPLOYEE' : '职员',
+//			'MANAGER' : '经理',
 			'USER' : '普通用户',
 			'MALE' : '男',
 			'FEMALE' : '女',
@@ -30,7 +30,7 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 		 * 在详情中展示字符串，有的值是对象，所以需要处理
 		 */
 		self.getValue = function(k, v) {
-			var result, i;
+			var result, i, j, auth;
 			switch (k) {
 				case 'department':
 					result = v.name;
@@ -44,11 +44,18 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 				case 'gender':
 					result = self.dictionary[v];
 					break;
-				case 'authorities':
+				case 'roles':
 					temp = [];
 					for (i = 0; i < v.length; i++) {
-						temp.push(self.dictionary[v[i]]);
-						result = temp.join('，');
+						for (j = 0; j < v[i].authorities.length; j++) {
+							auth = v[i].authorities[j];
+							if (auth instanceof String) {
+								temp.push(auth);
+							} else {
+								temp.push(auth.name);
+							}
+							result = temp.join('，');
+						}
 					}
 					break;
 				default:

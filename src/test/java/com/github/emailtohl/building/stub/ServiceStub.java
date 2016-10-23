@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -72,8 +73,8 @@ public class ServiceStub {
 		when(userService.getUserPage(customer, pageable)).thenReturn(customerPage);
 		when(userService.isExist(employee.getEmail())).thenReturn(true);
 		when(userService.isExist(customer.getEmail())).thenReturn(true);
-		when(userService.getPageByRoles(employee.getEmail(), employee.getRoles(), pageable)).thenReturn(employeePager);
-		when(userService.getPageByRoles(customer.getEmail(), customer.getRoles(), pageable)).thenReturn(customerPager);
+		when(userService.getPageByRoles(employee.getEmail(), employee.getRoles().stream().map(r -> r.getName()).collect(Collectors.toSet()), pageable)).thenReturn(employeePager);
+		when(userService.getPageByRoles(customer.getEmail(), customer.getRoles().stream().map(r -> r.getName()).collect(Collectors.toSet()), pageable)).thenReturn(customerPager);
 		when(userService.authenticate(employee.getEmail(), testPassword)).thenReturn(employee.getAuthentication());
 		when(userService.authenticate(customer.getEmail(), testPassword)).thenReturn(customer.getAuthentication());
 		when(userService.authenticate(employee.getAuthentication())).thenReturn(employee.getAuthentication());
@@ -81,5 +82,4 @@ public class ServiceStub {
 		
 		return userService;
 	}
-	
 }

@@ -31,7 +31,6 @@ import com.github.emailtohl.building.common.Constant;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.Employee;
-import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
 
 /**
@@ -192,7 +191,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @return
 	 */
 	@PreAuthorize("isAuthenticated()")
-	Pager<User> getPageByRoles(String email, Set<Role> roles, Pageable pageable);
+	Pager<User> getPageByRoles(String email, Set<String> roleNames, Pageable pageable);
 
 	/**
 	 * 判断用户是否具有该权限

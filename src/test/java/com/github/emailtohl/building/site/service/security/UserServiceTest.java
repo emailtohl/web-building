@@ -44,7 +44,7 @@ public class UserServiceTest {
 	
 	@Test(expected = AccessDeniedException.class)
 	public void testAddEmployee2() {
-		securityContextManager.setBar();
+		securityContextManager.setBaz();
 		userService.addEmployee(serviceStub.employee);
 	}
 	

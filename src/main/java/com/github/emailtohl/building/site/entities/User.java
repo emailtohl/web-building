@@ -326,10 +326,10 @@ public class User extends BaseEntity {
 		String password;
 		
 		public Principal() {
-			this.id = new Long(User.this.id);
-			this.username = new String(User.this.username);
-			this.email = new String(User.this.email);
-			this.password = new String(User.this.password);
+			this.id = User.this.id == null ? null : new Long(User.this.id);
+			this.username = User.this.username == null ? null : new String(User.this.username);
+			this.email = User.this.email == null ? null : new String(User.this.email);
+			this.password = User.this.password == null ? null : new String(User.this.password);
 			this.authorities = User.this.authorities();
 		}
 		
@@ -374,6 +374,12 @@ public class User extends BaseEntity {
 		@Override
 		public boolean isEnabled() {
 			return enabled == null ? false : enabled;
+		}
+
+		@Override
+		public String toString() {
+			return "Principal [id=" + id + ", username=" + username + ", email=" + email + ", authorities="
+					+ authorities + "]";
 		}
 	}
 	
