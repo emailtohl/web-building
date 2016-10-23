@@ -39,7 +39,6 @@ import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import org.hibernate.search.annotations.Field;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -99,7 +98,7 @@ public class User extends BaseEntity {
 //	protected Set<Authority> authorities = new HashSet<Authority>();
 	Set<Role> roles = new HashSet<Role>();
 	
-	@Field
+	@org.hibernate.search.annotations.Field
 	public String getName() {
 		return name;
 	}
@@ -107,7 +106,7 @@ public class User extends BaseEntity {
 		this.name = name;
 	}
 	
-	@Field
+	@org.hibernate.search.annotations.Field
 	public String getUsername() {
 		return username;
 	}
@@ -115,7 +114,7 @@ public class User extends BaseEntity {
 		this.username = username;
 	}
 	
-	@Field
+	@org.hibernate.search.annotations.Field
 	@Column(nullable = false, unique = true)
 	public String getEmail() {
 		return email;
@@ -243,7 +242,7 @@ public class User extends BaseEntity {
 		this.iconSrc = iconSrc;
 	}
 	
-	@Field
+	@org.hibernate.search.annotations.Field
 	public String getDescription() {
 		return description;
 	}

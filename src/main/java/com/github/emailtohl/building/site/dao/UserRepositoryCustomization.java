@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.CriterionQueryRepository;
-import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
 
 public interface UserRepositoryCustomization extends CriterionQueryRepository<User> {

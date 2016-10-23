@@ -8,22 +8,15 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.hibernate.search.annotations.Analyzer;
-import org.hibernate.search.annotations.Boost;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-
 /**
  * 论坛帖子对象
  * 
  * @author HeLei
  */
+@org.hibernate.search.annotations.Indexed
+@org.hibernate.search.annotations.Analyzer(impl = org.apache.lucene.analysis.standard.StandardAnalyzer.class)
 @Entity
 @Table(name = "t_Post")
-@Indexed
-@Analyzer(impl = StandardAnalyzer.class)
 public class ForumPost extends BaseEntity {
 	private static final long serialVersionUID = 5500398003740322853L;
 	private User user;
@@ -31,9 +24,9 @@ public class ForumPost extends BaseEntity {
 	private String body;
 	private String keywords;
 
+	@org.hibernate.search.annotations.IndexedEmbedded
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "user_id")
-	@IndexedEmbedded
 	public User getUser() {
 		return this.user;
 	}
@@ -42,8 +35,8 @@ public class ForumPost extends BaseEntity {
 		this.user = user;
 	}
 
+	@org.hibernate.search.annotations.Field
 	@Basic
-	@Field
 	public String getTitle() {
 		return this.title;
 	}
@@ -52,8 +45,8 @@ public class ForumPost extends BaseEntity {
 		this.title = title;
 	}
 
+	@org.hibernate.search.annotations.Field
 	@Lob
-	@Field
 	public String getBody() {
 		return this.body;
 	}
@@ -62,8 +55,8 @@ public class ForumPost extends BaseEntity {
 		this.body = body;
 	}
 
+	@org.hibernate.search.annotations.Field(boost = @org.hibernate.search.annotations.Boost(2.0F))// 关键字加权因子
 	@Basic
-	@Field(boost = @Boost(2.0F))// 关键字加权因子
 	public String getKeywords() {
 		return this.keywords;
 	}
