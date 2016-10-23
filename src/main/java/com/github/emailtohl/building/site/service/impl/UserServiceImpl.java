@@ -239,7 +239,7 @@ public class UserServiceImpl implements UserService {
 			fuzzy = '%' + fuzzy + '%';
 			u.setEmail(fuzzy);
 		}
-		Pager<User> pe = userRepository.dynamicQuery(u, pageable.getPageNumber());
+		Pager<User> pe = userRepository.dynamicQuery(u, pageable);
 		List<User> ls = convert(pe.getContent());
 		Pager<User> pd = new Pager<User>(ls, pe.getTotalElements(), pageable.getPageNumber(), pe.getPageSize());
 		return pd;

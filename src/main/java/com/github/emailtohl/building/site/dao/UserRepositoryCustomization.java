@@ -10,9 +10,8 @@ import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.CriterionQuery
 import com.github.emailtohl.building.site.entities.User;
 
 public interface UserRepositoryCustomization extends CriterionQueryRepository<User> {
-	Integer PAGE_SIZE = 20;
 	
-	Pager<User> dynamicQuery(User user, Integer pageNum);
+	Pager<User> dynamicQuery(User user, Pageable pageable);
 	
 	/**
 	 * 根据用户授权来查询Page，由于User与Authority是多对多关系，自定义的动态查询不满足需求，所以新开辟一个接口

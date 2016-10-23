@@ -34,8 +34,8 @@ import com.github.emailtohl.building.site.entities.User;
 public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> implements UserRepositoryCustomization {
 
 	@Override
-	public Pager<User> dynamicQuery(User user, Integer pageNum) {
-		return super.getPager(user, pageNum, PAGE_SIZE, AccessType.PROPERTY);
+	public Pager<User> dynamicQuery(User user, Pageable pageable) {
+		return super.getPager(user, pageable.getPageNumber(), pageable.getPageSize(), AccessType.PROPERTY);
 	}
 	
 	@Override
