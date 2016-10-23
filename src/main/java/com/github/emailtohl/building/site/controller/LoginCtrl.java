@@ -89,7 +89,7 @@ public class LoginCtrl {
 			long id = userService.addCustomer(c);
 			
 			// 第三步，邮件通知用户，让其激活该账号
-			String url = requet.getScheme() + "://" + requet.getServerName() + ":" + requet.getServerPort() + requet.getContextPath() + "/user/enableUser?id=" + id;
+			String url = requet.getScheme() + "://" + requet.getServerName() + ":" + requet.getServerPort() + requet.getContextPath() + "/enable?id=" + id;
 			emailService.enableUser(url, form.getEmail());
 			return "login";
 		} catch (RuntimeException e1) {

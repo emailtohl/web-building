@@ -676,7 +676,7 @@ public final class BeanTools {
 						value = m.invoke(t, new Object[] {});
 					}
 				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					e.printStackTrace();
+//					e.printStackTrace();
 					continue;
 				}
 				if (value != null && type != null && destMap.containsKey(name)) {

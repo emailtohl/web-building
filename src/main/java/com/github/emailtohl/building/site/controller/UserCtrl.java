@@ -147,9 +147,15 @@ public class UserCtrl {
 	@RequestMapping(value = "pageByRoles", method = GET)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	public Pager<User> getPageByRoles(String email, Set<String> roles,
+	public Pager<User> getPageByRoles(String email, String roles,
 			@PageableDefault(page = 0, size = 20, sort = BaseEntity.MODIFY_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
-		return userService.getPageByRoles(email, roles, pageable);
+		Set<String> set = new HashSet<String>();
+		if (roles != null && !roles.isEmpty()) {
+			for (String role : roles.split(",")) {
+				set.add(role);
+			}
+		}
+		return userService.getPageByRoles(email, set, pageable);
 	}
 	
 	/**

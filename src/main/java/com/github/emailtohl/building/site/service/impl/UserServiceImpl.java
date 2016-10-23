@@ -205,16 +205,16 @@ public class UserServiceImpl implements UserService {
 			throw new IllegalArgumentException("未找到该职员");
 		}
 		Employee entity = (Employee) u;
+		Department d = emp.getDepartment();
+		if (d != null && d.getName() != null) {
+			entity.setDepartment(departmentRepository.findByName(d.getName()));
+		}
 		// 修改密码，启用/禁用账户，授权功能，不走此接口，所以在调用merge方法前，先将其设置为null
 		emp.setRoles(null);
 		emp.setPassword(null);
 		emp.setEnabled(null);
 		emp.setDepartment(null);
 		BeanTools.merge(entity, emp);
-		Department d = emp.getDepartment();
-		if (d != null && d.getName() != null) {
-			entity.setDepartment(departmentRepository.findByName(d.getName()));
-		}
 		userRepository.save(entity);
 	}
 	
@@ -234,6 +234,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Pager<User> getUserPager(User u, Pageable pageable) {
+		String fuzzy = u.getEmail();
+		if (fuzzy != null && !fuzzy.isEmpty()) {
+			fuzzy = '%' + fuzzy + '%';
+			u.setEmail(fuzzy);
+		}
 		Pager<User> pe = userRepository.dynamicQuery(u, pageable.getPageNumber());
 		List<User> ls = convert(pe.getContent());
 		Pager<User> pd = new Pager<User>(ls, pe.getTotalElements(), pageable.getPageNumber(), pe.getPageSize());
@@ -257,7 +262,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Pager<User> getPageByRoles(String email, Set<String> roleNames, Pageable pageable) {
-		return userRepository.getPagerByCriteria(email, roleNames, pageable);
+		String fuzzy = email;
+		if (email != null && !email.isEmpty()) {
+			fuzzy = '%' + email + '%';
+		}
+		return userRepository.getPagerByCriteria(fuzzy, roleNames, pageable);
 	}
 
 	@Override
