@@ -7,7 +7,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
-
+/**
+ * 系统的用户一般分为外部客户和内部职员
+ * 这是为内部职员建立的实体类
+ * 
+ * @author HeLei
+ */
 @Entity
 @Table(name = "t_employee")
 public class Employee extends User {

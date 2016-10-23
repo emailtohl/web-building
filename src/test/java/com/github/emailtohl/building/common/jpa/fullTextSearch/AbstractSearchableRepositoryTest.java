@@ -6,20 +6,29 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
 
+import javax.inject.Inject;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.github.emailtohl.building.bootspring.Spring;
-import com.github.emailtohl.building.common.jpa.fullTextSearch.AbstractSearchableRepository;
+import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.common.jpa.relationEntities.Relation1;
+import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.entities.ForumPost;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = SpringConfigForTest.class)
+@ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
 public class AbstractSearchableRepositoryTest {
 	private static final Logger logger = LogManager.getLogger();
-	AnnotationConfigApplicationContext context = Spring.context;
+	@Inject ApplicationContext context;
 	class ForumFullTextSearch extends AbstractSearchableRepository<ForumPost> {}
 	ForumFullTextSearch forumFullTextSearch = new ForumFullTextSearch();
 	class TestFindByField extends AbstractSearchableRepository<Relation1>{}
@@ -29,7 +38,7 @@ public class AbstractSearchableRepositoryTest {
 	 */
 	@Test
 	public void testSearch() {
-		AutowireCapableBeanFactory factory = Spring.context.getAutowireCapableBeanFactory();
+		AutowireCapableBeanFactory factory = context.getAutowireCapableBeanFactory();
 		factory.autowireBeanProperties(forumFullTextSearch, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
 		factory.initializeBean(forumFullTextSearch, "forumFullTextSearch");
 		assertNotNull(forumFullTextSearch.entityManagerProxy);

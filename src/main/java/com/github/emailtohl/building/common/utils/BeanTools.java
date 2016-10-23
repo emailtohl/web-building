@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -173,6 +174,24 @@ public final class BeanTools {
 			}
 		} while (clz != null);
 		return f;
+	}
+	
+	/**
+	 * 从JavaBean属性描述器中获取注解
+	 * @param descriptor
+	 * @param annotationClass
+	 * @return
+	 */
+	public static <A extends Annotation> A getAnnotation(PropertyDescriptor descriptor, Class<A> annotationClass) {
+		Method read = descriptor.getReadMethod(), write = descriptor.getWriteMethod();
+		A a = null;
+		if (read != null) {
+			a = read.getAnnotation(annotationClass);
+		}
+		if (a == null && write != null) {
+			a = write.getAnnotation(annotationClass);
+		}
+		return a;
 	}
 
 	/**
@@ -652,15 +671,22 @@ public final class BeanTools {
 				Object value = null;
 				try {
 					type = entry.getValue().getPropertyType();
-					value = entry.getValue().getReadMethod().invoke(t, new Object[] {});
+					Method m = entry.getValue().getReadMethod();
+					if (m != null) {
+						value = m.invoke(t, new Object[] {});
+					}
 				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					e.printStackTrace();
+//					e.printStackTrace();
+					continue;
 				}
 				if (value != null && type != null && destMap.containsKey(name)) {
 					PropertyDescriptor pd = destMap.get(name);
 					if (pd.getPropertyType().isAssignableFrom(type)) {
 						try {
-							pd.getWriteMethod().invoke(dest, value);
+							Method w = pd.getWriteMethod();
+							if (w != null) {
+								w.invoke(dest, value);
+							}
 						} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 							e.printStackTrace();
 						}

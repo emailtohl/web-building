@@ -1,5 +1,16 @@
 package com.github.emailtohl.building.site.service;
 
+import static com.github.emailtohl.building.site.entities.Authority.USER_CREATE_SPECIAL;
+import static com.github.emailtohl.building.site.entities.Authority.USER_DELETE;
+import static com.github.emailtohl.building.site.entities.Authority.USER_DISABLE;
+import static com.github.emailtohl.building.site.entities.Authority.USER_GRANT_ROLES;
+import static com.github.emailtohl.building.site.entities.Authority.USER_READ_ALL;
+import static com.github.emailtohl.building.site.entities.Authority.USER_READ_SELF;
+import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_ALL;
+import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_SELF;
+
+import java.util.Set;
+
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -8,41 +19,48 @@ import javax.validation.constraints.Pattern;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.method.P;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.validation.annotation.Validated;
 
+import com.github.emailtohl.building.common.Constant;
 import com.github.emailtohl.building.common.jpa.Pager;
-import com.github.emailtohl.building.site.dto.UserDto;
+import com.github.emailtohl.building.site.entities.Customer;
+import com.github.emailtohl.building.site.entities.Employee;
+import com.github.emailtohl.building.site.entities.User;
 
 /**
  * 用户管理的服务
- * 
- * User类中，有的属性，如authorities是需要有权限才能调用的。
- * 所以新增User时，不会添加该属性，更新User时，也不会更新这些属性
- * 关于授权，需要在涉及权限的接口中定义
  * 
  * @author HeLei
  */
 @Transactional
 @Validated
-public interface UserService {
+public interface UserService extends AuthenticationProvider, UserDetailsService {
 
 	/**
-	 * 添加用户
-	 * 新增用户时，不设置authorities属性，且enable属性为false
-	 * 权限方面，这里添加用户主要是职员实体，需要管理员或经理才能新增
-	 * 
+	 * 创建雇员账号
 	 * 注意：对于Spring Security来说，新增用户时，必须同时为其添加相应的用户授权，否则即便激活了该用户，也不会让其登录
-	 * 
 	 * @param u
-	 * @return 新增User的id
+	 * @return
 	 */
-//	@PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER')")
-	Long addUser(@Valid UserDto u);
+	@PreAuthorize("hasAuthority('" + USER_CREATE_SPECIAL + "')")
+	Long addEmployee(@Valid Employee u);
 	
 	/**
-	 * 启用用户
+	 * 注册普通账号，无需权限即可
+	 * 注意：对于Spring Security来说，新增用户时，必须同时为其添加相应的用户授权，否则即便激活了该用户，也不会让其登录
+	 * @param u
+	 * @return
+	 */
+	Long addCustomer(@Valid Customer u);
+	
+	/**
+	 * 启用用户，无需权限即可
 	 * @param id
 	 */
 	void enableUser(@Min(value = 1L) Long id);
@@ -51,8 +69,21 @@ public interface UserService {
 	 * 禁用用户
 	 * @param id
 	 */
-	@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAuthority('" + USER_DISABLE + "')")
 	void disableUser(@Min(value = 1L) Long id);
+	
+	/**
+	 * 授予用户角色
+	 * @param roleNames
+	 */
+	@PreAuthorize("hasAuthority('" + USER_GRANT_ROLES + "')")
+	void grantRoles(long id, String... roleNames);
+	
+	/**
+	 * 新建用户时，授予普通用户角色
+	 * @param id
+	 */
+	void grantUserRole(long id);
 	
 	/**
 	 * 修改密码，限制只能本人才能修改
@@ -62,13 +93,21 @@ public interface UserService {
 	 * @param newPassword
 	 */
 	@PreAuthorize("#email == authentication.principal.username")
-	void changePassword(String email, @Pattern(regexp = "^[^\\s&\"<>]+$") String newPassword);
+	void changePassword(@P("email") String email, @Pattern(regexp = "^[^\\s&\"<>]+$") String newPassword);
 	
 	/**
-	 * 删除用户，只有ADMIN才能执行，MANAGER可以禁用用户
+	 * 修改密码，用于用户忘记密码的场景，没有权限控制
+	 * 由方法内部逻辑判断进行修改
+	 * @param email
+	 * @param newPassword
+	 */
+	void changePasswordByEmail(String email, @Pattern(regexp = "^[^\\s&\"<>]+$") String newPassword);
+	
+	/**
+	 * 删除用户
 	 * @param id
 	 */
-	@PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAuthority('" + USER_DELETE + "')")
 	void deleteUser(@Min(value = 1L) Long id);
 	
 	/**
@@ -77,8 +116,8 @@ public interface UserService {
 	 * @param id
 	 * @return
 	 */
-	@PostAuthorize("hasAnyAuthority('ADMIN', 'MANAGER') || returnObject.email == principal.username")
-	UserDto getUser(@Min(value = 1L) Long id);
+	@PostAuthorize("hasAuthority('" + USER_READ_ALL + "') || (hasAuthority('" + USER_READ_SELF + "') && returnObject.username == principal.username)")
+	User getUser(@Min(value = 1L) Long id);
 	
 	/**
 	 * 通过邮箱名查询用户，通过认证的均可调用
@@ -86,8 +125,8 @@ public interface UserService {
 	 * @param email
 	 * @return
 	 */
-	@PostAuthorize("hasAnyAuthority('ADMIN', 'MANAGER') || #email == principal.username")
-	UserDto getUserByEmail(@NotNull String email);
+	@PostAuthorize("hasAuthority('" + USER_READ_ALL + "') || (hasAuthority('" + USER_READ_SELF + "') && #email == principal.username)")
+	User getUserByEmail(@NotNull @P("email") String email);
 	
 	/**
 	 * 修改用户
@@ -97,8 +136,19 @@ public interface UserService {
 	 * 
 	 * @param u中的id不能为null， u中属性不为null的值为修改项
 	 */
-	@PreAuthorize("hasAnyAuthority('ADMIN', 'MANAGER') || #u.email == authentication.principal.username")
-	void mergeUser(@Min(value = 1L) Long id, UserDto u/* 用最大范围接收数据 */);
+	@PreAuthorize("hasAuthority('" + USER_UPDATE_ALL + "') || (hasAuthority('" + USER_UPDATE_SELF + "') && #email == principal.username)")
+	void mergeEmployee(@NotNull @P("email") String email, Employee emp);
+	
+	/**
+	 * 修改用户
+	 * 这里的方法名使用的是merge，传入的User参数只存储需要更新的属性，不更新的属性值为null
+	 * 
+	 * 修改密码，启用/禁用账户，授权功能，不走此接口
+	 * 
+	 * @param u中的id不能为null， u中属性不为null的值为修改项
+	 */
+	@PreAuthorize("hasAuthority('" + USER_UPDATE_ALL + "') || (hasAuthority('" + USER_UPDATE_SELF + "') && #email == principal.username)")
+	void mergeCustomer(@NotNull @P("email") String email, Customer cus);
 	
 	/**
 	 * 获取用户Pager
@@ -111,7 +161,7 @@ public interface UserService {
 	 */
 	@NotNull
 	@PreAuthorize("isAuthenticated()")
-	Pager<UserDto> getUserPager(UserDto u, Pageable pageable);
+	Pager<User> getUserPager(User u, Pageable pageable);
 	
 	/**
 	 * 获取用户Page,这里的Page是Spring Data提供的数据结构
@@ -124,6 +174,38 @@ public interface UserService {
 	 */
 	@NotNull
 	@PreAuthorize("isAuthenticated()")
-	Page<UserDto> getUserPage(UserDto u, Pageable pageable);
+	Page<User> getUserPage(User u, Pageable pageable);
 	
+	/**
+	 * 检查该邮箱是否注册
+	 * @param email
+	 * @return
+	 */
+	boolean isExist(@Pattern(regexp = Constant.PATTERN_EMAIL, flags = { Pattern.Flag.CASE_INSENSITIVE }) String email);
+	
+	/**
+	 * 通过用户邮箱名和角色名组合查询Pager
+	 * @param email
+	 * @param roles
+	 * @param pageable
+	 * @return
+	 */
+	@PreAuthorize("isAuthenticated()")
+	Pager<User> getPageByRoles(String email, Set<String> roleNames, Pageable pageable);
+
+	/**
+	 * 判断用户是否具有该权限
+	 * @param authorities
+	 * @return
+	 */
+	boolean hasAuthority(String... authorities);
+	
+	/**
+	 * 认证（登录）
+	 * @param email
+	 * @param password
+	 * @return
+	 */
+	Authentication authenticate(String email, String password);
+
 }

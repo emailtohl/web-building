@@ -1,10 +1,13 @@
 package com.github.emailtohl.building.site.dao;
 
+import java.util.Set;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.CriterionQueryRepository;
+import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
 
 public interface UserRepositoryCustomization extends CriterionQueryRepository<User> {
@@ -14,19 +17,21 @@ public interface UserRepositoryCustomization extends CriterionQueryRepository<Us
 	
 	/**
 	 * 根据用户授权来查询Page，由于User与Authority是多对多关系，自定义的动态查询不满足需求，所以新开辟一个接口
-	 * @param user
+	 * @param email
+	 * @param roles
 	 * @param pageable
 	 * @return
 	 */
-	Pager<User> getPagerByAuthorities(User user, Pageable pageable);
+	Pager<User> getPagerByRoles(String email, Set<String> roleNames, Pageable pageable);
 	
 	/**
 	 * 通过JPA2.1的标准查询（Criteria）方式获取Pager，支持排序
-	 * @param user 使用email和authorities属性进行查询
+	 * @param email
+	 * @param roles
 	 * @param pageable
 	 * @return
 	 */
-	Pager<User> getPagerByCriteria(User user, Pageable pageable);
+	Pager<User> getPagerByCriteria(String email, Set<String> roleNames, Pageable pageable);
 	
 	/**
 	 * 添加Spring data的分页功能，暂不支持Pageable中的排序功能

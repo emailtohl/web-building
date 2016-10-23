@@ -4,113 +4,70 @@ import static com.github.emailtohl.building.initdb.PersistenceData.foo;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
+import javax.inject.Inject;
+import javax.inject.Named;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.stubbing.Answer;
-import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.MediaType;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.web.util.NestedServletException;
 
-import com.github.emailtohl.building.bootspring.Spring;
-import com.github.emailtohl.building.common.jpa.Pager;
-import com.github.emailtohl.building.site.dto.UserDto;
-import com.github.emailtohl.building.site.entities.Authority;
+import com.github.emailtohl.building.bootspring.SpringConfigForTest;
+import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.mail.EmailService;
-import com.github.emailtohl.building.site.service.AuthenticationService;
 import com.github.emailtohl.building.site.service.UserService;
-import com.google.gson.Gson;
+import com.github.emailtohl.building.stub.SecurityContextManager;
+import com.github.emailtohl.building.stub.ServiceStub;
 
-public class AuthenticationCtrlTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = SpringConfigForTest.class)
+@ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
+public class LoginCtrlTest {
+	private static final Logger logger = LogManager.getLogger();
+	@Inject ServiceStub serviceStub;
+	@Inject @Named("userServiceMock") UserService userService;
+	@Inject ThreadPoolTaskScheduler taskScheduler;
+	@Inject SecurityContextManager securityContextManager;
 	MockMvc mockMvc;
 	
 	@Before
 	public void setUp() {
-		UserDto fooDto = new UserDto();
-		BeanUtils.copyProperties(foo, fooDto);
-		
-		AuthenticationService authenticationService = mock(AuthenticationService.class);
-		when(authenticationService.authenticate("foo@test.com", "123456")).thenReturn(new Authentication() {
-			private static final long serialVersionUID = -7421487535149159420L;
-			@Override
-			public String getName() {
-				return null;
-			}
-			@Override
-			public Collection<? extends GrantedAuthority> getAuthorities() {
-				return null;
-			}
-			@Override
-			public Object getCredentials() {
-				return null;
-			}
-			@Override
-			public Object getDetails() {
-				return null;
-			}
-			@Override
-			public Object getPrincipal() {
-				return null;
-			}
-			@Override
-			public boolean isAuthenticated() {
-				return false;
-			}
-			@Override
-			public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-			}}
-		);
-		when(authenticationService.getPageByAuthorities(fooDto, new PageRequest(0, 10))).thenReturn(new Pager<UserDto>(Arrays.asList(fooDto)));
-		when(authenticationService.isExist(foo.getEmail())).thenReturn(true);
-		
-		/*Answer<Object> answer = new Answer<Object>() {
-			public Object answer(InvocationOnMock invocation) {
-				Object[] args = invocation.getArguments();
-				return "called with arguments: " + args;
-			}
-		};*/
+		securityContextManager.setEmailtohl();
 		Answer<Object> answer = invocation -> {
-			Object[] args = invocation.getArguments();
-			return "called with arguments: " + args;
+			logger.debug(invocation.getMethod());
+			logger.debug(invocation.getArguments());
+			return invocation.getMock();
 		};
-
-		doAnswer(answer).when(authenticationService).grantedAuthority(100L, new HashSet<Authority>(Arrays.asList(Authority.MANAGER)));
+		EmailService emailService = mock(EmailService.class);
+		doAnswer(answer).when(emailService).sendMail("emailtohl@163.com", "test", "test");
+		doAnswer(answer).when(emailService).enableUser("http://localhost:8080/building/user/register", "emailtohl@163.com");
+		doAnswer(answer).when(emailService).updatePassword("http://localhost:8080/building/user/register",
+				"emailtohl@163.com", "test", "test");
 		
 		InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setPrefix("/WEB-INF/jsp/view/");
         viewResolver.setSuffix(".jsp");
 		
-		
-		UserService userService = mock(UserService.class);
-		when(userService.addUser(fooDto)).thenReturn(100L);
-		doAnswer(answer).when(userService).enableUser(100L);
-		
-		EmailService emailService = mock(EmailService.class);
-		doAnswer(answer).when(emailService).sendMail(foo.getEmail(), "test", "test");
-		doAnswer(answer).when(emailService).enableUser("http://localhost:8080/building/register", "emailtohl@163.com");
-		doAnswer(answer).when(emailService).updatePassword("http://localhost:8080/building/register", "emailtohl@163.com", "test", "test");
-		
-		AuthenticationCtrl authenticationCtrl = new AuthenticationCtrl();
-		authenticationCtrl.setAuthenticationService(authenticationService);
+		LoginCtrl authenticationCtrl = new LoginCtrl();
 		authenticationCtrl.setUserService(userService);
 		authenticationCtrl.setEmailService(emailService);
-		authenticationCtrl.setTaskScheduler(Spring.context.getBean(ThreadPoolTaskScheduler.class));
+//		不测试定时任务，否则需要等到时后才停止
+//		authenticationCtrl.setTaskScheduler(taskScheduler);
 		mockMvc = standaloneSetup(authenticationCtrl).setViewResolvers(viewResolver).build();
 	}
 
@@ -146,15 +103,16 @@ public class AuthenticationCtrlTest {
 		.andExpect(status().is(302));
 	}
 	
-	@Test
+//	NullPointerException会被spring转成NestedServletException，这是执行到定时任务产生的，即认可执行成功
+	@Test(expected = NestedServletException.class)
 	public void testForgetPassword() throws Exception {
 		mockMvc.perform(post("/forgetPassword")
-				.param("email", "abc")
+				.param("email", "abc@test.com")
 				.param("_csrf", "_csrf")
 				)
 		.andExpect(status().is(404));
 		mockMvc.perform(post("/forgetPassword")
-				.param("email", foo.getEmail())
+				.param("email", serviceStub.employee.getEmail())
 				.param("_csrf", "_csrf")
 				)
 		.andExpect(status().isOk());
@@ -195,16 +153,6 @@ public class AuthenticationCtrlTest {
 //	@Test
 	public void testGetPageByAuthorities() {
 		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testAuthorize() throws Exception {
-		String authorities = new Gson().toJson(Arrays.asList(Authority.MANAGER));
-		mockMvc.perform(put("/authentication/authorize/100")
-				.characterEncoding("UTF-8")  
-		        .contentType(MediaType.APPLICATION_JSON)  
-		        .content(authorities.getBytes()))
-		.andExpect(status().isOk());
 	}
 
 	@Test

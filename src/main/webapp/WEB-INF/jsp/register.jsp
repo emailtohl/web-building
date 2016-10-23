@@ -55,6 +55,10 @@
         <input type="email" class="form-control" placeholder="Email" name="email">
         <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
       </div>
+      <div class="form-group has-feedback hide">
+        <input type="hidden" class="form-control" placeholder="username" name="username">
+        <span class="glyphicon glyphicon-envelope form-control-feedback hide"></span>
+      </div>
       <div class="form-group has-feedback">
         <input type="password" class="form-control" placeholder="Password" name="password">
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
@@ -153,6 +157,8 @@
 		  tip('密码不一致');
 		  return false;
 	  }
+	  // 默认用户名即邮箱
+	  $('input[name="username"]').val(email);
   });
   
   

@@ -341,5 +341,5 @@ public class RootContextConfiguration
 		mailSender.setJavaMailProperties(p);
 		return mailSender;
 	}
-	
+
 }

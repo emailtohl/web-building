@@ -30,10 +30,13 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.github.emailtohl.building.common.utils.BeanTools;
 
 /**
  * JPA的实体管理器entityManager已经提供了简便的增、删、改功能，所以很容易封装，这里主要提供自定义的动态查询解决方案
@@ -215,7 +218,7 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 		class Predicate {
 			boolean first = true;
 			int position = 1;
-
+			
 			void predicate(Object o, String prefix) {
 				Class<?> clz;
 				// 如果是本实体继承树上的类，则只分析基类的属性
@@ -241,9 +244,16 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 				}
 				PropertyDescriptor[] descriptors = info.getPropertyDescriptors();
 				for (PropertyDescriptor descriptor : descriptors) {
+					if (BeanTools.getAnnotation(descriptor, Transient.class) != null) {
+						continue;
+					}
 					Object value = null;
 					try {
-						value = descriptor.getReadMethod().invoke(o);
+						Method m = descriptor.getReadMethod();
+						if (m == null) {
+							continue;
+						}
+						value = m.invoke(o);
 					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 						e.printStackTrace();
 					}
@@ -271,19 +281,9 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 						args.add(value);
 						position++;
 					} else {
-						Method read = descriptor.getReadMethod(), write = descriptor.getWriteMethod();
-						ManyToOne manyToOne = read.getAnnotation(ManyToOne.class);
-						if (manyToOne == null) {
-							manyToOne = write.getAnnotation(ManyToOne.class);
-						}
-						OneToOne oneToOne = read.getAnnotation(OneToOne.class);
-						if (oneToOne == null) {
-							oneToOne = write.getAnnotation(OneToOne.class);
-						}
-						Embedded embedded = read.getAnnotation(Embedded.class);
-						if (embedded == null) {
-							embedded = write.getAnnotation(Embedded.class);
-						}
+						ManyToOne manyToOne = BeanTools.getAnnotation(descriptor, ManyToOne.class);
+						OneToOne oneToOne = BeanTools.getAnnotation(descriptor, OneToOne.class);
+						Embedded embedded = BeanTools.getAnnotation(descriptor, Embedded.class);
 						if (manyToOne != null || oneToOne != null || embedded != null) {
 							if (set.contains(o)) {// 若遇到相互关联的情况，则终止递归
 								return;
@@ -343,7 +343,7 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 					for (int i = 0; i < fields.length; i++) {
 						Field field = fields[i];
 						int modifiers = field.getModifiers();
-						if (Modifier.isStatic(modifiers) || Modifier.isTransient(modifiers)) {
+						if (Modifier.isStatic(modifiers) || Modifier.isTransient(modifiers) || field.getAnnotation(Transient.class) != null) {
 							continue;
 						}
 						field.setAccessible(true);

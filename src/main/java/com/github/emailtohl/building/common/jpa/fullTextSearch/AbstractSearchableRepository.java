@@ -4,7 +4,6 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
-import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.orm.jpa.EntityManagerProxy;
 
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.AbstractCriterionQueryRepository;
+import com.github.emailtohl.building.common.utils.BeanTools;
 import com.github.emailtohl.building.site.entities.ForumPost;
 
 /**
@@ -112,15 +112,8 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 	private void findProper(String name, Class<?> clz, List<String> fields) {
 		try {
 			for (PropertyDescriptor p : Introspector.getBeanInfo(clz, Object.class).getPropertyDescriptors()) {
-				Method rm = p.getReadMethod(), wm = p.getWriteMethod();
-				Field f = rm.getAnnotation(Field.class);
-				if (f == null && wm != null) {
-					f = wm.getAnnotation(Field.class);
-				}
-				IndexedEmbedded e = rm.getAnnotation(IndexedEmbedded.class);
-				if (e == null && wm != null) {
-					e = wm.getAnnotation(IndexedEmbedded.class);
-				}
+				IndexedEmbedded e = BeanTools.getAnnotation(p, IndexedEmbedded.class);
+				Field f = BeanTools.getAnnotation(p, Field.class);
 				if (e != null) {
 					findProper(name + p.getName(), p.getPropertyType(), fields);
 				} else if (f != null) {

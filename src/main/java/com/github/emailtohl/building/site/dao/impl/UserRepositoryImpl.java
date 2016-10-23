@@ -16,24 +16,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.query.QueryUtils;
-import org.springframework.stereotype.Repository;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.AbstractCriterionQueryRepository;
 import com.github.emailtohl.building.site.dao.UserRepositoryCustomization;
-import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.Employee;
 import com.github.emailtohl.building.site.entities.User;
 
 /**
  * spring data扫描到接口UserRepository时，会认为UserRepository+Impl作为自定义实现
- * 
  * 当调用UserRepositoryImpl中的方法时，不再代理，而是直接将方法交给UserRepositoryImpl
  * 
  * @author HeLei
  *
  */
-@Repository //不由spring管理，而是由spring data管理
+//@Repository //不由spring管理，而是由spring data管理
 public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> implements UserRepositoryCustomization {
 
 	@Override
@@ -42,17 +39,14 @@ public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> i
 	}
 	
 	@Override
-	public Pager<User> getPagerByAuthorities(User user, Pageable pageable) {
-		
+	public Pager<User> getPagerByRoles(String email, Set<String> roleNames, Pageable pageable) {
 		StringBuilder jpql = new StringBuilder("SELECT DISTINCT u FROM User u WHERE 1 = 1");
-		String email = user.getEmail();
-		Set<Authority> authorities = user.getAuthorities();
 		Map<String, Object> args = new HashMap<String, Object>();
-		if (authorities != null && authorities.size() > 0) {
+		if (roleNames != null && roleNames.size() > 0) {
 			// 仅当有一对多关系存在时再插入JOIN语句，否则底层SQL语句就只能查找存在外联关系的数据了
 			int i = jpql.indexOf("WHERE");
-			jpql.insert(i, "JOIN u.authorities a ").append(" AND a IN :authorities");
-			args.put("authorities", authorities);
+			jpql.insert(i, "JOIN u.roles r ").append(" AND r.name IN :roleNames");
+			args.put("roleNames", roleNames);
 		}
 		if (email != null && email.length() > 0) {
 			jpql.append(" AND u.email LIKE :email");
@@ -62,18 +56,18 @@ public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> i
 	}
 	
 	@Override
-	public Pager<User> getPagerByCriteria(User user, Pageable pageable) {
+	public Pager<User> getPagerByCriteria(String email, Set<String> roleNames, Pageable pageable) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		
 		CriteriaQuery<Long> q1 = cb.createQuery(Long.class);
 		Root<User> r1 = q1.from(entityClass);
 		
 		List<Predicate> lp = new ArrayList<Predicate>();
-		if (user.getEmail() != null && !user.getEmail().isEmpty()) {
-			lp.add(cb.like(r1.get("email"), user.getEmail()));
+		if (email != null && !email.isEmpty()) {
+			lp.add(cb.like(r1.get("email"), email));
 		}
-		if (!user.getAuthorities().isEmpty()) {
-			lp.add(r1.join("authorities").in(user.getAuthorities()));
+		if (roleNames != null && !roleNames.isEmpty()) {
+			lp.add(r1.join("roles").get("name").in(roleNames));
 		}
 		Predicate[] ps = lp.toArray(new Predicate[lp.size()]);
 		
@@ -85,11 +79,11 @@ public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> i
 		Root<User> r2 = q2.from(entityClass);
 		
 		lp.clear();
-		if (user.getEmail() != null && !user.getEmail().isEmpty()) {
-			lp.add(cb.like(r2.get("email"), user.getEmail()));
+		if (email != null && !email.isEmpty()) {
+			lp.add(cb.like(r2.get("email"), email));
 		}
-		if (!user.getAuthorities().isEmpty()) {
-			lp.add(r2.join("authorities").in(user.getAuthorities()));
+		if (roleNames != null && !roleNames.isEmpty()) {
+			lp.add(r2.join("roles").get("name").in(roleNames));
 		}
 		ps = lp.toArray(new Predicate[lp.size()]);
 		

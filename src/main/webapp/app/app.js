@@ -40,7 +40,7 @@ define([ 'angular', 'uirouter', 'common/context', 'test/context', 'user/context'
 						&& $rootScope.authentication.principal.authorities;
 				if (authorities) {
 					for (i = 0; i < authorities.length; i++) {
-						if (authorities[i].role === authority) {
+						if (authorities[i] == authority || authorities[i].role === authority) {
 							flag = true;
 							break;
 						}

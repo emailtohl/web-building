@@ -6,6 +6,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.OPTIONS;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -18,8 +21,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -36,6 +38,8 @@ import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.exception.ResourceNotFoundException;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.BaseEntity;
+import com.github.emailtohl.building.site.entities.Customer;
+import com.github.emailtohl.building.site.entities.Employee;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
 import com.google.gson.Gson;
@@ -52,15 +56,6 @@ public class UserCtrl {
 	UserService userService;
 	@Inject
 	Gson gson;
-	
-	public String getCurrentUsername() {
-		String username = null;
-		Authentication a = SecurityContextHolder.getContext().getAuthentication();
-		if (a != null) {
-			username = a.getName();
-		}
-		return username;
-	}
 	
 	/**
 	 * 查询user资源下提供哪些方法
@@ -137,32 +132,78 @@ public class UserCtrl {
 	@RequestMapping(value = "pager", method = GET)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
-	public Pager<UserDto> getUserPager(@ModelAttribute UserDto u, 
+	public Pager<User> getUserPager(@ModelAttribute UserDto form, 
 			@PageableDefault(page = 0, size = 20, sort = BaseEntity.ID_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
+		User u = form.convertUser();
 		return userService.getUserPager(u, pageable);
 	}
 	
 	/**
-	 * 新增一个User
+	 * 获取用户权限列表
+	 * @param form
+	 * @param pageable
+	 * @return
+	 */
+	@RequestMapping(value = "pageByRoles", method = GET)
+	@ResponseBody
+	@ResponseStatus(HttpStatus.OK)
+	public Pager<User> getPageByRoles(String email, String roles,
+			@PageableDefault(page = 0, size = 20, sort = BaseEntity.MODIFY_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
+		Set<String> set = new HashSet<String>();
+		if (roles != null && !roles.isEmpty()) {
+			for (String role : roles.split(",")) {
+				set.add(role);
+			}
+		}
+		return userService.getPageByRoles(email, set, pageable);
+	}
+	
+	/**
+	 * 新增一个Employee
 	 * 适用于管理员操作，或RestFull风格的调用，受安全策略保护
 	 * 若注册页面中新增一个用户，可用/register，POST添加
 	 * @param u
 	 * @return
 	 */
-	@RequestMapping(value = "", method = POST)
-	public ResponseEntity<?> addUser(@RequestBody @Valid UserDto u, Errors e) {
+	@RequestMapping(value = "employee", method = POST)
+	public ResponseEntity<?> addEmployee(@RequestBody @Valid UserDto form, Errors e) {
 		if (e.hasErrors()) {
 			for (ObjectError oe : e.getAllErrors()) {
 				logger.info(oe);
 			}
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
-		Long id = userService.addUser(u);
+		Employee emp = form.convertEmployee();
+		Long id = userService.addEmployee(emp);
 		String uri = ServletUriComponentsBuilder.fromCurrentServletMapping().path("/user/{id}")
 				.buildAndExpand(id).toString();
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Location", uri);
-		return new ResponseEntity<>(u, headers, HttpStatus.CREATED);
+		return new ResponseEntity<>(emp, headers, HttpStatus.CREATED);
+	}
+	
+	/**
+	 * 新增一个Customer
+	 * 适用于管理员操作，或RestFull风格的调用，受安全策略保护
+	 * 若注册页面中新增一个用户，可用/register，POST添加
+	 * @param u
+	 * @return
+	 */
+	@RequestMapping(value = "customer", method = POST)
+	public ResponseEntity<?> addCustomer(@RequestBody @Valid UserDto form, Errors e) {
+		if (e.hasErrors()) {
+			for (ObjectError oe : e.getAllErrors()) {
+				logger.info(oe);
+			}
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		Customer cus = form.convertCustomer();
+		Long id = userService.addCustomer(cus);
+		String uri = ServletUriComponentsBuilder.fromCurrentServletMapping().path("/user/{id}")
+				.buildAndExpand(id).toString();
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Location", uri);
+		return new ResponseEntity<>(cus, headers, HttpStatus.CREATED);
 	}
 	
 	/**
@@ -186,19 +227,51 @@ public class UserCtrl {
 	}
 	
 	/**
+	 * 对用户授权，权限识别由service控制
+	 * @param id
+	 * @param authorities
+	 */
+	@RequestMapping(value = "grantRoles/{id}", method = RequestMethod.PUT)
+	@ResponseBody
+	public void grantRoles(@PathVariable @Min(1L) Long id, @RequestBody String[] roles) {
+		userService.grantRoles(id, roles);
+	}
+	
+	/**
 	 * 修改一个User
 	 * @param id
 	 * @param user
 	 */
-	@RequestMapping(value = "{id}", method = PUT)
-	public ResponseEntity<Void> update(@PathVariable("id") @Min(1L) long id, @Valid @RequestBody UserDto user/* 用最大范围来接收表单数据 */, Errors e) {
+	@RequestMapping(value = "employee/{id}", method = PUT)
+	public ResponseEntity<Void> updateEmployee(@PathVariable("id") @Min(1L) long id, @Valid @RequestBody UserDto form, Errors e) {
 		if (e.hasErrors()) {
 			for (ObjectError oe : e.getAllErrors()) {
 				logger.info(oe);
 			}
 			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
 		}
-		userService.mergeUser(id, user);
+		Employee emp = form.convertEmployee();
+		User u = userService.getUser(id);
+		userService.mergeEmployee(u.getEmail(), emp);
+		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+	}
+	
+	/**
+	 * 修改一个User
+	 * @param id
+	 * @param user
+	 */
+	@RequestMapping(value = "customer/{id}", method = PUT)
+	public ResponseEntity<Void> updateCustomer(@PathVariable("id") @Min(1L) long id, @Valid @RequestBody UserDto form, Errors e) {
+		if (e.hasErrors()) {
+			for (ObjectError oe : e.getAllErrors()) {
+				logger.info(oe);
+			}
+			return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+		}
+		Customer cus = form.convertCustomer();
+		User u = userService.getUser(id);
+		userService.mergeCustomer(u.getEmail(), cus);
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
 	

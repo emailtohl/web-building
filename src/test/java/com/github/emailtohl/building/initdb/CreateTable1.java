@@ -1,11 +1,6 @@
 package com.github.emailtohl.building.initdb;
 
-import static com.github.emailtohl.building.initdb.PersistenceData.bar;
-import static com.github.emailtohl.building.initdb.PersistenceData.company;
-import static com.github.emailtohl.building.initdb.PersistenceData.emailtohl;
-import static com.github.emailtohl.building.initdb.PersistenceData.foo;
-import static com.github.emailtohl.building.initdb.PersistenceData.product;
-import static com.github.emailtohl.building.initdb.PersistenceData.qa;
+import static com.github.emailtohl.building.initdb.PersistenceData.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -16,12 +11,30 @@ public class CreateTable1 {
 		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("building-unit");
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
+		
+		entityManager.persist(user_create_ordinary);
+		entityManager.persist(user_create_special);
+		entityManager.persist(user_enable);
+		entityManager.persist(user_disable);
+		entityManager.persist(user_grant_roles);
+		entityManager.persist(user_read_all);
+		entityManager.persist(user_read_self);
+		entityManager.persist(user_update_all);
+		entityManager.persist(user_update_self);
+		entityManager.persist(user_delete);
+		
+		entityManager.persist(admin);
+		entityManager.persist(manager);
+		entityManager.persist(employee);
+		entityManager.persist(user);
+		
 		entityManager.persist(company);
 		entityManager.persist(product);
 		entityManager.persist(qa);
 		entityManager.persist(emailtohl);
 		entityManager.persist(foo);
 		entityManager.persist(bar);
+		entityManager.persist(baz);
 
 		entityManager.getTransaction().commit();
 		entityManager.close();
