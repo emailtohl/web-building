@@ -2,6 +2,9 @@ package com.github.emailtohl.building.common.jpa.jpaCriterionQuery;
 
 import static org.junit.Assert.assertFalse;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
@@ -44,7 +47,7 @@ public class AbstractSearchableJpaRepositoryTest {
 		Sort sort = new Sort(Sort.Direction.DESC, "createDate")
 				 .and(new Sort(Sort.Direction.ASC, "id"));
 		Pageable p = new PageRequest(0, 20, sort);
-		SearchCriteria sc = SearchCriteria.Builder.create();
+		List<Criterion> sc = new ArrayList<>();
 		Criterion c1, c2;
 		c1 = new Criterion("email", Criterion.Operator.EQ, "emailtohl@163.com");
 		c2 = new Criterion("age", Criterion.Operator.GT, 20);
