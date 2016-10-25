@@ -268,7 +268,7 @@ public class User extends BaseEntity {
 	}
 	*/
 	
-	@ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
 	@JoinTable(name = "t_user_role"
 	, joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") }
 	, inverseJoinColumns = { @JoinColumn(name = "role_id", referencedColumnName = "id") })

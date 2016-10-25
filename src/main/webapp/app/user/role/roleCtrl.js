@@ -1,7 +1,7 @@
 define(['user/module'], function(userModule) {
 	return userModule
-	.controller('AuthorityCtrl', ['$scope', '$http', '$state', 'authorityService',
-	                                function($scope, $http, $state, authorityService) {
+	.controller('RoleCtrl', ['$scope', '$http', '$state', 'roleService',
+	                                function($scope, $http, $state, roleService) {
 		var self = this;
 		$scope.getAuthentication();
 		self.params = {
@@ -11,7 +11,7 @@ define(['user/module'], function(userModule) {
 			roles : []
 		};
 		self.query = function() {
-			authorityService.getPageByRoles(self.params).success(function(data, status, fun, obj) {
+			roleService.getPageByRoles(self.params).success(function(data, status, fun, obj) {
 				self.pager = data;
 				for (var i = 0; i < self.pager.content.length; i++) {
 					bindRoleNames(self.pager.content[i]);
@@ -35,7 +35,7 @@ define(['user/module'], function(userModule) {
 		};
 		self.reset = function() {
 			self.params.email = '';
-			self.params.authorities.length = 0;
+			self.params.roles.length = 0;
 		};
 		
 		self.modal = {
@@ -43,7 +43,7 @@ define(['user/module'], function(userModule) {
 			fail : {open : false},
 		};
 		self.onChange = function(id, value) {
-			authorityService.grantRoles(id, value).then(function(respose) {
+			roleService.grantRoles(id, value).then(function(respose) {
 				self.modal.success.open = true;
 			}, function(respose) {
 				self.query();

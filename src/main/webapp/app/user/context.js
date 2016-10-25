@@ -4,6 +4,6 @@ define(['user/module',
         'user/manager/detailCtrl',
         'user/manager/addUser',
         'user/manager/service',
-        'user/authority/service',
-        'user/authority/authorityCtrl'
+        'user/role/service',
+        'user/role/roleCtrl'
         ], function() {});

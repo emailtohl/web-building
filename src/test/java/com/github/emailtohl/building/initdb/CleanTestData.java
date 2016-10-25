@@ -1,14 +1,20 @@
 package com.github.emailtohl.building.initdb;
 
-import static com.github.emailtohl.building.initdb.PersistenceData.*;
+import static com.github.emailtohl.building.initdb.PersistenceData.bar;
+import static com.github.emailtohl.building.initdb.PersistenceData.baz;
+import static com.github.emailtohl.building.initdb.PersistenceData.company;
+import static com.github.emailtohl.building.initdb.PersistenceData.emailtohl;
+import static com.github.emailtohl.building.initdb.PersistenceData.foo;
+import static com.github.emailtohl.building.initdb.PersistenceData.product;
+import static com.github.emailtohl.building.initdb.PersistenceData.qa;
+
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.site.dao.CompanyRepository;
 import com.github.emailtohl.building.site.dao.DepartmentRepository;
+import com.github.emailtohl.building.site.dao.ForumPostRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
-import com.github.emailtohl.building.site.entities.Company;
-import com.github.emailtohl.building.site.entities.Department;
-import com.github.emailtohl.building.site.entities.User;
 
 public class CleanTestData {
 	
@@ -17,21 +23,47 @@ public class CleanTestData {
 		UserRepository userRepository = Spring.getApplicationContext().getBean(UserRepository.class);
 		DepartmentRepository departmentRepository = Spring.getApplicationContext().getBean(DepartmentRepository.class);
 		CompanyRepository companyRepository = Spring.getApplicationContext().getBean(CompanyRepository.class);
-		for (User u : userRepository.findAll()) {
-			if (emailtohl.getEmail().equals(u.getEmail()) || foo.getEmail().equals(u.getEmail()) || bar.getEmail().equals(u.getEmail()) || baz.getEmail().equals(u.getEmail())) {
-				userRepository.delete(u);
-			}
-		}
-		for (Department d : departmentRepository.findAll()) {
-			if (product.getName().equals(d.getName()) || qa.getName().equals(d.getName())) {
-				departmentRepository.delete(d);
-			}
-		}
-		for (Company c : companyRepository.findAll()) {
-			if (company.getName().equals(c.getName())) {
-				companyRepository.delete(c);
-			}
-		}
+		ForumPostRepository forumPostRepository = Spring.getApplicationContext().getBean(ForumPostRepository.class);
+
+		
+		try {
+			forumPostRepository.delete(forumPostRepository.findByUserEmail(emailtohl.getEmail()));
+		} catch (InvalidDataAccessApiUsageException e) {}
+		try {
+			forumPostRepository.delete(forumPostRepository.findByUserEmail(foo.getEmail()));
+		} catch (InvalidDataAccessApiUsageException e) {}
+		try {
+			forumPostRepository.delete(forumPostRepository.findByUserEmail(bar.getEmail()));
+		} catch (InvalidDataAccessApiUsageException e) {}
+		try {
+			forumPostRepository.delete(forumPostRepository.findByUserEmail(baz.getEmail()));
+		} catch (InvalidDataAccessApiUsageException e) {}
+		
+		
+		try {
+			userRepository.delete(userRepository.findByEmail(emailtohl.getEmail()));
+		} catch (InvalidDataAccessApiUsageException e) {}
+		try {
+			userRepository.delete(userRepository.findByEmail(foo.getEmail()));
+		} catch (InvalidDataAccessApiUsageException e) {}
+		try {
+			userRepository.delete(userRepository.findByEmail(bar.getEmail()));
+		} catch (InvalidDataAccessApiUsageException e) {}
+		try {
+			userRepository.delete(userRepository.findByEmail(baz.getEmail()));
+		} catch (InvalidDataAccessApiUsageException e) {}
+		
+		
+		try {
+			departmentRepository.delete(departmentRepository.findByName(product.getName()));
+		} catch (InvalidDataAccessApiUsageException e) {}
+		try {
+			departmentRepository.delete(departmentRepository.findByName(qa.getName()));
+		} catch (InvalidDataAccessApiUsageException e) {}
+		
+		try {
+			companyRepository.delete(companyRepository.findByName(company.getName()));
+		} catch (InvalidDataAccessApiUsageException e) {}
 		
 		System.exit(0);
 	}

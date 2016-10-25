@@ -1,5 +1,5 @@
 define([ 'user/module', 'common/context' ], function(userModule) {
-	return userModule.factory('authorityService', [ '$http', 'util', function($http, util) {
+	return userModule.factory('roleService', [ '$http', 'util', function($http, util) {
 		return {
 			getPageByRoles : function(params) {
 				return $http.get('user/pageByRoles?' + util.encodeUrlParams(params));

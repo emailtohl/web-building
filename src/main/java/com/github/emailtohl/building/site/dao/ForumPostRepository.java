@@ -10,4 +10,5 @@ import com.github.emailtohl.building.site.entities.ForumPost;
  */
 public interface ForumPostRepository extends JpaRepository<ForumPost, Long>, SearchableRepository<ForumPost> {
 	ForumPost findByTitle(String title);
+	ForumPost findByUserEmail(String email);
 }
