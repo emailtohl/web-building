@@ -4,7 +4,7 @@
 
   <groupId>com.github.emailtohl.web</groupId>
   <artifactId>web-building</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.1-SNAPSHOT</version>
   <packaging>war</packaging>
 
   <name>web-building</name>

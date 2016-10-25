@@ -41,7 +41,7 @@ public class CleanTestData {
 		
 		
 		try {
-			userRepository.delete(userRepository.findByEmail(emailtohl.getEmail()));
+//			userRepository.delete(userRepository.findByEmail(emailtohl.getEmail()));
 		} catch (InvalidDataAccessApiUsageException e) {}
 		try {
 			userRepository.delete(userRepository.findByEmail(foo.getEmail()));
