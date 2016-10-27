@@ -7,11 +7,14 @@ import java.util.Date;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import com.github.emailtohl.building.site.entities.ApplicationForm;
 import com.github.emailtohl.building.site.entities.ApplicationForm.Status;
@@ -23,6 +26,7 @@ import com.github.emailtohl.building.site.entities.ApplicationHandleHistory;
  */
 @Service
 @Transactional
+@Validated
 public interface ApplicationFormService {
 
 	/**
@@ -63,7 +67,7 @@ public interface ApplicationFormService {
 	 * @return
 	 */
 	@PreAuthorize("isAuthenticated()")
-	Page<ApplicationForm> findByApplicantEmailLike(Pageable pageable);
+	Page<ApplicationForm> findMyApplicationForm(Pageable pageable);
 	
 	/**
 	 * 改变申请单状态
@@ -73,7 +77,7 @@ public interface ApplicationFormService {
 	 * @param cause
 	 */
 	@PreAuthorize("isAuthenticated() && hasAuthority('" + APPLICATION_FORM_TRANSIT + "')")
-	void transit(Long id, Status status, String cause);
+	void transit(Long id, @NotNull Status status, @Min(value = 6) String cause);
 	
 	/**
 	 * 查询申请单处理历史
@@ -120,4 +124,13 @@ public interface ApplicationFormService {
 	 */
 	@PreAuthorize("isAuthenticated() && hasAuthority('" + APPLICATION_FORM_READ_HISTORY + "')")
 	Page<ApplicationHandleHistory> historyFindByStatus(Status status, Pageable pageable);
+	
+	/**
+	 * 
+	 * @param status
+	 * @param pageable
+	 * @return
+	 */
+	@PreAuthorize("isAuthenticated() && hasAuthority('" + APPLICATION_FORM_READ_HISTORY + "')")
+	Page<ApplicationHandleHistory> history(String applicant, String handler, @NotNull Status status, @NotNull Date start, @NotNull Date end, @NotNull Pageable pageable);
 }

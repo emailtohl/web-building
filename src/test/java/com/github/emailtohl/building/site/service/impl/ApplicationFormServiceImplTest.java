@@ -92,8 +92,8 @@ public class ApplicationFormServiceImplTest {
 	}
 
 	@Test
-	public void testFindByApplicantEmailLike() {
-		Page<ApplicationForm> page = applicationFormService.findByApplicantEmailLike(pageable);
+	public void testFindMyApplicationForm() {
+		Page<ApplicationForm> page = applicationFormService.findMyApplicationForm(pageable);
 		assertTrue(page.getTotalElements() > 0);
 	}
 

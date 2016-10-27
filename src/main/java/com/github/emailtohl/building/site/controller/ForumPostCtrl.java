@@ -32,13 +32,13 @@ import com.github.emailtohl.building.site.service.ForumPostService;
  */
 @RestController
 @RequestMapping("forum")
-public class ForumPostController {
+public class ForumPostCtrl {
 	private static final Logger logger = LogManager.getLogger();
 	
 	ForumPostService forumPostService;
 	
 	@Inject
-	public ForumPostController(ForumPostService forumPostService) {
+	public ForumPostCtrl(ForumPostService forumPostService) {
 		super();
 		this.forumPostService = forumPostService;
 	}

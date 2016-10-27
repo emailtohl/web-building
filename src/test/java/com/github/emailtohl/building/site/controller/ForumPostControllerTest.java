@@ -48,7 +48,7 @@ public class ForumPostControllerTest {
 		when(forumPostService.getForumPostByTitle(null)).thenReturn(null);
 		doAnswer(answer).when(forumPostService).save(null, null);
 		doAnswer(answer).when(forumPostService).delete(100L);
-		ForumPostController ctrl = new ForumPostController(forumPostService);
+		ForumPostCtrl ctrl = new ForumPostCtrl(forumPostService);
 		mockMvc = standaloneSetup(ctrl).build();
 	}
 	@Test

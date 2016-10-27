@@ -63,7 +63,7 @@ mvn cobertura:check
 And			findByLastnameAndFirstname		… where x.lastname = ?1 and x.firstname = ?2
 Or		findByLastnameOrFirstname		… where x.lastname = ?1 or x.firstname = ?2
 Is,Equals		findByFirstname,findByFirstnameIs,findByFirstnameEqual		… where x.firstname = 1?
-Between		findByStartDateBetween		… where x.startDate between 1? and ?2
+Between		findByStartDateBetween		… where x.startDate between ?1 and ?2
 LessThan		findByAgeLessThan		… where x.age < ?1
 LessThanEqual		findByAgeLessThanEqual		… where x.age <= ?1
 GreaterThan		findByAgeGreaterThan		… where x.age > ?1

@@ -56,7 +56,7 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 	}
 
 	@Override
-	public Page<ApplicationForm> findByApplicantEmailLike(Pageable pageable) {
+	public Page<ApplicationForm> findMyApplicationForm(Pageable pageable) {
 		String applicantEmail = getEmail();
 		if (applicantEmail.isEmpty())
 			return new PageImpl<>(new ArrayList<>());
@@ -119,5 +119,29 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 			return a.getName();
 		else
 			return "";
+	}
+
+	@Override
+	public Page<ApplicationHandleHistory> history(String applicant, String handler, Status status, Date start, Date end,  Pageable pageable) {
+		Page<ApplicationHandleHistory> page;
+		
+		if (empty(applicant)) {
+			if (empty(handler)) {
+				page = applicationHandleHistoryRepository.findByStatusAndCreateDateBetween(status, start, end, pageable);
+			} else {
+				page = applicationHandleHistoryRepository.history2(handler, status, start, end, pageable);
+			}
+		} else {
+			if (empty(handler)) {
+				page = applicationHandleHistoryRepository.history1(applicant, status, start, end, pageable);
+			} else {
+				page = applicationHandleHistoryRepository.history3(applicant, handler, status, start, end, pageable);
+			}
+		}
+		return page;
+	}
+	
+	private boolean empty(String s) {
+		return s == null || s.isEmpty();
 	}
 }
