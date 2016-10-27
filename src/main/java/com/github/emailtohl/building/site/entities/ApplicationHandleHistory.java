@@ -1,7 +1,8 @@
 package com.github.emailtohl.building.site.entities;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -21,7 +22,7 @@ public class ApplicationHandleHistory extends BaseEntity {
 	private String cause;
 	private Status status;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "application_form_id", nullable = false)
 	public ApplicationForm getApplicationForm() {
 		return applicationForm;
@@ -30,7 +31,7 @@ public class ApplicationHandleHistory extends BaseEntity {
 		this.applicationForm = applicationForm;
 	}
 	
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn(name = "handler_id")
 	public User getHandler() {
 		return handler;
@@ -38,17 +39,26 @@ public class ApplicationHandleHistory extends BaseEntity {
 	public void setHandler(User handler) {
 		this.handler = handler;
 	}
+	
 	public String getCause() {
 		return cause;
 	}
 	public void setCause(String cause) {
 		this.cause = cause;
 	}
+	
+	@Enumerated(EnumType.STRING)
 	public Status getStatus() {
 		return status;
 	}
 	public void setStatus(Status status) {
 		this.status = status;
+	}
+	
+	@Override
+	public String toString() {
+		return "ApplicationHandleHistory [applicationForm name=" + applicationForm.getName() + ", handler=" + handler.getEmail() + ", cause="
+				+ cause + ", status=" + status + "]";
 	}
 
 }

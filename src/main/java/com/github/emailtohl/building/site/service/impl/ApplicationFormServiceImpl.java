@@ -34,6 +34,8 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 	
 	@Override
 	public Long application(ApplicationForm applicationForm) {
+		User u = userService.getUserByEmail(getEmail());
+		applicationForm.setApplicant(u);
 		applicationFormRepository.save(applicationForm);
 		return applicationForm.getId();
 	}

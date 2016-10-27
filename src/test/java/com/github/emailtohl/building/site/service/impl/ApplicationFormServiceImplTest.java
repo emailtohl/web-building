@@ -5,9 +5,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import java.time.Instant;
+import java.util.Date;
+import java.util.Iterator;
 
+import javax.inject.Inject;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,19 +32,17 @@ import com.github.emailtohl.building.site.dao.ApplicationHandleHistoryRepository
 import com.github.emailtohl.building.site.entities.ApplicationForm;
 import com.github.emailtohl.building.site.entities.ApplicationForm.Status;
 import com.github.emailtohl.building.site.entities.ApplicationHandleHistory;
-import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.ApplicationFormService;
-import com.github.emailtohl.building.site.service.UserService;
 import com.github.emailtohl.building.stub.SecurityContextManager;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SpringConfigForTest.class)
 @ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
 public class ApplicationFormServiceImplTest {
+	static final Logger logger = LogManager.getLogger();
 	@Inject ApplicationFormRepository applicationFormRepository;
 	@Inject ApplicationHandleHistoryRepository applicationHandleHistoryRepository;
 	@Inject ApplicationFormService applicationFormService;
-	@Inject @Named("userServiceImpl") UserService userService;
 	@Inject SecurityContextManager securityContextManager;
 	private final String title = "test";
 	private Long id;
@@ -48,8 +51,9 @@ public class ApplicationFormServiceImplTest {
 	@Before
 	public void setUp() throws Exception {
 		securityContextManager.setEmailtohl();
-		User c = userService.getUserByEmail(PersistenceData.emailtohl.getEmail());
-		ApplicationForm af = new ApplicationForm(c, title, "test content");
+		ApplicationForm af = new ApplicationForm();
+		af.setName(title);
+		af.setDescription("test content");
 		applicationFormService.application(af);
 		id = af.getId();
 	}
@@ -57,10 +61,13 @@ public class ApplicationFormServiceImplTest {
 	@After
 	public void tearDown() throws Exception {
 		if (id != null) {
-			ApplicationForm af = applicationFormRepository.getOne(id);
-			Long historyId = af.getApplicationHandleHistory().iterator().next().getId();
-			applicationHandleHistoryRepository.delete(historyId);
-			applicationFormRepository.delete(af);
+			Page<ApplicationHandleHistory> page = applicationHandleHistoryRepository.findByApplicationFormId(id, pageable);
+			for (Iterator<ApplicationHandleHistory> i = page.getContent().iterator(); i.hasNext();) {
+				ApplicationHandleHistory h = i.next();
+				logger.debug(h);
+				applicationHandleHistoryRepository.delete(h.getId());
+			}
+			applicationFormRepository.delete(id);
 		}
 	}
 
@@ -98,37 +105,31 @@ public class ApplicationFormServiceImplTest {
 			ApplicationForm af = applicationFormService.findById(id);
 			assertEquals(Status.REJECT, af.getStatus());
 			assertEquals(cause, af.getCause());
-			ApplicationHandleHistory history = af.getApplicationHandleHistory().iterator().next();
-			assertNotNull(history);
+//			懒加载原因，session已关，不能调用
+//			ApplicationHandleHistory history = af.getApplicationHandleHistory().iterator().next();
+//			assertNotNull(history);
 			
+			Instant now = Instant.now();
+			Date start = Date.from(now.minusSeconds(1000));
+			Date end = Date.from(now.plusSeconds(10));
+			Page<ApplicationHandleHistory> page = applicationFormService.historyFindByCreateDateBetween(start, end, pageable);
+			assertTrue(page.getTotalElements() > 0);
+			
+			page = applicationFormService.historyFindByCreateDateGreaterThanEqual(start, pageable);
+			assertTrue(page.getTotalElements() > 0);
+			
+			page = applicationFormService.historyFindByCreateDateLessThanEqual(end, pageable);
+			assertTrue(page.getTotalElements() > 0);
+			
+			page = applicationFormService.historyFindByHandlerEmailLike(PersistenceData.emailtohl.getEmail(), pageable);
+			assertTrue(page.getTotalElements() > 0);
+			
+			page = applicationFormService.historyFindByStatus(Status.REJECT, pageable);
+			assertTrue(page.getTotalElements() > 0);
 		} else {
 			fail("没有持久化");
 		}
 	}
 
-	@Test
-	public void testHistoryFindByCreateDateBetween() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testHistoryFindByCreateDateGreaterThanEqual() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testHistoryFindByCreateDateLessThanEqual() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testHistoryFindByHandlerEmailLike() {
-		fail("Not yet implemented");
-	}
-
-	@Test
-	public void testHistoryFindByStatus() {
-		fail("Not yet implemented");
-	}
 
 }

@@ -14,6 +14,7 @@ import com.github.emailtohl.building.site.entities.ApplicationForm.Status;
  * @author HeLei
  */
 public interface ApplicationHandleHistoryRepository extends JpaRepository<ApplicationHandleHistory, Long> {
+	Page<ApplicationHandleHistory> findByApplicationFormId(long id, Pageable pageable);
 	Page<ApplicationHandleHistory> findByCreateDateBetween(Date start, Date end, Pageable pageable);
 	Page<ApplicationHandleHistory> findByCreateDateGreaterThanEqual(Date date, Pageable pageable);
 	Page<ApplicationHandleHistory> findByCreateDateLessThanEqual(Date date, Pageable pageable);

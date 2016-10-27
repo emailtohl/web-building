@@ -42,6 +42,7 @@ public class ApplicationForm extends BaseEntity {
 	
 	public ApplicationForm() {
 		super();
+		this.status = Status.REQUEST;
 	}
 	
 	public ApplicationForm(User applicant, String name, String description) {
@@ -80,6 +81,7 @@ public class ApplicationForm extends BaseEntity {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
 	public String getCause() {
 		return cause;
 	}
@@ -104,7 +106,7 @@ public class ApplicationForm extends BaseEntity {
 		this.status = status;
 	}
 	
-	@OneToMany(mappedBy = "applicationForm", orphanRemoval = false)
+	@OneToMany(targetEntity = ApplicationHandleHistory.class, mappedBy = "applicationForm", orphanRemoval = false)
 	public List<ApplicationHandleHistory> getApplicationHandleHistory() {
 		return applicationHandleHistory;
 	}
