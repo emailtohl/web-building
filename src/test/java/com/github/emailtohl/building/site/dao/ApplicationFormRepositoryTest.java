@@ -38,8 +38,10 @@ public class ApplicationFormRepositoryTest {
 		String title = "工单申请表";
 		Pageable p = new PageRequest(0, 20);
 		Customer c = (Customer) userRepository.findByEmail(PersistenceData.baz.getEmail());
-		applicationFormRepository.save(new ApplicationForm(c, title, "工单申请的内容"));
-		ApplicationForm af = applicationFormRepository.findByName(title);
+		ApplicationForm persist = new ApplicationForm(c, title, "工单申请的内容");
+		applicationFormRepository.save(persist);
+		Long id = persist.getId();
+		ApplicationForm af = applicationFormRepository.findOne(id);
 		logger.debug(af);
 		assertNotNull(af);
 		Page<ApplicationForm> page = applicationFormRepository.findByNameLike(title.substring(0, title.length() - 1) + '%', p);
@@ -52,7 +54,7 @@ public class ApplicationFormRepositoryTest {
 		logger.debug(page.getContent());
 		assertTrue(page.getTotalElements() > 0);
 		
-		applicationFormRepository.delete(applicationFormRepository.findByName(title));
+		applicationFormRepository.delete(persist);
 	}
 
 }

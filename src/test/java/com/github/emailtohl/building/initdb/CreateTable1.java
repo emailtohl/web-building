@@ -1,26 +1,6 @@
 package com.github.emailtohl.building.initdb;
 
-import static com.github.emailtohl.building.initdb.PersistenceData.admin;
-import static com.github.emailtohl.building.initdb.PersistenceData.bar;
-import static com.github.emailtohl.building.initdb.PersistenceData.baz;
-import static com.github.emailtohl.building.initdb.PersistenceData.company;
-import static com.github.emailtohl.building.initdb.PersistenceData.emailtohl;
-import static com.github.emailtohl.building.initdb.PersistenceData.employee;
-import static com.github.emailtohl.building.initdb.PersistenceData.foo;
-import static com.github.emailtohl.building.initdb.PersistenceData.manager;
-import static com.github.emailtohl.building.initdb.PersistenceData.product;
-import static com.github.emailtohl.building.initdb.PersistenceData.qa;
-import static com.github.emailtohl.building.initdb.PersistenceData.user;
-import static com.github.emailtohl.building.initdb.PersistenceData.user_create_ordinary;
-import static com.github.emailtohl.building.initdb.PersistenceData.user_create_special;
-import static com.github.emailtohl.building.initdb.PersistenceData.user_delete;
-import static com.github.emailtohl.building.initdb.PersistenceData.user_disable;
-import static com.github.emailtohl.building.initdb.PersistenceData.user_enable;
-import static com.github.emailtohl.building.initdb.PersistenceData.user_grant_roles;
-import static com.github.emailtohl.building.initdb.PersistenceData.user_read_all;
-import static com.github.emailtohl.building.initdb.PersistenceData.user_read_self;
-import static com.github.emailtohl.building.initdb.PersistenceData.user_update_all;
-import static com.github.emailtohl.building.initdb.PersistenceData.user_update_self;
+import static com.github.emailtohl.building.initdb.PersistenceData.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -43,6 +23,8 @@ public class CreateTable1 {
 		entityManager.persist(user_update_all);
 		entityManager.persist(user_update_self);
 		entityManager.persist(user_delete);
+		entityManager.persist(application_form_transit);
+		entityManager.persist(application_form_read_history);
 		
 		entityManager.persist(admin);
 		entityManager.persist(manager);

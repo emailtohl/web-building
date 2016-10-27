@@ -11,7 +11,7 @@ import com.github.emailtohl.building.site.entities.ApplicationForm.Status;
  * @author HeLei
  */
 public interface ApplicationFormRepository extends JpaRepository<ApplicationForm, Long> {
-	ApplicationForm findByName(String name);
+	ApplicationForm findById(long id);
 	Page<ApplicationForm> findByNameLike(String name, Pageable pageable);
 	Page<ApplicationForm> findByStatus(Status status, Pageable pageable);
 	Page<ApplicationForm> findByApplicantEmailLike(String applicantEmail, Pageable pageable);

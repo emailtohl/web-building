@@ -100,4 +100,12 @@ public abstract class AbstractJpaRepository<I extends Serializable, E extends Se
 		this.entityManagerFactory = entityManagerFactory;
 	}
 
+	/**
+	 * 让外部使用EntityManager接口，进行增删改查操作
+	 * @return
+	 */
+	public EntityManager getEntityManager() {
+		return entityManager;
+	}
+
 }

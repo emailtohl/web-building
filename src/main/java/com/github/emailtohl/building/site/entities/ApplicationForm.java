@@ -1,9 +1,13 @@
 package com.github.emailtohl.building.site.entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -34,27 +38,23 @@ public class ApplicationForm extends BaseEntity {
 	private String cause;
 	private User handler;
 	private Status status;
+	private List<ApplicationHandleHistory> applicationHandleHistory = new ArrayList<>();
 	
 	public ApplicationForm() {
 		super();
 	}
 	
 	public ApplicationForm(User applicant, String name, String description) {
+		this(applicant, name, description, Status.REQUEST);
+	}
+
+	public ApplicationForm(User applicant, String name, String description, Status status) {
 		super();
 		this.applicant = applicant;
 		this.name = name;
 		this.description = description;
-		this.status = Status.REQUEST;
-	}
-	
-	public ApplicationForm(User applicant, String name, Status status) {
-		super();
-		this.applicant = applicant;
-		this.name = name;
 		this.status = status;
 	}
-
-
 
 	@ManyToOne
 	@JoinColumn(name = "user_applicant_id")
@@ -104,6 +104,14 @@ public class ApplicationForm extends BaseEntity {
 		this.status = status;
 	}
 	
+	@OneToMany(mappedBy = "applicationForm", orphanRemoval = false)
+	public List<ApplicationHandleHistory> getApplicationHandleHistory() {
+		return applicationHandleHistory;
+	}
+	public void setApplicationHandleHistory(List<ApplicationHandleHistory> applicationHandleHistory) {
+		this.applicationHandleHistory = applicationHandleHistory;
+	}
+
 	@Override
 	public String toString() {
 		return "ApplicationForm [applicant email = " + applicant.getEmail() + ", name=" + name + ", description=" + description
