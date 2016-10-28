@@ -122,20 +122,20 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 	}
 
 	@Override
-	public Page<ApplicationHandleHistory> history(String applicant, String handler, Status status, Date start, Date end,  Pageable pageable) {
+	public Page<ApplicationHandleHistory> history(String applicantEmail, String handlerEmail, Status status, Date start, Date end,  Pageable pageable) {
 		Page<ApplicationHandleHistory> page;
 		
-		if (empty(applicant)) {
-			if (empty(handler)) {
+		if (empty(applicantEmail)) {
+			if (empty(handlerEmail)) {
 				page = applicationHandleHistoryRepository.findByStatusAndCreateDateBetween(status, start, end, pageable);
 			} else {
-				page = applicationHandleHistoryRepository.history2(handler, status, start, end, pageable);
+				page = applicationHandleHistoryRepository.history2(handlerEmail, status, start, end, pageable);
 			}
 		} else {
-			if (empty(handler)) {
-				page = applicationHandleHistoryRepository.history1(applicant, status, start, end, pageable);
+			if (empty(handlerEmail)) {
+				page = applicationHandleHistoryRepository.history1(applicantEmail, status, start, end, pageable);
 			} else {
-				page = applicationHandleHistoryRepository.history3(applicant, handler, status, start, end, pageable);
+				page = applicationHandleHistoryRepository.history3(applicantEmail, handlerEmail, status, start, end, pageable);
 			}
 		}
 		return page;

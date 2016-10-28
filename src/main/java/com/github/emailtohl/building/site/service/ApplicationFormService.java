@@ -7,7 +7,6 @@ import java.util.Date;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.data.domain.Page;
@@ -77,7 +76,7 @@ public interface ApplicationFormService {
 	 * @param cause
 	 */
 	@PreAuthorize("isAuthenticated() && hasAuthority('" + APPLICATION_FORM_TRANSIT + "')")
-	void transit(Long id, @NotNull Status status, @Min(value = 6) String cause);
+	void transit(Long id, @NotNull Status status, String cause);
 	
 	/**
 	 * 查询申请单处理历史
@@ -132,5 +131,5 @@ public interface ApplicationFormService {
 	 * @return
 	 */
 	@PreAuthorize("isAuthenticated() && hasAuthority('" + APPLICATION_FORM_READ_HISTORY + "')")
-	Page<ApplicationHandleHistory> history(String applicant, String handler, @NotNull Status status, @NotNull Date start, @NotNull Date end, @NotNull Pageable pageable);
+	Page<ApplicationHandleHistory> history(String applicantEmail, String handlerEmail, @NotNull Status status, @NotNull Date start, @NotNull Date end, @NotNull Pageable pageable);
 }
