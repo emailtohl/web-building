@@ -12,7 +12,6 @@ import javax.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import com.github.emailtohl.building.site.entities.ApplicationForm;
@@ -23,7 +22,6 @@ import com.github.emailtohl.building.site.entities.ApplicationHandleHistory;
  * 流程处理服务
  * @author HeLei
  */
-@Service
 @Transactional
 @Validated
 public interface ApplicationFormService {
@@ -49,7 +47,7 @@ public interface ApplicationFormService {
 	 * @param pageable
 	 * @return
 	 */
-	Page<ApplicationForm> findByNameLike(String name, Pageable pageable);
+	Page<ApplicationForm> findByNameLike(String name, @NotNull Pageable pageable);
 	
 	/**
 	 * 根据申请单状态查找申请单
@@ -57,7 +55,15 @@ public interface ApplicationFormService {
 	 * @param pageable
 	 * @return
 	 */
-	Page<ApplicationForm> findByStatus(Status status, Pageable pageable);
+	Page<ApplicationForm> findByStatus(@NotNull Status status, @NotNull Pageable pageable);
+	
+	/**
+	 * 根据申请单状态查找申请单
+	 * @param status
+	 * @param pageable
+	 * @return
+	 */
+	Page<ApplicationForm> findByNameAndStatus(String name, Status status, @NotNull Pageable pageable);
 	
 	/**
 	 * 根据申请人查找申请单
@@ -66,7 +72,7 @@ public interface ApplicationFormService {
 	 * @return
 	 */
 	@PreAuthorize("isAuthenticated()")
-	Page<ApplicationForm> findMyApplicationForm(Pageable pageable);
+	Page<ApplicationForm> findMyApplicationForm(@NotNull Pageable pageable);
 	
 	/**
 	 * 改变申请单状态
@@ -76,7 +82,7 @@ public interface ApplicationFormService {
 	 * @param cause
 	 */
 	@PreAuthorize("isAuthenticated() && hasAuthority('" + APPLICATION_FORM_TRANSIT + "')")
-	void transit(Long id, @NotNull Status status, String cause);
+	void transit(@NotNull Long id, @NotNull Status status, String cause);
 	
 	/**
 	 * 查询申请单处理历史
@@ -86,7 +92,7 @@ public interface ApplicationFormService {
 	 * @return
 	 */
 	@PreAuthorize("isAuthenticated() && hasAuthority('" + APPLICATION_FORM_READ_HISTORY + "')")
-	Page<ApplicationHandleHistory> historyFindByCreateDateBetween(Date start, Date end, Pageable pageable);
+	Page<ApplicationHandleHistory> historyFindByCreateDateBetween(@NotNull Date start, @NotNull Date end, @NotNull Pageable pageable);
 	
 	/**
 	 * 查询申请单处理历史
@@ -95,7 +101,7 @@ public interface ApplicationFormService {
 	 * @return
 	 */
 	@PreAuthorize("isAuthenticated() && hasAuthority('" + APPLICATION_FORM_READ_HISTORY + "')")
-	Page<ApplicationHandleHistory> historyFindByCreateDateGreaterThanEqual(Date date, Pageable pageable);
+	Page<ApplicationHandleHistory> historyFindByCreateDateGreaterThanEqual(@NotNull Date date, @NotNull Pageable pageable);
 	
 	/**
 	 * 查询申请单处理历史
@@ -104,7 +110,7 @@ public interface ApplicationFormService {
 	 * @return
 	 */
 	@PreAuthorize("isAuthenticated() && hasAuthority('" + APPLICATION_FORM_READ_HISTORY + "')")
-	Page<ApplicationHandleHistory> historyFindByCreateDateLessThanEqual(Date date, Pageable pageable);
+	Page<ApplicationHandleHistory> historyFindByCreateDateLessThanEqual(@NotNull Date date, @NotNull Pageable pageable);
 	
 	/**
 	 * 查询申请单处理历史
@@ -113,7 +119,7 @@ public interface ApplicationFormService {
 	 * @return
 	 */
 	@PreAuthorize("isAuthenticated() && hasAuthority('" + APPLICATION_FORM_READ_HISTORY + "')")
-	Page<ApplicationHandleHistory> historyFindByHandlerEmailLike(String email, Pageable pageable);
+	Page<ApplicationHandleHistory> historyFindByHandlerEmailLike(@NotNull String email, @NotNull Pageable pageable);
 	
 	/**
 	 * 查询申请单处理历史
@@ -122,7 +128,7 @@ public interface ApplicationFormService {
 	 * @return
 	 */
 	@PreAuthorize("isAuthenticated() && hasAuthority('" + APPLICATION_FORM_READ_HISTORY + "')")
-	Page<ApplicationHandleHistory> historyFindByStatus(Status status, Pageable pageable);
+	Page<ApplicationHandleHistory> historyFindByStatus(@NotNull Status status, @NotNull Pageable pageable);
 	
 	/**
 	 * 

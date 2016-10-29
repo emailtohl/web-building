@@ -25,14 +25,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.entities.ApplicationForm;
 import com.github.emailtohl.building.site.entities.ApplicationForm.Status;
+import com.github.emailtohl.building.site.entities.ApplicationHandleHistory;
 import com.github.emailtohl.building.site.entities.BaseEntity;
-import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.ApplicationFormService;
 
 @Controller
@@ -46,7 +47,7 @@ public class ApplicationFormCtrl {
 		this.applicationFormService = applicationFormService;
 	}
 
-	@RequestMapping(value = "findMyApplicationForm", method = RequestMethod.GET)
+	@RequestMapping(value = "mine", method = RequestMethod.GET)
 	@ResponseBody
 	public Pager<ApplicationForm> findMyApplicationForm(@PageableDefault(page = 0, size = 20, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
 		Page<ApplicationForm> page = applicationFormService.findMyApplicationForm(pageable);
@@ -54,20 +55,11 @@ public class ApplicationFormCtrl {
 		return new Pager<ApplicationForm>(page.getContent(), page.getTotalElements(), pageable.getPageNumber(), pageable.getPageSize());
 	}
 	
-	@RequestMapping(value = "findMyApplicationForm/{name}", method = RequestMethod.GET)
+	@RequestMapping(value = "query", method = RequestMethod.GET)
 	@ResponseBody
-	public Pager<ApplicationForm> findMyApplicationForm(@PathVariable("name") String name, 
+	public Pager<ApplicationForm> findMyApplicationForm(@RequestParam("name") String name, @RequestParam("status") Status status,
 			@PageableDefault(page = 0, size = 20, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
-		Page<ApplicationForm> page = applicationFormService.findByNameLike(name, pageable);
-		
-		return new Pager<ApplicationForm>(page.getContent(), page.getTotalElements(), pageable.getPageNumber(), pageable.getPageSize());
-	}
-	
-	@RequestMapping(value = "findByStatus/{status}", method = RequestMethod.GET)
-	@ResponseBody
-	public Pager<ApplicationForm> findByStatus(@PathVariable("status") Status status, 
-			@PageableDefault(page = 0, size = 20, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
-		Page<ApplicationForm> page = applicationFormService.findByStatus(status, pageable);
+		Page<ApplicationForm> page = applicationFormService.findByNameAndStatus(name, status, pageable);
 		
 		return new Pager<ApplicationForm>(page.getContent(), page.getTotalElements(), pageable.getPageNumber(), pageable.getPageSize());
 	}
@@ -113,39 +105,23 @@ public class ApplicationFormCtrl {
 		public Status status;
 		public String cause;
 	}
-/*	
+	
 	@RequestMapping(value = "history", method = RequestMethod.GET)
 	@ResponseBody
-	public Pager<ApplicationForm> history(HistoryForm history, 
+	public Pager<ApplicationHandleHistory> history(@RequestBody HistoryForm history, 
 			@PageableDefault(page = 0, size = 20, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
 		
-		if (!empty(history.applicant)) {
-			User u = new User();
-			u.setEmail(history.applicant);
-		}
-		if (!empty(history.handler)) {
-			User u = new User();
-			u.setEmail(history.handler);
-		}
-		if (!empty(history.applicant)) {
-			User u = new User();
-			u.setEmail(history.applicant);
-		}
+		Page<ApplicationHandleHistory> page = applicationFormService.history(history.applicant, history.handler, history.status, history.start, history.end, pageable);
 		
-		Page<ApplicationForm> page = applicationFormService.historyFindByCreateDateBetween(start, end, pageable);
-		
-		return new Pager<ApplicationForm>(page.getContent(), page.getTotalElements(), pageable.getPageNumber(), pageable.getPageSize());
-	}
-	
-	private boolean empty(String s) {
-		return s == null || s.isEmpty();
+		return new Pager<ApplicationHandleHistory>(page.getContent(), page.getTotalElements(), pageable.getPageNumber(), pageable.getPageSize());
 	}
 	
 	public static class HistoryForm implements Serializable {
 		private static final long serialVersionUID = 4973257512711350898L;
 		public String applicant;
 		public String handler;
+		public Status status;
 		public Date start;
 		public Date end;
-	}*/
+	}
 }

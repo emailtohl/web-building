@@ -47,7 +47,11 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 
 	@Override
 	public Page<ApplicationForm> findByNameLike(String name, Pageable pageable) {
-		return applicationFormRepository.findByNameLike(name, pageable);
+		if (isEmpty(name)) {
+			return applicationFormRepository.findAll(pageable);
+		}
+		String fuzzy = name.trim() + '%';
+		return applicationFormRepository.findByNameLike(fuzzy, pageable);
 	}
 
 	@Override
@@ -55,6 +59,23 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 		return applicationFormRepository.findByStatus(status, pageable);
 	}
 
+	@Override
+	public Page<ApplicationForm> findByNameAndStatus(String name, Status status, Pageable pageable) {
+		if (isEmpty(name)) {
+			if (status == null) {
+				return applicationFormRepository.findAll(pageable);
+			} else {
+				return applicationFormRepository.findByStatus(status, pageable);
+			}
+		} else {
+			if (status == null) {
+				return applicationFormRepository.findByNameLike(name.trim() + '%', pageable);
+			} else {
+				return applicationFormRepository.findByStatus(status, pageable);
+			}
+		}
+	}
+	
 	@Override
 	public Page<ApplicationForm> findMyApplicationForm(Pageable pageable) {
 		String applicantEmail = getEmail();
@@ -125,14 +146,14 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 	public Page<ApplicationHandleHistory> history(String applicantEmail, String handlerEmail, Status status, Date start, Date end,  Pageable pageable) {
 		Page<ApplicationHandleHistory> page;
 		
-		if (empty(applicantEmail)) {
-			if (empty(handlerEmail)) {
+		if (isEmpty(applicantEmail)) {
+			if (isEmpty(handlerEmail)) {
 				page = applicationHandleHistoryRepository.findByStatusAndCreateDateBetween(status, start, end, pageable);
 			} else {
 				page = applicationHandleHistoryRepository.history2(handlerEmail, status, start, end, pageable);
 			}
 		} else {
-			if (empty(handlerEmail)) {
+			if (isEmpty(handlerEmail)) {
 				page = applicationHandleHistoryRepository.history1(applicantEmail, status, start, end, pageable);
 			} else {
 				page = applicationHandleHistoryRepository.history3(applicantEmail, handlerEmail, status, start, end, pageable);
@@ -141,7 +162,7 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 		return page;
 	}
 	
-	private boolean empty(String s) {
+	private boolean isEmpty(String s) {
 		return s == null || s.isEmpty();
 	}
 }

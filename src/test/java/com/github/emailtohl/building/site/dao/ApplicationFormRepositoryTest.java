@@ -54,6 +54,9 @@ public class ApplicationFormRepositoryTest {
 		logger.debug(page.getContent());
 		assertTrue(page.getTotalElements() > 0);
 		
+		page = applicationFormRepository.findByNameLikeAndStatus(title, Status.REQUEST, p);
+		assertTrue(page.getTotalElements() > 0);
+		
 		applicationFormRepository.delete(persist);
 	}
 

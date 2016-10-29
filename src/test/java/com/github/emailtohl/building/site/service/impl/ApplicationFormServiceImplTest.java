@@ -110,6 +110,22 @@ public class ApplicationFormServiceImplTest {
 		Page<ApplicationForm> page = applicationFormService.findMyApplicationForm(pageable);
 		assertTrue(page.getTotalElements() > 0);
 	}
+	
+	@Test
+	public void testFindByNameLikeAndStatus() {
+		securityContextManager.setBaz();
+		Page<ApplicationForm> page = applicationFormService.findByNameAndStatus(title, Status.REQUEST, pageable);
+		assertTrue(page.getTotalElements() > 0);
+		
+		page = applicationFormService.findByNameAndStatus(null, Status.REQUEST, pageable);
+		assertTrue(page.getTotalElements() > 0);
+		
+		page = applicationFormService.findByNameAndStatus(title, null, pageable);
+		assertTrue(page.getTotalElements() > 0);
+		
+		page = applicationFormService.findByNameAndStatus(null, null, pageable);
+		assertTrue(page.getTotalElements() > 0);
+	}
 
 	@Test
 	public void testTransit() {
