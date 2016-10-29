@@ -66,7 +66,7 @@ public class ApplicationFormCtrl {
 	
 	@RequestMapping(value = "{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public ApplicationForm findByStatus(@PathVariable("id") long id) {
+	public ApplicationForm get(@PathVariable("id") long id) {
 		return applicationFormService.findById(id);
 	}
 	

@@ -6,7 +6,9 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.time.Instant;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,9 +20,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.site.entities.ApplicationForm;
+import com.github.emailtohl.building.site.entities.ApplicationForm.Status;
+import com.github.emailtohl.building.site.entities.ApplicationHandleHistory;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.Employee;
 import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.service.ApplicationFormService;
 import com.github.emailtohl.building.site.service.UserService;
 
 /**
@@ -81,5 +87,37 @@ public class ServiceStub {
 		when(userService.authenticate(customer.getAuthentication())).thenReturn(customer.getAuthentication());
 		
 		return userService;
+	}
+	
+	
+	private Instant now = Instant.now();
+	public final Date start = Date.from(now.minusSeconds(1000));
+	public final Date end = Date.from(now.plusSeconds(100));
+	public final Long applicationFormId = 100L;
+	public final String applicationFormTitle = "测试申请单标题";
+	public final Status applicationFormStatus = Status.REQUEST;
+	public final ApplicationForm applicationForm = new ApplicationForm(customer, applicationFormTitle, "测试申请单的内容……");
+	public final ApplicationHandleHistory applicationHandleHistory = new ApplicationHandleHistory(applicationForm, employee, "处理意见", applicationFormStatus);
+	public ApplicationFormService getApplicationFormService() {
+		ApplicationFormService applicationFormService = mock(ApplicationFormService.class);
+		Answer<Object> answer = invocation -> {
+			logger.debug(invocation.getMethod());
+			logger.debug(invocation.getArguments());
+			return invocation.getMock();
+		};
+		when(applicationFormService.application(applicationForm)).thenReturn(applicationFormId);
+		when(applicationFormService.findById(applicationFormId)).thenReturn(applicationForm);
+		
+		Page<ApplicationForm> page = new PageImpl<ApplicationForm>(Arrays.asList(applicationForm), pageable, 1L);
+		Page<ApplicationHandleHistory> historypage = new PageImpl<ApplicationHandleHistory>(Arrays.asList(applicationHandleHistory), pageable, 1L);
+		
+		when(applicationFormService.findByNameAndStatus(applicationFormTitle, applicationFormStatus, pageable)).thenReturn(page);
+		when(applicationFormService.findByNameLike(applicationFormTitle, pageable)).thenReturn(page);
+		when(applicationFormService.findByStatus(applicationFormStatus, pageable)).thenReturn(page);
+		when(applicationFormService.findMyApplicationForm(pageable)).thenReturn(page);
+		when(applicationFormService.history(customer.getEmail(), employee.getEmail(), applicationFormStatus, start, end, pageable)).thenReturn(historypage);
+		doAnswer(answer).when(applicationFormService).transit(applicationFormId, applicationFormStatus, "test 处理意见……");
+		
+		return applicationFormService;
 	}
 }

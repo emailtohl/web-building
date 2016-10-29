@@ -22,6 +22,18 @@ public class ApplicationHandleHistory extends BaseEntity {
 	private String cause;
 	private Status status;
 	
+	public ApplicationHandleHistory() {
+		super();
+	}
+	
+	public ApplicationHandleHistory(ApplicationForm applicationForm, User handler, String cause, Status status) {
+		super();
+		this.applicationForm = applicationForm;
+		this.handler = handler;
+		this.cause = cause;
+		this.status = status;
+	}
+
 	@ManyToOne
 	@JoinColumn(name = "application_form_id", nullable = false)
 	public ApplicationForm getApplicationForm() {
