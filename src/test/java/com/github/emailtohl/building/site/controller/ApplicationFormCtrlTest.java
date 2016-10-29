@@ -1,17 +1,15 @@
 package com.github.emailtohl.building.site.controller;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,17 +60,12 @@ public class ApplicationFormCtrlTest {
 		mockMvc = standaloneSetup(ctrl).build();
 	}
 
-	@After
-	public void tearDown() throws Exception {
-	}
-
-
-	@Test
+//	@Test
 	public void testFindMyApplicationFormPageable() {
 		fail("Not yet implemented");
 	}
 
-	@Test
+//	@Test
 	public void testFindMyApplicationFormStringStatusPageable() {
 		fail("Not yet implemented");
 	}
@@ -93,11 +86,16 @@ public class ApplicationFormCtrlTest {
 	}
 
 	@Test
-	public void testTransit() {
-		fail("Not yet implemented");
+	public void testTransit() throws Exception {
+		serviceStub.applicationForm.setCause("处理意见……");
+		mockMvc.perform(put("/applicationForm/" + serviceStub.customerId)
+				.characterEncoding("UTF-8")  
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(gson.toJson(serviceStub.applicationForm).getBytes()))
+		.andExpect(status().is(HttpStatus.NO_CONTENT.value()));
 	}
 
-	@Test
+//	@Test
 	public void testHistory() {
 		fail("Not yet implemented");
 	}
