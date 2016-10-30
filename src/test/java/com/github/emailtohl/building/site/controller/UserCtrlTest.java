@@ -141,7 +141,7 @@ public class UserCtrlTest {
 	@Test
 	public void testEnableUser() throws Exception {
 		mockMvc.perform(put("/user/enableUser/" + serviceStub.customerId)
-				.characterEncoding("UTF-8")  
+				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON))
 		.andExpect(status().isOk());
 	}
@@ -149,7 +149,7 @@ public class UserCtrlTest {
 	@Test
 	public void testDisableUser() throws Exception {
 		mockMvc.perform(put("/user/disableUser/"  + serviceStub.customerId)
-				.characterEncoding("UTF-8")  
+				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON))
 		.andExpect(status().isOk());
 	}
@@ -158,7 +158,7 @@ public class UserCtrlTest {
 	public void testGrantRoles() throws Exception {
 		String[] authorities = new String[] { Role.MANAGER, Role.EMPLOYEE };
 		mockMvc.perform(put("/user/grantRoles/" + serviceStub.employeeId)
-				.characterEncoding("UTF-8")  
+				.characterEncoding("UTF-8")
 		        .contentType(MediaType.APPLICATION_JSON)  
 		        .content(gson.toJson(authorities).getBytes()))
 		.andExpect(status().isOk());
@@ -173,7 +173,7 @@ public class UserCtrlTest {
 		.andExpect(status().is(HttpStatus.NO_CONTENT.value()));
 		
 		mockMvc.perform(put("/user/employee/" + serviceStub.employeeId)
-		.characterEncoding("UTF-8")  
+		.characterEncoding("UTF-8")
         .contentType(MediaType.APPLICATION_JSON)  
         .content("{username:\"foo\"}".getBytes()))
 		.andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
@@ -188,7 +188,7 @@ public class UserCtrlTest {
 		.andExpect(status().is(HttpStatus.NO_CONTENT.value()));
 		
 		mockMvc.perform(put("/user/customer/" + serviceStub.customerId)
-				.characterEncoding("UTF-8")  
+				.characterEncoding("UTF-8")
 				.contentType(MediaType.APPLICATION_JSON)  
 				.content("{username:\"baz\"}".getBytes()))
 		.andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
