@@ -146,6 +146,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.antMatchers(HttpMethod.PUT, "/user/grantRoles/**").hasAuthority(USER_GRANT_ROLES)
 					.antMatchers(HttpMethod.PUT, "/user/disableUser/**").hasAuthority(USER_DISABLE)
 					.antMatchers(HttpMethod.POST, "/fileUploadServer/**").fullyAuthenticated()
+					.antMatchers(HttpMethod.GET, "/applicationForm/query").hasAuthority(APPLICATION_FORM_TRANSIT)
+					.antMatchers(HttpMethod.PUT, "/applicationForm").hasAuthority(APPLICATION_FORM_TRANSIT)
+					.antMatchers(HttpMethod.GET, "/applicationForm/history").hasAuthority(APPLICATION_FORM_READ_HISTORY)
 					.anyRequest().authenticated()
 				// HTTP Basic Authentication是基于REST风格，通过HTTP状态码与访问它的应用程序进行沟通
 				/*.and().httpBasic()*/

@@ -31,9 +31,10 @@ public class ApplicationForm extends BaseEntity {
 			return name;
 		}
 	}
-	@NotNull
 	private User applicant;
+	@NotNull
 	private String name;
+	@NotNull
 	private String description;
 	private String cause;
 	private User handler;

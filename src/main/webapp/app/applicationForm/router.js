@@ -11,7 +11,7 @@ define(['applicationForm/module',
 			template : '<div ui-view></div>'
 		})
 		.state('applicationForm.submit', {
-			url : '/application',
+			url : '/submit',
 			templateUrl : 'app/applicationForm/application/application.html',
 			controller : 'ApplicationCtrl as ctrl'
 		})

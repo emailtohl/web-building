@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 
@@ -31,14 +32,16 @@ public interface ApplicationFormService {
 	 * @param applicationForm
 	 * @return
 	 */
-	@PreAuthorize("isAuthenticated()")
+	@PostAuthorize("isAuthenticated()")
 	Long application(@Valid ApplicationForm applicationForm);
 	
 	/**
 	 * 查询申请单
+	 * 需要被认证的用户才能调用，如果不是申请者本人，则需具备APPLICATION_FORM_TRANSIT权限
 	 * @param id
 	 * @return
 	 */
+	@PreAuthorize("isAuthenticated() && (returnObject.applicant.username != principal.username || hasAuthority('" + APPLICATION_FORM_TRANSIT + "'))")
 	ApplicationForm findById(long id);
 	
 	/**
@@ -47,6 +50,7 @@ public interface ApplicationFormService {
 	 * @param pageable
 	 * @return
 	 */
+	@PreAuthorize("isAuthenticated()")
 	Page<ApplicationForm> findByNameLike(String name, @NotNull Pageable pageable);
 	
 	/**
@@ -55,6 +59,7 @@ public interface ApplicationFormService {
 	 * @param pageable
 	 * @return
 	 */
+	@PreAuthorize("isAuthenticated()")
 	Page<ApplicationForm> findByStatus(@NotNull Status status, @NotNull Pageable pageable);
 	
 	/**
@@ -63,6 +68,7 @@ public interface ApplicationFormService {
 	 * @param pageable
 	 * @return
 	 */
+	@PreAuthorize("isAuthenticated()")
 	Page<ApplicationForm> findByNameAndStatus(String name, Status status, @NotNull Pageable pageable);
 	
 	/**

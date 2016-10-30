@@ -8,6 +8,7 @@ import java.util.Date;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,6 +48,11 @@ public class ApplicationFormCtrl {
 		this.applicationFormService = applicationFormService;
 	}
 
+	/**
+	 * 查询自己的申请表
+	 * @param pageable
+	 * @return
+	 */
 	@RequestMapping(value = "mine", method = RequestMethod.GET)
 	@ResponseBody
 	public Pager<ApplicationForm> findMyApplicationForm(@PageableDefault(page = 0, size = 20, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
@@ -55,9 +61,16 @@ public class ApplicationFormCtrl {
 		return new Pager<ApplicationForm>(page.getContent(), page.getTotalElements(), pageable.getPageNumber(), pageable.getPageSize());
 	}
 	
+	/**
+	 * 查询所有申请表，用于处理申请表所用
+	 * @param name
+	 * @param status
+	 * @param pageable
+	 * @return
+	 */
 	@RequestMapping(value = "query", method = RequestMethod.GET)
 	@ResponseBody
-	public Pager<ApplicationForm> findMyApplicationForm(@RequestParam("name") String name, @RequestParam("status") Status status,
+	public Pager<ApplicationForm> queryApplicationForm(@RequestParam("name") String name, @RequestParam("status") Status status,
 			@PageableDefault(page = 0, size = 20, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
 		Page<ApplicationForm> page = applicationFormService.findByNameAndStatus(name, status, pageable);
 		
@@ -70,6 +83,12 @@ public class ApplicationFormCtrl {
 		return applicationFormService.findById(id);
 	}
 	
+	/**
+	 * 提交申请表
+	 * @param form
+	 * @param e
+	 * @return
+	 */
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
 	public ResponseEntity<ApplicationForm> add(@RequestBody @Valid ApplicationForm form, Errors e) {
@@ -87,6 +106,13 @@ public class ApplicationFormCtrl {
 		return new ResponseEntity<>(form, headers, HttpStatus.CREATED);
 	}
 	
+	/**
+	 * 修改申请表状态，处理申请表所用
+	 * @param id
+	 * @param form
+	 * @param e
+	 * @return
+	 */
 	@RequestMapping(value = "{id}", method = PUT)
 	public ResponseEntity<Void> transit(@PathVariable("id") @Min(1L) long id, @Valid @RequestBody Form form, Errors e) {
 		if (e.hasErrors()) {
@@ -102,10 +128,18 @@ public class ApplicationFormCtrl {
 	
 	public static class Form implements Serializable {
 		private static final long serialVersionUID = 4973257512711350898L;
+		@NotNull public String name;
+		@NotNull public String description;
 		public Status status;
 		public String cause;
 	}
 	
+	/**
+	 * 查看申请表处理历史
+	 * @param history
+	 * @param pageable
+	 * @return
+	 */
 	@RequestMapping(value = "history", method = RequestMethod.GET)
 	@ResponseBody
 	public Pager<ApplicationHandleHistory> history(@RequestBody HistoryForm history, 
