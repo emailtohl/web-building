@@ -21,6 +21,15 @@ define([ 'angular', 'uirouter', 'common/context', 'test/context', 'user/context'
 					this.open = false;
 				}
 			};
+			// 执行失败的提示框
+			$rootScope.errorModal = {
+				open : false,
+				title : '失败',
+				type : 'danger',
+				whenConfirm : function() {
+					$rootScope.errorModal = false;
+				},
+			};
 			// 获取当前用户的认证信息，页面可以直接通过{{authentication.username}}获取用户名
 			$rootScope.getAuthentication = function(callback) {
 				$http.get('authentication').success(function(data) {

@@ -87,10 +87,10 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 
 	@Override
 	public void transit(Long id, Status status, String cause) {
-		if (status == Status.COMPLETION) {
+		ApplicationForm af = applicationFormRepository.findOne(id);
+		if (af.getStatus() == Status.COMPLETION) {
 			throw new IllegalArgumentException("最终状态不能更改");
 		}
-		ApplicationForm af = applicationFormRepository.findOne(id);
 		af.setStatus(status);
 		af.setCause(cause);
 		

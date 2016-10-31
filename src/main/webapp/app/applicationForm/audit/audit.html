@@ -106,13 +106,28 @@
                 <img class="img-responsive img-circle img-sm" src="lib/AdminLTE/img/user2-160x160.jpg" alt="Alt Text">
                 <!-- .img-push is used to add margin to elements next to floating images -->
                 <div class="img-push">
-                  <input class="form-control input-sm" placeholder="Press enter to post comment" type="text">
+                  <input name="cause" class="form-control input-sm" placeholder="Press enter to post comment" type="text" ng-model="ctrl.form.cause">
                 </div>
-                <div class="img-push">
-                  <button type="button" class="btn btn-default btn-xs"><i class="fa fa-thumbs-o-down" ng-click="ctrl.form.status = 'REJECT'"></i> 拒绝</button>
-                  <button type="button" class="btn btn-default btn-xs"><i class="fa fa-share" ng-click="ctrl.form.status = 'PROCESSING'"></i> 接受</button>
-                  <button type="button" class="btn btn-default btn-xs"><i class="fa fa-thumbs-o-up" ng-click="ctrl.form.status = 'COMPLETION'"></i> 完成</button>
-              	</div>
+                <div class="form-group">
+                  <div class="radio">
+                    <label>
+                      <input name="status" value="REJECT" ng-model="ctrl.form.status" checked="" type="radio">
+                      	拒绝
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label>
+                      <input name="status" value="PROCESSING" ng-model="ctrl.form.status" type="radio">
+                      	接受申请
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label>
+                      <input name="status" value="COMPLETION" ng-model="ctrl.form.status" type="radio">
+                      	完成
+                    </label>
+                  </div>
+                </div>
               </form>
             </div>
             <!-- /.box-footer -->

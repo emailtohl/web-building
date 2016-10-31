@@ -18,11 +18,8 @@ define([ 'applicationForm/module' ], function(applicationFormModule) {
 			add : function(applicationForm) {
 				return $http.post('applicationForm', applicationForm);
 			},
-			transit : function(id, status, cause) {
-				return $http.put('applicationForm/' + id, {
-					status : status,
-					cause : causep
-				});
+			transit : function(form) {
+				return $http.put('applicationForm/' + form.id, form);
 			},
 		};
 	}]);

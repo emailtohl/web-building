@@ -41,7 +41,7 @@ public class ApplicationForm extends BaseEntity {
 	private String cause;
 	private User handler;
 	private Status status;
-	private List<ApplicationHandleHistory> applicationHandleHistory = new ArrayList<>();
+	private transient List<ApplicationHandleHistory> applicationHandleHistory = new ArrayList<>();
 	
 	public ApplicationForm() {
 		super();

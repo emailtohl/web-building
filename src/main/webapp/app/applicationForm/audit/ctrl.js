@@ -36,8 +36,11 @@ define(['applicationForm/module', 'applicationForm/service'], function(applicati
 			title : '审核申请单',
 			type : '',
 			whenConfirm : function() {
-				applicationFormService.transit(self.form.id, self.form.status, self.form.cause).success(function(data) {
-//						$state.go('user.detail', { id : self.form.id }, { reload : true });
+				self.form.id = self.detail.id;
+				self.form.name = self.detail.name;
+				self.form.description = self.detail.description;
+				applicationFormService.transit(self.form).success(function(data) {
+					self.openModal.open = false;
 					self.getPager();
 				});
 			},
@@ -51,17 +54,6 @@ define(['applicationForm/module', 'applicationForm/service'], function(applicati
 				console.log(data);
 				self.detail = data;
 				self.modal.open = true;
-			});
-		};
-		self.form = {
-			id : self.detail && self.detail.id,
-			status : null,
-			cause : null,
-		};
-		self.audit = function() {
-			applicationFormService.transit(self.form.id, self.form.status, self.form.cause).success(function() {
-				self.openModal.open = false;
-				self.getPager();
 			});
 		};
 		
