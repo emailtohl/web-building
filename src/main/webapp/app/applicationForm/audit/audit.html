@@ -1,1 +1,124 @@
-审核申请单
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+            审核申请
+    <small>审核申请单</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li ui-sref="dashboard"><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li class="active">audit</li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+<div class="row">
+	<div class="col-xs-12">
+	  <div class="box">
+	    <div class="box-header">
+	      <h3 class="box-title">申请单列表</h3>
+	
+	      <div class="box-tools">
+	        <div class="input-group input-group-sm" style="width: 150px;">
+	          <input name="table_search" class="form-control pull-right" placeholder="Search" type="text">
+	
+	          <div class="input-group-btn">
+	            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	    <!-- /.box-header -->
+	    <div class="box-body table-responsive no-padding">
+	      <table class="table table-hover">
+	        <tbody><tr>
+	          <th>申请人</th>
+	          <th>申请日期</th>
+	          <th>内容</th>
+	          <th>状态</th>
+	          <th>审核人</th>
+	          <th>审核日期</th>
+	          <th>处理意见</th>
+	        </tr>
+	        <tr ng-repeat="x in ctrl.pager.content" ng-click="ctrl.openModal(x.id)">
+	          <td>{{x.applicant.email}}</td>
+	          <td>{{x.createDate}}</td>
+	          <td>{{x.description}}</td>
+	          <td><span class="label" ng-class="{'label-primary': x.status == 'REQUEST', 'label-warning' : x.status == 'PROCESSING', 'label-danger' : x.status == 'REJECT', 'label-success' : x.status == 'COMPLETION'}">{{ctrl.statusMap[x.status]}}</span></td>
+	          <td>{{x.handler.email}}</td>
+	          <td>{{x.modifyDate}}</td>
+	          <td>{{x.cause}}</td>
+	        </tr>
+	      </tbody></table>
+	    </div>
+	    <!-- /.box-body -->
+	  </div>
+	  <!-- /.box -->
+	  </div>
+	</div>
+	
+	<div modal open="ctrl.modal.open" title="{{ctrl.modal.title}}" when-confirm="ctrl.modal.whenConfirm()" type="{{ctrl.modal.type}}">
+	    <div class="box box-widget">
+            <div class="box-header with-border">
+              <div class="user-block">
+                <img class="img-circle" ng-src="{{ctrl.detail.applicant.iconSrc}}" alt="User Image">
+                <span class="username"><a href="#">{{ctrl.detail.applicant.email}}</a></span>
+                <span class="description">{{ctrl.detail.createDate}}</span>
+              </div>
+              <!-- /.user-block -->
+              <div class="box-tools">
+                <button type="button" class="btn btn-box-tool" data-toggle="tooltip" title="Mark as read">
+                  <i class="fa fa-circle-o"></i></button>
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <!-- <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button> -->
+              </div>
+              <!-- /.box-tools -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <!-- post text -->
+              
+              <p>{{ctrl.detail.description}}</p>
+
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer box-comments">
+              <div class="box-comment" ng-repeat="x in ctrl.detail.applicationHandleHistory">
+                <!-- User image -->
+                <img class="img-circle img-sm" ng-src="{{x.handler.iconSrc}}" alt="User Image">
+
+                <div class="comment-text">
+                      <span class="username">
+                        {{x.handler.email}}
+                        <span class="text-muted pull-right">{{x.createDate}}</span>
+                        <span class="label" ng-class="{'label-primary': x.status == 'REQUEST', 'label-warning' : x.status == 'PROCESSING', 'label-danger' : x.status == 'REJECT', 'label-success' : x.status == 'COMPLETION'}">{{ctrl.statusMap[x.status]}}</span>
+                      </span><!-- /.username -->
+                  {{x.cause}}
+                </div>
+                <!-- /.comment-text -->
+              </div>
+              <!-- /.box-comment -->
+            </div>
+            <!-- /.box-footer -->
+            <div class="box-footer">
+              <form name="f">
+                <img class="img-responsive img-circle img-sm" src="lib/AdminLTE/img/user2-160x160.jpg" alt="Alt Text">
+                <!-- .img-push is used to add margin to elements next to floating images -->
+                <div class="img-push">
+                  <input class="form-control input-sm" placeholder="Press enter to post comment" type="text">
+                </div>
+                <div class="img-push">
+                  <button type="button" class="btn btn-default btn-xs"><i class="fa fa-thumbs-o-down" ng-click="ctrl.form.status = 'REJECT'"></i> 拒绝</button>
+                  <button type="button" class="btn btn-default btn-xs"><i class="fa fa-share" ng-click="ctrl.form.status = 'PROCESSING'"></i> 接受</button>
+                  <button type="button" class="btn btn-default btn-xs"><i class="fa fa-thumbs-o-up" ng-click="ctrl.form.status = 'COMPLETION'"></i> 完成</button>
+              	</div>
+              </form>
+            </div>
+            <!-- /.box-footer -->
+          </div>
+	  
+	    <!-- /.box-body -->
+	</div>
+	
+</section>

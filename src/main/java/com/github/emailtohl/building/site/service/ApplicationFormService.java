@@ -41,7 +41,7 @@ public interface ApplicationFormService {
 	 * @param id
 	 * @return
 	 */
-	@PreAuthorize("isAuthenticated() && (returnObject.applicant.username != principal.username || hasAuthority('" + APPLICATION_FORM_TRANSIT + "'))")
+	@PostAuthorize("returnObject.applicant.email == principal.username || hasAuthority('" + APPLICATION_FORM_TRANSIT + "')")
 	ApplicationForm findById(long id);
 	
 	/**

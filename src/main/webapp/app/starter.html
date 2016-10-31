@@ -277,7 +277,7 @@ desired effect
             <li ng-class="{active: $state.includes('forum.add')}"><a ui-sref="forum.add" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>发帖</a></li>
           </ul>
         </li>
-        <li class="treeview" ng-class="{active: $state.includes('applicationForm')}">
+        <li ng-if="isAuthenticated()" class="treeview" ng-class="{active: $state.includes('applicationForm')}">
           <a href="#"><i class="fa fa-tasks"></i> <span>申请表</span> <i class="fa fa-angle-left pull-right"></i></a>
           <ul class="treeview-menu">
             <li ng-class="{active: $state.includes('applicationForm.submit')}" ><a ui-sref="applicationForm.submit" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>提交申请表</a></li>

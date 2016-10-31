@@ -70,7 +70,8 @@ public class ApplicationFormCtrl {
 	 */
 	@RequestMapping(value = "query", method = RequestMethod.GET)
 	@ResponseBody
-	public Pager<ApplicationForm> queryApplicationForm(@RequestParam("name") String name, @RequestParam("status") Status status,
+	public Pager<ApplicationForm> queryApplicationForm(@RequestParam(name = "name", required = false) String name, 
+			@RequestParam(name = "status", required = false) Status status,
 			@PageableDefault(page = 0, size = 20, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
 		Page<ApplicationForm> page = applicationFormService.findByNameAndStatus(name, status, pageable);
 		

@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -99,6 +101,7 @@ public class ApplicationForm extends BaseEntity {
 		this.handler = handler;
 	}
 	
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	public Status getStatus() {
 		return status;
