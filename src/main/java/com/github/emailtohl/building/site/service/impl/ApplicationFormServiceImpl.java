@@ -143,7 +143,7 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 	}
 
 	@Override
-	public Page<ApplicationHandleHistory> history(String applicantEmail, String handlerEmail, Status status, Date start, Date end,  Pageable pageable) {
+	public Page<ApplicationHandleHistory> history(String applicantEmail, String handlerEmail, Status status, Date start, Date end, Pageable pageable) {
 		Page<ApplicationHandleHistory> page;
 		
 		if (isEmpty(applicantEmail)) {

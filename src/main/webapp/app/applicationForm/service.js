@@ -21,6 +21,16 @@ define([ 'applicationForm/module' ], function(applicationFormModule) {
 			transit : function(form) {
 				return $http.put('applicationForm/' + form.id, form);
 			},
+			history : function(applicant, handler, status, start, end) {
+				var param = util.encodeUrlParams({
+					applicant : applicant,
+					handler : handler,
+					status : status,
+					start : start,
+					end : end
+				});
+				return $http.get('applicationForm/history' + (param ? '?' + param : ''));
+			},
 		};
 	}]);
 });

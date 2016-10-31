@@ -3,6 +3,8 @@ package com.github.emailtohl.building.site.controller;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.inject.Inject;
@@ -135,28 +137,23 @@ public class ApplicationFormCtrl {
 		public String cause;
 	}
 	
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 	/**
 	 * 查看申请表处理历史
 	 * @param history
 	 * @param pageable
 	 * @return
+	 * @throws ParseException 时间解析异常
 	 */
 	@RequestMapping(value = "history", method = RequestMethod.GET)
 	@ResponseBody
-	public Pager<ApplicationHandleHistory> history(@RequestBody HistoryForm history, 
-			@PageableDefault(page = 0, size = 20, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
+	public Pager<ApplicationHandleHistory> history(@RequestParam(required = false) String applicant, @RequestParam(required = false) String handler,
+			@RequestParam(defaultValue = "REQUEST") Status status, @RequestParam(required = true) String start, @RequestParam(required = true) String end,
+			@PageableDefault(page = 0, size = 20, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) throws ParseException {
 		
-		Page<ApplicationHandleHistory> page = applicationFormService.history(history.applicant, history.handler, history.status, history.start, history.end, pageable);
+		Date startTime = sdf.parse(start), endTime = sdf.parse(end);
+		Page<ApplicationHandleHistory> page = applicationFormService.history(applicant, handler, status, startTime, endTime, pageable);
 		
 		return new Pager<ApplicationHandleHistory>(page.getContent(), page.getTotalElements(), pageable.getPageNumber(), pageable.getPageSize());
-	}
-	
-	public static class HistoryForm implements Serializable {
-		private static final long serialVersionUID = 4973257512711350898L;
-		public String applicant;
-		public String handler;
-		public Status status;
-		public Date start;
-		public Date end;
 	}
 }
