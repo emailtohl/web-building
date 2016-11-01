@@ -8,6 +8,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 /**
  * 标准查询的条件
+ * @author HeLei
  */
 public class Criterion {
 	private final String propertyName;
@@ -36,13 +37,13 @@ public class Criterion {
 		EQ {
 			@Override
 			public Predicate toPredicate(Criterion c, Root<?> r, CriteriaBuilder b) {
-				return b.equal(r.get(c.getPropertyName()), c.getCompareTo());
+				return b.equal(getPath(r, c.getPropertyName()), c.getCompareTo());
 			}
 		},
 		NEQ {
 			@Override
 			public Predicate toPredicate(Criterion c, Root<?> r, CriteriaBuilder b) {
-				return b.notEqual(r.get(c.getPropertyName()), c.getCompareTo());
+				return b.notEqual(getPath(r, c.getPropertyName()), c.getCompareTo());
 			}
 		},
 		LT {
@@ -50,9 +51,7 @@ public class Criterion {
 			@Override
 			public Predicate toPredicate(Criterion c, Root<?> r, CriteriaBuilder b) {
 				Comparable comparable = getComparable(c);
-				Path<Comparable> path = r.<Comparable> get(c.getPropertyName());
-				return b.lessThan(path, comparable);
-//				return b.lessThan(r.<Comparable<?>> get(c.getPropertyName()), getComparable(c));
+				return b.lessThan(getComparablePath(r, c.getPropertyName()), comparable);
 			}
 		},
 		LTE {
@@ -60,9 +59,7 @@ public class Criterion {
 			@Override
 			public Predicate toPredicate(Criterion c, Root<?> r, CriteriaBuilder b) {
 				Comparable comparable = getComparable(c);
-				Path<Comparable> path = r.<Comparable> get(c.getPropertyName());
-				return b.lessThanOrEqualTo(path, comparable);
-//				return b.lessThanOrEqualTo(r.<Comparable<?>> get(c.getPropertyName()), getComparable(c));
+				return b.lessThanOrEqualTo(getComparablePath(r, c.getPropertyName()), comparable);
 			}
 		},
 		GT {
@@ -70,9 +67,7 @@ public class Criterion {
 			@Override
 			public Predicate toPredicate(Criterion c, Root<?> r, CriteriaBuilder b) {
 				Comparable comparable = getComparable(c);
-				Path<Comparable> path = r.<Comparable> get(c.getPropertyName());
-				return b.greaterThan(path, comparable);
-//				return b.greaterThan(r.<Comparable<?>> get(c.getPropertyName()), getComparable(c));
+				return b.greaterThan(getComparablePath(r, c.getPropertyName()), comparable);
 			}
 		},
 		GTE {
@@ -80,21 +75,19 @@ public class Criterion {
 			@Override
 			public Predicate toPredicate(Criterion c, Root<?> r, CriteriaBuilder b) {
 				Comparable comparable = getComparable(c);
-				Path<Comparable> path = r.<Comparable> get(c.getPropertyName());
-				return b.greaterThanOrEqualTo(path, comparable);
-//				return b.greaterThanOrEqualTo(r.<Comparable<?>> get(c.getPropertyName()), getComparable(c));
+				return b.greaterThanOrEqualTo(getComparablePath(r, c.getPropertyName()), comparable);
 			}
 		},
 		LIKE {
 			@Override
 			public Predicate toPredicate(Criterion c, Root<?> r, CriteriaBuilder b) {
-				return b.like(r.get(c.getPropertyName()), getString(c));
+				return b.like(getStringPath(r, c.getPropertyName()), getString(c));
 			}
 		},
 		NOT_LIKE {
 			@Override
 			public Predicate toPredicate(Criterion c, Root<?> r, CriteriaBuilder b) {
-				return b.notLike(r.get(c.getPropertyName()), getString(c));
+				return b.notLike(getStringPath(r, c.getPropertyName()), getString(c));
 			}
 		},
 		IN {
@@ -102,9 +95,9 @@ public class Criterion {
 			public Predicate toPredicate(Criterion c, Root<?> r, CriteriaBuilder b) {
 				Object o = c.getCompareTo();
 				if (o == null)
-					return r.get(c.getPropertyName()).in();
+					return getPath(r, c.getPropertyName()).in();
 				if (o instanceof Collection)
-					return r.get(c.getPropertyName()).in((Collection<?>) o);
+					return getPath(r, c.getPropertyName()).in((Collection<?>) o);
 				throw new IllegalArgumentException(c.getPropertyName());
 			}
 		},
@@ -113,27 +106,57 @@ public class Criterion {
 			public Predicate toPredicate(Criterion c, Root<?> r, CriteriaBuilder b) {
 				Object o = c.getCompareTo();
 				if (o == null)
-					return b.not(r.get(c.getPropertyName()).in());
+					return b.not(getPath(r, c.getPropertyName()).in());
 				if (o instanceof Collection)
-					return b.not(r.get(c.getPropertyName()).in((Collection<?>) o));
+					return b.not(getPath(r, c.getPropertyName()).in((Collection<?>) o));
 				throw new IllegalArgumentException(c.getPropertyName());
 			}
 		},
 		NULL {
 			@Override
 			public Predicate toPredicate(Criterion c, Root<?> r, CriteriaBuilder b) {
-				return r.get(c.getPropertyName()).isNull();
+				return getPath(r, c.getPropertyName()).isNull();
 			}
 		},
 		NOT_NULL {
 			@Override
 			public Predicate toPredicate(Criterion c, Root<?> r, CriteriaBuilder b) {
-				return r.get(c.getPropertyName()).isNotNull();
+				return getPath(r, c.getPropertyName()).isNotNull();
 			}
 		};
 
 		public abstract Predicate toPredicate(Criterion c, Root<?> r, CriteriaBuilder b);
 
+		private static Path<?> getPath(Root<?> r, String propertyName) {
+			Path<?> p = null;
+			boolean first = true;
+			for (String s : propertyName.split("\\.")) {
+				if (first) {
+					try {
+						p = r.get(s);
+					} catch (IllegalArgumentException e) {
+						throw new IllegalArgumentException("检查" + r.getJavaType() + "实体类是否有“" + s + "”属性", e);
+					}
+					first = false;
+				} else {
+					p = p.get(s);
+				}
+			}
+			return p;
+		}
+		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		private static Path<Comparable> getComparablePath(Root<?> r, String propertyName) {
+			Path<?> p = getPath(r, propertyName);
+			return (Path<Comparable>) p;
+		}
+		
+		@SuppressWarnings("unchecked")
+		private static Path<String> getStringPath(Root<?> r, String propertyName) {
+			Path<?> p = getPath(r, propertyName);
+			return (Path<String>) p;
+		}
+		
 		private static Comparable<?> getComparable(Criterion c) {
 			Object o = c.getCompareTo();
 			if (o != null && !(o instanceof Comparable))

@@ -53,7 +53,7 @@ import com.github.emailtohl.building.common.Constant;
  */
 @Entity
 @Table(name = "t_user")
-@Access(AccessType.PROPERTY) // 实际上这就是默认的配置
+@Access(AccessType.PROPERTY) // 实际上这就是默认的配置，Hibernate实现会根据@Id所在地方进行判断
 //指定继承的映射策略，所有继承树上的实体共用一张表：SINGLE_TABLE，这是默认值
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 //定义辨别者列的列名为“user_type”，列类型是字符串
@@ -96,7 +96,7 @@ public class User extends BaseEntity {
 	@Size(max = 300)
 	protected String description;
 //	protected Set<Authority> authorities = new HashSet<Authority>();
-	Set<Role> roles = new HashSet<Role>();
+	protected Set<Role> roles = new HashSet<Role>();
 	
 	@org.hibernate.search.annotations.Field
 	public String getName() {
