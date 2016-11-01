@@ -15,17 +15,23 @@ define(['applicationForm/module', 'applicationForm/service'], function(applicati
 			PROCESSING : '处理中',
 			COMPLETION : '完成'
 		}
-		
+		var initForm = {
+			page : 1,
+			name : null,
+			status : null
+		};
+		self.form = initForm;
+		self.reset = function() {
+			self.form = initForm;
+		};
 		self.getPager = function() {
 			if ($scope.hasAuthority('application_form_transit')) {// 如果有审批权限，则可查看所有申请单
-				applicationFormService.query().success(function(data) {
+				applicationFormService.query(self.form.page, self.form.name, self.form.status).success(function(data) {
 					self.pager = data;
-					console.log(data)
 				});
 			} else {// 否则查询与自己有关的申请单
-				applicationFormService.mine().success(function(data) {
+				applicationFormService.mine(self.form.page).success(function(data) {
 					self.pager = data;
-					console.log(data)
 				});
 			}
 		};
@@ -51,11 +57,13 @@ define(['applicationForm/module', 'applicationForm/service'], function(applicati
 				return;
 			}
 			applicationFormService.get(id).success(function(data) {
-				console.log(data);
 				self.detail = data;
 				self.modal.open = true;
 			});
 		};
-		
+		self.page = function(pageNumber) {
+			self.form.page = pageNumber;
+			self.getPager();
+		};
 	}]);
 });

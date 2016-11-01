@@ -94,7 +94,11 @@ public class ApplicationFormCtrl {
 		ApplicationForm af = applicationFormService.findById(id);
 		ApplicationFormDto dto = new ApplicationFormDto();
 		BeanUtils.copyProperties(af, dto, "applicationHandleHistory");
-		af.getApplicationHandleHistory().forEach(h -> dto.getHistoryList().add(h));
+		try {
+			af.getApplicationHandleHistory().forEach(h -> dto.getHistoryList().add(h));
+		} catch (RuntimeException e) {
+			logger.info(e);
+		}
 		return dto;
 	}
 	
@@ -161,7 +165,7 @@ public class ApplicationFormCtrl {
 	@ResponseBody
 	public Pager<ApplicationHandleHistory> history(@RequestParam(required = false) String applicant, @RequestParam(required = false) String handler,
 			@RequestParam(required = false) Status status, @RequestParam(required = false) String start, @RequestParam(required = false) String end,
-			@PageableDefault(page = 0, size = 20, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) throws ParseException {
+			@PageableDefault(page = 0, size = 20, sort = BaseEntity.MODIFY_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) throws ParseException {
 		
 		Date startTime = sdf.parse(start), endTime = sdf.parse(end);
 		Page<ApplicationHandleHistory> page = applicationFormService.history(applicant, handler, status, startTime, endTime, pageable);

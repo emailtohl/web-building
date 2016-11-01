@@ -36,7 +36,10 @@ public class FilterBootstrap implements WebApplicationInitializer {
 		/*
 		 * 访问JPA实体懒加载的属性
 		 */
-		registration = container.addFilter("openEntityManagerInViewFilter", new OpenEntityManagerInViewFilter());
+		OpenEntityManagerInViewFilter openEntityManagerInViewFilter = new OpenEntityManagerInViewFilter();
+		openEntityManagerInViewFilter.setEntityManagerFactoryBeanName("entityManagerFactory");
+		openEntityManagerInViewFilter.setServletContext(container);
+		registration = container.addFilter("openEntityManagerInViewFilter", openEntityManagerInViewFilter);
 		registration.addMappingForUrlPatterns(null, false, "/*");
 		
 	}

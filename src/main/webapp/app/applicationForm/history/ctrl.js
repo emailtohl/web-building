@@ -16,6 +16,7 @@ define(['applicationForm/module', 'applicationForm/service', 'moment'], function
 			COMPLETION : '完成'
 		}
 		var initForm = {
+			page : 1,
 			applicant : null,
 			handler : null,
 			status : null,
@@ -28,17 +29,17 @@ define(['applicationForm/module', 'applicationForm/service', 'moment'], function
 		};
 		
 		self.getPager = function() {
-			if ($scope.hasAuthority('application_form_read_history')) {// 如果有审批权限，则可查看所有申请单
-				applicationFormService.history(
-						self.form.applicant,
-						self.form.handler,
-						self.form.status,
-						self.form.start,
-						self.form.end).success(
-						function(data) {
-							self.pager = data;
-						});
-			}
+			applicationFormService.history(
+				self.form.page,
+				self.form.applicant,
+				self.form.handler,
+				self.form.status,
+				self.form.start,
+				self.form.end).success(
+				function(data) {
+					self.pager = data;
+					console.log(self.pager);
+				});
 		};
 		self.getPager();
 		
@@ -60,6 +61,9 @@ define(['applicationForm/module', 'applicationForm/service', 'moment'], function
 				self.modal.open = true;
 			});
 		};
-		
+		self.page = function(pageNumber) {
+			self.form.page = pageNumber;
+			self.getPager();
+		};
 	}]);
 });

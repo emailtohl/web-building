@@ -1,11 +1,12 @@
 define([ 'applicationForm/module' ], function(applicationFormModule) {
 	return applicationFormModule.factory('applicationFormService', [ '$http', 'util', function($http, util) {
 		return {
-			mine : function() {
-				return $http.get('applicationForm/mine');
+			mine : function(page) {
+				return $http.get('applicationForm/mine?page=' + page);
 			},
-			query : function(name, status) {
+			query : function(page, name, status) {
 				var param = {
+					page : page,
 					name : name,
 					status : status
 				};
@@ -24,8 +25,9 @@ define([ 'applicationForm/module' ], function(applicationFormModule) {
 			getHistoryById : function(id) {
 				return $http.get('applicationForm/history/' + id);
 			},
-			history : function(applicant, handler, status, start, end) {
+			history : function(page, applicant, handler, status, start, end) {
 				var param = util.encodeUrlParams({
+					page : page,
 					applicant : applicant,
 					handler : handler,
 					status : status,
