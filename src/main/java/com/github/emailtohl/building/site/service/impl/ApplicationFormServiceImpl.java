@@ -2,6 +2,7 @@ package com.github.emailtohl.building.site.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -13,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.Criterion;
 import com.github.emailtohl.building.site.dao.ApplicationFormRepository;
 import com.github.emailtohl.building.site.dao.ApplicationHandleHistoryRepository;
 import com.github.emailtohl.building.site.entities.ApplicationForm;
@@ -106,6 +108,11 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 	}
 
 	@Override
+	public ApplicationHandleHistory getHistoryById(long id) {
+		return applicationHandleHistoryRepository.findOne(id);
+	}
+	
+	@Override
 	public Page<ApplicationHandleHistory> historyFindByCreateDateBetween(Date start, Date end, Pageable pageable) {
 		return applicationHandleHistoryRepository.findByCreateDateBetween(start, end, pageable);
 	}
@@ -145,24 +152,28 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 	@Override
 	public Page<ApplicationHandleHistory> history(String applicantEmail, String handlerEmail, Status status, Date start, Date end, Pageable pageable) {
 		Page<ApplicationHandleHistory> page;
-		
-		if (isEmpty(applicantEmail)) {
-			if (isEmpty(handlerEmail)) {
-				page = applicationHandleHistoryRepository.findByStatusAndCreateDateBetween(status, start, end, pageable);
-			} else {
-				page = applicationHandleHistoryRepository.history2(handlerEmail, status, start, end, pageable);
-			}
-		} else {
-			if (isEmpty(handlerEmail)) {
-				page = applicationHandleHistoryRepository.history1(applicantEmail, status, start, end, pageable);
-			} else {
-				page = applicationHandleHistoryRepository.history3(applicantEmail, handlerEmail, status, start, end, pageable);
-			}
+		List<Criterion> ls = new ArrayList<>();
+		if (!isEmpty(applicantEmail)) {
+			ls.add(new Criterion("applicationForm.applicant.email", Criterion.Operator.LIKE, applicantEmail.trim() + '%'));
 		}
+		if (!isEmpty(handlerEmail)) {
+			ls.add(new Criterion("handler.email", Criterion.Operator.LIKE, handlerEmail.trim() + '%'));
+		}
+		if (status != null) {
+			ls.add(new Criterion("status", Criterion.Operator.EQ, status));
+		}
+		if (start != null) {
+			ls.add(new Criterion("applicationForm.createDate", Criterion.Operator.GTE, start));
+		}
+		if (end != null) {
+			ls.add(new Criterion("applicationForm.createDate", Criterion.Operator.LTE, end));
+		}
+		page = applicationHandleHistoryRepository.search(ls, pageable);
 		return page;
 	}
 	
 	private boolean isEmpty(String s) {
 		return s == null || s.isEmpty();
 	}
+
 }

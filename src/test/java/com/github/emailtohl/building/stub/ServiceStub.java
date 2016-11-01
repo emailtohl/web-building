@@ -94,6 +94,7 @@ public class ServiceStub {
 	public final Date start = Date.from(now.minusSeconds(1000));
 	public final Date end = Date.from(now.plusSeconds(100));
 	public final Long applicationFormId = 100L;
+	public final Long historyId = 100L;
 	public final String applicationFormTitle = "测试申请单标题";
 	public final Status applicationFormStatus = Status.REQUEST;
 	public final ApplicationForm applicationForm = new ApplicationForm(customer, applicationFormTitle, "测试申请单的内容……");
@@ -115,6 +116,7 @@ public class ServiceStub {
 		when(applicationFormService.findByNameLike(applicationFormTitle, pageable)).thenReturn(page);
 		when(applicationFormService.findByStatus(applicationFormStatus, pageable)).thenReturn(page);
 		when(applicationFormService.findMyApplicationForm(pageable)).thenReturn(page);
+		when(applicationFormService.getHistoryById(historyId)).thenReturn(applicationHandleHistory);
 		when(applicationFormService.history(customer.getEmail(), employee.getEmail(), applicationFormStatus, start, end, pageable)).thenReturn(historypage);
 		doAnswer(answer).when(applicationFormService).transit(applicationFormId, applicationFormStatus, "test 处理意见……");
 		

@@ -95,6 +95,12 @@ public class ApplicationFormCtrlTest {
 		.andExpect(status().is(HttpStatus.NO_CONTENT.value()));
 	}
 
+	@Test
+	public void testGetHistoryById() throws Exception {
+		mockMvc.perform(get("/applicationForm/history/" + serviceStub.historyId))
+		.andExpect(status().isOk());
+	}
+	
 //	@Test
 	public void testHistory() {
 		fail("Not yet implemented");

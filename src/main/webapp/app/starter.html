@@ -282,7 +282,7 @@ desired effect
           <ul class="treeview-menu">
             <li ng-class="{active: $state.includes('applicationForm.submit')}" ><a ui-sref="applicationForm.submit" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>提交申请表</a></li>
             <li ng-class="{active: $state.includes('applicationForm.audit')}" ><a ui-sref="applicationForm.audit" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>处理申请表</a></li>
-            <li ng-class="{active: $state.includes('applicationForm.history')}"><a ui-sref="applicationForm.history" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>处理记录</a></li>
+            <li ng-if="hasAuthority('application_form_read_history')" ng-class="{active: $state.includes('applicationForm.history')}"><a ui-sref="applicationForm.history" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>处理记录</a></li>
           </ul>
         </li>
         <li class="treeview" ng-class="{active: $state.includes('user')}">

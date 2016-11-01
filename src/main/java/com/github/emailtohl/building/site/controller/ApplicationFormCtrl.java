@@ -160,12 +160,25 @@ public class ApplicationFormCtrl {
 	@RequestMapping(value = "history", method = RequestMethod.GET)
 	@ResponseBody
 	public Pager<ApplicationHandleHistory> history(@RequestParam(required = false) String applicant, @RequestParam(required = false) String handler,
-			@RequestParam(defaultValue = "REQUEST") Status status, @RequestParam(required = true) String start, @RequestParam(required = true) String end,
+			@RequestParam(required = false) Status status, @RequestParam(required = false) String start, @RequestParam(required = false) String end,
 			@PageableDefault(page = 0, size = 20, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) throws ParseException {
 		
 		Date startTime = sdf.parse(start), endTime = sdf.parse(end);
 		Page<ApplicationHandleHistory> page = applicationFormService.history(applicant, handler, status, startTime, endTime, pageable);
 		
 		return new Pager<ApplicationHandleHistory>(page.getContent(), page.getTotalElements(), pageable.getPageNumber(), pageable.getPageSize());
+	}
+	
+	/**
+	 * 查看某个申请表的处理历史记录
+	 * @param history
+	 * @param pageable
+	 * @return
+	 * @throws ParseException 时间解析异常
+	 */
+	@RequestMapping(value = "history/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public ApplicationHandleHistory getHistoryById(@PathVariable("id") long id) throws ParseException {
+		return applicationFormService.getHistoryById(id);
 	}
 }

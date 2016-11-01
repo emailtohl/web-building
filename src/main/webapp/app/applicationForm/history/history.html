@@ -12,5 +12,171 @@
 
 <!-- Main content -->
 <section class="content">
+  <div class="row">
+    <div class="col-xs-12">
+	    <!-- general form elements -->
+	    <div class="box box-primary">
+	      <div class="box-header with-border">
+	        <h3 class="box-title">搜索记录</h3>
+	      </div>
+	      <!-- /.box-header -->
+	      <!-- form start -->
+	      <form role="f">
+	        <div class="box-body">
+	          <div class="form-group col-md-6">
+	            <label for="exampleInputEmail1">申请人邮箱</label>
+	            <input type="text" class="form-control" ng-model="ctrl.form.applicant" placeholder="可模糊查询">
+	          </div>
+	          <div class="form-group col-md-6">
+	            <label for="exampleInputEmail1">审核人邮箱</label>
+	            <input type="text" class="form-control" ng-model="ctrl.form.handler" placeholder="可模糊查询">
+	          </div>
 
+			  <div class="form-group col-md-4" ng-init="ctrl.form.status = ''">
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="status" value="" ng-model="ctrl.form.status">
+                      	全部
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="status" value="REQUEST" ng-model="ctrl.form.status">
+                      	申请中
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="status" value="PROCESSING" ng-model="ctrl.form.status" >
+                      	处理中
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="status" value="REJECT" ng-model="ctrl.form.status" >
+                      	已拒绝
+                    </label>
+                  </div>
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="status" value="COMPLETION" ng-model="ctrl.form.status" >
+                      	已完成
+                    </label>
+                  </div>
+                </div>
+                <div class="form-group col-md-4">
+	              <label for="exampleInputEmail1">不早于</label>
+	              <input type="text" datetimepicker class="form-control" ng-model="ctrl.form.start" placeholder="可模糊查询">
+	            </div>
+                <div class="form-group col-md-4">
+	              <label for="exampleInputEmail1">不晚于</label>
+	              <input type="text" datetimepicker class="form-control" ng-model="ctrl.form.end" placeholder="可模糊查询">
+	            </div>
+	        </div>
+	        <!-- /.box-body -->
+	
+	        <div class="box-footer">
+	          <button type="reset" class="btn btn-default" ng-click="ctrl.reset()">重置</button>
+	          <button type="submit" class="btn btn-primary pull-right" ng-click="ctrl.getPager()">查询</button>
+	        </div>
+	      </form>
+	    </div>
+	    <!-- /.box -->
+    	</div>
+  
+	<div class="col-xs-12">
+	  <div class="box">
+	    <div class="box-header">
+	      <h3 class="box-title">申请单处理记录</h3>
+	
+	      <div class="box-tools">
+	        <div class="input-group input-group-sm" style="width: 150px;">
+	          <input name="table_search" class="form-control pull-right" placeholder="Search" type="text">
+	
+	          <div class="input-group-btn">
+	            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+	    <!-- /.box-header -->
+	    <div class="box-body table-responsive no-padding">
+	      <table class="table table-hover">
+	        <tbody><tr>
+	          <th>申请人</th>
+	          <th>申请日期</th>
+	          <th>申请内容</th>
+	          <th>审核人</th>
+	          <th>审核日期</th>
+	          <th>处理意见</th>
+	          <th>修改状态</th>
+	        </tr>
+	        <tr ng-repeat="x in ctrl.pager.content" ng-click="ctrl.openModal(x.id)">
+	          <td>{{x.applicationForm.applicant.email}}</td>
+	          <td>{{x.applicationForm.createDate}}</td>
+	          <td>{{x.applicationForm.description}}</td>
+	          <td>{{x.handler.email}}</td>
+	          <td>{{x.modifyDate}}</td>
+	          <td>{{x.cause}}</td>
+	          <td><span class="label" ng-class="{'label-primary': x.status == 'REQUEST', 'label-warning' : x.status == 'PROCESSING', 'label-danger' : x.status == 'REJECT', 'label-success' : x.status == 'COMPLETION'}">{{ctrl.statusMap[x.status]}}</span></td>
+	        </tr>
+	      </tbody></table>
+	    </div>
+	    <!-- /.box-body -->
+	  </div>
+	  <!-- /.box -->
+	  </div>
+	</div>
+	
+	<div modal open="ctrl.modal.open" title="{{ctrl.modal.title}}" when-confirm="ctrl.modal.whenConfirm()" type="{{ctrl.modal.type}}">
+	    <div class="box box-widget">
+            <div class="box-header with-border">
+              <div class="user-block">
+                <img class="img-circle" ng-src="{{ctrl.detail.applicationForm.applicant.iconSrc}}" alt="User Image">
+                <span class="username"><a href="#">{{ctrl.detail.applicationForm.applicant.email}}</a></span>
+                <span class="description">{{ctrl.detail.applicationForm.createDate}}</span>
+              </div>
+              <!-- /.user-block -->
+              <div class="box-tools">
+                <button type="button" class="btn btn-box-tool" data-toggle="tooltip" title="Mark as read">
+                  <i class="fa fa-circle-o"></i></button>
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <!-- <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button> -->
+              </div>
+              <!-- /.box-tools -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <!-- post text -->
+              
+              <p>{{ctrl.detail.applicationForm.description}}</p>
+
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer box-comments">
+              <div class="box-comment">
+                <!-- User image -->
+                <img class="img-circle img-sm" ng-src="{{ctrl.detail.handler.iconSrc}}" alt="User Image">
+
+                <div class="comment-text">
+                      <span class="username">
+                        {{ctrl.detail.handler.email}}
+                        <span class="text-muted pull-right">{{ctrl.detail.createDate}}</span>
+                        <span class="label" ng-class="{'label-primary': x.status == 'REQUEST', 'label-warning' : x.status == 'PROCESSING', 'label-danger' : x.status == 'REJECT', 'label-success' : x.status == 'COMPLETION'}">{{ctrl.statusMap[x.status]}}</span>
+                      </span><!-- /.username -->
+                  {{ctrl.detail.cause}}
+                </div>
+                <!-- /.comment-text -->
+              </div>
+              <!-- /.box-comment -->
+            </div>
+            <!-- /.box-footer -->
+            <div class="box-footer">
+            </div>
+            <!-- /.box-footer -->
+          </div>
+	  
+	    <!-- /.box-body -->
+	</div>
 </section>

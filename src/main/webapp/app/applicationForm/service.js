@@ -21,6 +21,9 @@ define([ 'applicationForm/module' ], function(applicationFormModule) {
 			transit : function(form) {
 				return $http.put('applicationForm/' + form.id, form);
 			},
+			getHistoryById : function(id) {
+				return $http.get('applicationForm/history/' + id);
+			},
 			history : function(applicant, handler, status, start, end) {
 				var param = util.encodeUrlParams({
 					applicant : applicant,

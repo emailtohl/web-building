@@ -91,6 +91,14 @@ public interface ApplicationFormService {
 	void transit(@NotNull Long id, @NotNull Status status, String cause);
 	
 	/**
+	 * 查询某个申请单的处理历史记录
+	 * @param id
+	 * @return
+	 */
+	@PreAuthorize("isAuthenticated() && hasAuthority('" + APPLICATION_FORM_READ_HISTORY + "')")
+	ApplicationHandleHistory getHistoryById(long id);
+	
+	/**
 	 * 查询申请单处理历史
 	 * @param start
 	 * @param end
@@ -143,5 +151,5 @@ public interface ApplicationFormService {
 	 * @return
 	 */
 	@PreAuthorize("isAuthenticated() && hasAuthority('" + APPLICATION_FORM_READ_HISTORY + "')")
-	Page<ApplicationHandleHistory> history(String applicantEmail, String handlerEmail, @NotNull Status status, @NotNull Date start, @NotNull Date end, @NotNull Pageable pageable);
+	Page<ApplicationHandleHistory> history(String applicantEmail, String handlerEmail, Status status, Date start, Date end, @NotNull Pageable pageable);
 }
