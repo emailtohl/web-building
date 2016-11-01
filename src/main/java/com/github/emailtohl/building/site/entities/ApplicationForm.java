@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -110,7 +111,7 @@ public class ApplicationForm extends BaseEntity {
 		this.status = status;
 	}
 	/*此处若不设置为早加载，会在控制层报异常，不知OpenEntityManagerInViewFilter为何没有生效*/
-	@OneToMany(/*fetch = FetchType.EAGER, */targetEntity = ApplicationHandleHistory.class, mappedBy = "applicationForm", orphanRemoval = false)
+	@OneToMany(fetch = FetchType.EAGER, targetEntity = ApplicationHandleHistory.class, mappedBy = "applicationForm", orphanRemoval = false)
 	public List<ApplicationHandleHistory> getApplicationHandleHistory() {
 		return applicationHandleHistory;
 	}

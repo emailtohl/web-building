@@ -5,7 +5,11 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -33,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.github.emailtohl.building.common.Constant;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.dto.ApplicationFormDto;
 import com.github.emailtohl.building.site.entities.ApplicationForm;
@@ -153,7 +158,8 @@ public class ApplicationFormCtrl {
 		public String cause;
 	}
 	
-	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+	private final Pattern p = Pattern.compile(Constant.PATTERN_DATE);
+	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 	/**
 	 * 查看申请表处理历史
 	 * @param history
@@ -163,11 +169,22 @@ public class ApplicationFormCtrl {
 	 */
 	@RequestMapping(value = "history", method = RequestMethod.GET)
 	@ResponseBody
-	public Pager<ApplicationHandleHistory> history(@RequestParam(required = false) String applicant, @RequestParam(required = false) String handler,
-			@RequestParam(required = false) Status status, @RequestParam(required = false) String start, @RequestParam(required = false) String end,
+	public Pager<ApplicationHandleHistory> history(@RequestParam(required = false) String applicant, 
+			@RequestParam(required = false) String handler,	@RequestParam(required = false) Status status, 
+			@RequestParam(required = false, defaultValue = "") String start, @RequestParam(required = false, defaultValue = "") String end,
 			@PageableDefault(page = 0, size = 20, sort = BaseEntity.MODIFY_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) throws ParseException {
 		
-		Date startTime = sdf.parse(start), endTime = sdf.parse(end);
+		Date startTime = null, endTime = null;
+		Matcher m = p.matcher(start);
+		if (m.find()) {
+			startTime = sdf.parse(m.group(0));
+		}
+		m = p.matcher(end);
+		if (m.find()) {
+			endTime = sdf.parse(m.group(0));
+			Instant i = endTime.toInstant();
+			endTime = Date.from(i.plus(Duration.ofDays(1)));
+		}
 		Page<ApplicationHandleHistory> page = applicationFormService.history(applicant, handler, status, startTime, endTime, pageable);
 		
 		return new Pager<ApplicationHandleHistory>(page.getContent(), page.getTotalElements(), pageable.getPageNumber(), pageable.getPageSize());
