@@ -8,6 +8,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 /**
  * 标准查询的条件
+ * propertyName可以用“.”表示嵌套实体下的属性名
  * @author HeLei
  */
 public class Criterion {
@@ -47,7 +48,7 @@ public class Criterion {
 			}
 		},
 		LT {
-			@SuppressWarnings({ "rawtypes", "unchecked" })
+			@SuppressWarnings({ "unchecked", "rawtypes" })
 			@Override
 			public Predicate toPredicate(Criterion c, Root<?> r, CriteriaBuilder b) {
 				Comparable comparable = getComparable(c);

@@ -48,9 +48,9 @@ public class AbstractCriterionQueryRepositoryTest {
 		employeeRepository = new EmployeeRepository();
 		AutowireCapableBeanFactory factory = context.getAutowireCapableBeanFactory();
 		factory.autowireBeanProperties(userRepository, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
-		factory.initializeBean(userRepository, "userRepository");
+		factory.initializeBean(userRepository, "userForAbstractCriterionQueryRepositoryTest");
 		factory.autowireBeanProperties(employeeRepository, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
-		factory.initializeBean(employeeRepository, "employeeRepository");
+		factory.initializeBean(employeeRepository, "employeeForAbstractCriterionQueryRepositoryTest");
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
