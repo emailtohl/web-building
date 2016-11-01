@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.site.dto.ApplicationFormDto;
 import com.github.emailtohl.building.site.entities.ApplicationForm;
 import com.github.emailtohl.building.site.entities.ApplicationForm.Status;
 import com.github.emailtohl.building.site.entities.ApplicationHandleHistory;
@@ -80,10 +82,20 @@ public class ApplicationFormCtrl {
 		return new Pager<ApplicationForm>(page.getContent(), page.getTotalElements(), pageable.getPageNumber(), pageable.getPageSize());
 	}
 	
+	/**
+	 * 由于ApplicationForm和ApplicationHandleHistory之间交叉引用，所以gson解析会异常
+	 * 所以返回专门存储ApplicationForm的DTO对象，里面可以存储ApplicationHandleHistory信息
+	 * @param id
+	 * @return
+	 */
 	@RequestMapping(value = "{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public ApplicationForm get(@PathVariable("id") long id) {
-		return applicationFormService.findById(id);
+	public ApplicationFormDto get(@PathVariable("id") long id) {
+		ApplicationForm af = applicationFormService.findById(id);
+		ApplicationFormDto dto = new ApplicationFormDto();
+		BeanUtils.copyProperties(af, dto, "applicationHandleHistory");
+		af.getApplicationHandleHistory().forEach(h -> dto.getHistoryList().add(h));
+		return dto;
 	}
 	
 	/**
