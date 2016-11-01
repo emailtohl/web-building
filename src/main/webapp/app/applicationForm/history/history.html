@@ -31,47 +31,24 @@
 	            <label for="exampleInputEmail1">审核人邮箱</label>
 	            <input type="text" class="form-control" ng-model="ctrl.form.handler" placeholder="可模糊查询">
 	          </div>
-
-			  <div class="form-group col-md-4" ng-init="ctrl.form.status = ''">
-                  <div class="radio">
-                    <label>
-                      <input type="radio" name="status" value="" ng-model="ctrl.form.status">
-                      	全部
-                    </label>
-                  </div>
-                  <div class="radio">
-                    <label>
-                      <input type="radio" name="status" value="REQUEST" ng-model="ctrl.form.status">
-                      	申请中
-                    </label>
-                  </div>
-                  <div class="radio">
-                    <label>
-                      <input type="radio" name="status" value="PROCESSING" ng-model="ctrl.form.status" >
-                      	处理中
-                    </label>
-                  </div>
-                  <div class="radio">
-                    <label>
-                      <input type="radio" name="status" value="REJECT" ng-model="ctrl.form.status" >
-                      	已拒绝
-                    </label>
-                  </div>
-                  <div class="radio">
-                    <label>
-                      <input type="radio" name="status" value="COMPLETION" ng-model="ctrl.form.status" >
-                      	已完成
-                    </label>
-                  </div>
-                </div>
-                <div class="form-group col-md-4">
-	              <label for="exampleInputEmail1">不早于</label>
-	              <input type="text" datetimepicker class="form-control" ng-model="ctrl.form.start" placeholder="可模糊查询">
-	            </div>
-                <div class="form-group col-md-4">
-	              <label for="exampleInputEmail1">不晚于</label>
-	              <input type="text" datetimepicker class="form-control" ng-model="ctrl.form.end" placeholder="可模糊查询">
-	            </div>
+		      <div class="form-group col-md-4">
+		        <label>状态</label>
+		        <select class="form-control select2" style="width: 100%;" select2 ng-model="ctrl.form.status" on-change="">
+		          <option value="">全部</option>
+		          <option value="REQUEST">申请中</option>
+		          <option value="PROCESSING">处理中</option>
+		          <option value="REJECT">已拒绝</option>
+		          <option value="COMPLETION">已完成</option>
+		        </select>
+		      </div>
+	             <div class="form-group col-md-4">
+	            <label for="exampleInputEmail1">不早于</label>
+	            <input type="text" datetimepicker class="form-control" ng-model="ctrl.form.start" placeholder="可模糊查询">
+	          </div>
+	             <div class="form-group col-md-4">
+	            <label for="exampleInputEmail1">不晚于</label>
+	            <input type="text" datetimepicker class="form-control" ng-model="ctrl.form.end" placeholder="可模糊查询">
+	          </div>
 	        </div>
 	        <!-- /.box-body -->
 	
