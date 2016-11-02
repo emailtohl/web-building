@@ -4,6 +4,7 @@ import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_
 import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_TRANSIT;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -43,6 +44,13 @@ public interface ApplicationFormService {
 	 */
 	@PostAuthorize("returnObject.applicant.email == principal.username || hasAuthority('" + APPLICATION_FORM_TRANSIT + "')")
 	ApplicationForm findById(long id);
+	
+	/**
+	 * 查阅某申请单关联的操作记录
+	 * @param id
+	 * @return
+	 */
+	List<ApplicationHandleHistory> findByApplicationFormId(long id);
 	
 	/**
 	 * 模糊查询申请单列表
@@ -151,5 +159,5 @@ public interface ApplicationFormService {
 	 * @return
 	 */
 	@PreAuthorize("isAuthenticated() && hasAuthority('" + APPLICATION_FORM_READ_HISTORY + "')")
-	Page<ApplicationHandleHistory> history(String applicantEmail, String handlerEmail, Status status, Date start, Date end, @NotNull Pageable pageable);
+	Page<ApplicationHandleHistory> history(String applicantEmail, String handlerEmail, String name, Status status, Date start, Date end, @NotNull Pageable pageable);
 }

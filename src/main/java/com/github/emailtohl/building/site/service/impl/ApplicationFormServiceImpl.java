@@ -48,6 +48,11 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 	}
 
 	@Override
+	public List<ApplicationHandleHistory> findByApplicationFormId(long id) {
+		return applicationHandleHistoryRepository.findByApplicationFormId(id);
+	}
+	
+	@Override
 	public Page<ApplicationForm> findByNameLike(String name, Pageable pageable) {
 		if (isEmpty(name)) {
 			return applicationFormRepository.findAll(pageable);
@@ -150,7 +155,7 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 	}
 
 	@Override
-	public Page<ApplicationHandleHistory> history(String applicantEmail, String handlerEmail, Status status, Date start, Date end, Pageable pageable) {
+	public Page<ApplicationHandleHistory> history(String applicantEmail, String handlerEmail, String name, Status status, Date start, Date end, Pageable pageable) {
 		Page<ApplicationHandleHistory> page;
 		List<Criterion> ls = new ArrayList<>();
 		if (!isEmpty(applicantEmail)) {
@@ -158,6 +163,9 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 		}
 		if (!isEmpty(handlerEmail)) {
 			ls.add(new Criterion("handler.email", Criterion.Operator.LIKE, handlerEmail.trim() + '%'));
+		}
+		if (!isEmpty(name)) {
+			ls.add(new Criterion("applicationForm.name", Criterion.Operator.LIKE, name.trim() + '%'));
 		}
 		if (status != null) {
 			ls.add(new Criterion("status", Criterion.Operator.EQ, status));

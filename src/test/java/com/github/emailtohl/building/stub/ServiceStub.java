@@ -117,7 +117,7 @@ public class ServiceStub {
 		when(applicationFormService.findByStatus(applicationFormStatus, pageable)).thenReturn(page);
 		when(applicationFormService.findMyApplicationForm(pageable)).thenReturn(page);
 		when(applicationFormService.getHistoryById(historyId)).thenReturn(applicationHandleHistory);
-		when(applicationFormService.history(customer.getEmail(), employee.getEmail(), applicationFormStatus, start, end, pageable)).thenReturn(historypage);
+		when(applicationFormService.history(customer.getEmail(), employee.getEmail(), applicationFormTitle, applicationFormStatus, start, end, pageable)).thenReturn(historypage);
 		doAnswer(answer).when(applicationFormService).transit(applicationFormId, applicationFormStatus, "test 处理意见……");
 		
 		return applicationFormService;

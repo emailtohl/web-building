@@ -1,6 +1,7 @@
 package com.github.emailtohl.building.site.dao;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +18,8 @@ import com.github.emailtohl.building.site.entities.ApplicationHandleHistory;
 public interface ApplicationHandleHistoryRepository
 		extends JpaRepository<ApplicationHandleHistory, Long>, ApplicationHandleHistoryRepositoryCustomization {
 
+	List<ApplicationHandleHistory> findByApplicationFormId(long id);
+	
 	Page<ApplicationHandleHistory> findByApplicationFormId(long id, Pageable pageable);
 
 	Page<ApplicationHandleHistory> findByCreateDateBetween(Date start, Date end, Pageable pageable);

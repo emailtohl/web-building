@@ -5,6 +5,15 @@ define(['applicationForm/module', 'applicationForm/service', 'moment'], function
 	return applicationFormModule
 	.controller('ApplicationFormHistoryCtrl', [ '$scope', '$http', '$state', 'applicationFormService', 'util'
 	                         , function($scope, $http, $state, applicationFormService, util) {
+		const initForm = JSON.stringify({
+			page : 1,
+			name : null,
+			applicant : null,
+			handler : null,
+			status : null,
+			start : moment().startOf('year').format('YYYY-MM-DD HH:mm:ss'),
+			end : moment().format('YYYY-MM-DD HH:mm:ss'),
+		});
 		var self = this;
 		util.loadasync('lib/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css');
 		$scope.getAuthentication();
@@ -15,17 +24,10 @@ define(['applicationForm/module', 'applicationForm/service', 'moment'], function
 			PROCESSING : '处理中',
 			COMPLETION : '完成'
 		}
-		var initForm = {
-			page : 1,
-			applicant : null,
-			handler : null,
-			status : null,
-			start : moment().startOf('year').format('YYYY-MM-DD HH:mm:ss'),
-			end : moment().format('YYYY-MM-DD HH:mm:ss'),
-		};
-		self.form = initForm;
+		
+		self.form = JSON.parse(initForm);
 		self.reset = function() {
-			self.form = initForm;
+			self.form = JSON.parse(initForm);
 		};
 		
 		self.getPager = function() {
@@ -33,6 +35,7 @@ define(['applicationForm/module', 'applicationForm/service', 'moment'], function
 				self.form.page,
 				self.form.applicant,
 				self.form.handler,
+				self.form.name,
 				self.form.status,
 				self.form.start,
 				self.form.end).success(

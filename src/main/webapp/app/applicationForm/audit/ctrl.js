@@ -5,6 +5,11 @@ define(['applicationForm/module', 'applicationForm/service'], function(applicati
 	return applicationFormModule
 	.controller('ApplicationFormAuditCtrl', [ '$scope', '$http', '$state', 'applicationFormService', 'util'
 	                         , function($scope, $http, $state, applicationFormService, util) {
+		const initForm = JSON.stringify({
+			page : 1,
+			name : null,
+			status : null
+		});
 		var self = this;
 		util.loadasync('lib/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css');
 		$scope.getAuthentication();
@@ -15,14 +20,9 @@ define(['applicationForm/module', 'applicationForm/service'], function(applicati
 			PROCESSING : '处理中',
 			COMPLETION : '完成'
 		}
-		var initForm = {
-			page : 1,
-			name : null,
-			status : null
-		};
-		self.form = initForm;
+		self.form = JSON.parse(initForm);
 		self.reset = function() {
-			self.form = initForm;
+			self.form = JSON.parse(initForm);
 		};
 		self.getPager = function() {
 			if ($scope.hasAuthority('application_form_transit')) {// 如果有审批权限，则可查看所有申请单

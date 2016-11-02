@@ -101,8 +101,10 @@ public class ApplicationFormCtrl {
 		BeanUtils.copyProperties(af, dto, "applicationHandleHistory");
 		try {
 			af.getApplicationHandleHistory().forEach(h -> dto.getHistoryList().add(h));
-		} catch (RuntimeException e) {
-			logger.info(e);
+		} catch (RuntimeException e) {// 处理懒加载出现的异常
+			logger.debug(e);
+			dto.getApplicationHandleHistory().clear();
+			applicationFormService.findByApplicationFormId(id).forEach(h -> dto.getHistoryList().add(h));
 		}
 		return dto;
 	}
@@ -169,9 +171,13 @@ public class ApplicationFormCtrl {
 	 */
 	@RequestMapping(value = "history", method = RequestMethod.GET)
 	@ResponseBody
-	public Pager<ApplicationHandleHistory> history(@RequestParam(required = false) String applicant, 
-			@RequestParam(required = false) String handler,	@RequestParam(required = false) Status status, 
-			@RequestParam(required = false, defaultValue = "") String start, @RequestParam(required = false, defaultValue = "") String end,
+	public Pager<ApplicationHandleHistory> history(
+			@RequestParam(required = false) String applicant, 
+			@RequestParam(required = false) String handler,
+			@RequestParam(required = false) String name,
+			@RequestParam(required = false) Status status, 
+			@RequestParam(required = false, defaultValue = "") String start,
+			@RequestParam(required = false, defaultValue = "") String end,
 			@PageableDefault(page = 0, size = 20, sort = BaseEntity.MODIFY_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) throws ParseException {
 		
 		Date startTime = null, endTime = null;
@@ -185,7 +191,7 @@ public class ApplicationFormCtrl {
 			Instant i = endTime.toInstant();
 			endTime = Date.from(i.plus(Duration.ofDays(1)));
 		}
-		Page<ApplicationHandleHistory> page = applicationFormService.history(applicant, handler, status, startTime, endTime, pageable);
+		Page<ApplicationHandleHistory> page = applicationFormService.history(applicant, handler, name, status, startTime, endTime, pageable);
 		
 		return new Pager<ApplicationHandleHistory>(page.getContent(), page.getTotalElements(), pageable.getPageNumber(), pageable.getPageSize());
 	}

@@ -67,13 +67,12 @@
 	      <h3 class="box-title">申请单处理记录</h3>
 	
 	      <div class="box-tools">
-	        <div class="input-group input-group-sm" style="width: 150px;">
-	          <input name="table_search" class="form-control pull-right" placeholder="Search" type="text">
-	
+	        <form  ng-submit="ctrl.getPager()" class="input-group input-group-sm" style="width: 150px;">
+	          <input ng-model="ctrl.form.name" name="table_search" class="form-control pull-right" placeholder="Search" type="text">
 	          <div class="input-group-btn">
 	            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
 	          </div>
-	        </div>
+	        </form>
 	      </div>
 	    </div>
 	    <!-- /.box-header -->
@@ -82,6 +81,7 @@
 	        <tbody><tr>
 	          <th>申请人</th>
 	          <th>申请日期</th>
+	          <th>申请标题</th>
 	          <th>申请内容</th>
 	          <th>审核人</th>
 	          <th>审核日期</th>
@@ -91,6 +91,7 @@
 	        <tr ng-repeat="x in ctrl.pager.content" ng-click="ctrl.openModal(x.id)">
 	          <td>{{x.applicationForm.applicant.email}}</td>
 	          <td>{{x.applicationForm.createDate}}</td>
+	          <td>{{x.applicationForm.name}}</td>
 	          <td>{{x.applicationForm.description}}</td>
 	          <td>{{x.handler.email}}</td>
 	          <td>{{x.modifyDate}}</td>

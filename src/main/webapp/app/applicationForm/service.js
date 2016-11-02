@@ -25,11 +25,12 @@ define([ 'applicationForm/module' ], function(applicationFormModule) {
 			getHistoryById : function(id) {
 				return $http.get('applicationForm/history/' + id);
 			},
-			history : function(page, applicant, handler, status, start, end) {
+			history : function(page, applicant, handler, name, status, start, end) {
 				var param = util.encodeUrlParams({
 					page : page,
 					applicant : applicant,
 					handler : handler,
+					name : name,
 					status : status,
 					start : start,
 					end : end

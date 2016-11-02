@@ -110,8 +110,8 @@ public class ApplicationForm extends BaseEntity {
 	public void setStatus(Status status) {
 		this.status = status;
 	}
-	/*此处若不设置为早加载，会在控制层报异常，不知OpenEntityManagerInViewFilter为何没有生效*/
-	@OneToMany(fetch = FetchType.EAGER, targetEntity = ApplicationHandleHistory.class, mappedBy = "applicationForm", orphanRemoval = false)
+	// 此处若设置为默认的LAZY，会在控制层报异常，似乎是因为关联的User使用了lob导致无法再加载
+	@OneToMany(fetch = FetchType.LAZY, targetEntity = ApplicationHandleHistory.class, mappedBy = "applicationForm", orphanRemoval = false)
 	public List<ApplicationHandleHistory> getApplicationHandleHistory() {
 		return applicationHandleHistory;
 	}

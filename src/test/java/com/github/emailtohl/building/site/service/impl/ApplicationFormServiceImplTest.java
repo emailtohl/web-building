@@ -2,14 +2,12 @@ package com.github.emailtohl.building.site.service.impl;
 
 import static com.github.emailtohl.building.initdb.PersistenceData.bar;
 import static com.github.emailtohl.building.initdb.PersistenceData.baz;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.time.Instant;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -89,7 +87,7 @@ public class ApplicationFormServiceImplTest {
 			assertNotNull(e);
 		}
 	}
-
+	
 	@Test
 	public void testFindByNameLike() {
 		securityContextManager.setBar();
@@ -157,12 +155,15 @@ public class ApplicationFormServiceImplTest {
 			page = applicationFormService.historyFindByStatus(Status.REJECT, pageable);
 			assertTrue(page.getTotalElements() > 0);
 			
-			page = applicationFormService.history(baz.getEmail(), null, Status.REJECT, start, end, pageable);
+			page = applicationFormService.history(baz.getEmail(), null, title, Status.REJECT, start, end, pageable);
 			assertTrue(page.getTotalElements() > 0);
-			page = applicationFormService.history(null, bar.getEmail(), Status.REJECT, start, end, pageable);
+			page = applicationFormService.history(null, bar.getEmail(), title, Status.REJECT, start, end, pageable);
 			assertTrue(page.getTotalElements() > 0);
-			page = applicationFormService.history("", "", Status.REJECT, start, end, pageable);
+			page = applicationFormService.history("", "", title, Status.REJECT, start, end, pageable);
 			assertTrue(page.getTotalElements() > 0);
+			
+			List<ApplicationHandleHistory> ls = applicationFormService.findByApplicationFormId(id);
+			assertFalse(ls.isEmpty());
 			
 		} else {
 			fail("没有持久化");
