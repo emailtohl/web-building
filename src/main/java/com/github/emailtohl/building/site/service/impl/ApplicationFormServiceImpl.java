@@ -10,8 +10,6 @@ import javax.inject.Named;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.Criterion;
@@ -102,6 +100,7 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 		af.setCause(cause);
 		
 		User u = userService.getUserByEmail(getEmail());
+		
 		ApplicationHandleHistory history = new ApplicationHandleHistory();
 		history.setApplicationForm(af);
 		history.setHandler(u);
@@ -109,6 +108,7 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 		history.setCause(cause);
 		applicationHandleHistoryRepository.save(history);
 		
+		af.setHandler(u);
 		af.getApplicationHandleHistory().add(history);
 	}
 
@@ -142,17 +142,6 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 		return applicationHandleHistoryRepository.findByStatus(status, pageable);
 	}
 
-	/**
-	 * 业务中被认证的name就是用户的email
-	 * @return 一定不为null
-	 */
-	private String getEmail() {
-		Authentication a = SecurityContextHolder.getContext().getAuthentication();
-		if (a != null)
-			return a.getName();
-		else
-			return "";
-	}
 
 	@Override
 	public Page<ApplicationHandleHistory> history(String applicantEmail, String handlerEmail, String name, Status status, Date start, Date end, Pageable pageable) {

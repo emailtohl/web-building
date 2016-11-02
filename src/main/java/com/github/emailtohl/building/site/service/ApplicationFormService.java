@@ -14,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 
 import com.github.emailtohl.building.site.entities.ApplicationForm;
@@ -160,4 +162,16 @@ public interface ApplicationFormService {
 	 */
 	@PreAuthorize("isAuthenticated() && hasAuthority('" + APPLICATION_FORM_READ_HISTORY + "')")
 	Page<ApplicationHandleHistory> history(String applicantEmail, String handlerEmail, String name, Status status, Date start, Date end, @NotNull Pageable pageable);
+
+	/**
+	 * 业务中被认证的name就是用户的email
+	 * @return 一定不为null
+	 */
+	default String getEmail() {
+		Authentication a = SecurityContextHolder.getContext().getAuthentication();
+		if (a != null)
+			return a.getName();
+		else
+			return "";
+	}
 }
