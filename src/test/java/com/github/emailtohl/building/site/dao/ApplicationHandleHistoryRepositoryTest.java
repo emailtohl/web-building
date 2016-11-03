@@ -4,6 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -58,6 +59,10 @@ public class ApplicationHandleHistoryRepositoryTest {
 		h.setStatus(Status.PROCESSING);
 		h.setCause("处理中……");
 		
+		af.setHandler(e);
+		af.setCause("处理中……");
+		af.setStatus(Status.PROCESSING);
+		
 		applicationHandleHistoryRepository.save(h);
 		historyId = h.getId();
 	}
@@ -89,6 +94,9 @@ public class ApplicationHandleHistoryRepositoryTest {
 		logger.debug(page.getContent());
 		logger.debug(page.getTotalElements());
 		assertTrue(page.getTotalElements() > 0);
+		
+		List<ApplicationHandleHistory> ls = applicationHandleHistoryRepository.findByApplicationFormIdWhenException(formId);
+		logger.debug(ls);
 	}
 
 }

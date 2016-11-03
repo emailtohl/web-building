@@ -169,6 +169,11 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 		return page;
 	}
 	
+	@Override
+	public List<ApplicationHandleHistory> findByApplicationFormIdWhenException(long id) {
+		return applicationHandleHistoryRepository.findByApplicationFormIdWhenException(id);
+	}
+	
 	private boolean isEmpty(String s) {
 		return s == null || s.isEmpty();
 	}

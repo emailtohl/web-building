@@ -52,7 +52,16 @@ public interface ApplicationFormService {
 	 * @param id
 	 * @return
 	 */
+	@PreAuthorize("isAuthenticated() && hasAuthority('" + APPLICATION_FORM_READ_HISTORY + "')")
 	List<ApplicationHandleHistory> findByApplicationFormId(long id);
+	
+	/**
+	 * 当出现懒加载异常时，重新开辟事务访问底层数据
+	 * @param id
+	 * @return
+	 */
+	@PreAuthorize("isAuthenticated() && hasAuthority('" + APPLICATION_FORM_READ_HISTORY + "')")
+	List<ApplicationHandleHistory> findByApplicationFormIdWhenException(long id);
 	
 	/**
 	 * 模糊查询申请单列表
@@ -174,4 +183,5 @@ public interface ApplicationFormService {
 		else
 			return "";
 	}
+
 }

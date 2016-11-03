@@ -104,7 +104,7 @@ public class ApplicationFormCtrl {
 		} catch (RuntimeException e) {// 处理懒加载出现的异常
 			logger.debug(e);
 			dto.getApplicationHandleHistory().clear();
-			applicationFormService.findByApplicationFormId(id).forEach(h -> dto.getHistoryList().add(h));
+			applicationFormService.findByApplicationFormIdWhenException(id).forEach(h -> dto.getHistoryList().add(h));
 		}
 		return dto;
 	}
