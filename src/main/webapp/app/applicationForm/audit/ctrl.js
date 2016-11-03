@@ -42,6 +42,10 @@ define(['applicationForm/module', 'applicationForm/service'], function(applicati
 			title : '审核申请单',
 			type : '',
 			whenConfirm : function() {
+				if (self.detail.status == 'COMPLETION') {
+					self.openModal.open = false;
+					return;
+				}
 				self.form.id = self.detail.id;
 				self.form.name = self.detail.name;
 				self.form.description = self.detail.description;
