@@ -1,4 +1,4 @@
-define(['angular', 'dashboard/module', 'sparkline'], function(angular) {
+define(['angular', 'dashboard/module', 'sparkline', 'knob'], function(angular) {
 	return angular.module('dashboardModule')
 	.controller('DashboardCtrl', ['$scope', '$http', function($scope, $http) {
 		var self = this;
@@ -50,6 +50,9 @@ define(['angular', 'dashboard/module', 'sparkline'], function(angular) {
 		    	connection.send(self.message); // 通过套接字传递该内容
 		    	self.message = '';
 			};
+			
+			
+			$(".knob").knob();
 			
 		});
 	}]);

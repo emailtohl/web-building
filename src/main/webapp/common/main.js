@@ -22,6 +22,7 @@ require.config({
 //		'mine' : '../lib/mine',
 		'jquery' : '../lib/jquery/jquery-2.2.3.min',
 		'jqueryui' : '../lib/jqueryui/jquery-ui.min',
+		'knob' : '../lib/knob/jquery.knob',
 		'bootstrap' : '../lib/bootstrap/js/bootstrap.min',
 		'adminLTE' : '../lib/AdminLTE/js/app.min',
 		'angular' : '../lib/angular/angular.min',
@@ -68,6 +69,10 @@ require.config({
 		'jqueryui' : {
 			deps : [ 'jquery' ],
 			exports : 'jqueryui'
+		},
+		'knob' : {
+			deps : [ 'jqueryui' ],
+			exports : 'knob'
 		},
 		'bootstrap' : {
 			deps : [ 'jquery' ],
