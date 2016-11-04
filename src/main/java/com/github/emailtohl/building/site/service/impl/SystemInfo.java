@@ -4,6 +4,8 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -39,4 +41,24 @@ public class SystemInfo {
 			} // if
 		} // for
 	}
+	
+	public static class Info {
+		float memory;
+	}
+	
+	public static interface Observe {
+		void notify(Info info);
+	}
+	
+	private List<Observe> observes = new ArrayList<>();
+
+	public List<Observe> getObserves() {
+		return observes;
+	}
+
+	public void setObserves(List<Observe> observes) {
+		this.observes = observes;
+	}
+	
+	
 }

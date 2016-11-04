@@ -52,8 +52,7 @@ define(['angular', 'dashboard/module', 'sparkline', 'knob'], function(angular) {
 			};
 			
 			
-			$(".knob").knob();
-			
+			$(".knob").knob().trigger('change');
 		});
 	}]);
 });
