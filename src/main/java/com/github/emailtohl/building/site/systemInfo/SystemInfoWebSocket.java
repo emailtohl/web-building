@@ -1,9 +1,7 @@
-package com.github.emailtohl.building.site.chat;
+package com.github.emailtohl.building.site.systemInfo;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpSession;
 import javax.websocket.CloseReason;
@@ -13,7 +11,6 @@ import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
-import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
 import org.apache.logging.log4j.LogManager;
@@ -21,73 +18,60 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import com.github.emailtohl.building.site.service.impl.SystemInfo;
+import com.github.emailtohl.building.site.service.impl.SystemInfo.Observe;
 import com.github.emailtohl.building.websocket.Configurator;
 import com.google.gson.Gson;
+
 /**
- * websocket，聊天程序的服务端
+ * 系统信息监听程序，将系统信息主动推送到前台
  * @author HeLei
  */
-@ServerEndpoint(value = "/chat/{username}", configurator = Configurator.class)
-public class ChatEndpoint {
+@ServerEndpoint(value = "/systemInfo", configurator = Configurator.class)
+public class SystemInfoWebSocket implements Observe {
 	private static Logger logger = LogManager.getLogger();
-	private String username;
 	private Session session;
 	private HttpSession httpSession;
-	private ChatService chatService;
 	private Gson gson;
-	private static final Map<String, Session> map = new ConcurrentHashMap<String, Session>();
-
+	private SystemInfo systemInfo;
+	
 	@OnOpen
-	public void onOpen(Session session, @PathParam("username") String username, EndpointConfig config) {
-		this.username = username;
+	public void onOpen(Session session, EndpointConfig config) {
 		this.session = session;
 		// 在配置类中获取HttpSession
 		this.httpSession = Configurator.getExposedSession(session);
 		// websocket属于容器管理，要使用spring管理的Bean，需要先获取spring容器
 		WebApplicationContext context = WebApplicationContextUtils
 				.getRequiredWebApplicationContext(httpSession.getServletContext());
-		chatService = context.getBean(ChatService.class);
+		systemInfo = context.getBean(SystemInfo.class);
+		systemInfo.register(this);
 		gson = context.getBean(Gson.class);
-		map.put(session.getId(), session);
 	}
-
+	
 	@OnMessage
 	public void onMessage(String message) throws IOException {
-		ChatMessage msg = new ChatMessage();
-		msg.setTimestamp(Instant.now());
-		msg.setUser(username);
-		msg.setUserContent(message);
-		String str = gson.toJson(msg);
-		for (Session s : map.values()) {
-			/*if (s.equals(session)) {
-				continue;
-			}*/
-			s.getBasicRemote().sendText(str);
-		}
-		
-		chatService.save(username, msg);
+		session.getBasicRemote().sendText("收到了消息：" + message);
 	}
 
 	@OnClose
 	public void onClose(CloseReason reason) {
-		String str = "goodbye username: " + username + "  reason: " + reason.getReasonPhrase();
-		for (Session s : map.values()) {
-			if (s.equals(session)) {
-				continue;
-			}
-			try {
-				s.getBasicRemote().sendText(str);
-			} catch (IOException e) {
-				e.printStackTrace();
-				map.remove(s.getId());
-			}
-		}
-		map.remove(session.getId());
+		systemInfo.remove(this);
 	}
 
 	@OnError
 	public void onError(Throwable e) {
 		logger.info(e);
-		map.remove(session.getId());
+		systemInfo.remove(this);
+	}
+
+	@Override
+	public void notify(Map<String, Object> info) {
+		if (session == null)
+			return;
+		try {
+			session.getBasicRemote().sendText(gson.toJson(info));
+		} catch (Exception e) {
+			logger.info("public void notify(Map<String, Object> info)    " + e);
+		}
 	}
 }

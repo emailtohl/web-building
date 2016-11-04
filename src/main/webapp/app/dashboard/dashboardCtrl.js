@@ -17,7 +17,7 @@ define(['angular', 'dashboard/module', 'sparkline', 'knob'], function(angular) {
 			var connection = new WebSocket(url);
 			
 			connection.onopen = function() {
-				console.log('打开连接');
+				console.log('打开聊天连接');
 			};
 			
 			connection.onmessage = function(e) {
@@ -51,8 +51,40 @@ define(['angular', 'dashboard/module', 'sparkline', 'knob'], function(angular) {
 		    	self.message = '';
 			};
 			
-			
-			$(".knob").knob().trigger('change');
+			/**
+			 * 获取系统信息
+			 */
+			self.systemInfo = {};
+			(function SystemInfo() {
+				var url = 'ws://' + window.location.host + '/building/systemInfo';
+				var connection = new WebSocket(url);
+				
+				connection.onopen = function() {
+					console.log('打开系统信息连接');
+				};
+				
+				connection.onmessage = function(e) {
+					var data = JSON.parse(e.data), memory;
+					if (data.getFreePhysicalMemorySize && data.getTotalPhysicalMemorySize) {
+						self.systemInfo.memory = (data.getFreePhysicalMemorySize / data.getTotalPhysicalMemorySize) * 100;
+					}
+					if (data.getFreeSwapSpaceSize && data.getTotalSwapSpaceSize) {
+						self.systemInfo.swap = (data.getFreeSwapSpaceSize / data.getTotalSwapSpaceSize) * 100;
+					}
+					self.systemInfo.cpu = data.getSystemCpuLoad;
+					console.log(self.systemInfo);
+					$scope.$apply();
+					$(".knob").knob().trigger('change');
+				};
+				
+				connection.onclose = function(e) {
+			    	console.log('WebSocketClosed! ' + e.data);
+			    }
+
+				connection.onerror = function(e) {
+			    	alert('WebSocketError! ' + e.data);
+			    }
+			})();
 		});
 	}]);
 });

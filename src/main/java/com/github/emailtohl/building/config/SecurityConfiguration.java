@@ -130,6 +130,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			"/signup",
 			"/about",
 			"/chat/**",
+			"/systemInfo",
 			"/fileUploadServer/test"
 		};
 		security
