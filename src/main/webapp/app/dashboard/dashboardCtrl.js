@@ -1,6 +1,6 @@
 define(['angular', 'dashboard/module', 'sparkline', 'knob'], function(angular) {
 	return angular.module('dashboardModule')
-	.controller('DashboardCtrl', ['$scope', '$http', function($scope, $http) {
+	.controller('DashboardCtrl', ['$scope', '$http', '$state', function($scope, $http, $state) {
 		var self = this;
 		// AdminLTE dashboard demo (This is only for demo purposes)
 		// AdminLTE for demo purposes
@@ -64,6 +64,8 @@ define(['angular', 'dashboard/module', 'sparkline', 'knob'], function(angular) {
 				};
 				
 				connection.onmessage = function(e) {
+					if (!$state.includes('dashboard'))
+						return;
 					var data = JSON.parse(e.data), memory;
 					if (data.getFreePhysicalMemorySize && data.getTotalPhysicalMemorySize) {
 						self.systemInfo.memory = (data.getFreePhysicalMemorySize / data.getTotalPhysicalMemorySize) * 100;
@@ -72,7 +74,6 @@ define(['angular', 'dashboard/module', 'sparkline', 'knob'], function(angular) {
 						self.systemInfo.swap = (data.getFreeSwapSpaceSize / data.getTotalSwapSpaceSize) * 100;
 					}
 					self.systemInfo.cpu = data.getSystemCpuLoad;
-					console.log(self.systemInfo);
 					$scope.$apply();
 					$(".knob").knob().trigger('change');
 				};
