@@ -106,7 +106,7 @@
             <!-- /.box-body -->
           </div>
           <!-- /.box -->
-	      <div class="box-footer clearfix" ng-if="hasAuthority('ADMIN') || hasAuthority('MANAGER')">
+	      <div class="box-footer clearfix" ng-if="hasAuthority('user_create_special')">
 	        <button type="button" class="btn btn-primary btn-block" ui-sref="user.addUser()">新增</button>
 	      </div>
         </div>

@@ -47,7 +47,7 @@
 				</span>
 		      </div>
 		      <div class="form-group has-feedback" ng-class="{'has-success':addUserform.password.$valid,'has-warning':addUserform.password.$error.required,'has-error':addUserform.password.$error.minlength}">
-		        <label for="exampleInputEmail1">默认密码</label>
+		        <label for="exampleInputEmail1">输入密码</label>
 		        <input type="password" placeholder="password min 6" name="password" class="form-control" ng-model="ctrl.form.plainPassword" required="required" ng-minlength="6">
 		      	<span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':addUserform.password.$valid,'glyphicon-warning-sign':addUserform.password.$error.required,'glyphicon-remove':addUserform.password.$error.minlength}"></span>
 			    <span ng-show="addUserform.password.$error.required">
@@ -60,17 +60,34 @@
 				This field is invalid
 				</span>
 		      </div>
+		      <div class="form-group has-feedback" ng-class="{'has-success':addUserform.password.$valid,'has-warning':addUserform.password.$error.required,'has-error':addUserform.password.$error.minlength || ctrl.form.plainPassword != ctrl.form.confirmPassword}">
+		        <label for="exampleInputEmail1">确认密码</label>
+		        <input type="password" placeholder="password min 6" name="confirmPassword" class="form-control" ng-model="ctrl.form.confirmPassword" required="required" ng-minlength="6">
+		      	<span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':addUserform.confirmPassword.$valid && ctrl.form.plainPassword == ctrl.form.confirmPassword,'glyphicon-warning-sign':addUserform.password.$error.required || ctrl.form.plainPassword != ctrl.form.confirmPassword,'glyphicon-remove':addUserform.password.$error.minlength}"></span>
+			    <span ng-show="ctrl.form.plainPassword != ctrl.form.confirmPassword">
+				确认密码不匹配
+				</span>
+			    <span ng-show="addUserform.confirmPassword.$error.required">
+				This is a required field
+				</span>
+				<span ng-show="addUserform.confirmPassword.$error.minlength">
+				Minimum length required is 6
+				</span>
+				<span ng-show="addUserform.confirmPassword.$invalid">
+				This field is invalid
+				</span>
+		      </div>
 		      <div class="form-group">
 		        <label for="exampleInputEmail1">生日</label>
 		        <input type="text" placeholder="birthday" class="form-control" datepicker ng-model="ctrl.form.date">
 		      </div>
+	        </div>
+	        
+	        <div class="col-md-6">
 		      <div class="form-group">
 		        <label for="exampleInputEmail1">联系电话</label>
 		        <input type="text" placeholder="mobile" class="form-control" ng-model="ctrl.form.subsidiary.mobile">
 		      </div>
-	        </div>
-	        
-	        <div class="col-md-6">
 			  <div class="form-group" ng-init="ctrl.form.userType = 'EMPLOYEE'">
 		        <div class="radio">
 		          <label>
@@ -78,7 +95,7 @@
 		            	 普通职员
 		          </label>
 		        </div>
-		        <div class="radio" ng-if="hasAuthority('ADMIN') || hasAuthority('MANAGER')">
+		        <div class="radio" ng-if="hasAuthority('user_create_special')">
 		          <label>
 		            <input name="userType" value="MANAGER" type="radio" ng-model="ctrl.form.userType">
 		             	经理
@@ -115,7 +132,7 @@
 	        
 	        <div class="col-md-12">
       		  <div class="box-body">
-		        <input type="submit" class="btn btn-primary btn-block" ng-disabled="addUserform.$invalid" ng-click="ctrl.submit()">
+		        <input type="submit" class="btn btn-primary btn-block" ng-disabled="addUserform.$invalid || ctrl.form.plainPassword != ctrl.form.confirmPassword" ng-click="ctrl.submit()">
 		      </div>
 	        </div>
 	        

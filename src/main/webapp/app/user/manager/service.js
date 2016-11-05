@@ -14,7 +14,7 @@ define([ 'user/module', 'common/context' ], function(userModule) {
 				return $http.get('user/pager?' + util.encodeUrlParams(params));
 			},
 			addUser : function(user) {
-				return $http.post('user', user);
+				return $http.post('user/employee', user);
 			},
 			enableUser : function(id) {
 				return $http.put('user/enableUser/' + id);
@@ -23,11 +23,7 @@ define([ 'user/module', 'common/context' ], function(userModule) {
 				return $http.put('user/disableUser/' + id);
 			},
 			update : function(user) {
-				if (user.post) {
-					return $http.put('user/employee/' + user.id, user);
-				} else {
-					return $http.put('user/customer/' + user.id, user);
-				}
+				return $http.put('user/employee/' + user.id, user);
 			},
 			'delete' : function(id) {
 				return $http['delete']('user/' + id);

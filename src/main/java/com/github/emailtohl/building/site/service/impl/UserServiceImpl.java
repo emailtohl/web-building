@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Long addEmployee(Employee u) {
 		Employee e = new Employee();
-		BeanUtils.copyProperties(u, e, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, "roles", "enabled", "password", "department");
+		BeanUtils.copyProperties(u, e, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, "roles", "enabled", "department");
 		// 关于工号
 		synchronized (this) {
 			Integer max = userRepository.getMaxEmpNo();
