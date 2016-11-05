@@ -380,7 +380,7 @@ public class UserServiceImpl implements UserService {
 			} else {
 				result = new User();
 			}
-			BeanUtils.copyProperties(u, result, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, "password", "authorities");
+			BeanUtils.copyProperties(u, result, "password", "authorities");
 			ls.add(result);
 		});
 		return ls;
@@ -400,7 +400,7 @@ public class UserServiceImpl implements UserService {
 		} else {
 			result = new User();
 		}
-		BeanUtils.copyProperties(user, result, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, "password");
+		BeanUtils.copyProperties(user, result, "password");
 		return result;
 	}
 
