@@ -7,6 +7,7 @@ import static com.github.emailtohl.building.site.entities.BaseEntity.MODIFY_DATE
 import static com.github.emailtohl.building.site.entities.Role.ADMIN;
 
 import java.io.Serializable;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -39,7 +40,6 @@ import org.springframework.stereotype.Service;
 
 import com.github.emailtohl.building.common.Constant;
 import com.github.emailtohl.building.common.jpa.Pager;
-import com.github.emailtohl.building.common.utils.BCryptUtil;
 import com.github.emailtohl.building.common.utils.BeanTools;
 import com.github.emailtohl.building.site.dao.DepartmentRepository;
 import com.github.emailtohl.building.site.dao.RoleRepository;
@@ -60,6 +60,8 @@ import com.github.emailtohl.building.site.service.UserService;
 @Service
 public class UserServiceImpl implements UserService {
 	private static final Logger logger = LogManager.getLogger();
+	private static final SecureRandom RANDOM = new SecureRandom();
+	private static final int HASHING_ROUNDS = 10;
 	@Inject UserRepository userRepository;
 	@Inject RoleRepository roleRepository;
 	@Inject DepartmentRepository departmentRepository;
@@ -94,13 +96,12 @@ public class UserServiceImpl implements UserService {
 		}
 		// 创建雇员时，可以直接激活可用
 		e.setEnabled(true);
-		String hashPw;
-		if (u.getPassword() == null) {
-			hashPw = BCryptUtil.hash("123456");// 设置默认密码
-		} else {
-			hashPw = BCryptUtil.hash(u.getPassword());
+		String pw = u.getPassword();
+		if (pw == null || pw.isEmpty()) {
+			pw = "123456";// 设置默认密码
 		}
-		e.setPassword(hashPw);
+		pw = BCrypt.hashpw(pw, BCrypt.gensalt(HASHING_ROUNDS, RANDOM));
+		e.setPassword(pw);
 		userRepository.save(e);
 		return e.getId();
 	}
@@ -114,13 +115,12 @@ public class UserServiceImpl implements UserService {
 		r.getUsers().add(e);
 		// 用户注册时，还未激活
 		e.setEnabled(false);
-		String hashPw;
-		if (u.getPassword() == null) {
-			hashPw = BCryptUtil.hash("123456");// 设置默认密码
-		} else {
-			hashPw = BCryptUtil.hash(u.getPassword());
+		String pw = u.getPassword();
+		if (pw == null || pw.isEmpty()) {
+			pw = "123456";// 设置默认密码
 		}
-		e.setPassword(hashPw);
+		pw = BCrypt.hashpw(pw, BCrypt.gensalt(HASHING_ROUNDS, RANDOM));
+		e.setPassword(pw);
 		userRepository.save(e);
 		return e.getId();
 	}
@@ -174,7 +174,7 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public void changePassword(String email, String newPassword) {
-		String hashPw = BCryptUtil.hash(newPassword);
+		String hashPw = BCrypt.hashpw(newPassword, BCrypt.gensalt(HASHING_ROUNDS, RANDOM));
 		User u = userRepository.findByEmail(email);
 		u.setPassword(hashPw);
 	}

@@ -93,7 +93,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @param newPassword
 	 */
 	@PreAuthorize("#email == authentication.principal.username")
-	void changePassword(@P("email") String email, @Pattern(regexp = "^[^\\s&\"<>]+$") String newPassword);
+	void changePassword(@P("email") String email, @NotNull @Pattern(regexp = "^[^\\s&\"<>]+$") String newPassword);
 	
 	/**
 	 * 修改密码，用于用户忘记密码的场景，没有权限控制
@@ -101,7 +101,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @param email
 	 * @param newPassword
 	 */
-	void changePasswordByEmail(String email, @Pattern(regexp = "^[^\\s&\"<>]+$") String newPassword);
+	void changePasswordByEmail(String email, @NotNull @Pattern(regexp = "^[^\\s&\"<>]+$") String newPassword);
 	
 	/**
 	 * 删除用户
