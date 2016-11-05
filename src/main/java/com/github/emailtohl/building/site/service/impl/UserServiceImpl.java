@@ -1,5 +1,9 @@
 package com.github.emailtohl.building.site.service.impl;
+
 import static com.github.emailtohl.building.site.entities.Authority.USER_DELETE;
+import static com.github.emailtohl.building.site.entities.BaseEntity.CREATE_DATE_PROPERTY_NAME;
+import static com.github.emailtohl.building.site.entities.BaseEntity.ID_PROPERTY_NAME;
+import static com.github.emailtohl.building.site.entities.BaseEntity.MODIFY_DATE_PROPERTY_NAME;
 import static com.github.emailtohl.building.site.entities.Role.ADMIN;
 
 import java.io.Serializable;
@@ -69,7 +73,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Long addEmployee(Employee u) {
 		Employee e = new Employee();
-		BeanUtils.copyProperties(u, e, "roles", "enabled", "password", "department");
+		BeanUtils.copyProperties(u, e, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, "roles", "enabled", "password", "department");
 		// 关于工号
 		synchronized (this) {
 			Integer max = userRepository.getMaxEmpNo();
@@ -104,7 +108,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Long addCustomer(Customer u) {	
 		Customer e = new Customer();
-		BeanUtils.copyProperties(u, e, "roles", "enabled", "password", "department");
+		BeanUtils.copyProperties(u, e, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, "roles", "enabled", "password", "department");
 		Role r = roleRepository.findByName(Role.USER);
 		e.getRoles().add(r);
 		r.getUsers().add(e);
@@ -376,7 +380,7 @@ public class UserServiceImpl implements UserService {
 			} else {
 				result = new User();
 			}
-			BeanUtils.copyProperties(u, result, "password", "authorities");
+			BeanUtils.copyProperties(u, result, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, "password", "authorities");
 			ls.add(result);
 		});
 		return ls;
@@ -396,7 +400,7 @@ public class UserServiceImpl implements UserService {
 		} else {
 			result = new User();
 		}
-		BeanUtils.copyProperties(user, result, "password");
+		BeanUtils.copyProperties(user, result, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, "password");
 		return result;
 	}
 

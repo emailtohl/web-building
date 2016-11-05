@@ -73,13 +73,13 @@ public class UserDto extends User {
 	 */
 	public User convertUser() {
 		User u = new User();
-		BeanUtils.copyProperties(this, u, "iconSrc", "icon", "password");
+		BeanUtils.copyProperties(this, u, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, "iconSrc", "icon", "password");
 		return u;
 	}
 	
 	public Employee convertEmployee() {
 		Employee e = new Employee();
-		BeanUtils.copyProperties(this, e, "iconSrc", "icon", "password");
+		BeanUtils.copyProperties(this, e, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, "iconSrc", "icon", "password");
 		return e;
 	}
 	
