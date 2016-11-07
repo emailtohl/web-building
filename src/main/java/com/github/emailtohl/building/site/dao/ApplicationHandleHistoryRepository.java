@@ -46,5 +46,8 @@ public interface ApplicationHandleHistoryRepository
 	@Query(value = "select distinct a from ApplicationHandleHistory a where a.applicationForm.applicant.email like ?1 or a.handler.email like ?2 and a.status = ?3 and a.createDate between ?4 and ?5", countQuery = "select distinct count(a) from ApplicationHandleHistory a where a.applicationForm.applicant.email like ?1 or a.handler.email like ?2 or a.status = ?3 and a.createDate between ?4 and ?5")
 	Page<ApplicationHandleHistory> history3(String applicantEmail, String handlerEmail, Status status, Date start,
 			Date end, Pageable pageable);
+	
+	@Query(value = "select distinct a from ApplicationHandleHistory a where a.createDate between ?1 and ?2", countQuery = "select distinct count(a) from ApplicationHandleHistory a where a.createDate between ?1 and ?2")
+	Page<ApplicationHandleHistory> history4(Date start, Date end, Pageable pageable);
 
 }

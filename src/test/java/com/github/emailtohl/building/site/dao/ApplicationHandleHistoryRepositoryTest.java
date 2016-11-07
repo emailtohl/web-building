@@ -3,6 +3,7 @@ package com.github.emailtohl.building.site.dao;
 import static org.junit.Assert.assertTrue;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 
@@ -78,8 +79,8 @@ public class ApplicationHandleHistoryRepositoryTest {
 	@Test
 	public void test() {
 		Instant now = Instant.now();
-		Date start = Date.from(now.minusSeconds(1000));
-		Date end = Date.from(now.plusSeconds(100));
+		Date start = Date.from(now.minus(3650, ChronoUnit.DAYS));
+		Date end = Date.from(now.plus(3650, ChronoUnit.DAYS));
 		Page<ApplicationHandleHistory> page = applicationHandleHistoryRepository.history1(PersistenceData.baz.getEmail(), Status.PROCESSING, start, end, pageable);
 		logger.debug(page.getContent());
 		logger.debug(page.getTotalElements());
@@ -97,6 +98,12 @@ public class ApplicationHandleHistoryRepositoryTest {
 		
 		List<ApplicationHandleHistory> ls = applicationHandleHistoryRepository.findByApplicationFormIdWhenException(formId);
 		logger.debug(ls);
+		
+		Pageable pageable2 = new PageRequest(1, 20);
+		page = applicationHandleHistoryRepository.history4(start, end, pageable2);
+		logger.debug(page.getContent());
+		logger.debug(page.getTotalElements());
+		assertTrue(page.getTotalElements() > 0);
 	}
 
 }
