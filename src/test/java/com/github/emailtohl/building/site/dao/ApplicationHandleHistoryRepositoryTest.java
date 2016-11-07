@@ -99,11 +99,6 @@ public class ApplicationHandleHistoryRepositoryTest {
 		List<ApplicationHandleHistory> ls = applicationHandleHistoryRepository.findByApplicationFormIdWhenException(formId);
 		logger.debug(ls);
 		
-		Pageable pageable2 = new PageRequest(1, 20);
-		page = applicationHandleHistoryRepository.history4(start, end, pageable2);
-		logger.debug(page.getContent());
-		logger.debug(page.getTotalElements());
-		assertTrue(page.getTotalElements() > 0);
 	}
 
 }
