@@ -1,4 +1,4 @@
-define(['user/module'], function(userModule) {
+define(['user/module', 'user/role/service'], function(userModule) {
 	return userModule
 	.controller('RoleCtrl', ['$scope', '$http', '$state', 'roleService',
 	                                function($scope, $http, $state, roleService) {
