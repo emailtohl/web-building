@@ -88,7 +88,7 @@
 	          <th>处理意见</th>
 	          <th>修改状态</th>
 	        </tr>
-	        <tr ng-repeat="x in ctrl.pager.content" ng-click="ctrl.openModal(x.id)">
+	        <tr style="cursor: pointer;" ng-repeat="x in ctrl.pager.content" ng-click="ctrl.openModal(x.id)">
 	          <td>{{x.applicationForm.applicant.email}}</td>
 	          <td>{{x.applicationForm.createDate}}</td>
 	          <td>{{x.applicationForm.name}}</td>
