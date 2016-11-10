@@ -14,7 +14,11 @@ import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.service.UserService;
 import com.github.emailtohl.building.stub.SecurityContextManager;
 import com.github.emailtohl.building.stub.ServiceStub;
-
+/**
+ * 建立此配置类的原因是为了不让RootContextConfiguration引用src/test/java目录下的类
+ * 否则在生产环境中启动时会发生编译异常
+ * @author HeLei
+ */
 @Profile(PROFILE_DEVELPMENT)
 @Configuration
 @Import({ RootContextConfiguration.class })

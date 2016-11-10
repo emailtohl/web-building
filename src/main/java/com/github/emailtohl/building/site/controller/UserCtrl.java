@@ -52,10 +52,8 @@ import com.google.gson.Gson;
 @RequestMapping("user")
 public class UserCtrl {
 	private static final Logger logger = LogManager.getLogger();
-	@Inject
-	UserService userService;
-	@Inject
-	Gson gson;
+	@Inject UserService userService;
+	@Inject Gson gson;
 	
 	/**
 	 * 查询user资源下提供哪些方法
