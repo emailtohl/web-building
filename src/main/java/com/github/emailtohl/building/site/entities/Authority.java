@@ -20,6 +20,10 @@ import javax.validation.constraints.NotNull;
 public class Authority extends BaseEntity {
 	private static final long serialVersionUID = 2353467451352218773L;
 	/**
+	 * 权限配置的权限
+	 */
+	public static final String USER_ROLE_AUTHORITY_ALLOCATION = "user_role_authority_allocation";
+	/**
 	 * 创建普通账号，用于用户自行注册时
 	 */
 	public static final String USER_CREATE_ORDINARY = "user_create_ordinary";

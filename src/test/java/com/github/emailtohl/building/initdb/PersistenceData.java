@@ -42,6 +42,7 @@ public class PersistenceData {
 	static final int HASHING_ROUNDS = 10;
 	
 	public final static Authority
+			user_role_authority_allocation = new Authority(USER_ROLE_AUTHORITY_ALLOCATION, "对角色进行权限配置的权限"),
 			user_create_ordinary = new Authority(USER_CREATE_ORDINARY, "创建普通账号，用于用户自行注册时"),
 			user_create_special = new Authority(USER_CREATE_SPECIAL, "创建有一定权限的账号，用于管理员创建时"),
 			user_enable = new Authority(USER_ENABLE, "激活账号"),
@@ -67,6 +68,7 @@ public class PersistenceData {
 	public final static Department product = new Department(), qa = new Department();
 
 	static {
+		user_role_authority_allocation.getRoles().add(admin);
 		user_create_ordinary.getRoles().addAll(Arrays.asList(admin, manager, employee, user));
 		user_create_special.getRoles().addAll(Arrays.asList(admin, manager));
 		user_enable.getRoles().addAll(Arrays.asList(admin, manager, employee, user));
@@ -80,7 +82,7 @@ public class PersistenceData {
 		application_form_transit.getRoles().addAll(Arrays.asList(admin, manager, employee));
 		application_form_read_history.getRoles().addAll(Arrays.asList(admin, manager, employee));
 		
-		admin.getAuthorities().addAll(Arrays.asList(user_create_ordinary, user_create_special, user_enable, user_disable, user_grant_roles, user_read_all, user_read_self, user_update_all, user_update_self, user_delete, application_form_transit, application_form_read_history));
+		admin.getAuthorities().addAll(Arrays.asList(user_role_authority_allocation, user_create_ordinary, user_create_special, user_enable, user_disable, user_grant_roles, user_read_all, user_read_self, user_update_all, user_update_self, user_delete, application_form_transit, application_form_read_history));
 		manager.getAuthorities().addAll(Arrays.asList(user_create_ordinary, user_create_special, user_enable, user_disable, user_grant_roles, user_read_all, user_read_self, user_update_self, application_form_transit, application_form_read_history));
 		employee.getAuthorities().addAll(Arrays.asList(user_create_ordinary, user_enable, user_read_all, user_read_self, user_update_self, application_form_transit, application_form_read_history));
 		user.getAuthorities().addAll(Arrays.asList(user_create_ordinary, user_enable, user_read_self, user_update_self));

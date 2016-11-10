@@ -207,5 +207,5 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @return
 	 */
 	Authentication authenticate(String email, String password);
-
+	
 }

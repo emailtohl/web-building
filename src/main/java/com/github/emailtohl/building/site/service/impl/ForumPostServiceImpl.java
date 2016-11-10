@@ -1,5 +1,9 @@
 package com.github.emailtohl.building.site.service.impl;
 
+import static com.github.emailtohl.building.site.entities.BaseEntity.CREATE_DATE_PROPERTY_NAME;
+import static com.github.emailtohl.building.site.entities.BaseEntity.ID_PROPERTY_NAME;
+import static com.github.emailtohl.building.site.entities.BaseEntity.MODIFY_DATE_PROPERTY_NAME;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,7 +71,7 @@ public class ForumPostServiceImpl implements ForumPostService {
 	@Transactional
 	public void save(String email, ForumPostDto dto) {
 		ForumPost forumPost = new ForumPost();
-		BeanUtils.copyProperties(dto, forumPost, "user");
+		BeanUtils.copyProperties(dto, forumPost, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, "user");
 		User u = userRepository.findByEmail(email);
 		if (u == null) {
 			throw new IllegalArgumentException("User does not exist.");
