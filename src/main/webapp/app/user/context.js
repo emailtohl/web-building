@@ -5,5 +5,5 @@ define(['user/module',
         'user/manager/addUser',
         'user/manager/service',
         'user/role/service',
-        'user/role/roleCtrl'
+        'user/role/ctrl'
         ], function() {});

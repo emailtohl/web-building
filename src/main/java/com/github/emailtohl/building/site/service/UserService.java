@@ -9,6 +9,7 @@ import static com.github.emailtohl.building.site.entities.Authority.USER_READ_SE
 import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_ALL;
 import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_SELF;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.transaction.Transactional;
@@ -31,6 +32,7 @@ import com.github.emailtohl.building.common.Constant;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.Employee;
+import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
 
 /**
@@ -192,14 +194,21 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 */
 	@PreAuthorize("isAuthenticated()")
 	Pager<User> getPageByRoles(String email, Set<String> roleNames, Pageable pageable);
-
+	
+	/**
+	 * 获取用户角色
+	 * @return
+	 */
+	@PreAuthorize("isAuthenticated()")
+	List<Role> getRoles();
+	
 	/**
 	 * 判断用户是否具有该权限
 	 * @param authorities
 	 * @return
 	 */
 	boolean hasAuthority(String... authorities);
-	
+
 	/**
 	 * 认证（登录）
 	 * @param email

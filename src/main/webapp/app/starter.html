@@ -289,13 +289,13 @@ desired effect
           <a href="#"><i class="fa fa-users"></i> <span>用户管理</span> <i class="fa fa-angle-left pull-right"></i></a>
           <ul class="treeview-menu">
             <li ng-class="{active: $state.includes('user.list') || $state.includes('user.detail')}"><a ui-sref="user.list" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>账户管理</a></li>
-            <li ng-class="{active: $state.includes('user.role')}" ng-if="hasAuthority('user_grant_roles')"><a ui-sref="user.role" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>角色管理</a></li>
+            <li ng-class="{active: $state.includes('user.role')}" ng-if="hasAuthority('user_grant_roles')"><a ui-sref="user.role" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>分配角色</a></li>
             <li><a href="secure" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>security测试</a></li>
           </ul>
         </li>
         <li class="" ng-if="hasAuthority('user_role_authority_allocation')" ng-class="{active: $state.includes('role')}" ui-sref="role">
           <a href="#">
-            <i class="fa fa-th"></i> <span>角色管理</span>
+            <i class="fa fa-th"></i> <span>角色配置</span>
             <span class="pull-right-container">
               <small class="label pull-right bg-red">notice</small>
             </span>

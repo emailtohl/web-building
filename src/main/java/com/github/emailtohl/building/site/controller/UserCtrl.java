@@ -7,6 +7,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -40,6 +41,7 @@ import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.BaseEntity;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.Employee;
+import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
 import com.google.gson.Gson;
@@ -283,6 +285,15 @@ public class UserCtrl {
 		userService.deleteUser(id);
 	}
 
+	/**
+	 * 获取所有角色
+	 * @return
+	 */
+	@RequestMapping(value = "role", method = GET)
+	public List<Role> getRoles() {
+		return userService.getRoles();
+	}
+	
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}

@@ -1,7 +1,7 @@
 define(['user/module',
         'user/manager/listCtrl',
         'user/manager/detailCtrl',
-        'user/role/roleCtrl'
+        'user/role/ctrl'
         ], function(userModule) {
 	return userModule.config(function($stateProvider) {
 		$stateProvider
@@ -28,7 +28,7 @@ define(['user/module',
 		.state('user.role', {
 			url : '/role',
 			templateUrl : 'app/user/role/role.html',
-			controller : 'RoleCtrl as ctrl'
+			controller : 'RoleAllocationCtrl as ctrl'
 		});
 	});
 });

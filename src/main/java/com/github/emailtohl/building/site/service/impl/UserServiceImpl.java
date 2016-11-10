@@ -272,6 +272,11 @@ public class UserServiceImpl implements UserService {
 		}
 		return userRepository.getPagerByCriteria(fuzzy, roleNames, pageable);
 	}
+	
+	@Override
+	public List<Role> getRoles() {
+		return roleRepository.findAll();
+	}
 
 	@Override
 	public boolean hasAuthority(String ... authorities) {

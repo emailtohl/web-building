@@ -1,7 +1,7 @@
 define(['user/module', 'user/role/service'], function(userModule) {
 	return userModule
-	.controller('RoleCtrl', ['$scope', '$http', '$state', 'roleService',
-	                                function($scope, $http, $state, roleService) {
+	.controller('RoleAllocationCtrl', ['$scope', '$http', '$state', 'roleAllocationService',
+	                                function($scope, $http, $state, roleAllocationService) {
 		var self = this;
 		$scope.getAuthentication();
 		self.params = {
@@ -10,13 +10,18 @@ define(['user/module', 'user/role/service'], function(userModule) {
 			email : '',
 			roles : []
 		};
+		function getRoles() {
+			roleAllocationService.getRoles().success(function(data) {
+				self.roles = data;
+			});
+		}
 		self.query = function() {
-			roleService.getPageByRoles(self.params).success(function(data, status, fun, obj) {
+			roleAllocationService.getPageByRoles(self.params).success(function(data, status, fun, obj) {
 				self.pager = data;
 				for (var i = 0; i < self.pager.content.length; i++) {
 					bindRoleNames(self.pager.content[i]);
 				}
-				console.log(self.pager);
+				getRoles();
 				/**
 				 * 用户的角色是一个对象，为了在页面显示出来，所以再为用户模型绑上字符串的角色数组
 				 */
@@ -43,7 +48,7 @@ define(['user/module', 'user/role/service'], function(userModule) {
 			fail : {open : false},
 		};
 		self.onChange = function(id, value) {
-			roleService.grantRoles(id, value).then(function(respose) {
+			roleAllocationService.grantRoles(id, value).then(function(respose) {
 				self.modal.success.open = true;
 			}, function(respose) {
 				self.query();

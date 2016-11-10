@@ -28,11 +28,7 @@
 	          <div class="form-group col-md-6">
 	            <label for="exampleInputPassword1">权限名</label>
 	            <select class="form-control select2" multiple="multiple" data-placeholder="Select a State" style="width: 100%;" select2 ng-model="ctrl.params.roles">
-			        <option value="">无</option>
-			        <option value="admin" ng-if="hasAuthority('user_delete')">管理员</option>
-			        <option value="manager">经理</option>
-			        <option value="employee">职员</option>
-			        <option value="user">用户</option>
+			        <option ng-repeat="x in ctrl.roles" value="{{x.name}}" ng-hide="x.name == 'admin' && !hasAuthority('user_role_authority_allocation')">{{x.description}}</option>
 		        </select>
 	          </div>
 	        </div>
@@ -72,11 +68,8 @@
                   <td class="col-md-4">
                     <div class="form-group">
                       <select class="form-control select2 select2-hidden-accessible" multiple="multiple" select2 ng-model="x.roleNames" on-change="ctrl.onChange(x.id, value)">
-				        <!-- 认为含有删除用户的权限的人就拥有ADMIN角色 -->
-				        <option value="admin" ng-if="hasAuthority('user_delete')">管理员</option>
-				        <option value="manager">经理</option>
-				        <option value="employee">职员</option>
-				        <option value="user">用户</option>
+				        <!-- 认为含有配置角色权限的人就拥有ADMIN角色 -->
+				        <option ng-repeat="x in ctrl.roles" value="{{x.name}}" ng-hide="x.name == 'admin' && !hasAuthority('user_role_authority_allocation')">{{x.description}}</option>
                       </select>
                       <!-- <button type="button" class="btn btn-default" ng-click="ctrl.authorizeModal(x.id)">授权</button> -->
                     </div>
