@@ -293,6 +293,14 @@ desired effect
             <li><a href="secure" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>security测试</a></li>
           </ul>
         </li>
+        <li class="" ng-if="hasAuthority('user_role_authority_allocation')" ng-class="{active: $state.includes('role')}" ui-sref="role">
+          <a href="#">
+            <i class="fa fa-th"></i> <span>角色管理</span>
+            <span class="pull-right-container">
+              <small class="label pull-right bg-red">notice</small>
+            </span>
+          </a>
+        </li>
         <li class="treeview" ng-class="{active: $state.includes('test')}">
           <a href="#"><i class="fa fa-laptop"></i> <span>组件测试</span> <i class="fa fa-angle-left pull-right"></i></a>
           <ul class="treeview-menu">
