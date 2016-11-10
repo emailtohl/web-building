@@ -68,7 +68,7 @@ public class Role extends BaseEntity {
 		this.description = description;
 	}
 	
-	@ManyToMany(targetEntity = User.class, fetch = FetchType.LAZY, mappedBy = "roles", cascade = CascadeType.ALL)
+	@ManyToMany(targetEntity = User.class, fetch = FetchType.LAZY, mappedBy = "roles", cascade = CascadeType.REMOVE)
 	public Set<User> getUsers() {
 		return users;
 	}
@@ -76,7 +76,7 @@ public class Role extends BaseEntity {
 		this.users = users;
 	}
 	
-	@ManyToMany(targetEntity = Authority.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToMany(targetEntity = Authority.class, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
 	@JoinTable(name = "t_role_authority"
 	, joinColumns = { @JoinColumn(name = "role_id", referencedColumnName = "id") }
 	, inverseJoinColumns = { @JoinColumn(name = "authority_id", referencedColumnName = "id") })

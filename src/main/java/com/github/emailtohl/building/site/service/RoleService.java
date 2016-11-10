@@ -18,10 +18,15 @@ import com.github.emailtohl.building.site.entities.Role;
  * 角色管理的服务层
  * @author HeLei
  */
-@PreAuthorize("hasAuthority(" + USER_ROLE_AUTHORITY_ALLOCATION + ")")
+@PreAuthorize("hasAuthority('" + USER_ROLE_AUTHORITY_ALLOCATION + "')")
 @Transactional
 @Validated
 public interface RoleService {
+	/**
+	 * 获取角色
+	 */
+	Role getRole(long id);
+	
 	/**
 	 * 获取所有角色
 	 * @return

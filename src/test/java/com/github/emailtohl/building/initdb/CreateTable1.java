@@ -13,6 +13,7 @@ public class CreateTable1 {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 
+		entityManager.persist(user_role_authority_allocation);
 		entityManager.persist(user_create_ordinary);
 		entityManager.persist(user_create_special);
 		entityManager.persist(user_enable);

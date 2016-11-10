@@ -100,7 +100,7 @@ public class Authority extends BaseEntity {
 		this.description = description;
 	}
 	
-	@ManyToMany(targetEntity = Role.class, fetch = FetchType.LAZY, mappedBy = "authorities", cascade = CascadeType.ALL)
+	@ManyToMany(targetEntity = Role.class, fetch = FetchType.LAZY, mappedBy = "authorities", cascade = CascadeType.REMOVE)
 	public Set<Role> getRoles() {
 		return roles;
 	}

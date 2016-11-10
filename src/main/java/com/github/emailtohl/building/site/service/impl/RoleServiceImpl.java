@@ -27,6 +27,11 @@ public class RoleServiceImpl implements RoleService {
 	@Inject AuthorityRepository authorityRepository;
 
 	@Override
+	public Role getRole(long id) {
+		return roleRepository.findOne(id);
+	}
+	
+	@Override
 	public List<Role> getRoles() {
 		return roleRepository.findAll();
 	}
@@ -41,7 +46,7 @@ public class RoleServiceImpl implements RoleService {
 		Role r = new Role();
 		// 仅仅只复制基本属性，权限集合通过手工代码完成
 		BeanUtils.copyProperties(role, r, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, "users", "authorities");
-		r.getAuthorities().addAll(r.getAuthorities());
+		r.getAuthorities().addAll(role.getAuthorities());
 		roleRepository.save(r);
 		return r.getId();
 	}
@@ -49,12 +54,12 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	public long createRole(Role role, Set<String> authorityNames) {
 		role.getAuthorities().clear();
-		authorityNames.forEach(name -> {
+		for (String name : authorityNames) {
 			Authority a = authorityRepository.findByName(name);
 			if (a != null) {
 				role.getAuthorities().add(a);
 			}
-		});
+		}
 		return createRole(role);
 	}
 
@@ -70,12 +75,13 @@ public class RoleServiceImpl implements RoleService {
 	@Override
 	public void grantAuthorities(long roleId, Set<String> authorityNames) {
 		Role r = roleRepository.findOne(roleId);
-		authorityNames.forEach(name -> {
+		r.getAuthorities().clear();
+		for (String name : authorityNames) {
 			Authority a = authorityRepository.findByName(name);
 			if (a != null) {
 				r.getAuthorities().add(a);
 			}
-		});
+		}
 	}
 
 	@Override
