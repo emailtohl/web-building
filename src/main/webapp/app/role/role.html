@@ -10,7 +10,57 @@
 <!-- Main content -->
 <section class="content">
 	<div class="row">
-	
+		<div class="col-xs-12">
+			<div class="box">
+				<div class="box-header">
+	              <h3 class="box-title">角色列表</h3>
+	            </div>
+				<!-- /.box-header -->
+				<div class="box-body">
+					<table class="table table-bordered table-hover">
+						<thead>
+			                <tr>
+			                  <th class="col-md-6">角色名</th>
+			                  <th class="col-md-6">角色描述</th>
+			                </tr>
+		                </thead>
+		                <tbody>
+		                	<tr style="cursor:pointer;" ng-repeat="x in ctrl.roles" ng-click="ctrl.openModal(x.id)">
+                  				<td ng-bind="x.name" class="col-md-6"></td>
+                  				<td ng-bind="x.description" class="col-md-6"></td>
+                  			</tr>
+		                </tbody>
+					</table>
+				</div>
+		        <div class="box-footer clearfix">
+		          <button type="button" class="btn btn-primary btn-block" ng-click="ctrl.openModal()">新增</button>
+		        </div>
+			</div>
+		</div>
 	</div>
 </section>
 <!-- /.content -->
+
+
+<div modal open="ctrl.modal.open" title="{{ctrl.modal.title}}" when-confirm="ctrl.modal.whenConfirm()" type="{{ctrl.modal.type}}">
+  <form role="form">
+    <div class="box-body">
+      <div class="form-group">
+        <label for="exampleInputEmail1">角色名</label>
+        <input type="text" placeholder="name" class="form-control" ng-model="ctrl.form.name">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">描述</label>
+        <textarea rows="3" placeholder="description" class="form-control" ng-model="ctrl.form.description"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="exampleInputFile">权限</label>
+        <select multiple="multiple" class="form-control select2" style="width: 100%;" select2 ng-model="ctrl.form.authorityNames">
+	      <option value="">请选择</option>
+	      <option ng-repeat="x in ctrl.authorities" value="{{x.name}}">{{x.description}}</option>
+	    </select>
+      </div>
+    </div>
+    <!-- /.box-body -->
+  </form>
+</div>

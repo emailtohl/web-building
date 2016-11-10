@@ -98,6 +98,8 @@ public class RoleCtrl {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void updateRole(@PathVariable long id, @RequestBody @Valid RoleDto role) {
 		roleService.updateRole(id, role);
+		// 该方法会替换以前的权限
+		roleService.grantAuthorities(id, role.getAuthorityNames());
 	}
 	
 	/**
