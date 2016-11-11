@@ -54,5 +54,12 @@ define(['roleAuthCfg/module', 'roleAuthCfg/service'], function(roleAuthCfgModule
 			self.modal.open = true;
 		}
 		
+		self['delete'] = function(id, name) {
+			if (window.prompt('确定删除“' + name + '”角色吗？')) {
+				roleAuthCfgService.deleteRole(id).success(function() {
+					getRoles();
+				});
+			}
+		};
 	}]);
 });

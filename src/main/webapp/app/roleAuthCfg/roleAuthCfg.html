@@ -20,14 +20,16 @@
 					<table class="table table-bordered table-hover">
 						<thead>
 			                <tr>
-			                  <th class="col-md-6">角色名</th>
-			                  <th class="col-md-6">角色描述</th>
+			                  <th class="col-md-5">角色名</th>
+			                  <th class="col-md-5">角色描述</th>
+			                  <th class="col-md-2">删除</th>
 			                </tr>
 		                </thead>
 		                <tbody>
 		                	<tr style="cursor:pointer;" ng-repeat="x in ctrl.roles" ng-click="ctrl.openModal(x.id)">
-                  				<td ng-bind="x.name" class="col-md-6"></td>
-                  				<td ng-bind="x.description" class="col-md-6"></td>
+                  				<td ng-bind="x.name" class="col-md-5"></td>
+                  				<td ng-bind="x.description" class="col-md-5"></td>
+                  				<td class="col-md-2"><button class="btn btn-default" type="button" ng-click="ctrl.delete(x.id, x.name)">删除</button></td>
                   			</tr>
 		                </tbody>
 					</table>

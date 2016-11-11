@@ -69,7 +69,7 @@
                     <div class="form-group">
                       <select class="form-control select2 select2-hidden-accessible" multiple="multiple" select2 ng-model="x.roleNames" on-change="ctrl.onChange(x.id, value)">
 				        <!-- 认为含有配置角色权限的人就拥有ADMIN角色 -->
-				        <option ng-repeat="x in ctrl.roles" value="{{x.name}}" ng-hide="x.name == 'admin' && !hasAuthority('user_role_authority_allocation')">{{x.description}}</option>
+				        <option ng-repeat="x in ctrl.roles" value="{{x.name}}" ng-if="!(x.name == 'admin' && !hasAuthority('user_role_authority_allocation'))">{{x.description}}</option>
                       </select>
                       <!-- <button type="button" class="btn btn-default" ng-click="ctrl.authorizeModal(x.id)">授权</button> -->
                     </div>
