@@ -254,6 +254,18 @@ public class UserServiceTest {
 		securityContextManager.setBar();
 		userService.getUserPage(serviceStub.customer, serviceStub.pageable);
 	}
+	
+	@Test(expected = AuthenticationCredentialsNotFoundException.class)
+	public void testGetRoles1() {
+		securityContextManager.clearContext();
+		userService.getRoles();
+	}
+	
+	@Test
+	public void testGetRoles2() {
+		securityContextManager.setBaz();
+		userService.getRoles();
+	}
 
 	@Test
 	public void testHasAuthority() {

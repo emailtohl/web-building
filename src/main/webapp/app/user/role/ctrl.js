@@ -10,18 +10,15 @@ define(['user/module', 'user/role/service'], function(userModule) {
 			email : '',
 			roles : []
 		};
-		function getRoles() {
-			roleAllocationService.getRoles().success(function(data) {
-				self.roles = data;
-			});
-		}
+		roleAllocationService.getRoles().success(function(data) {
+			self.roles = data;
+		});
 		self.query = function() {
 			roleAllocationService.getPageByRoles(self.params).success(function(data, status, fun, obj) {
 				self.pager = data;
 				for (var i = 0; i < self.pager.content.length; i++) {
 					bindRoleNames(self.pager.content[i]);
 				}
-				getRoles();
 				/**
 				 * 用户的角色是一个对象，为了在页面显示出来，所以再为用户模型绑上字符串的角色数组
 				 */

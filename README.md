@@ -68,7 +68,7 @@ xml的DTD、scheme校验很繁琐，项目尽可能避免使用xml，在配置�
 完成数据库配置后，执行src/test/java/com.github.emailtohl.building.initdb.CreateTable1，JPA Hibernate会自动创建数据表和初始的测试数据，创建的数据见com.github.emailtohl.building.initdb.PersistenceData，可自行创建自己的账户
 
 ### 3. 登录系统
-打开浏览器连接到系统后，可进入首页，当访问授权地址时要求用户登录，用户可使用com.github.emailtohl.building.initdb.PersistenceData中配置的测试账户登录，也可以在登录页面中注册新的账户。
+打开浏览器连接到系统后，可进入首页，当访问授权地址时要求用户登录，用户可使用超级管理员账号是：emailtohl@163.com/123456登录，系统中还预存了几个测试账户，他们统一定义在com.github.emailtohl.building.initdb.PersistenceData中，也可以在src/main/resources/config.properties配置发件邮箱后，再在登录页面中注册新的账户。
 
 > 注意：注册用户会根据用户的邮箱发激活邮件，邮箱的配置在src/main/resources/config.properties中
 
@@ -123,4 +123,4 @@ README仅简述了项目概况，该项目是我学习所用，如何配置和�
 ## 六、 持续开发
 目前框架搭建以及基础组件以及创建完毕：如对用户、授权的实体建模，基础数据访问仓库，通用工具，通用过滤器，通用组件等，前端的拦截器、分页、select2等angular指令也都已齐备。
 
-现在业务代码方面基本完成用户管理，用户认证与授权，论坛全文搜索，工单流程申请，项目持续进行中……
+目前基础功能完成了：角色的权限配置、用户管理、用户的认证授权等功能；业务功能完成了，首页实时数据监控、论坛发帖与全文搜索，工单流程申请等功能，项目持续进行中……

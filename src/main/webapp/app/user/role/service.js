@@ -8,7 +8,7 @@ define([ 'user/module', 'common/context' ], function(userModule) {
 				return $http.put('user/grantRoles/' + id, roles);
 			},
 			getRoles : function() {
-				return $http.put('user/role');
+				return $http.get('user/role');
 			},
 		};
 	}]);

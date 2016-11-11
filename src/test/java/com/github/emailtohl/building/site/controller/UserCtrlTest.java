@@ -200,4 +200,9 @@ public class UserCtrlTest {
 		.andExpect(status().is(HttpStatus.NO_CONTENT.value()));
 	}
 
+	@Test
+	public void testGetRoles() throws Exception {
+		mockMvc.perform(get("/user/role"))
+		.andExpect(status().isOk());
+	}
 }

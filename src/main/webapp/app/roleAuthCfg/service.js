@@ -1,5 +1,5 @@
-define([ 'role/module', 'common/context' ], function(roleModule) {
-	return roleModule.factory('roleService', [ '$http', 'util', function($http, util) {
+define([ 'roleAuthCfg/module', 'common/context' ], function(roleAuthCfgModule) {
+	return roleAuthCfgModule.factory('roleAuthCfgService', [ '$http', 'util', function($http, util) {
 		return {
 			getRole : function(id) {
 				return $http.get('role/' + id);

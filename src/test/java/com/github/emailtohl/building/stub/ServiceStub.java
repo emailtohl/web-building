@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.stream.Collectors;
@@ -25,6 +26,7 @@ import com.github.emailtohl.building.site.entities.ApplicationForm.Status;
 import com.github.emailtohl.building.site.entities.ApplicationHandleHistory;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.Employee;
+import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.ApplicationFormService;
 import com.github.emailtohl.building.site.service.UserService;
@@ -81,6 +83,7 @@ public class ServiceStub {
 		when(userService.isExist(customer.getEmail())).thenReturn(true);
 		when(userService.getPageByRoles(employee.getEmail(), employee.getRoles().stream().map(r -> r.getName()).collect(Collectors.toSet()), pageable)).thenReturn(employeePager);
 		when(userService.getPageByRoles(customer.getEmail(), customer.getRoles().stream().map(r -> r.getName()).collect(Collectors.toSet()), pageable)).thenReturn(customerPager);
+		when(userService.getRoles()).thenReturn(new ArrayList<Role>());
 		when(userService.authenticate(employee.getEmail(), testPassword)).thenReturn(employee.getAuthentication());
 		when(userService.authenticate(customer.getEmail(), testPassword)).thenReturn(customer.getAuthentication());
 		when(userService.authenticate(employee.getAuthentication())).thenReturn(employee.getAuthentication());

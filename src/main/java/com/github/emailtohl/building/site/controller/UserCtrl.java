@@ -290,6 +290,7 @@ public class UserCtrl {
 	 * @return
 	 */
 	@RequestMapping(value = "role", method = GET)
+	@ResponseBody
 	public List<Role> getRoles() {
 		return userService.getRoles();
 	}

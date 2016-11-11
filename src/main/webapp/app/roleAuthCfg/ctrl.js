@@ -1,17 +1,17 @@
-define(['role/module', 'role/service'], function(roleModule) {
-	return roleModule
-	.controller('RoleCtrl', [ '$scope', '$http', '$state', 'roleService'
-	                         , function($scope, $http, $state, roleService) {
+define(['roleAuthCfg/module', 'roleAuthCfg/service'], function(roleAuthCfgModule) {
+	return roleAuthCfgModule
+	.controller('RoleAuthCfgCtrl', [ '$scope', '$http', '$state', 'roleAuthCfgService'
+	                         , function($scope, $http, $state, roleAuthCfgService) {
 		var self = this;
 		$scope.getAuthentication();
 		self.form = {};// 要提交的表单数据
 		function getRoles() {
-			roleService.getRoles().success(function(data) {
+			roleAuthCfgService.getRoles().success(function(data) {
 				self.roles = data;
 			});
 		}
 		function getAuthorities() {
-			roleService.getAuthorities().success(function(data) {
+			roleAuthCfgService.getAuthorities().success(function(data) {
 				self.authorities = data;
 			});
 		}
@@ -24,11 +24,11 @@ define(['role/module', 'role/service'], function(roleModule) {
 			type : '',
 			whenConfirm : function() {
 				if (self.form.id) {// 有id的是编辑
-					roleService.updateRole(self.form.id, self.form).success(function(data) {
+					roleAuthCfgService.updateRole(self.form.id, self.form).success(function(data) {
 						getRoles();
 					});
 				} else {// 没有id的是新增
-					roleService.createRole(self.form).success(function(data) {
+					roleAuthCfgService.createRole(self.form).success(function(data) {
 						getRoles();
 					});
 				}
@@ -36,7 +36,7 @@ define(['role/module', 'role/service'], function(roleModule) {
 		};
 		self.openModal = function(id) {
 			if (id) {// 如果是编辑
-				roleService.getRole(id).success(function(data) {
+				roleAuthCfgService.getRole(id).success(function(data) {
 					self.form = data;
 					var authorityNames = [];
 					for (var i = 0; i < data.authorities.length; i++) {
