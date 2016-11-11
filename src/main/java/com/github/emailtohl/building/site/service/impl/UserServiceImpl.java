@@ -1,6 +1,6 @@
 package com.github.emailtohl.building.site.service.impl;
 
-import static com.github.emailtohl.building.site.entities.Authority.USER_DELETE;
+import static com.github.emailtohl.building.site.entities.Authority.*;
 import static com.github.emailtohl.building.site.entities.BaseEntity.CREATE_DATE_PROPERTY_NAME;
 import static com.github.emailtohl.building.site.entities.BaseEntity.ID_PROPERTY_NAME;
 import static com.github.emailtohl.building.site.entities.BaseEntity.MODIFY_DATE_PROPERTY_NAME;
@@ -137,8 +137,8 @@ public class UserServiceImpl implements UserService {
 	
 	@Override
 	public void grantRoles(long id, String... roleNames) {
-		// 能进此接口的拥有USER_GRANT_ROLES权限，现在认为含有删除用户的权限的人就拥有ADMIN角色
-		boolean isAdmin = hasAuthority(USER_DELETE);
+		// 能进此接口的拥有USER_ROLE_AUTHORITY_ALLOCATION权限，现在认为含有该权限的人就拥有ADMIN角色
+		boolean isAdmin = hasAuthority(USER_ROLE_AUTHORITY_ALLOCATION);
 		User u = userRepository.findOne(id);
 		// 先删除原有的
 		/* 虽然在User实体上已定义了级联关系，但从业务逻辑理解和保险的角度上来看，还是手工操作关系的删除

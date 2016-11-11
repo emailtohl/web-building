@@ -56,7 +56,6 @@
       <div class="form-group">
         <label for="exampleInputFile">权限</label>
         <select multiple="multiple" class="form-control select2" style="width: 100%;" select2 ng-model="ctrl.form.authorityNames">
-	      <option value="">请选择</option>
 	      <option ng-repeat="x in ctrl.authorities" value="{{x.name}}">{{x.description}}</option>
 	    </select>
       </div>

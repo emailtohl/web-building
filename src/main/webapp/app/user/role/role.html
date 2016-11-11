@@ -28,7 +28,7 @@
 	          <div class="form-group col-md-6">
 	            <label for="exampleInputPassword1">权限名</label>
 	            <select class="form-control select2" multiple="multiple" data-placeholder="Select a State" style="width: 100%;" select2 ng-model="ctrl.params.roles">
-			        <option ng-repeat="x in ctrl.roles" value="{{x.name}}" ng-hide="x.name == 'admin' && !hasAuthority('user_role_authority_allocation')">{{x.description}}</option>
+			        <option ng-repeat="x in ctrl.roles" value="{{x.name}}" ng-if="!(x.name == 'admin' && !hasAuthority('user_role_authority_allocation'))">{{x.description}}</option>
 		        </select>
 	          </div>
 	        </div>
