@@ -69,6 +69,16 @@ define([ 'angular', 'uirouter', 'common/context', 'test/context', 'user/context'
 				e.preventDefault();
 				$state.go('forum.search', {query : $(this).find('input').val()}, { reload : true});
 			});
+			
+			// 获取图片信息
+			$rootScope.getIconSrc = function() {
+				var iconSrc = $rootScope.authentication && $rootScope.authentication.iconSrc;
+				if (!iconSrc)
+					iconSrc = $rootScope.authentication && $rootScope.authentication.principal && $rootScope.authentication.principal.iconSrc;
+				if (!iconSrc)
+					iconSrc = 'lib/AdminLTE/img/user2-160x160.jpg';
+				return iconSrc;
+			}
 		} ]);
 	}
 );

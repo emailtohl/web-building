@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.github.emailtohl.building.exception.ResourceNotFoundException;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.Customer;
+import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.mail.EmailService;
 import com.github.emailtohl.building.site.service.UserService;
 /**
@@ -39,10 +40,16 @@ public class LoginCtrl {
 	@Inject private UserService userService;
 	@Inject private EmailService emailService;
 	@Inject private ThreadPoolTaskScheduler taskScheduler;
+	
 	/**
 	 * 忘记密码时，当发送邮件时，会记录一个token，该token有时效，过期会被清除
 	 */
 	private Map<String, String> tokenMap = new ConcurrentHashMap<String, String>();
+	/**
+	 * spring security自带的AuthenticationProvider返回的UserDetails实现并不含用户的图片等附加信息
+	 * 通过一个容器存储用户的图片信息
+	 */
+	private Map<String, String> iconSrcMap = new ConcurrentHashMap<String, String>();
 	
 	/**
 	 * GET方法获取登录页面
@@ -198,6 +205,29 @@ public class LoginCtrl {
 				map.put("username", authentication.getName());
 				map.put("details", authentication.getDetails());
 				map.put("principal", authentication.getPrincipal());
+			}
+			/*
+			 * 如果是自定义的AuthenticationProvider，则可以提供含有图片等附加信息
+			 * 但如果是spring security框架提供的UserDetails则不会包含图片信息，可在返回的Map上添加上图片信息
+			 */
+			Object userDetails = authentication.getPrincipal();
+			if (userDetails != null) {
+				try {
+					userDetails.getClass().getDeclaredField("iconSrc");
+				} catch (NoSuchFieldException | SecurityException e1) {// 如果是框架的实现，则无此字段
+					String email = authentication.getName();// UserDetails中的username实则email
+					String iconSrc = iconSrcMap.get(email);// 先查询缓存是否有此信息
+					if (iconSrc == null) {// 若缓存没有则去数据库查询
+						try {// 匿名用户在数据库中查不到，会抛IllegalArgumentException异常
+							User u = userService.getUserByEmail(email);
+							iconSrc = u.getIconSrc();
+							iconSrcMap.put(email, iconSrc);// 先放入缓存供下次查询
+						} catch (IllegalArgumentException e2) {
+							logger.debug("可能是匿名用户，查询不到User");
+						}
+					}
+					map.put("iconSrc", iconSrc);// 然后放入返回的UserDetails中
+				}
 			}
 		}
 		return map;

@@ -323,6 +323,7 @@ public class User extends BaseEntity {
 		String email;
 		Set<String> authorities;
 		String password;
+		String iconSrc;// 额外携带用户图片信息
 		
 		public Principal() {
 			this.id = User.this.id == null ? null : new Long(User.this.id);
@@ -330,6 +331,7 @@ public class User extends BaseEntity {
 			this.email = User.this.email == null ? null : new String(User.this.email);
 			this.password = User.this.password == null ? null : new String(User.this.password);
 			this.authorities = User.this.authorities();
+			this.iconSrc = User.this.iconSrc;
 		}
 		
 		@Override
@@ -351,6 +353,10 @@ public class User extends BaseEntity {
 			return this.id;
 		}
 
+		public String getIconSrc() {
+			return this.iconSrc;
+		}
+		
 		public String getEmail() {
 			return this.email;
 		}
