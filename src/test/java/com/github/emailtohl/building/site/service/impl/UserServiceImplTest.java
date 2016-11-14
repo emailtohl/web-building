@@ -5,14 +5,13 @@ import static com.github.emailtohl.building.initdb.PersistenceData.employee;
 import static com.github.emailtohl.building.initdb.PersistenceData.foo;
 import static com.github.emailtohl.building.initdb.PersistenceData.manager;
 import static com.github.emailtohl.building.initdb.PersistenceData.user;
-import static com.github.emailtohl.building.site.entities.Authority.USER_DELETE;
-import static com.github.emailtohl.building.site.entities.Authority.USER_READ_ALL;
-import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_ALL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
@@ -39,6 +38,7 @@ import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.Validator;
 import com.github.emailtohl.building.config.RootContextConfiguration;
+import com.github.emailtohl.building.initdb.PersistenceData;
 import com.github.emailtohl.building.site.dao.RoleRepository;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.Employee;
@@ -230,16 +230,16 @@ public class UserServiceImplTest {
 	}
 	
 	@Test
-	public void testHasAuthority() {
-		securityContextManager.clearContext();
-		assertFalse(userService.hasAuthority(USER_DELETE, USER_UPDATE_ALL));
-		securityContextManager.setEmailtohl();
-		assertTrue(userService.hasAuthority(USER_DELETE, USER_UPDATE_ALL));
-		securityContextManager.setFoo();
-		assertTrue(userService.hasAuthority(USER_READ_ALL));
-		securityContextManager.setBaz();
-		assertFalse(userService.hasAuthority(USER_READ_ALL));
-		
+	public void testSaveIcon() {
+		ClassLoader cl = PersistenceData.class.getClassLoader();
+		// cl.getResourceAsStream方法返回的输入流已经是BufferedInputStream对象，无需再装饰
+		try (InputStream is = cl.getResourceAsStream("img/icon-head-emailtohl.png")) {
+			byte[] icon = new byte[is.available()];
+			is.read(icon);
+			userService.saveIcon(icon);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Test
@@ -248,4 +248,5 @@ public class UserServiceImplTest {
 		// 查看认证结果
 		logger.debug(gson.toJson(a));
 	}
+
 }

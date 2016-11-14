@@ -1,6 +1,6 @@
 package com.github.emailtohl.building.site.service.impl;
 
-import static com.github.emailtohl.building.site.entities.Authority.*;
+import static com.github.emailtohl.building.site.entities.Authority.USER_ROLE_AUTHORITY_ALLOCATION;
 import static com.github.emailtohl.building.site.entities.BaseEntity.CREATE_DATE_PROPERTY_NAME;
 import static com.github.emailtohl.building.site.entities.BaseEntity.ID_PROPERTY_NAME;
 import static com.github.emailtohl.building.site.entities.BaseEntity.MODIFY_DATE_PROPERTY_NAME;
@@ -9,8 +9,6 @@ import static com.github.emailtohl.building.site.entities.Role.ADMIN;
 import java.io.Serializable;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -31,8 +29,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -41,6 +37,7 @@ import org.springframework.stereotype.Service;
 import com.github.emailtohl.building.common.Constant;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.BeanTools;
+import com.github.emailtohl.building.common.utils.SecurityContextUtils;
 import com.github.emailtohl.building.site.dao.DepartmentRepository;
 import com.github.emailtohl.building.site.dao.RoleRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
@@ -62,6 +59,7 @@ public class UserServiceImpl implements UserService {
 	private static final Logger logger = LogManager.getLogger();
 	private static final SecureRandom RANDOM = new SecureRandom();
 	private static final int HASHING_ROUNDS = 10;
+	@Inject SecurityContextUtils securityContextUtils;
 	@Inject UserRepository userRepository;
 	@Inject RoleRepository roleRepository;
 	@Inject DepartmentRepository departmentRepository;
@@ -138,7 +136,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void grantRoles(long id, String... roleNames) {
 		// 能进此接口的拥有USER_ROLE_AUTHORITY_ALLOCATION权限，现在认为含有该权限的人就拥有ADMIN角色
-		boolean isAdmin = hasAuthority(USER_ROLE_AUTHORITY_ALLOCATION);
+		boolean isAdmin = securityContextUtils.hasAnyAuthority(USER_ROLE_AUTHORITY_ALLOCATION);
 		User u = userRepository.findOne(id);
 		// 先删除原有的
 		/* 虽然在User实体上已定义了级联关系，但从业务逻辑理解和保险的角度上来看，还是手工操作关系的删除
@@ -235,6 +233,12 @@ public class UserServiceImpl implements UserService {
 		BeanTools.merge(entity, cus);
 		userRepository.save(entity);
 	}
+	
+	@Override
+	public void saveIcon(byte[] icon) {
+		User u = getUserByEmail(securityContextUtils.getCurrentUsername());
+		u.setIcon(icon);
+	}
 
 	@Override
 	public Pager<User> getUserPager(User u, Pageable pageable) {
@@ -278,30 +282,6 @@ public class UserServiceImpl implements UserService {
 		return roleRepository.findAll();
 	}
 
-	@Override
-	public boolean hasAuthority(String ... authorities) {
-		boolean result = false;
-		Authentication a = SecurityContextHolder.getContext().getAuthentication();
-		if (a != null) {
-			Set<String> grantedAuthoritySet = getGrantedAuthoritySet(a.getAuthorities());
-			for (int i = 0; i < authorities.length; i++) {
-				if (grantedAuthoritySet.contains(authorities[i])) {
-					result = true;
-					break;
-				}
-			}
-		}
-		return result;
-	}
-	
-	private Set<String> getGrantedAuthoritySet(Collection<? extends GrantedAuthority> collection) {
-		Set<String> set = new HashSet<String>();
-		for (GrantedAuthority g : collection) {
-			set.add(g.getAuthority());
-		}
-		return set;
-	}
-	
 	@Override
 	public Authentication authenticate(String email, String password) {
 		User u = userRepository.findByEmail(email);
@@ -423,5 +403,6 @@ public class UserServiceImpl implements UserService {
 		User u = userRepository.findByEmail(email);
 		return u.getUserDetails();
 	}
+
 
 }

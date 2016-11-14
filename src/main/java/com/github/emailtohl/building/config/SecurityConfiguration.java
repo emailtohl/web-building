@@ -146,6 +146,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.antMatchers(HttpMethod.PUT, "/user/**").hasAnyAuthority(USER_UPDATE_ALL, USER_UPDATE_SELF)
 					.antMatchers(HttpMethod.PUT, "/user/grantRoles/**").hasAuthority(USER_GRANT_ROLES)
 					.antMatchers(HttpMethod.PUT, "/user/disableUser/**").hasAuthority(USER_DISABLE)
+					.antMatchers(HttpMethod.POST, "/user/icon").fullyAuthenticated()
 					.antMatchers(HttpMethod.POST, "/fileUploadServer/**").fullyAuthenticated()
 					.antMatchers(HttpMethod.GET, "/applicationForm/query").hasAuthority(APPLICATION_FORM_TRANSIT)
 					.antMatchers(HttpMethod.PUT, "/applicationForm").hasAuthority(APPLICATION_FORM_TRANSIT)

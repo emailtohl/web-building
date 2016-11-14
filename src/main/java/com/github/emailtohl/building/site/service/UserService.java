@@ -153,6 +153,12 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	void mergeCustomer(@NotNull @P("email") String email, Customer cus);
 	
 	/**
+	 * 保存用户二进制图片文件
+	 */
+	@PreAuthorize("isAuthenticated()")
+	void saveIcon(byte[] icon);
+	
+	/**
 	 * 获取用户Pager
 	 * 
 	 * 实现类中要对Pager中返回的List中敏感信息进行过滤
@@ -202,13 +208,6 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	@PreAuthorize("isAuthenticated()")
 	List<Role> getRoles();
 	
-	/**
-	 * 判断用户是否具有该权限
-	 * @param authorities
-	 * @return
-	 */
-	boolean hasAuthority(String... authorities);
-
 	/**
 	 * 认证（登录）
 	 * @param email

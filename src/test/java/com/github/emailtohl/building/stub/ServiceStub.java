@@ -1,7 +1,6 @@
 package com.github.emailtohl.building.stub;
 
-import static com.github.emailtohl.building.initdb.PersistenceData.baz;
-import static com.github.emailtohl.building.initdb.PersistenceData.foo;
+import static com.github.emailtohl.building.initdb.PersistenceData.*;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -67,10 +66,12 @@ public class ServiceStub {
 		doAnswer(answer).when(userService).deleteUser(customerId);
 		when(userService.getUser(employeeId)).thenReturn(employee);
 		when(userService.getUser(customerId)).thenReturn(customer);
+		when(userService.getUserByEmail(emailtohl.getEmail())).thenReturn(emailtohl);
 		when(userService.getUserByEmail(employee.getEmail())).thenReturn(customer);
 		when(userService.getUserByEmail(customer.getEmail())).thenReturn(customer);
 		doAnswer(answer).when(userService).mergeEmployee(employee.getEmail(), employee);
 		doAnswer(answer).when(userService).mergeCustomer(customer.getEmail(), customer);
+		doAnswer(answer).when(userService).saveIcon(new byte[0]);
 		Pager<User> employeePager = new Pager<User>(Arrays.asList(employee));
 		Pager<User> customerPager = new Pager<User>(Arrays.asList(customer));
 		when(userService.getUserPager(employee, pageable)).thenReturn(employeePager);

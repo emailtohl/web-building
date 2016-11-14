@@ -6,11 +6,15 @@ import static org.springframework.web.bind.annotation.RequestMethod.OPTIONS;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.servlet.http.Part;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
@@ -31,11 +35,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.common.utils.SecurityContextUtils;
 import com.github.emailtohl.building.exception.ResourceNotFoundException;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.BaseEntity;
@@ -55,6 +61,7 @@ import com.google.gson.Gson;
 public class UserCtrl {
 	private static final Logger logger = LogManager.getLogger();
 	@Inject UserService userService;
+	@Inject SecurityContextUtils securityContextUtils;
 	@Inject Gson gson;
 	
 	/**
@@ -293,6 +300,49 @@ public class UserCtrl {
 	@ResponseBody
 	public List<Role> getRoles() {
 		return userService.getRoles();
+	}
+	
+	/**
+	 * 用户上传头像
+	 * @param icon
+	 */
+	@RequestMapping(value = "icon", method = RequestMethod.POST)
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void uploadIcon(@RequestPart("icon") Part icon) {
+		User u = userService.getUserByEmail(securityContextUtils.getCurrentUsername());
+		LocalDate today = LocalDate.now();
+		String dir = today.toString() + '/' + icon.getSubmittedFileName();
+		String uri = ServletUriComponentsBuilder.fromCurrentServletMapping().path("/download/{dir}")
+				.buildAndExpand(dir).toString();
+		// 先写入文件系统中
+		
+		System.out.println(ServletUriComponentsBuilder.fromCurrentServletMapping().path("/download/{dir}")
+				.buildAndExpand(dir).toString());
+		
+		System.out.println(ServletUriComponentsBuilder.fromCurrentContextPath().path("/download/{dir}")
+				.buildAndExpand(dir).toString());
+		
+		System.out.println(ServletUriComponentsBuilder.fromCurrentRequest().path("/download/{dir}")
+				.buildAndExpand(dir).toString());
+		
+		System.out.println(ServletUriComponentsBuilder.fromCurrentRequestUri().path("/download/{dir}")
+				.buildAndExpand(dir).toString());
+		/*
+		File f = new File(u.getIconSrc());
+		if (f != null && f.exists()) {// 删除原有的
+			f.delete();
+		}
+		try {
+			icon.write(dir);
+		} catch (IOException e) {
+			e.printStackTrace();
+			logger.debug("保存文件失败");
+		}
+		u.setIconSrc(dir);
+		
+		// 再保存一份到数据库中
+		byte[] b = new byte[(int) icon.getSize()];// 保证图片尺寸不会太大
+		userService.saveIcon(b);*/
 	}
 	
 	public void setUserService(UserService userService) {

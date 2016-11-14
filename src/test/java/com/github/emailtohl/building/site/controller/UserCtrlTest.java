@@ -1,13 +1,8 @@
 package com.github.emailtohl.building.site.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -204,5 +199,12 @@ public class UserCtrlTest {
 	public void testGetRoles() throws Exception {
 		mockMvc.perform(get("/user/role"))
 		.andExpect(status().isOk());
+	}
+	
+//	@Test
+	public void testUploadIcon() throws Exception {
+		mockMvc.perform(fileUpload("/user/icon")
+				.characterEncoding("UTF-8"))
+				.andExpect(status().is(HttpStatus.NO_CONTENT.value()));
 	}
 }

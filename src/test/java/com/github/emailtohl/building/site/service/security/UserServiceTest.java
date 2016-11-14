@@ -1,7 +1,4 @@
 package com.github.emailtohl.building.site.service.security;
-import static com.github.emailtohl.building.site.entities.Authority.USER_DELETE;
-import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_ALL;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -232,6 +229,19 @@ public class UserServiceTest {
 	}
 	
 	@Test(expected = AuthenticationCredentialsNotFoundException.class)
+	public void testSaveIcon1() {
+		securityContextManager.clearContext();
+		userService.saveIcon(new byte[0]);
+	}
+	
+	@Test
+	public void testSaveIcon2() {
+		securityContextManager.setEmailtohl();;
+		userService.saveIcon(new byte[0]);
+	}
+	
+	
+	@Test(expected = AuthenticationCredentialsNotFoundException.class)
 	public void testGetUserPager1() {
 		SecurityContextHolder.clearContext();
 		userService.getUserPager(null, null);
@@ -267,9 +277,4 @@ public class UserServiceTest {
 		userService.getRoles();
 	}
 
-	@Test
-	public void testHasAuthority() {
-		securityContextManager.clearContext();
-		userService.hasAuthority(USER_DELETE, USER_UPDATE_ALL);
-	}
 }
