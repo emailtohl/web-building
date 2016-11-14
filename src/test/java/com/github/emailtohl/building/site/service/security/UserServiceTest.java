@@ -229,19 +229,6 @@ public class UserServiceTest {
 	}
 	
 	@Test(expected = AuthenticationCredentialsNotFoundException.class)
-	public void testSaveIcon1() {
-		securityContextManager.clearContext();
-		userService.saveIcon(new byte[0]);
-	}
-	
-	@Test
-	public void testSaveIcon2() {
-		securityContextManager.setEmailtohl();;
-		userService.saveIcon(new byte[0]);
-	}
-	
-	
-	@Test(expected = AuthenticationCredentialsNotFoundException.class)
 	public void testGetUserPager1() {
 		SecurityContextHolder.clearContext();
 		userService.getUserPager(null, null);

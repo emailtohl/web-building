@@ -10,8 +10,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
@@ -38,7 +36,6 @@ import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.Validator;
 import com.github.emailtohl.building.config.RootContextConfiguration;
-import com.github.emailtohl.building.initdb.PersistenceData;
 import com.github.emailtohl.building.site.dao.RoleRepository;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.Employee;
@@ -227,19 +224,6 @@ public class UserServiceImplTest {
 		u.setEmail(foo.getEmail());
 		Page<User> p = userService.getUserPage(u, new PageRequest(0, 20));
 		assertTrue(p.getContent().size() > 0);
-	}
-	
-	@Test
-	public void testSaveIcon() {
-		ClassLoader cl = PersistenceData.class.getClassLoader();
-		// cl.getResourceAsStream方法返回的输入流已经是BufferedInputStream对象，无需再装饰
-		try (InputStream is = cl.getResourceAsStream("img/icon-head-emailtohl.png")) {
-			byte[] icon = new byte[is.available()];
-			is.read(icon);
-			userService.saveIcon(icon);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	@Test

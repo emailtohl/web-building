@@ -233,12 +233,6 @@ public class UserServiceImpl implements UserService {
 		BeanTools.merge(entity, cus);
 		userRepository.save(entity);
 	}
-	
-	@Override
-	public void saveIcon(byte[] icon) {
-		User u = getUserByEmail(securityContextUtils.getCurrentUsername());
-		u.setIcon(icon);
-	}
 
 	@Override
 	public Pager<User> getUserPager(User u, Pageable pageable) {

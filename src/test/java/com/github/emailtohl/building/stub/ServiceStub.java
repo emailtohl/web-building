@@ -71,7 +71,6 @@ public class ServiceStub {
 		when(userService.getUserByEmail(customer.getEmail())).thenReturn(customer);
 		doAnswer(answer).when(userService).mergeEmployee(employee.getEmail(), employee);
 		doAnswer(answer).when(userService).mergeCustomer(customer.getEmail(), customer);
-		doAnswer(answer).when(userService).saveIcon(new byte[0]);
 		Pager<User> employeePager = new Pager<User>(Arrays.asList(employee));
 		Pager<User> customerPager = new Pager<User>(Arrays.asList(customer));
 		when(userService.getUserPager(employee, pageable)).thenReturn(employeePager);

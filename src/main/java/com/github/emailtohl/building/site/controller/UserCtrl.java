@@ -8,12 +8,14 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.servlet.ServletContext;
 import javax.servlet.http.Part;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -38,10 +40,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.github.emailtohl.building.common.jpa.Pager;
-import com.github.emailtohl.building.common.utils.SecurityContextUtils;
 import com.github.emailtohl.building.exception.ResourceNotFoundException;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.BaseEntity;
@@ -61,7 +64,6 @@ import com.google.gson.Gson;
 public class UserCtrl {
 	private static final Logger logger = LogManager.getLogger();
 	@Inject UserService userService;
-	@Inject SecurityContextUtils securityContextUtils;
 	@Inject Gson gson;
 	
 	/**
@@ -308,41 +310,43 @@ public class UserCtrl {
 	 */
 	@RequestMapping(value = "icon", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void uploadIcon(@RequestPart("icon") Part icon) {
-		User u = userService.getUserByEmail(securityContextUtils.getCurrentUsername());
-		LocalDate today = LocalDate.now();
-		String dir = today.toString() + '/' + icon.getSubmittedFileName();
-		String uri = ServletUriComponentsBuilder.fromCurrentServletMapping().path("/download/{dir}")
-				.buildAndExpand(dir).toString();
+	public void uploadIcon(@RequestParam("id") long id, @RequestPart("icon") Part icon) {
+		WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();
+		ServletContext servletContext = webApplicationContext.getServletContext();
+		String dir = "download/img/" + LocalDate.now().toString();
+		String iconSrc = dir + '/' + icon.getSubmittedFileName();
+		String filename = servletContext.getRealPath(iconSrc);
+		
+		User u = userService.getUser(id);
 		// 先写入文件系统中
-		
-		System.out.println(ServletUriComponentsBuilder.fromCurrentServletMapping().path("/download/{dir}")
-				.buildAndExpand(dir).toString());
-		
-		System.out.println(ServletUriComponentsBuilder.fromCurrentContextPath().path("/download/{dir}")
-				.buildAndExpand(dir).toString());
-		
-		System.out.println(ServletUriComponentsBuilder.fromCurrentRequest().path("/download/{dir}")
-				.buildAndExpand(dir).toString());
-		
-		System.out.println(ServletUriComponentsBuilder.fromCurrentRequestUri().path("/download/{dir}")
-				.buildAndExpand(dir).toString());
-		/*
-		File f = new File(u.getIconSrc());
-		if (f != null && f.exists()) {// 删除原有的
-			f.delete();
+		if (u.getIconSrc() != null && !u.getIconSrc().isEmpty()) {
+			File exist = new File(servletContext.getRealPath(u.getIconSrc()));
+			if (exist != null && exist.exists()) {// 删除原有的
+				exist.delete();
+			}
 		}
 		try {
-			icon.write(dir);
+			File newDir = new File(servletContext.getRealPath(dir));
+			if (!newDir.exists()) {
+				newDir.mkdir();
+			}
+			icon.write(filename);
+			u.setIconSrc(iconSrc);
 		} catch (IOException e) {
 			e.printStackTrace();
-			logger.debug("保存文件失败");
+			logger.info("保存用户头像失败");
 		}
-		u.setIconSrc(dir);
 		
 		// 再保存一份到数据库中
 		byte[] b = new byte[(int) icon.getSize()];// 保证图片尺寸不会太大
-		userService.saveIcon(b);*/
+		try {
+			InputStream in = icon.getInputStream();
+			in.read(b, 0, (int) icon.getSize());
+			u.setIcon(b);
+		} catch (IOException e) {
+			e.printStackTrace();
+			logger.info("用户头像图片写入数据库失败");
+		}
 	}
 	
 	public void setUserService(UserService userService) {

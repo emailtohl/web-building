@@ -12,7 +12,14 @@
 
 <div class="row">
   <div class="box">
-    <!-- /.box-header -->
+    <div class="box-header">
+      <form class="form-group image" upload upload-to="user/icon" when-done="ctrl.refresh()">
+        <img style="height: 90px;width: 90px;" ng-src="{{ctrl.detail.iconSrc}}" class="img-circle" alt="User Image">
+        <input type="file" name="icon" class="btn">
+        <input type="hidden" name="id" value="{{ctrl.detail.id}}">
+        <input type="submit" class="btn btn-primary" value="上传头像">
+      </form>
+    </div>
     <div class="box-body">
       <table class="table table-bordered">
         <tbody><tr>
