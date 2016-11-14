@@ -64,8 +64,8 @@ import com.google.gson.Gson;
 @RequestMapping("user")
 public class UserCtrl {
 	private static final Logger logger = LogManager.getLogger();
-	private static final String ICON_DIR = "icon_dir";
-	private static ServletContext servletContext;
+	private final String iconDir = "upload/icon_dir";
+	ServletContext servletContext;
 	@Inject UserService userService;
 	@Inject Gson gson;
 	
@@ -73,7 +73,7 @@ public class UserCtrl {
 	public void createIconDir() {
 		WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();
 		servletContext = webApplicationContext.getServletContext();
-		String dir = servletContext.getRealPath(ICON_DIR);
+		String dir = servletContext.getRealPath(iconDir);
 		File f = new File(dir);
 		if (!f.exists()) {
 			f.mkdir();
@@ -325,31 +325,38 @@ public class UserCtrl {
 	@RequestMapping(value = "icon", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void uploadIcon(@RequestParam("id") long id, @RequestPart("icon") Part icon) {
-		String dir = ICON_DIR + '/' + LocalDate.now().toString();
-		String iconSrc = dir + '/' + icon.getSubmittedFileName();
+		String dir = iconDir + '/' + LocalDate.now().toString();
+		String iconSrc = null;
+		/*
+		try {
+			iconSrc = dir + '/' + id + '_' + URLEncoder.encode(icon.getSubmittedFileName(), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			logger.fatal("UTF-8编码，不可能出现的异常", e);
+		}
+		*/
+		iconSrc = dir + '/' + id + '_' + icon.getSubmittedFileName();
 		String filename = servletContext.getRealPath(iconSrc);
 		
 		if (new File(filename).exists()) {
-			throw new IllegalArgumentException("该文件已经上传");
+			throw new IllegalArgumentException("上传文件重名，该文件已经上传");
 		}
 		User u = userService.getUser(id);
-		// 先写入文件系统中
+		// 先写入文件系统中，写入前，先删除原有的
 		if (u.getIconSrc() != null && !u.getIconSrc().isEmpty()) {
 			File exist = new File(servletContext.getRealPath(u.getIconSrc()));
-			if (exist != null && exist.exists()) {// 删除原有的
+			if (exist != null && exist.exists()) {
 				exist.delete();
 			}
 		}
 		try {
-			File newDir = new File(servletContext.getRealPath(dir));
-			if (!newDir.exists()) {
-				newDir.mkdir();
+			File fdir = new File(servletContext.getRealPath(dir));
+			if (!fdir.exists()) {
+				fdir.mkdir();
 			}
 			icon.write(filename);
 			userService.updateIconSrc(id, iconSrc);
 		} catch (IOException e) {
-			e.printStackTrace();
-			logger.info("保存用户头像失败");
+			logger.info("保存用户头像失败", e);
 		}
 		
 		// 再保存一份到数据库中
@@ -359,8 +366,7 @@ public class UserCtrl {
 			in.read(b, 0, (int) icon.getSize());
 			userService.updateIcon(id, b);
 		} catch (IOException e) {
-			e.printStackTrace();
-			logger.info("用户头像图片写入数据库失败");
+			logger.info("用户头像图片写入数据库失败", e);
 		}
 	}
 	

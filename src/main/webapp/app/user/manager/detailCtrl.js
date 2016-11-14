@@ -19,7 +19,7 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 		self.whenDone = function() {
 			setTimeout(function() {
 				self.getDetail($state.params.id);
-			}, 500);
+			}, 1500);
 		};
 		self.dictionary = {
 //			'ADMIN' : '系统管理员',

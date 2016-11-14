@@ -203,7 +203,7 @@ public class UserCtrlTest {
 	
 //	@Test
 	public void testUploadIcon() throws Exception {
-		mockMvc.perform(fileUpload("/user/icon")
+		mockMvc.perform(fileUpload("/user/icon").param("id", "100")
 				.characterEncoding("UTF-8"))
 				.andExpect(status().is(HttpStatus.NO_CONTENT.value()));
 	}

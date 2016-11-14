@@ -1,15 +1,13 @@
 package com.github.emailtohl.building.site.service.impl;
 
-import static com.github.emailtohl.building.initdb.PersistenceData.bar;
-import static com.github.emailtohl.building.initdb.PersistenceData.employee;
-import static com.github.emailtohl.building.initdb.PersistenceData.foo;
-import static com.github.emailtohl.building.initdb.PersistenceData.manager;
-import static com.github.emailtohl.building.initdb.PersistenceData.user;
+import static com.github.emailtohl.building.initdb.PersistenceData.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
@@ -36,6 +34,7 @@ import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.Validator;
 import com.github.emailtohl.building.config.RootContextConfiguration;
+import com.github.emailtohl.building.initdb.PersistenceData;
 import com.github.emailtohl.building.site.dao.RoleRepository;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.Employee;
@@ -202,6 +201,22 @@ public class UserServiceImplTest {
 		assertNotNull(a);
 		assertEquals(bar.getName(), a.getName());
 		userService.changePassword(bar.getEmail(), old);
+	}
+	
+	public void testUpdateIcon() {
+		String iconSrc = "img/icon-head-foo.jpg";
+		securityContextManager.setFoo();
+		ClassLoader cl = PersistenceData.class.getClassLoader();
+		// cl.getResourceAsStream方法返回的输入流已经是BufferedInputStream对象，无需再装饰
+		try (InputStream is = cl.getResourceAsStream(iconSrc)) {
+			byte[] icon = new byte[is.available()];
+			is.read(icon);
+			long id = userService.getUserByEmail(foo.getEmail()).getId();
+			userService.updateIconSrc(id, iconSrc);
+			userService.updateIcon(id, icon);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Test

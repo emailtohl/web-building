@@ -73,6 +73,8 @@ public class ServiceStub {
 		doAnswer(answer).when(userService).mergeCustomer(customer.getEmail(), customer);
 		Pager<User> employeePager = new Pager<User>(Arrays.asList(employee));
 		Pager<User> customerPager = new Pager<User>(Arrays.asList(customer));
+		doAnswer(answer).when(userService).updateIconSrc(employeeId, "url");
+		doAnswer(answer).when(userService).updateIcon(employeeId, new byte[1]);
 		when(userService.getUserPager(employee, pageable)).thenReturn(employeePager);
 		when(userService.getUserPager(customer, pageable)).thenReturn(customerPager);
 		Page<User> employeePage = new PageImpl<User>(Arrays.asList(employee));

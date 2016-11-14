@@ -229,6 +229,31 @@ public class UserServiceTest {
 	}
 	
 	@Test(expected = AuthenticationCredentialsNotFoundException.class)
+	public void testUpdateIconSrc1() {
+		securityContextManager.clearContext();
+		userService.updateIconSrc(serviceStub.employeeId, "url");
+	}
+	
+	@Test
+	public void testUpdateIconSrc2() {
+		securityContextManager.setFoo();
+		userService.updateIconSrc(serviceStub.employeeId, "url");
+	}
+	
+	@Test(expected = AuthenticationCredentialsNotFoundException.class)
+	public void testUpdateIcon1() {
+		securityContextManager.clearContext();
+		userService.updateIcon(serviceStub.employeeId, new byte[1]);
+	}
+	
+	@Test
+	public void testUpdateIcon2() {
+		securityContextManager.setFoo();
+		userService.updateIcon(serviceStub.employeeId, new byte[1]);
+	}
+	
+	
+	@Test(expected = AuthenticationCredentialsNotFoundException.class)
 	public void testGetUserPager1() {
 		SecurityContextHolder.clearContext();
 		userService.getUserPager(null, null);
