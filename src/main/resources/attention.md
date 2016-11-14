@@ -84,3 +84,8 @@ NotIn		findByAgeNotIn(Collection age)		… where x.age not in ?1
 True		findByActiveTrue()		… where x.active = true
 False		findByActiveFalse()		… where x.active = false
 IgnoreCase		findByFirstnameIgnoreCase		… where UPPER(x.firstame) = UPPER(?1)
+
+
+## 六、 tomcat虚拟目录的配置
+在server.xml的<host>标签下，添加如下如下配置
+<Context path="/building/upload" docBase="F:\development\apache-tomcat-8.0.33\wtpwebapps\building_upload" reloadable="true" debug="0"/>
