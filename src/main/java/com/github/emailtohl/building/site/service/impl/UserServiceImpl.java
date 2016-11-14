@@ -235,6 +235,16 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public void updateIconSrc(long id, String iconSrc) {
+		userRepository.getOne(id).setIconSrc(iconSrc);
+	}
+
+	@Override
+	public void updateIcon(long id, byte[] icon) {
+		userRepository.getOne(id).setIcon(icon);
+	}
+
+	@Override
 	public Pager<User> getUserPager(User u, Pageable pageable) {
 		String fuzzy = u.getEmail();
 		if (fuzzy != null && !fuzzy.isEmpty()) {
@@ -397,6 +407,4 @@ public class UserServiceImpl implements UserService {
 		User u = userRepository.findByEmail(email);
 		return u.getUserDetails();
 	}
-
-
 }

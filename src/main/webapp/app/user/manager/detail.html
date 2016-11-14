@@ -13,7 +13,7 @@
 <div class="row">
   <div class="box">
     <div class="box-header">
-      <form class="form-group image" upload upload-to="user/icon" when-done="ctrl.refresh()">
+      <form class="form-group image" upload upload-to="user/icon" when-done="ctrl.whenDone()">
         <img style="height: 90px;width: 90px;" ng-src="{{ctrl.detail.iconSrc}}" class="img-circle" alt="User Image">
         <input type="file" name="icon" class="btn">
         <input type="hidden" name="id" value="{{ctrl.detail.id}}">

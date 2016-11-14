@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Part;
@@ -63,8 +64,21 @@ import com.google.gson.Gson;
 @RequestMapping("user")
 public class UserCtrl {
 	private static final Logger logger = LogManager.getLogger();
+	private static final String ICON_DIR = "icon_dir";
+	private static ServletContext servletContext;
 	@Inject UserService userService;
 	@Inject Gson gson;
+	
+	@PostConstruct
+	public void createIconDir() {
+		WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();
+		servletContext = webApplicationContext.getServletContext();
+		String dir = servletContext.getRealPath(ICON_DIR);
+		File f = new File(dir);
+		if (!f.exists()) {
+			f.mkdir();
+		}
+	}
 	
 	/**
 	 * 查询user资源下提供哪些方法
@@ -311,12 +325,13 @@ public class UserCtrl {
 	@RequestMapping(value = "icon", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void uploadIcon(@RequestParam("id") long id, @RequestPart("icon") Part icon) {
-		WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();
-		ServletContext servletContext = webApplicationContext.getServletContext();
-		String dir = "download/img/" + LocalDate.now().toString();
+		String dir = ICON_DIR + '/' + LocalDate.now().toString();
 		String iconSrc = dir + '/' + icon.getSubmittedFileName();
 		String filename = servletContext.getRealPath(iconSrc);
 		
+		if (new File(filename).exists()) {
+			throw new IllegalArgumentException("该文件已经上传");
+		}
 		User u = userService.getUser(id);
 		// 先写入文件系统中
 		if (u.getIconSrc() != null && !u.getIconSrc().isEmpty()) {
@@ -331,7 +346,7 @@ public class UserCtrl {
 				newDir.mkdir();
 			}
 			icon.write(filename);
-			u.setIconSrc(iconSrc);
+			userService.updateIconSrc(id, iconSrc);
 		} catch (IOException e) {
 			e.printStackTrace();
 			logger.info("保存用户头像失败");
@@ -342,7 +357,7 @@ public class UserCtrl {
 		try {
 			InputStream in = icon.getInputStream();
 			in.read(b, 0, (int) icon.getSize());
-			u.setIcon(b);
+			userService.updateIcon(id, b);
 		} catch (IOException e) {
 			e.printStackTrace();
 			logger.info("用户头像图片写入数据库失败");

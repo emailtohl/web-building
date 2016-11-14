@@ -131,6 +131,20 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	User getUserByEmail(@NotNull @P("email") String email);
 	
 	/**
+	 * 修改用户的头像地址
+	 * @param iconSrc 修改用户头像的地址
+	 */
+	@PreAuthorize("isAuthenticated()")
+	void updateIconSrc(long id, String iconSrc);
+	
+	/**
+	 * 将用户的头像二进制文件存入数据库
+	 * @param icon 二进制图片文件
+	 */
+	@PreAuthorize("isAuthenticated()")
+	void updateIcon(long id, byte[] icon);
+	
+	/**
 	 * 修改用户
 	 * 这里的方法名使用的是merge，传入的User参数只存储需要更新的属性，不更新的属性值为null
 	 * 

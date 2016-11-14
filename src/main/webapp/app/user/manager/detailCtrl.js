@@ -16,8 +16,10 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 			});
 		};
 		self.getDetail($state.params.id);
-		self.refresh = function() {
-			self.getDetail($state.params.id);
+		self.whenDone = function() {
+			setTimeout(function() {
+				self.getDetail($state.params.id);
+			}, 500);
 		};
 		self.dictionary = {
 //			'ADMIN' : '系统管理员',
