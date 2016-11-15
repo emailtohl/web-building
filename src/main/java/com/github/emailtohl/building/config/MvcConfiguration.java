@@ -44,7 +44,7 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
 	 * RootContextConfiguration中定义的LocalValidatorFactoryBean继承了SpringValidatorAdapter
 	 */
 	@Inject SpringValidatorAdapter validator;
-	@Value("${uploadBase}") String uploadBaseStr;
+	@Value("${uploadBase}") String uploadBase;
 	
 	@Bean
 	public ViewResolver viewResolver() {
@@ -80,16 +80,16 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
 	public UpDownloader uploader() {
 		WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();    
         ServletContext servletContext = webApplicationContext.getServletContext(); 
-        File uploadBase;
-		if (uploadBaseStr == null || uploadBaseStr.isEmpty()) {
+        File basePath;
+		if (uploadBase == null || uploadBase.isEmpty()) {
 			File p = new File(servletContext.getRealPath("")).getParentFile();
-			uploadBase = new File(p, "web-building-upload");
+			basePath = new File(p, "web-building-upload");
 		} else {
-			uploadBase = new File(uploadBaseStr);
+			basePath = new File(uploadBase);
 		}
-		if (!uploadBase.exists()) {
-			uploadBase.mkdir();
+		if (!basePath.exists()) {
+			basePath.mkdir();
 		}
-		return new UpDownloader(uploadBase);
+		return new UpDownloader(basePath);
 	}
 }

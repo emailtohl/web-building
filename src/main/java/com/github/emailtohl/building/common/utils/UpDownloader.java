@@ -166,12 +166,4 @@ public class UpDownloader {
 		}
 	}
 	
-	public File getBasePath() {
-		return basePath;
-	}
-
-	public void setBasePath(File basePath) {
-		this.basePath = basePath;
-	}
-	
 }
