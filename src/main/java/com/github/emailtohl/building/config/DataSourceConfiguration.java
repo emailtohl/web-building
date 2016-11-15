@@ -26,8 +26,7 @@ public class DataSourceConfiguration {
 	/**
 	 * 将@PropertySource中引入的属性封装到Environment
 	 */
-	@Inject
-	Environment env;
+	@Inject Environment env;
 
 	/**
 	 * 若要使用@Value直接将值注入Bean中，除了在@Value中使用SpEl表达式外，
