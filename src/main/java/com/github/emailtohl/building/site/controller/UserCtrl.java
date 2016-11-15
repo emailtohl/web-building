@@ -46,6 +46,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.common.utils.Uploader;
 import com.github.emailtohl.building.exception.ResourceNotFoundException;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.BaseEntity;
@@ -68,6 +69,7 @@ public class UserCtrl {
 	ServletContext servletContext;
 	@Inject UserService userService;
 	@Inject Gson gson;
+	@Inject Uploader uploader;
 	
 	@PostConstruct
 	public void createIconDir() {

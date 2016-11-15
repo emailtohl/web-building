@@ -17,10 +17,13 @@ import javax.servlet.http.Part;
  * @author HeLei
  */
 public class Uploader {
-	private final File uploadBase;
+	private File uploadBase;
+
+	public Uploader() {
+		super();
+	}
 
 	public Uploader(File uploadBase) {
-		super();
 		this.uploadBase = uploadBase;
 	}
 	
@@ -109,4 +112,13 @@ public class Uploader {
 	public String getFileAbsolutePath(String relativePath) {
 		return new File(uploadBase, relativePath).getAbsolutePath();
 	}
+
+	public File getUploadBase() {
+		return uploadBase;
+	}
+
+	public void setUploadBase(File uploadBase) {
+		this.uploadBase = uploadBase;
+	}
+	
 }
