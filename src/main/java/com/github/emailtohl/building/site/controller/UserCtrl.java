@@ -63,7 +63,7 @@ import com.google.gson.Gson;
 @RequestMapping("user")
 public class UserCtrl {
 	private static final Logger logger = LogManager.getLogger();
-	private final String iconDir = "icon_dir";
+	public static final String ICON_DIR = "icon_dir";
 	ServletContext servletContext;
 	@Inject UserService userService;
 	@Inject Gson gson;
@@ -71,7 +71,7 @@ public class UserCtrl {
 	
 	@PostConstruct
 	public void createIconDir() {
-		File f = new File(uploader.getUploadAbsolutePath(iconDir));
+		File f = new File(uploader.getUploadAbsolutePath(ICON_DIR));
 		if (!f.exists()) {
 			f.mkdir();
 		}
@@ -323,7 +323,7 @@ public class UserCtrl {
 	@RequestMapping(value = "icon", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void uploadIcon(@RequestParam("id") long id, @RequestPart("icon") Part icon) throws IOException {
-		String dir = iconDir + '/' + LocalDate.now().toString();
+		String dir = ICON_DIR + '/' + LocalDate.now().toString();
 		File fdir = new File(uploader.getUploadAbsolutePath(dir));
 		if (!fdir.exists()) {
 			fdir.mkdir();
@@ -337,7 +337,7 @@ public class UserCtrl {
 		}
 		*/
 		iconName = dir + '/' + id + '_' + icon.getSubmittedFileName();
-		uploader.upload(iconName, icon);
+
 		User u = userService.getUser(id);
 		// 删除原有的图片，且同步数据库中的信息
 		if (u.getIconSrc() != null && !u.getIconSrc().isEmpty()) {
@@ -346,6 +346,8 @@ public class UserCtrl {
 				exist.delete();
 			}
 		}
+		
+		uploader.upload(iconName, icon);
 		userService.updateIconSrc(id, iconName);
 		// 再保存一份到数据库中
 		byte[] b = new byte[(int) icon.getSize()];// 保证图片尺寸不会太大

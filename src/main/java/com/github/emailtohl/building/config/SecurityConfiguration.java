@@ -40,6 +40,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
+import com.github.emailtohl.building.site.controller.UserCtrl;
 import com.github.emailtohl.building.site.service.UserPermissionEvaluator;
 /**
  * spring security 的编程风格的配置，它不仅被RootContextConfiguration导入，并且也依赖于RootContextConfiguration中的Bean
@@ -140,6 +141,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.antMatchers("/secure").fullyAuthenticated()
 					.antMatchers("/forum/**").fullyAuthenticated()
 					.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+					.antMatchers(HttpMethod.GET, UserCtrl.ICON_DIR + "/**").permitAll()
 					.antMatchers(HttpMethod.GET, "/user/**").hasAnyAuthority(USER_READ_ALL, USER_READ_SELF)
 					.antMatchers(HttpMethod.DELETE, "/user/**").hasAnyAuthority(USER_DELETE)
 					.antMatchers(HttpMethod.POST, "/user/employee").hasAuthority(USER_CREATE_SPECIAL)
