@@ -44,7 +44,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.github.emailtohl.building.common.jpa.Pager;
-import com.github.emailtohl.building.common.utils.Uploader;
+import com.github.emailtohl.building.common.utils.UpDownloader;
 import com.github.emailtohl.building.exception.ResourceNotFoundException;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.BaseEntity;
@@ -67,11 +67,11 @@ public class UserCtrl {
 	ServletContext servletContext;
 	@Inject UserService userService;
 	@Inject Gson gson;
-	@Inject Uploader uploader;
+	@Inject UpDownloader upDownloader;
 	
 	@PostConstruct
 	public void createIconDir() {
-		File f = new File(uploader.getUploadAbsolutePath(ICON_DIR));
+		File f = new File(upDownloader.getAbsolutePath(ICON_DIR));
 		if (!f.exists()) {
 			f.mkdir();
 		}
@@ -324,7 +324,7 @@ public class UserCtrl {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void uploadIcon(@RequestParam("id") long id, @RequestPart("icon") Part icon) throws IOException {
 		String dir = ICON_DIR + '/' + LocalDate.now().toString();
-		File fdir = new File(uploader.getUploadAbsolutePath(dir));
+		File fdir = new File(upDownloader.getAbsolutePath(dir));
 		if (!fdir.exists()) {
 			fdir.mkdir();
 		}
@@ -341,13 +341,13 @@ public class UserCtrl {
 		User u = userService.getUser(id);
 		// 删除原有的图片，且同步数据库中的信息
 		if (u.getIconSrc() != null && !u.getIconSrc().isEmpty()) {
-			File exist = new File(uploader.getUploadAbsolutePath(u.getIconSrc()));
+			File exist = new File(upDownloader.getAbsolutePath(u.getIconSrc()));
 			if (exist.exists()) {
 				exist.delete();
 			}
 		}
 		
-		uploader.upload(iconName, icon);
+		upDownloader.upload(iconName, icon);
 		userService.updateIconSrc(id, iconName);
 		// 再保存一份到数据库中
 		byte[] b = new byte[(int) icon.getSize()];// 保证图片尺寸不会太大

@@ -24,7 +24,7 @@ import org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
-import com.github.emailtohl.building.common.utils.Uploader;
+import com.github.emailtohl.building.common.utils.UpDownloader;
 
 /**
  * spring mvc的配置
@@ -77,7 +77,7 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
 	}
 	
 	@Bean
-	public Uploader uploader() {
+	public UpDownloader uploader() {
 		WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();    
         ServletContext servletContext = webApplicationContext.getServletContext(); 
         File uploadBase;
@@ -90,6 +90,6 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
 		if (!uploadBase.exists()) {
 			uploadBase.mkdir();
 		}
-		return new Uploader(uploadBase);
+		return new UpDownloader(uploadBase);
 	}
 }
