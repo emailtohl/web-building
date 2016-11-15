@@ -1,7 +1,11 @@
 package com.github.emailtohl.building.config;
 
-import javax.inject.Inject;
+import java.io.File;
 
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +13,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
+import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.RequestToViewNameTranslator;
 import org.springframework.web.servlet.ViewResolver;
@@ -17,6 +23,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
+
+import com.github.emailtohl.building.common.utils.Uploader;
 
 /**
  * spring mvc的配置
@@ -36,6 +44,7 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
 	 * RootContextConfiguration中定义的LocalValidatorFactoryBean继承了SpringValidatorAdapter
 	 */
 	@Inject SpringValidatorAdapter validator;
+	@Value("${uploadBase}") String uploadBaseStr;
 	
 	@Bean
 	public ViewResolver viewResolver() {
@@ -67,4 +76,20 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
 		return this.validator;
 	}
 	
+	@Bean
+	public Uploader uploader() {
+		WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();    
+        ServletContext servletContext = webApplicationContext.getServletContext(); 
+        File uploadBase;
+		if (uploadBaseStr == null || uploadBaseStr.isEmpty()) {
+			File p = new File(servletContext.getRealPath("")).getParentFile();
+			uploadBase = new File(p, "web-building-upload");
+		} else {
+			uploadBase = new File(uploadBaseStr);
+		}
+		if (!uploadBase.exists()) {
+			uploadBase.mkdir();
+		}
+		return new Uploader(uploadBase);
+	}
 }

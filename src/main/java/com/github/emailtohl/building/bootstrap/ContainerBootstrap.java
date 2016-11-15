@@ -1,4 +1,7 @@
 package com.github.emailtohl.building.bootstrap;
+import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_PRODUCTION;
+import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_QA;
+
 import javax.servlet.FilterRegistration;
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletContext;
@@ -11,14 +14,11 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.DispatcherServlet;
-import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_PRODUCTION;
-import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_QA;
+
 import com.github.emailtohl.building.config.MvcConfiguration;
 import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.filter.PreSecurityLoggingFilter;
-import com.github.emailtohl.building.listener.ContextRegistration;
 import com.github.emailtohl.building.listener.SessionListener;
-import com.github.emailtohl.building.listener.UploadDirectoryInitialization;
 /**
  * 初始化容器时最先启动的类，它将完成如下工作：
  * （1）激活容器默认的servlet来响应静态资源；
@@ -62,9 +62,7 @@ public class ContainerBootstrap implements WebApplicationInitializer {
 //		container.setInitParameter("spring.profiles.active", PROFILE_PRODUCTION);
 
 		/* 在Servlet容器中注册监听器 */
-		container.addListener(ContextRegistration.class);
 		container.addListener(SessionListener.class);
-		container.addListener(UploadDirectoryInitialization.class);
 		
 		/* 在Servlet容器中注册过滤器 */
 		FilterRegistration.Dynamic registration = container.addFilter("characterEncodingFilter", new CharacterEncodingFilter());
