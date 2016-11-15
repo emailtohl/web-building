@@ -41,8 +41,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.context.ContextLoader;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.github.emailtohl.building.common.jpa.Pager;
@@ -65,7 +63,7 @@ import com.google.gson.Gson;
 @RequestMapping("user")
 public class UserCtrl {
 	private static final Logger logger = LogManager.getLogger();
-	private final String iconDir = "upload/icon_dir";
+	private final String iconDir = "icon_dir";
 	ServletContext servletContext;
 	@Inject UserService userService;
 	@Inject Gson gson;
@@ -73,10 +71,7 @@ public class UserCtrl {
 	
 	@PostConstruct
 	public void createIconDir() {
-		WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();
-		servletContext = webApplicationContext.getServletContext();
-		String dir = servletContext.getRealPath(iconDir);
-		File f = new File(dir);
+		File f = new File(uploader.getUploadAbsolutePath(iconDir));
 		if (!f.exists()) {
 			f.mkdir();
 		}
@@ -323,44 +318,35 @@ public class UserCtrl {
 	/**
 	 * 用户上传头像
 	 * @param icon
+	 * @throws IOException 
 	 */
 	@RequestMapping(value = "icon", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void uploadIcon(@RequestParam("id") long id, @RequestPart("icon") Part icon) {
+	public void uploadIcon(@RequestParam("id") long id, @RequestPart("icon") Part icon) throws IOException {
 		String dir = iconDir + '/' + LocalDate.now().toString();
-		String iconSrc = null;
+		File fdir = new File(uploader.getUploadAbsolutePath(dir));
+		if (!fdir.exists()) {
+			fdir.mkdir();
+		}
+		String iconName = null;
 		/*
 		try {
-			iconSrc = dir + '/' + id + '_' + URLEncoder.encode(icon.getSubmittedFileName(), "UTF-8");
+			iconName = dir + '/' + id + '_' + URLEncoder.encode(icon.getSubmittedFileName(), "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			logger.fatal("UTF-8编码，不可能出现的异常", e);
 		}
 		*/
-		iconSrc = dir + '/' + id + '_' + icon.getSubmittedFileName();
-		String filename = servletContext.getRealPath(iconSrc);
-		
-		if (new File(filename).exists()) {
-			throw new IllegalArgumentException("上传文件重名，该文件已经上传");
-		}
+		iconName = dir + '/' + id + '_' + icon.getSubmittedFileName();
+		uploader.upload(iconName, icon);
 		User u = userService.getUser(id);
-		// 先写入文件系统中，写入前，先删除原有的
+		// 删除原有的图片，且同步数据库中的信息
 		if (u.getIconSrc() != null && !u.getIconSrc().isEmpty()) {
-			File exist = new File(servletContext.getRealPath(u.getIconSrc()));
-			if (exist != null && exist.exists()) {
+			File exist = new File(uploader.getUploadAbsolutePath(u.getIconSrc()));
+			if (exist.exists()) {
 				exist.delete();
 			}
 		}
-		try {
-			File fdir = new File(servletContext.getRealPath(dir));
-			if (!fdir.exists()) {
-				fdir.mkdir();
-			}
-			icon.write(filename);
-			userService.updateIconSrc(id, iconSrc);
-		} catch (IOException e) {
-			logger.info("保存用户头像失败", e);
-		}
-		
+		userService.updateIconSrc(id, iconName);
 		// 再保存一份到数据库中
 		byte[] b = new byte[(int) icon.getSize()];// 保证图片尺寸不会太大
 		try {

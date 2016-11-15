@@ -19,12 +19,15 @@ import javax.servlet.http.Part;
 public class Uploader {
 	private File uploadBase;
 
-	public Uploader() {
-		super();
-	}
-
+	/**
+	 * 构造时，同时在文件系统中创建uploadBase的目录
+	 * @param uploadBase
+	 */
 	public Uploader(File uploadBase) {
 		this.uploadBase = uploadBase;
+		if (!this.uploadBase.exists()) {
+			uploadBase.mkdir();
+		}
 	}
 	
 	/**
@@ -109,7 +112,7 @@ public class Uploader {
 	 * @param relativePath
 	 * @return
 	 */
-	public String getFileAbsolutePath(String relativePath) {
+	public String getUploadAbsolutePath(String relativePath) {
 		return new File(uploadBase, relativePath).getAbsolutePath();
 	}
 
