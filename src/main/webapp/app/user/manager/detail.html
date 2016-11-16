@@ -13,11 +13,25 @@
 <div class="row">
   <div class="box">
     <div class="box-header">
-      <form class="form-group image" upload upload-to="user/icon" when-done="ctrl.whenDone()">
-        <img style="height: 90px;width: 90px;" ng-src="{{ctrl.detail.iconSrc}}" class="img-circle" alt="User Image">
-        <input type="file" name="icon" class="btn">
-        <input type="hidden" name="id" value="{{ctrl.detail.id}}">
-        <input type="submit" class="btn btn-primary" value="上传头像">
+      <form class="box box-danger form-group image" upload upload-to="user/icon" when-done="ctrl.whenDone()">
+        <div class="box-body no-padding">
+        	<div class="col-md-2">
+		        <img style="height: 90px;width: 90px;" ng-src="{{ctrl.detail.iconSrc}}" class="img-circle" alt="User Image">
+		        <a class="users-list-name" href="#">{{ctrl.detail.email}}</a>
+		        <span class="users-list-date">{{ctrl.detail.createDate}}</span>
+        	</div>
+        	<div class="col-md-4">
+        		<div class="form-group">
+                  <label for="exampleInputFile">浏览</label>
+                  <input type="file" name="icon" class="btn">
+                  <p class="help-block">选择你的头像</p>
+                </div>
+		        <input type="hidden" name="id" value="{{ctrl.detail.id}}">
+		        <div class="form-group">
+			        <input type="submit" class="btn btn-primary" value="上传头像">
+		        </div>
+        	</div>
+        </div>
       </form>
     </div>
     <div class="box-body">
