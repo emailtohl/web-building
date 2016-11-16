@@ -28,8 +28,18 @@ public class UpDownloader {
 	public UpDownloader(File basePath) {
 		this.basePath = basePath;
 		if (!this.basePath.exists()) {
-			basePath.mkdir();
+			if (!basePath.mkdirs()) {
+				throw new IllegalStateException("路径不存在，并且创建失败：" + basePath);
+			}
 		}
+	}
+
+	/**
+	 * 接收字符串的构造器
+	 * @param basePath
+	 */
+	public UpDownloader(String basePath) {
+		this(new File(basePath));
 	}
 	
 	/**
@@ -163,6 +173,21 @@ public class UpDownloader {
 					break;
 				out.write(buffer, 0, b);
 			}
+		}
+	}
+	
+	/**
+	 * 删除整个目录树
+	 */
+	public void deleteDir(String absolutePath) {
+		File f = new File(absolutePath);
+		if (f.isDirectory()) {
+			for (File ff : f.listFiles()) {
+				deleteDir(ff.getAbsolutePath());
+			}
+			f.delete();
+		} else {
+			f.delete();
 		}
 	}
 	
