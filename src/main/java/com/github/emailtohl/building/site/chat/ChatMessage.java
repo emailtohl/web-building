@@ -2,6 +2,7 @@ package com.github.emailtohl.building.site.chat;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Arrays;
 /**
  * 被websocket序列化的类
  * @author HeLei
@@ -15,6 +16,7 @@ public class ChatMessage implements Cloneable, Serializable {
 	private Object[] contentArguments;
 	private String localizedContent;
 	private String userContent;
+	private String iconSrc;
 
 	public Instant getTimestamp() {
 		return timestamp;
@@ -71,6 +73,14 @@ public class ChatMessage implements Cloneable, Serializable {
 	public void setUserContent(String userContent) {
 		this.userContent = userContent;
 	}
+	
+	public String getIconSrc() {
+		return iconSrc;
+	}
+
+	public void setIconSrc(String iconSrc) {
+		this.iconSrc = iconSrc;
+	}
 
 	@Override
 	protected ChatMessage clone() {
@@ -105,7 +115,9 @@ public class ChatMessage implements Cloneable, Serializable {
 
 	@Override
 	public String toString() {
-		return "ChatMessage [timestamp=" + timestamp + ", user=" + user + ", userContent=" + userContent + "]";
+		return "ChatMessage [timestamp=" + timestamp + ", type=" + type + ", user=" + user + ", contentCode="
+				+ contentCode + ", contentArguments=" + Arrays.toString(contentArguments) + ", localizedContent="
+				+ localizedContent + ", userContent=" + userContent + ", iconSrc=" + iconSrc + "]";
 	}
-	
+
 }

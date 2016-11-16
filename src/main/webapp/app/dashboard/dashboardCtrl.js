@@ -28,7 +28,8 @@ define(['angular', 'dashboard/module', 'sparkline', 'knob'], function(angular) {
 						name : data.user,
 						timestamp : data.timestamp,
 						message : data.userContent,
-						time : time
+						time : time,
+						iconSrc : data.iconSrc
 					});
 				});
 			};
@@ -47,7 +48,11 @@ define(['angular', 'dashboard/module', 'sparkline', 'knob'], function(angular) {
 					callee(data);
 					return;
 				}
-		    	connection.send(self.message); // 通过套接字传递该内容
+		    	var msg = JSON.stringify({
+		    		message : self.message,
+		    		iconSrc : $scope.getIconSrc()
+		    	});
+		    	connection.send(msg); // 通过套接字传递该内容
 		    	self.message = '';
 			};
 			

@@ -56,7 +56,9 @@ public class ChatEndpoint {
 		ChatMessage msg = new ChatMessage();
 		msg.setTimestamp(Instant.now());
 		msg.setUser(username);
-		msg.setUserContent(message);
+		Message m = gson.fromJson(message, Message.class);
+		msg.setUserContent(m.getMessage());
+		msg.setIconSrc(m.getIconSrc());
 		String str = gson.toJson(msg);
 		for (Session s : map.values()) {
 			/*if (s.equals(session)) {
@@ -89,5 +91,27 @@ public class ChatEndpoint {
 	public void onError(Throwable e) {
 		logger.info(e);
 		map.remove(session.getId());
+	}
+	
+	/**
+	 * 对应前端传输来的字段
+	 * @author HeLei
+	 *
+	 */
+	class Message {
+		String message;
+		String iconSrc;
+		public String getMessage() {
+			return message;
+		}
+		public void setMessage(String message) {
+			this.message = message;
+		}
+		public String getIconSrc() {
+			return iconSrc;
+		}
+		public void setIconSrc(String iconSrc) {
+			this.iconSrc = iconSrc;
+		}
 	}
 }
