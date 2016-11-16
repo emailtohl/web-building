@@ -68,6 +68,7 @@ public class UserCtrl {
 	@Inject UserService userService;
 	@Inject Gson gson;
 	@Inject UpDownloader upDownloader;
+	@Inject LoginCtrl loginCtrl;
 	
 	@PostConstruct
 	public void createIconDir() {
@@ -349,6 +350,8 @@ public class UserCtrl {
 		
 		upDownloader.upload(iconName, icon);
 		userService.updateIconSrc(id, iconName);
+		loginCtrl.updateIconSrcMap(u.getEmail(), iconName);// 同时更新用户头像的缓存信息
+		
 		// 再保存一份到数据库中
 		byte[] b = new byte[(int) icon.getSize()];// 保证图片尺寸不会太大
 		try {

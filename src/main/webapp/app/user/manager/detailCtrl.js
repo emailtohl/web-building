@@ -19,7 +19,8 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 		self.whenDone = function() {
 			setTimeout(function() {
 				self.getDetail($state.params.id);
-			}, 1500);
+				$scope.getAuthentication();
+			}, 1000);
 		};
 		self.dictionary = {
 //			'ADMIN' : '系统管理员',

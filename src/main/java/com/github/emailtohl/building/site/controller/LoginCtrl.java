@@ -234,6 +234,15 @@ public class LoginCtrl {
 	}
 	
 	/**
+	 * 当用户更新头像后，需要刷新缓存，故提供此接口
+	 * @param email 用户邮箱
+	 * @param iconSrc 新的头像图片地址
+	 */
+	public void updateIconSrcMap(String email, String iconSrc) {
+		iconSrcMap.put(email, iconSrc);
+	}
+	
+	/**
 	 * 测试接口
 	 * @return
 	 */
