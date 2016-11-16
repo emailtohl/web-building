@@ -1,15 +1,20 @@
 package com.github.emailtohl.building.common.utils;
 
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Arrays;
-
-import static org.junit.Assert.*;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -30,8 +35,8 @@ public class UpDownloaderTest {
 	byte[] bin = new byte[1024];
 	String absolutePath = new File(basePath, relativePath).getAbsolutePath();
 	Part part = mock(Part.class);
-	BufferedInputStream in = mock(BufferedInputStream.class);
-	BufferedOutputStream out = mock(BufferedOutputStream.class);
+	InputStream in = new ByteArrayInputStream(bin);
+	OutputStream out = new ByteArrayOutputStream();
 	HttpServletResponse response = mock(HttpServletResponse.class);
 	ServletOutputStream sos = mock(ServletOutputStream.class);
 	UpDownloader upDownloader = new UpDownloader(basePath);
@@ -44,8 +49,6 @@ public class UpDownloaderTest {
 			return invocation.getMock();
 		};
 		doAnswer(answer).when(part).write(absolutePath);
-		doAnswer(answer).when(out).write(bin);
-		when(in.read(bin)).thenReturn(10);
 		when(response.getOutputStream()).thenReturn(sos);
 		doAnswer(answer).when(sos).write(bin);
 	}
