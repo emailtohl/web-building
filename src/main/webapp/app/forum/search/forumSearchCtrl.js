@@ -7,7 +7,7 @@ define(['forum/module', 'forum/search/service'], function(forumModule) {
 		console.log($state.params);
 		var queryInput = $('form[name="fulltextsearch"]').find('input[name="search"]');
 		
-		if ($state.params.query) {
+		if ($state.params.query && $state.params.query.trim()) {
 			forumSearchService.search($state.params.query, 1).success(function(data) {
 				self.pager = data;
 			});
@@ -29,9 +29,15 @@ define(['forum/module', 'forum/search/service'], function(forumModule) {
 		
 		self.search = function(pageNumber) {
 			var query = queryInput.val();
-			forumSearchService.search(query, pageNumber).success(function(data) {
-				self.pager = data;
-			});
+			if (query && query.trim()) {
+				forumSearchService.search(query, pageNumber).success(function(data) {
+					self.pager = data;
+				});
+			} else {
+				forumSearchService.get(1).success(function(data) {
+					self.pager = data;
+				});
+			}
 		};
 		
 		self.getIconSrc = function(obj) {
