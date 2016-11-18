@@ -3,7 +3,6 @@ package com.github.emailtohl.building.site.entities;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -100,7 +99,7 @@ public class Authority extends BaseEntity {
 		this.description = description;
 	}
 	
-	@ManyToMany(targetEntity = Role.class, fetch = FetchType.LAZY, mappedBy = "authorities", cascade = CascadeType.REMOVE)
+	@ManyToMany(targetEntity = Role.class, fetch = FetchType.LAZY, mappedBy = "authorities")
 	public Set<Role> getRoles() {
 		return roles;
 	}
