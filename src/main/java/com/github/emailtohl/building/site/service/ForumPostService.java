@@ -1,6 +1,9 @@
 package com.github.emailtohl.building.site.service;
 
+import static com.github.emailtohl.building.site.entities.Authority.*;
+
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.fullTextSearch.SearchResult;
@@ -30,5 +33,10 @@ public interface ForumPostService {
 	 */
 	void save(String email, ForumPostDto forumPost);
 	
+	/**
+	 * 特殊情况下用于管理员删帖
+	 * @param id
+	 */
+	@PreAuthorize("hasAuthority('" + FORUM_DELETE + "')")
 	void delete(long id);
 }

@@ -178,4 +178,11 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 		return s == null || s.isEmpty();
 	}
 
+	@Override
+	public void delete(long id) {
+		ApplicationForm af = applicationFormRepository.findOne(id);
+		applicationHandleHistoryRepository.deleteInBatch(af.getApplicationHandleHistory());
+		applicationFormRepository.delete(id);
+	}
+
 }

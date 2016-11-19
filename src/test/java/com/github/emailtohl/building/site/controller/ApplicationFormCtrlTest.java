@@ -1,6 +1,7 @@
 package com.github.emailtohl.building.site.controller;
 
 import static org.junit.Assert.fail;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -106,4 +107,9 @@ public class ApplicationFormCtrlTest {
 		fail("Not yet implemented");
 	}
 
+	@Test
+	public void testDelete() throws Exception {
+		mockMvc.perform(delete("/applicationForm/" + serviceStub.applicationFormId))
+		.andExpect(status().is(HttpStatus.NO_CONTENT.value()));
+	}
 }

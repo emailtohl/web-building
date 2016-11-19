@@ -27,7 +27,7 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 		};
 		
 		self['delete'] = function(id) {
-			if (confirm('确认删除吗？') != null) {
+			if (confirm('确认删除吗？')) {
 				userService['delete'](id).success(function(data) {
 					self.query();
 				});

@@ -94,7 +94,7 @@
                         {{x.handler.email}}
                         <span class="text-muted pull-right">{{x.createDate}}</span>
                         <span class="label" ng-class="{'label-primary': x.status == 'REQUEST', 'label-warning' : x.status == 'PROCESSING', 'label-danger' : x.status == 'REJECT', 'label-success' : x.status == 'COMPLETION'}">{{ctrl.statusMap[x.status]}}</span>
-                      </span><!-- /.username -->
+                      </span>
                   {{x.cause}}
                 </div>
                 <!-- /.comment-text -->
@@ -104,7 +104,7 @@
             <!-- /.box-footer -->
             <div class="box-footer">
               <form name="f" ng-if="ctrl.detail.status != 'COMPLETION'">
-                <img class="img-responsive img-circle img-sm" src="{{getIconSrc()}}" alt="Alt Text">
+                <img class="img-responsive img-circle img-sm" ng-src="{{getIconSrc()}}" alt="Alt Text">
                 <!-- .img-push is used to add margin to elements next to floating images -->
                 <div class="img-push">
                   <input name="cause" class="form-control input-sm" placeholder="Press enter to post comment" type="text" ng-model="ctrl.form.cause">

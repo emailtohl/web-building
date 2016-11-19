@@ -54,7 +54,9 @@ public class PersistenceData {
 			user_update_self = new Authority(USER_UPDATE_SELF, "修改自己账号的权限，用于普通用户"),
 			user_delete = new Authority(USER_DELETE, "删除用户的权限"),
 			application_form_transit = new Authority(APPLICATION_FORM_TRANSIT, "处理申请单的权限"),
-			application_form_read_history = new Authority(APPLICATION_FORM_READ_HISTORY, "处理申请单的权限");
+			application_form_read_history = new Authority(APPLICATION_FORM_READ_HISTORY, "处理申请单的权限"),
+			application_form_delete = new Authority(APPLICATION_FORM_DELETE, "删除申请单"),
+			forum_delete = new Authority(FORUM_DELETE, "删除论坛帖子");
 	
 	public final static Role admin = new Role(ADMIN, "管理员"), manager = new Role(MANAGER, "经理"),
 			employee = new Role(EMPLOYEE, "雇员"), user = new Role(USER, "普通用户");
@@ -81,8 +83,10 @@ public class PersistenceData {
 		user_delete.getRoles().add(admin);
 		application_form_transit.getRoles().addAll(Arrays.asList(admin, manager, employee));
 		application_form_read_history.getRoles().addAll(Arrays.asList(admin, manager, employee));
+		application_form_delete.getRoles().addAll(Arrays.asList(admin));
+		forum_delete.getRoles().addAll(Arrays.asList(admin));
 		
-		admin.getAuthorities().addAll(Arrays.asList(user_role_authority_allocation, user_create_ordinary, user_create_special, user_enable, user_disable, user_grant_roles, user_read_all, user_read_self, user_update_all, user_update_self, user_delete, application_form_transit, application_form_read_history));
+		admin.getAuthorities().addAll(Arrays.asList(user_role_authority_allocation, user_create_ordinary, user_create_special, user_enable, user_disable, user_grant_roles, user_read_all, user_read_self, user_update_all, user_update_self, user_delete, application_form_transit, application_form_read_history, application_form_delete, forum_delete));
 		manager.getAuthorities().addAll(Arrays.asList(user_create_ordinary, user_create_special, user_enable, user_disable, user_grant_roles, user_read_all, user_read_self, user_update_self, application_form_transit, application_form_read_history));
 		employee.getAuthorities().addAll(Arrays.asList(user_create_ordinary, user_enable, user_read_all, user_read_self, user_update_self, application_form_transit, application_form_read_history));
 		user.getAuthorities().addAll(Arrays.asList(user_create_ordinary, user_enable, user_read_self, user_update_self));

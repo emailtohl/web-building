@@ -2,11 +2,14 @@ package com.github.emailtohl.building.site.service.impl;
 
 import static com.github.emailtohl.building.initdb.PersistenceData.bar;
 import static com.github.emailtohl.building.initdb.PersistenceData.baz;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.time.Instant;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -67,8 +70,9 @@ public class ApplicationFormServiceImplTest {
 
 	@After
 	public void tearDown() throws Exception {
-		securityContextManager.setBar();
+		securityContextManager.setEmailtohl();
 		if (id != null) {
+			/*
 			Page<ApplicationHandleHistory> page = applicationHandleHistoryRepository.findByApplicationFormId(id, pageable);
 			for (Iterator<ApplicationHandleHistory> i = page.getContent().iterator(); i.hasNext();) {
 				ApplicationHandleHistory h = i.next();
@@ -76,6 +80,8 @@ public class ApplicationFormServiceImplTest {
 				applicationHandleHistoryRepository.delete(h.getId());
 			}
 			applicationFormRepository.delete(id);
+			*/
+			applicationFormService.delete(id);
 		}
 	}
 

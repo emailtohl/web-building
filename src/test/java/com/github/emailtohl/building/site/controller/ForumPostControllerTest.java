@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -16,6 +17,7 @@ import org.junit.Test;
 import org.mockito.stubbing.Answer;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -80,4 +82,9 @@ public class ForumPostControllerTest {
 		fail("Not yet implemented");
 	}
 
+	@Test
+	public void testDelete() throws Exception {
+		mockMvc.perform(delete("/forum/" + 100))
+		.andExpect(status().is(HttpStatus.NO_CONTENT.value()));
+	}
 }

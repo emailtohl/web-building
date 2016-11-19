@@ -1,5 +1,6 @@
 package com.github.emailtohl.building.site.controller;
 
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.io.Serializable;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.github.emailtohl.building.common.Constant;
@@ -207,5 +209,16 @@ public class ApplicationFormCtrl {
 	@ResponseBody
 	public ApplicationHandleHistory getHistoryById(@PathVariable("id") long id) throws ParseException {
 		return applicationFormService.getHistoryById(id);
+	}
+	
+	/**
+	 * 特殊情况，允许具有APPLICATION_FORM_DELETE权限的用户删除申请单
+	 * 由于数据完整性，删除申请单的同时将删除所有申请单记录以及用户相关的记录
+	 * @param id
+	 */
+	@RequestMapping(value = "{id}", method = DELETE)
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void delete(@PathVariable("id") @Min(1L) long id) {
+		applicationFormService.delete(id);
 	}
 }

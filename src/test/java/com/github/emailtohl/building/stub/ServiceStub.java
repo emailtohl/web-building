@@ -124,6 +124,7 @@ public class ServiceStub {
 		when(applicationFormService.getHistoryById(historyId)).thenReturn(applicationHandleHistory);
 		when(applicationFormService.history(customer.getEmail(), employee.getEmail(), applicationFormTitle, applicationFormStatus, start, end, pageable)).thenReturn(historypage);
 		doAnswer(answer).when(applicationFormService).transit(applicationFormId, applicationFormStatus, "test 处理意见……");
+		doAnswer(answer).when(applicationFormService).delete(applicationFormId);
 		
 		return applicationFormService;
 	}

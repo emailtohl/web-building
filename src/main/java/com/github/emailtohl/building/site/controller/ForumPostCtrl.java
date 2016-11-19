@@ -1,22 +1,28 @@
 package com.github.emailtohl.building.site.controller;
 
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.emailtohl.building.common.jpa.Pager;
@@ -85,4 +91,13 @@ public class ForumPostCtrl {
 		return new Pager<SearchResult<ForumPostDto>>(ls, p.getTotalElements(), pageable.getPageNumber(), p.getPageSize());
 	}
 	
+	/**
+	 * 特殊情况，管理员删除论坛帖子
+	 * @param id
+	 */
+	@RequestMapping(value = "{id}", method = DELETE)
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void delete(@PathVariable("id") @Min(1L) long id) {
+		forumPostService.delete(id);
+	}
 }

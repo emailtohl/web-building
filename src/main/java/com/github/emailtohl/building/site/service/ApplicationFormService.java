@@ -1,7 +1,6 @@
 package com.github.emailtohl.building.site.service;
 
-import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_READ_HISTORY;
-import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_TRANSIT;
+import static com.github.emailtohl.building.site.entities.Authority.*;
 
 import java.util.Date;
 import java.util.List;
@@ -184,4 +183,10 @@ public interface ApplicationFormService {
 			return "";
 	}
 
+	/**
+	 * 提供在特殊情况下的删除功能，包括历史记录，用户相关记录将被一并删除
+	 * @param id
+	 */
+	@PreAuthorize("hasAuthority('" + APPLICATION_FORM_DELETE + "')")
+	void delete(long id);
 }

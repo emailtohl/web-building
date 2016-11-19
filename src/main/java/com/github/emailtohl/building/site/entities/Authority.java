@@ -67,9 +67,17 @@ public class Authority extends BaseEntity {
 	 */
 	public static final String APPLICATION_FORM_TRANSIT = "application_form_transit";
 	/**
+	 * 删除申请单
+	 */
+	public static final String APPLICATION_FORM_DELETE = "application_form_delete";
+	/**
 	 * 查询申请单的处理历史
 	 */
 	public static final String APPLICATION_FORM_READ_HISTORY = "application_form_read_history";
+	/**
+	 * 删除论坛帖子
+	 */
+	public static final String FORUM_DELETE = "forum_delete";
 	
 	public Authority() {
 		super();

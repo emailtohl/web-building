@@ -1,6 +1,5 @@
 package com.github.emailtohl.building.site.entities;
 
-import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -36,7 +35,6 @@ public class ForumPost extends BaseEntity {
 	}
 
 	@org.hibernate.search.annotations.Field
-	@Basic
 	public String getTitle() {
 		return this.title;
 	}
@@ -56,7 +54,6 @@ public class ForumPost extends BaseEntity {
 	}
 
 	@org.hibernate.search.annotations.Field(boost = @org.hibernate.search.annotations.Boost(2.0F))// 关键字加权因子
-	@Basic
 	public String getKeywords() {
 		return this.keywords;
 	}
