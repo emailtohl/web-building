@@ -32,6 +32,11 @@ define(['angular', 'dashboard/module', 'sparkline', 'knob'], function(angular) {
 						iconSrc : data.iconSrc
 					});
 				});
+				
+				// 划动到底部
+				var container = $('.direct-chat-messages');
+				var h = container.scrollParent().height() + container.height();
+				container.scrollTop(h);
 			};
 			
 			connection.onclose = function(e) {
