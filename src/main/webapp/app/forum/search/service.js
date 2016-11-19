@@ -1,7 +1,7 @@
 define([ 'forum/module' ], function(forumModule) {
 	return forumModule.factory('forumSearchService', [ '$http', 'util', function($http, util) {
 		return {
-			get : function(page) {
+			getPager : function(page) {
 				var param = page ? '?page=' + page : '';
 				return $http.get('forum/pager' + param);
 			},
