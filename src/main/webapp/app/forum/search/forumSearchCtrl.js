@@ -45,5 +45,15 @@ define(['forum/module', 'forum/search/service'], function(forumModule) {
 			&& obj.entity.user
 			&& obj.entity.user.iconSrc;
 		};
+		self['delete'] = function(id, $event) {
+			$event.stopPropagation();
+			if (confirm('确定删除吗？')) {
+				forumSearchService['delete'](id).success(function(data) {
+					forumSearchService.get(1).success(function(data) {
+						self.pager = data;
+					});
+				});
+			}
+		};
 	}]);
 });

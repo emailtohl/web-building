@@ -37,6 +37,9 @@ define([ 'applicationForm/module' ], function(applicationFormModule) {
 				});
 				return $http.get('applicationForm/history' + (param ? '?' + param : ''));
 			},
+			'delete' : function(id) {
+				return $http['delete']('applicationForm/' + id);
+			},
 		};
 	}]);
 });

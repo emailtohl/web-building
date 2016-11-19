@@ -38,6 +38,7 @@
 	          <th>审核人</th>
 	          <th>审核日期</th>
 	          <th>处理意见</th>
+	          <th ng-if="hasAuthority('application_form_delete')">删除</th>
 	        </tr>
 	        <tr style="cursor: pointer;" ng-repeat="x in ctrl.pager.content" ng-click="ctrl.openModal(x.id)">
 	          <td>{{x.applicant.email}}</td>
@@ -48,6 +49,7 @@
 	          <td>{{x.handler.email}}</td>
 	          <td>{{x.modifyDate}}</td>
 	          <td>{{x.cause}}</td>
+	          <td ng-if="hasAuthority('application_form_delete')"><button type="button" class="btn btn-block btn-danger btn-xs" ng-click="ctrl.delete(x.id, $event)">删除</button></td>
 	        </tr>
 	      </tbody></table>
 	    </div>

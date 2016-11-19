@@ -69,5 +69,13 @@ define(['applicationForm/module', 'applicationForm/service'], function(applicati
 			self.form.page = pageNumber;
 			self.getPager();
 		};
+		self['delete'] = function(id, $event) {
+			$event.stopPropagation();
+			if (confirm('确定删除吗？')) {
+				applicationFormService['delete'](id).success(function(data) {
+					self.getPager();
+				});
+			}
+		};
 	}]);
 });

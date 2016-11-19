@@ -223,7 +223,9 @@ public class LoginCtrl {
 							iconSrc = u.getIconSrc();
 							iconSrcMap.put(email, iconSrc);// 先放入缓存供下次查询
 						} catch (IllegalArgumentException e2) {
-							logger.debug("可能是匿名用户，查询不到User");
+							logger.debug("查询不到User，可能是匿名用户");
+						} catch (NullPointerException e3) {
+							logger.debug("该用户还没有iconSrc值");
 						}
 					}
 					map.put("iconSrc", iconSrc);// 然后放入返回的UserDetails中

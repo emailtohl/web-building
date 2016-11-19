@@ -29,7 +29,7 @@
 		                	<tr style="cursor:pointer;" ng-repeat="x in ctrl.roles" ng-click="ctrl.openModal(x.id)">
                   				<td ng-bind="x.name" class="col-md-5"></td>
                   				<td ng-bind="x.description" class="col-md-5"></td>
-                  				<td class="col-md-2"><button class="btn btn-danger" type="button" ng-click="ctrl.delete(x.id, x.name)">删除</button></td>
+                  				<td class="col-md-2"><button class="btn btn-danger btn-xs" type="button" ng-click="ctrl.delete(x.id, x.name)">删除</button></td>
                   			</tr>
 		                </tbody>
 					</table>

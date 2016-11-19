@@ -13,6 +13,9 @@ define([ 'forum/module' ], function(forumModule) {
 				param = util.encodeUrlParams(param);
 				return $http.get('forum/search' + (param ? '?' + param : ''));
 			},
+			'delete' : function(id) {
+				return $http['delete']('forum/' + id);
+			},
 		};
 	}]);
 });
