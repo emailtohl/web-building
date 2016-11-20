@@ -54,9 +54,9 @@
     </div>
     <!-- /.box-body -->
     <div class="box-footer clearfix">
-      <button type="button" class="btn btn-default pull-left" ng-click="ctrl.edit()">编辑</button>
-      <button type="button" class="btn btn-default pull-left" ng-click="ctrl.enableUser()" ng-if="!ctrl.detail.enabled">激活账户</button>
-      <button type="button" class="btn btn-default pull-left" ng-click="ctrl.disableUser()" ng-if="hasAuthority('ADMIN') && ctrl.detail.enabled">禁用账户</button>
+      <button type="button" class="btn btn-primary pull-left margin" ng-click="ctrl.edit()">编辑</button>
+      <button type="button" class="btn btn-success pull-left margin" ng-click="ctrl.enableUser()" ng-if="!ctrl.detail.enabled">激活账户</button>
+      <button type="button" class="btn btn-warning pull-left margin" ng-click="ctrl.disableUser()" ng-if="hasAuthority('user_disable') && ctrl.detail.enabled">禁用账户</button>
       <ul class="pagination pagination-sm no-margin pull-right">
         <li><a href="#">«</a></li>
         <li><a href="#">1</a></li>

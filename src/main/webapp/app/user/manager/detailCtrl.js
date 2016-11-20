@@ -43,9 +43,6 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 				case 'subsidiary':
 					result = v.country + ' ' + v.province + ' ' + v.city;
 					break;
-				case 'iconSrc':
-					result = '';
-					break;
 				case 'gender':
 					result = self.dictionary[v];
 					break;
@@ -75,10 +72,17 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 			title : '编辑用户信息',
 			type : '',
 			whenConfirm : function() {
-				userService.update(self.form).success(function(data) {
-//					$state.go('user.detail', { id : self.form.id }, { reload : true });
-					self.getDetail(self.form.id);
-				});
+				if (self.detail.empNum && self.detail.empNum > 0) {
+					userService.updateEmployee(self.form).success(function(data) {
+//						$state.go('user.detail', { id : self.form.id }, { reload : true });
+						self.getDetail(self.form.id);
+					});
+				} else {
+					userService.updateCustomer(self.form).success(function(data) {
+//						$state.go('user.detail', { id : self.form.id }, { reload : true });
+						self.getDetail(self.form.id);
+					});
+				}
 			},
 		};
 		self.edit = function() {

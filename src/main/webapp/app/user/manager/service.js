@@ -22,8 +22,11 @@ define([ 'user/module', 'common/context' ], function(userModule) {
 			disableUser : function(id) {
 				return $http.put('user/disableUser/' + id);
 			},
-			update : function(user) {
+			updateEmployee : function(user) {
 				return $http.put('user/employee/' + user.id, user);
+			},
+			updateCustomer : function(user) {
+				return $http.put('user/customer/' + user.id, user);
 			},
 			'delete' : function(id) {
 				return $http['delete']('user/' + id);

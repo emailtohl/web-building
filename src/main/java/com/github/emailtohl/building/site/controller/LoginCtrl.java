@@ -222,7 +222,7 @@ public class LoginCtrl {
 							User u = userService.getUserByEmail(email);
 							iconSrc = u.getIconSrc();
 							iconSrcMap.put(email, iconSrc);// 先放入缓存供下次查询
-						} catch (IllegalArgumentException e2) {
+						} catch (IllegalArgumentException | NullPointerException e2) {
 							logger.debug("可能是匿名用户，查询不到User，也可能是该用户未上传图片");
 						}
 					}
