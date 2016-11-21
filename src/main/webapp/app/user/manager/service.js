@@ -35,7 +35,9 @@ define([ 'user/module', 'common/context' ], function(userModule) {
 			 * 将实体对象中的数据复制到表单对象中
 			 */
 			entity2form : function(e) {
-				var f = {};
+				var f = {
+					subsidiary : {}
+				};
 				f.id = e.id;
 				f.email = e.email;
 				f.name = e.name;
@@ -43,6 +45,11 @@ define([ 'user/module', 'common/context' ], function(userModule) {
 				f.post = e.post;
 				f.department = {name : e.department ? e.department.name : ''};
 				f.description = e.description;
+				f.address = e.address;
+				f.subsidiary.city = e.subsidiary.city;
+				f.subsidiary.province = e.subsidiary.province;
+				f.subsidiary.country = e.subsidiary.country;
+				f.subsidiary.language = e.subsidiary.language;
 				return f;
 			},
 			

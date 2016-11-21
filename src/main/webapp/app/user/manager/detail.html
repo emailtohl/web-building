@@ -75,25 +75,9 @@
   <form role="form">
     <div class="box-body">
       <div class="form-group">
-        <label for="exampleInputEmail1">姓名</label>
+        <label for="">姓名</label>
         <input type="text" placeholder="name" class="form-control" ng-model="ctrl.form.name">
       </div>
-      <!-- 
-      <div class="form-group" ng-if="hasAuthority('ADMIN') || hasAuthority('MANAGER')">
-        <div class="radio">
-          <label>
-            <input name="enabled" ng-value="true" type="radio" ng-model="ctrl.form.enabled">
-            	 已激活
-          </label>
-        </div>
-        <div class="radio">
-          <label>
-            <input name="enabled" ng-value="false" type="radio" ng-model="ctrl.form.enabled">
-             	未激活
-          </label>
-        </div>
-      </div>
-       -->
       <div class="form-group">
         <label for="exampleInputPassword1">描述</label>
         <textarea rows="3" placeholder="description" class="form-control" ng-model="ctrl.form.description"></textarea>
@@ -113,6 +97,26 @@
 	      <option value="生产部">生产部</option>
 	      <option value="质量部">质量部</option>
 	    </select>
+      </div>
+      <div class="form-group">
+        <label for="">地址</label>
+        <input type="text" placeholder="address" class="form-control" ng-model="ctrl.form.address">
+      </div>
+      <div class="form-group">
+        <label for="">城市</label>
+        <input type="text" placeholder="city" class="form-control" ng-model="ctrl.form.subsidiary.city">
+      </div>
+      <div class="form-group">
+        <label for="">省份</label>
+        <input type="text" placeholder="province" class="form-control" ng-model="ctrl.form.subsidiary.province">
+      </div>
+      <div class="form-group">
+        <label for="">国家</label>
+        <input type="text" placeholder="country" class="form-control" ng-model="ctrl.form.subsidiary.country">
+      </div>
+      <div class="form-group">
+        <label for="">语言</label>
+        <input type="text" placeholder="language" class="form-control" ng-model="ctrl.form.subsidiary.language">
       </div>
     </div>
     <!-- /.box-body -->
