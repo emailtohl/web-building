@@ -79,8 +79,21 @@ define([ 'common/module', 'common/service/util' ], function(commonModule) {
 				if (rejection.status === 403) {
 					location.replace('login');
 				} else {
+					var i, p, error, data = [];
+					if (rejection.data && rejection.data.errors instanceof Array) {
+						for (i = 0; i < rejection.data.errors.length; i++) {
+							error =  rejection.data.errors[i];
+							for (p in error) {
+								if (error.hasOwnProperty(p)) {
+									data.push(p + ' : ' + error[p]);
+								}
+							}
+						}
+					}
 					$rootScope.errorModal.open = true;
-					$rootScope.errorModal.content = 'status: ' + rejection.status + ' , statusText: ' + rejection.statusText;
+					$rootScope.errorModal.status = rejection.status;
+					$rootScope.errorModal.statusText = rejection.statusText;
+					$rootScope.errorModal.data = data.join(', ');
 					$rootScope.$apply();
 					//alert('status: ' + rejection.status + ' , statusText: ' + rejection.statusText);
 				}
