@@ -77,7 +77,7 @@ public class JPAConfiguration {
 	 */
 	@Profile(PROFILE_DEVELPMENT)
 	@Bean(name = "entityManagerFactory")
-	public LocalEntityManagerFactoryBean LocakEntityManagerFactory() {
+	public LocalEntityManagerFactoryBean LocalEntityManagerFactory() {
 		LocalEntityManagerFactoryBean emfb = new LocalEntityManagerFactoryBean();
 		emfb.setPersistenceUnitName("building-unit");
 		emfb.setJpaPropertyMap(getJpaPropertyMap());
@@ -121,7 +121,7 @@ public class JPAConfiguration {
 	@Conditional(value = Condition1.class)
 	@Bean(name = "jpaTransactionManager")
 	public PlatformTransactionManager development_jpaTransactionManager() {
-		return new JpaTransactionManager(LocakEntityManagerFactory().getObject());
+		return new JpaTransactionManager(LocalEntityManagerFactory().getObject());
 	}
 	
 	@Profile({ PROFILE_PRODUCTION, PROFILE_QA })
