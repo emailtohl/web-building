@@ -12,7 +12,8 @@ define([ 'common/module', 'bootstrap' ], function(common) {
 				open : '=',// 是否打开模态框，双向绑定，使用它时，不能用{{}}，如<div modal open="ctrl.open"></div>
 				title : '@',// 模态框标题，单向取值，使用它时，使用{{}}取值，如<div modal title="{{ctrl.title}}"></div>
 				whenConfirm : '&',// 确认按钮的回调函数
-				type : '@'// class样式，有primary、info、warning、success、danger，默认无
+				type : '@',// class样式，有primary、info、warning、success、danger，默认无
+				disabled : '='
 			},
 			link : function($scope, $element, $attrs) {
 				function openModal() {

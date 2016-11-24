@@ -60,7 +60,7 @@
 	  </div>
 	</div>
 	
-	<div modal open="ctrl.modal.open" title="{{ctrl.modal.title}}" when-confirm="ctrl.modal.whenConfirm()" type="{{ctrl.modal.type}}">
+	<div modal open="ctrl.modal.open" title="{{ctrl.modal.title}}" when-confirm="ctrl.modal.whenConfirm()" type="{{ctrl.modal.type}}" disabled="!ctrl.form.cause || !ctrl.form.status">
 	    <div class="box box-widget">
             <div class="box-header with-border">
               <div class="user-block">

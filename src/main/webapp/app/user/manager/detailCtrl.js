@@ -108,5 +108,8 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 				self.getDetail(id);
 			});
 		};
+		$('input[name="icon"]').on('change', function(e) {
+			$('#submit-file').attr('disabled', null);
+		});
 	}]);
 });

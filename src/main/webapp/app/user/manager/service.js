@@ -46,10 +46,10 @@ define([ 'user/module', 'common/context' ], function(userModule) {
 				f.department = {name : e.department ? e.department.name : ''};
 				f.description = e.description;
 				f.address = e.address;
-				f.subsidiary.city = e.subsidiary.city;
-				f.subsidiary.province = e.subsidiary.province;
-				f.subsidiary.country = e.subsidiary.country;
-				f.subsidiary.language = e.subsidiary.language;
+				f.subsidiary.city = e.subsidiary && e.subsidiary.city;
+				f.subsidiary.province = e.subsidiary && e.subsidiary.province;
+				f.subsidiary.country = e.subsidiary && e.subsidiary.country;
+				f.subsidiary.language = e.subsidiary && e.subsidiary.language;
 				return f;
 			},
 			
