@@ -76,7 +76,7 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 			if (status == null) {
 				return applicationFormRepository.findByNameLike(name.trim() + '%', pageable);
 			} else {
-				return applicationFormRepository.findByStatus(status, pageable);
+				return applicationFormRepository.findByNameLikeAndStatus(name.trim() + '%', status, pageable);
 			}
 		}
 	}

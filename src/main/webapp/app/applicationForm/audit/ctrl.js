@@ -52,6 +52,7 @@ define(['applicationForm/module', 'applicationForm/service'], function(applicati
 				applicationFormService.transit(self.form).success(function(data) {
 					self.openModal.open = false;
 					self.getPager();
+					self.form = JSON.parse(initForm);
 				});
 			},
 		};

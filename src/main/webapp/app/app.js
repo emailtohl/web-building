@@ -9,7 +9,7 @@ define([ 'angular', 'uirouter', 'common/context', 'test/context', 'user/context'
 			$rootScope.$state = $state;
 			$rootScope.$stateParams = $stateParams;
 			// 初始化模态框，遮罩
-			$rootScope.modal = {
+			/*$rootScope.modal = {
 				open : false,
 				type : 'Default',
 				msg : 'hello world',
@@ -20,7 +20,7 @@ define([ 'angular', 'uirouter', 'common/context', 'test/context', 'user/context'
 					console.log(params);
 					this.open = false;
 				}
-			};
+			};*/
 			// 执行失败的提示框
 			$rootScope.errorModal = {
 				open : false,
