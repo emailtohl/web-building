@@ -29,7 +29,7 @@
 		                	<tr style="cursor:pointer;" ng-repeat="x in ctrl.roles" ng-click="ctrl.openModal(x.id)">
                   				<td ng-bind="x.name" class="col-md-5"></td>
                   				<td ng-bind="x.description" class="col-md-5"></td>
-                  				<td class="col-md-2"><button class="btn btn-danger btn-xs" type="button" ng-click="ctrl.delete(x.id, x.name)">删除</button></td>
+                  				<td class="col-md-2"><button class="btn btn-danger btn-xs" type="button" ng-click="ctrl.delete(x.id, x.name, $event)">删除</button></td>
                   			</tr>
 		                </tbody>
 					</table>
@@ -44,7 +44,7 @@
 <!-- /.content -->
 
 
-<div modal open="ctrl.modal.open" title="{{ctrl.modal.title}}" when-confirm="ctrl.modal.whenConfirm()" type="{{ctrl.modal.type}}" disabled="!ctrl.form.name || !ctrl.form.authorityNames || !ctrl.form.authorityNames.length">
+<div modal open="ctrl.modal.open" title="{{ctrl.modal.title}}" when-confirm="ctrl.modal.whenConfirm()" type="{{ctrl.modal.type}}" disabled="!ctrl.form.name">
   <form role="form" name="f">
     <div class="box-body">
       <div class="form-group">
@@ -56,10 +56,13 @@
         <textarea rows="3" placeholder="description" class="form-control" ng-model="ctrl.form.description"></textarea>
       </div>
       <div class="form-group">
-        <label for="exampleInputFile">权限</label>
-        <select multiple="multiple" class="form-control select2" style="width: 100%;" select2 ng-model="ctrl.form.authorityNames">
-	      <option ng-repeat="x in ctrl.authorities" value="{{x.name}}">{{x.description}}</option>
-	    </select>
+        <div class="checkbox" ng-repeat="x in ctrl.authorities">
+		  <label>
+		    <input type="checkbox" value="{{x.name}}" ng-model="x.selected" ng-true-value="true" ng-false-value="false">
+		    {{$index + 1}}
+		    {{x.description}}
+		  </label>
+		</div>
       </div>
     </div>
     <!-- /.box-body -->

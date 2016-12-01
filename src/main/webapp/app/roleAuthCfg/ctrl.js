@@ -13,8 +13,36 @@ define(['roleAuthCfg/module', 'roleAuthCfg/service'], function(roleAuthCfgModule
 		function getAuthorities() {
 			roleAuthCfgService.getAuthorities().success(function(data) {
 				self.authorities = data;
+				// 创建一个以权限名为key，权限对象为value的map
+				self.authMap = {};
+				for (var i = 0; i < data.length; i++) {
+					self.authMap[data[i].name] = data[i];
+				}
 			});
 		}
+		/**
+		 * 在self.authMap中找到被选中的权限名数组
+		 */
+		function getAuthorityNames() {
+			var authorityNames = [], p;
+			for (p in self.authMap) {
+				if (self.authMap.hasOwnProperty(p) && self.authMap[p].selected) {
+					authorityNames.push(self.authMap[p].name);
+				}
+			}
+			return authorityNames;
+		}
+		/**
+		 * 清空self.authMap的被选属性
+		 */
+		function clearAuthMapSelected() {
+			for (var p in self.authMap) {
+				if (self.authMap.hasOwnProperty(p)) {
+					self.authMap[p].selected = false;
+				}
+			}
+		}
+		
 		getRoles();
 		getAuthorities();
 		
@@ -24,10 +52,12 @@ define(['roleAuthCfg/module', 'roleAuthCfg/service'], function(roleAuthCfgModule
 			type : '',
 			whenConfirm : function() {
 				if (self.form.id) {// 有id的是编辑
+					self.form.authorityNames = getAuthorityNames();
 					roleAuthCfgService.updateRole(self.form.id, self.form).success(function(data) {
 						getRoles();
 					});
 				} else {// 没有id的是新增
+					self.form.authorityNames = getAuthorityNames();
 					roleAuthCfgService.createRole(self.form).success(function(data) {
 						getRoles();
 					});
@@ -35,14 +65,14 @@ define(['roleAuthCfg/module', 'roleAuthCfg/service'], function(roleAuthCfgModule
 			},
 		};
 		self.openModal = function(id) {
+			clearAuthMapSelected();// 先清理self.authMap中的被属性
 			if (id) {// 如果是编辑
 				roleAuthCfgService.getRole(id).success(function(data) {
 					self.form = data;
-					var authorityNames = [];
 					for (var i = 0; i < data.authorities.length; i++) {
-						authorityNames.push(data.authorities[i].name);
+						// 根据权限名查询权限对象，然后将其被选属性改为true
+						self.authMap[data.authorities[i].name].selected = true;
 					}
-					self.form.authorityNames = authorityNames;
 				});
 			} else {// 否则是新增
 				self.form = {
@@ -54,7 +84,8 @@ define(['roleAuthCfg/module', 'roleAuthCfg/service'], function(roleAuthCfgModule
 			self.modal.open = true;
 		}
 		
-		self['delete'] = function(id, name) {
+		self['delete'] = function(id, name, $event) {
+			$event.stopPropagation();
 			if (confirm('确定删除“' + name + '”角色吗？')) {
 				roleAuthCfgService.deleteRole(id).success(function() {
 					getRoles();

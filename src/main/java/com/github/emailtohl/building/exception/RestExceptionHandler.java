@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlValue;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -42,6 +43,25 @@ public class RestExceptionHandler {
 			error.setMessage(violation.getMessage());
 			errors.addError(error);
 		}
+		return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public ResponseEntity<ErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+		ErrorResponse errors = new ErrorResponse();
+		ErrorItem i = new ErrorItem();
+		String msg = null;
+		if (e.getCause() != null) {
+			msg = e.getCause().getMessage();
+			if (e.getCause().getCause() != null) {
+				msg = e.getCause().getCause().getMessage();
+				if (e.getCause().getCause().getCause() != null) {
+					msg = e.getCause().getCause().getCause().getMessage();
+				}
+			}
+		}
+		i.setMessage(msg);
+		errors.addError(i);
 		return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
 	}
 	

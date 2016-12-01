@@ -54,7 +54,7 @@ public class PersistenceData {
 			user_update_self = new Authority(USER_UPDATE_SELF, "修改自己账号的权限，用于普通用户"),
 			user_delete = new Authority(USER_DELETE, "删除用户的权限"),
 			application_form_transit = new Authority(APPLICATION_FORM_TRANSIT, "处理申请单的权限"),
-			application_form_read_history = new Authority(APPLICATION_FORM_READ_HISTORY, "处理申请单的权限"),
+			application_form_read_history = new Authority(APPLICATION_FORM_READ_HISTORY, "查看申请单历史记录的权限"),
 			application_form_delete = new Authority(APPLICATION_FORM_DELETE, "删除申请单"),
 			forum_delete = new Authority(FORUM_DELETE, "删除论坛帖子");
 	
