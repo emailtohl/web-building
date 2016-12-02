@@ -72,6 +72,7 @@ define(['angular', 'dashboard/module', 'sparkline', 'knob'], function(angular) {
 		(function SystemInfo() {
 			var url = 'ws://' + window.location.host + '/building/systemInfo';
 			var connection = new WebSocket(url);
+			var $knob = $(".knob"), isCreated = false;
 			
 			connection.onopen = function() {
 				console.log('打开系统信息连接');
@@ -103,8 +104,14 @@ define(['angular', 'dashboard/module', 'sparkline', 'knob'], function(angular) {
 						cpuPoints.splice(0, 1);
 					$cpu.sparkline(cpuPoints);
 				}
-				$scope.$apply();
-				$(".knob").knob().trigger('change');
+				$scope.$apply(function() {
+					if (isCreated) {
+						$knob.trigger('change');
+					} else {
+						$knob.knob().trigger('change');
+						isCreated = true;
+					}
+				});
 			};
 			
 			connection.onclose = function(e) {

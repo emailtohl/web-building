@@ -210,6 +210,6 @@ require([ 'jquery', 'jqueryui', 'bootstrap', 'adminLTE' ], function($) {
  */
 require([ 'angular', 'uirouter', 'app', 'router' ], function(angular) {
 	angular.element(document).ready(function() {
-		angular.bootstrap(document, [ 'appdemo' ]);
+		angular.bootstrap(document, [ 'webBuilding' ]);
 	});
 });

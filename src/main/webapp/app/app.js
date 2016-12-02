@@ -3,24 +3,11 @@
  */
 define([ 'angular', 'uirouter', 'common/context', 'test/context', 'user/context', 'roleAuthCfg/context', 'dashboard/context', 'forum/context', 'applicationForm/context' ],
 	function(angular) {
-		return angular.module('appdemo', [ 'ui.router', 'commonModule', 'testModule', 'userModule', 'roleAuthCfgModule', 'dashboardModule', 'forumModule', 'applicationFormModule' ])
+		return angular.module('webBuilding', [ 'ui.router', 'commonModule', 'testModule', 'userModule', 'roleAuthCfgModule', 'dashboardModule', 'forumModule', 'applicationFormModule' ])
 		.run([ '$rootScope', '$state', '$stateParams', '$http', function($rootScope, $state, $stateParams, $http) {
 			// 让页面能同步状态，显示出该状态应有的效果，例如某菜单被激活的样式
 			$rootScope.$state = $state;
 			$rootScope.$stateParams = $stateParams;
-			// 初始化模态框，遮罩
-			/*$rootScope.modal = {
-				open : false,
-				type : 'Default',
-				msg : 'hello world',
-				close : function() {
-					this.open = false;
-				},
-				save : function(params) {
-					console.log(params);
-					this.open = false;
-				}
-			};*/
 			// 执行失败的提示框
 			$rootScope.errorModal = {
 				open : false,
