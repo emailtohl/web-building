@@ -1,7 +1,7 @@
 define(['angular', 'dashboard/module', 'sparkline', 'knob'], function(angular) {
 	return angular.module('dashboardModule')
 	.controller('DashboardCtrl', ['$scope', '$http', '$state', function($scope, $http, $state) {
-		var self = this;
+		var self = this, isHttps = window.location.protocol == 'https:' ? true : false;
 		// AdminLTE dashboard demo (This is only for demo purposes)
 		// AdminLTE for demo purposes
 		require(['dashboard/dashboard2', 'dashboard/demo'], function() {});
@@ -9,12 +9,12 @@ define(['angular', 'dashboard/module', 'sparkline', 'knob'], function(angular) {
 		self.chatlist = [];
 		
 		/**
-		 * 向获取身份认证方法中注册聊天程序
+		 * 向获取身份认证方法中注册聊天程序.
 		 */
 		$scope.getAuthentication(function(data) {
 			var callee = arguments.callee;
 			if (data && data.username) {
-				var url = 'ws://' + window.location.host + '/building/chat/' + data.username;
+				var url = (isHttps ? 'wss://' : 'ws://') + window.location.host + '/building/chat/' + data.username;
 				var connection = new WebSocket(url);
 				
 				connection.onopen = function() {
@@ -70,7 +70,7 @@ define(['angular', 'dashboard/module', 'sparkline', 'knob'], function(angular) {
 		 */
 		self.systemInfo = {};
 		(function SystemInfo() {
-			var url = 'ws://' + window.location.host + '/building/systemInfo';
+			var url = (isHttps ? 'wss://' : 'ws://') + window.location.host + '/building/systemInfo';
 			var connection = new WebSocket(url);
 			var $knob = $(".knob"), isCreated = false;
 			
