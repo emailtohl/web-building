@@ -1,8 +1,97 @@
-﻿# https原理及tomcat配置https方法
-Author: 百度经验
+#迁移环境时的注意事项
+
+## 一、数据源
+系统中存在3份数据源配置，要保持一致：
+###1. 位于src/main/resources/database.properties
+该文件主要为开发测试提供数据源配置，生产环境中，为了避免内存泄漏，安全，不统一等问题，应该使用tomcat容器中的数据源，见2
+
+###2. tomcat的context.xml文件：
+```xml
+	<Resource name="jdbc/building" type="javax.sql.DataSource"
+		maxActive="20" maxIdle="5" maxWait="10000" username="postgres"
+		password="123456" driverClassName="org.postgresql.Driver"
+		defaultTransactionIsolation="READ_COMMITTED"
+		url="jdbc:postgresql://localhost:5432/building" />
+```
+> 此处配置的是容器的数据源，程序通过JNDI查询使用该数据源
+
+###3. 位于src/main/resources/META-INF/persistence.xml
+执行测试用例时，由于不在容器环境中，所以使用LocalEntityManagerFactoryBean来管理实体工厂，该Bean需要读取META-INF/persistence.xml中的配置。
+> 注意，此文件之所以没有放在src/test/resources中，是因为src/test/java/目录下有许多其他共测试的Entities，为避免把数据表弄混乱，所以它仍然存放在src/main/resources/下
+
+## 二、项目的部署
+###1. 创建数据库
+在src/test/java/下的com.github.emailtohl.building.initdb包中可以有两种方式让JPA提供者生成数据表，并填入初始化数据。
+
+###2. 项目的配置
+项目的servlet、filter、listener均通过com.github.emailtohl.building.bootstrap下的程序启动，并未配置在web.xml中
 
 
-## 什么是HTTPS
+## 三、关于单元测试
+查看单元测试覆盖率可以在项目根目录下运行如下命令:mvn cobertura:cobertura
+常用命令
+
+查看cobertura插件的帮助
+mvn cobertura:help
+
+清空cobertura插件运行结果
+mvn cobertura:clean
+
+运行cobertura的检查任务     
+mvn cobertura:check      
+
+在target文件夹下出现了一个site目录，下面是一个静态站点，里面就是单元测试的覆盖率报告。
+
+## 四、关于Spring Security內建表达式说明
+|             表达式                              |                说明                                                                                             |
+| ------------------------- |:------------------------------------------------:|
+| hasRole([role])           | 返回 true 如果当前主体拥有特定角色。                                                                      |
+| hasAnyRole([role1,role2]) |返回 true 如果当前主体拥有任何一个提供的角色 （使用逗号分隔的字符串队列）|
+| principal                 | 允许直接访问主体对象，表示当前用户                                                                              |
+| authentication            | 允许直接访问当前 Authentication对象从SecurityContext中获得  |
+| permitAll                 | 一直返回true                                       |
+| denyAll                   | 一直返回false                                      |
+| isAnonymous()             | 如果用户是一个匿名登录的用户 就会返回 true                    |
+| isRememberMe()            | 如果用户是通过remember-me 登录的用户 就会返回 true           |
+| isAuthenticated()         | 如果用户不是匿名用户就会返回true                          |
+| isFullyAuthenticated()    | 如果用户不是通过匿名也不是通过remember-me登录的用户时， 就会返回true|
+
+
+## 五、关于Spring data内建表达式说明
+
+表达式			例子			jpql查询语句
+And			findByLastnameAndFirstname		… where x.lastname = ?1 and x.firstname = ?2
+Or		findByLastnameOrFirstname		… where x.lastname = ?1 or x.firstname = ?2
+Is,Equals		findByFirstname,findByFirstnameIs,findByFirstnameEqual		… where x.firstname = 1?
+Between		findByStartDateBetween		… where x.startDate between ?1 and ?2
+LessThan		findByAgeLessThan		… where x.age < ?1
+LessThanEqual		findByAgeLessThanEqual		… where x.age <= ?1
+GreaterThan		findByAgeGreaterThan		… where x.age > ?1
+GreaterThanEqual		findByAgeGreaterThanEqual		… where x.age >= ?1
+After		findByStartDateAfter		… where x.startDate > ?1
+Before		findByStartDateBefore		… where x.startDate < ?1
+IsNull		findByAgeIsNull		… where x.age is null
+IsNotNull,NotNull		findByAge(Is)NotNull		… where x.age not null
+Like		findByFirstnameLike		… where x.firstname like ?1
+NotLike		findByFirstnameNotLike		… where x.firstname not like ?1
+StartingWith		findByFirstnameStartingWith		… where x.firstname like ?1 (parameter bound with appended %)
+EndingWith		findByFirstnameEndingWith		… where x.firstname like ?1 (parameter bound with prepended %)
+Containing		findByFirstnameContaining		… where x.firstname like ?1 (parameter bound wrapped in %)
+OrderBy		findByAgeOrderByLastnameDesc		… where x.age = ?1 order by x.lastname desc
+Not		findByLastnameNot		… where x.lastname <> ?1
+In		findByAgeIn(Collection ages)		… where x.age in ?1
+NotIn		findByAgeNotIn(Collection age)		… where x.age not in ?1
+True		findByActiveTrue()		… where x.active = true
+False		findByActiveFalse()		… where x.active = false
+IgnoreCase		findByFirstnameIgnoreCase		… where UPPER(x.firstame) = UPPER(?1)
+
+
+## 六、 tomcat虚拟目录的配置
+在server.xml的<host>标签下，添加如下如下配置
+<Context path="/building/icon_dir" docBase="D:\program\apache-tomcat-8.0.32\wtpwebapps\web-building-upload\icon_dir" reloadable="true" debug="0"/>
+
+## 七、 HTTPS原理以及tomcat配置https方法
+### 1. 什么是HTTPS
 
 在说HTTPS之前先说说什么是HTTP，HTTP就是我们平时浏览网页时候使用的一种协议。
 
@@ -14,14 +103,14 @@ SSL目前的版本是3.0，被IETF（Internet Engineering Task Force）定义在
 
 目前TLS的版本是1.2，定义在RFC 5246中，暂时还没有被广泛的使用。
 
-## Https的工作原理
+### 2. Https的工作原理
 HTTPS在传输数据之前需要客户端（浏览器）与服务端（网站）之间进行一次握手，在握手过程中将确立双方加密传输数据的密码信息。TLS/SSL协议不仅仅是一套加密传输的协议，更是一件经过艺术家精心设计的艺术品，TLS/SSL中使用了非对称加密，对称加密以及HASH算法。握手过程的简单描述如下：
 
-1.浏览器将自己支持的一套加密规则发送给网站。
+（1）浏览器将自己支持的一套加密规则发送给网站。
 
-2.网站从中选出一组加密算法与HASH算法，并将自己的身份信息以证书的形式发回给浏览器。证书里面包含了网站地址，加密公钥，以及证书的颁发机构等信息。
+（2）网站从中选出一组加密算法与HASH算法，并将自己的身份信息以证书的形式发回给浏览器。证书里面包含了网站地址，加密公钥，以及证书的颁发机构等信息。
 
-3.获得网站证书之后浏览器要做以下工作：
+（3）获得网站证书之后浏览器要做以下工作：
 
 a) 验证证书的合法性（颁发证书的机构是否合法，证书中包含的网站地址是否与正在访问的地址一致等），如果证书受信任，则浏览器栏里面会显示一个小锁头，否则会给出证书不受信的提示。
 
@@ -29,13 +118,13 @@ b) 如果证书受信任，或者是用户接受了不受信的证书，浏览�
 
 c) 使用约定好的HASH计算握手消息，并使用生成的随机数对消息进行加密，最后将之前生成的所有信息发送给网站。
 
-4.网站接收浏览器发来的数据之后要做以下的操作：
+（4）网站接收浏览器发来的数据之后要做以下的操作：
 
 a) 使用自己的私钥将信息解密取出密码，使用密码解密浏览器发来的握手消息，并验证HASH是否与浏览器发来的一致。
 
 b) 使用密码加密一段握手消息，发送给浏览器。
 
-5.浏览器解密并计算握手消息的HASH，如果与服务端发来的HASH一致，此时握手过程结束，之后所有的通信数据将由之前浏览器生成的随机密码并利用对称加密算法进行加密。
+（5）浏览器解密并计算握手消息的HASH，如果与服务端发来的HASH一致，此时握手过程结束，之后所有的通信数据将由之前浏览器生成的随机密码并利用对称加密算法进行加密。
 
 这里浏览器与网站互相发送加密的握手消息并验证，目的是为了保证双方都获得了一致的密码，并且可以正常的加密解密数据，为后续真正数据的传输做一次测试。另外，HTTPS一般使用的加密与HASH算法如下：
 
@@ -51,7 +140,7 @@ HASH算法：MD5，SHA1，SHA256
 
 TLS握手过程中如果有任何错误，都会使加密连接断开，从而阻止了隐私信息的传输。
 
-## 为服务器生成证书
+### 3. 为服务器生成证书
 “运行”控制台，进入%JAVA_HOME%/bin目录，使用如下命令进入目录：
 使用keytool为Tomcat生成证书，假定目标机器的域名是“localhost”，keystore文件存放在“D:\home\tomcat.keystore”，口令为“password”，使用如下命令生成：
 
@@ -71,17 +160,17 @@ keytool -genkey -v -alias tomcat -keyalg RSA -keystore D:\home\tomcat.keystore -
 
 * 输入<tomcat>的主密码，这项较为重要，会在tomcat配置文件中使用，建议输入与keystore的密码一致，设置其它密码也可以，完成上述输入后，直接回车则在你在第二步中定义的位置找到生成的文件。
 
-## 为客户端生成证书
+### 4. 为客户端生成证书
 为浏览器生成证书，以便让服务器来验证它。为了能将证书顺利导入至IE和Firefox，证书格式应该是PKCS12，因此，使用如下命令生成：
 ```
 keytool -genkey -v -alias mykey -keyalg RSA -storetype PKCS12 -keystore D:\home\mykey.p12 （mykey为自定义）。
 ```
 对应的证书库存放在“D:\home\mykey.p12”，客户端的CN可以是任意值。双击mykey.p12文件，即可将证书导入至浏览器（客户端）。
 
-## 让服务器信任客户端证书
+### 5. 让服务器信任客户端证书
 由于是双向SSL认证，服务器必须要信任客户端证书，因此，必须把客户端证书添加为服务器的信任认证。由于不能直接将PKCS12格式的证书库导入，必须先把客户端证书导出为一个单独的CER文件，使用如下命令：
 ```
-keytool -export -alias mykey -keystore D:\home\mykey.p12 -storetype PKCS12 -storepass password -rfc -file D:\home\mykey.cer 
+keytool -export -alias mykey -keystore D:\home\mykey.p12 -storetype PKCS12 -storepass password -rfc -file D:\home\mykey.cer
 ```
 mykey为自定义与客户端定义的mykey要一致，password是你设置的密码。通过以上命令，客户端证书就被我们导出到“D:\home\mykey.cer”文件了。
 
@@ -93,9 +182,16 @@ keytool -import -v -file D:\home\mykey.cer -keystore D:\home\tomcat.keystore
 ```
 keytool -list -keystore D:\home\tomcat.keystore (tomcat为你设置服务器端的证书名)。
 ```
+
+### 6. 让客户端信任服务器证书
+
+由于是双向SSL认证，客户端也要验证服务器证书，因此，必须把服务器证书添加到浏览的“受信任的根证书颁发机构”。由于不能直接将keystore格式的证书库导入，必须先把服务器证书导出为一个单独的CER文件，使用如下命令：
+```
+keytool -keystore D:\home\tomcat.keystore -export -alias tomcat -file D:\home\tomcat.cer (tomcat为你设置服务器端的证书名)。
+```
 通过以上命令，服务器证书就被我们导出到“D:\home\tomcat.cer”文件了。双击tomcat.cer文件，按照提示安装证书，将证书填入到“受信任的根证书颁发机构”。
 
-## 配置Tomcat服务器
+### 7. 配置Tomcat服务器
 打开Tomcat根目录下的/conf/server.xml，找到Connector port="8443"配置段，修改为如下：
 ```html
 <Connector port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol"
@@ -118,6 +214,5 @@ truststoreFile="D:\\home\\tomcat.keystore" truststorePass="password" />
 
 * truststorePass:根证书密码
 
-## 测试
+### 8. 测试
 在浏览器中输入:https://localhost:8443/，会弹出选择客户端证书界面，点击“确定”，会进入tomcat主页，地址栏后会有“锁”图标，表示本次会话已经通过HTTPS双向验证，接下来的会话过程中所传输的信息都已经过SSL信息加密。
-
