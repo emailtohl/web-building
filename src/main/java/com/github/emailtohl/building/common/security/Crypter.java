@@ -34,7 +34,7 @@ import org.apache.logging.log4j.Logger;
  * 用于文件加密解密的工具，加解密文件用的是AES算法，AES的密钥用RSA算法加密
  * @author HeLei
  */
-public class Crypt {
+public class Crypter {
 	private static final Logger logger = LogManager.getLogger();
 	private Hex hex = new Hex();
 	
@@ -196,7 +196,7 @@ public class Crypt {
 			byte[] plaintextByteArray = cipher.doFinal(ciphertextByteArray);
 			return new String(plaintextByteArray);
 		} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
-			throw new RuntimeException("加密失败", e);
+			throw new RuntimeException("解密失败", e);
 		}
 	}
 	

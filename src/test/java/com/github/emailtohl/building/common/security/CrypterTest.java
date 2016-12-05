@@ -6,11 +6,11 @@ import java.security.KeyPair;
 
 import org.junit.Test;
 
-public class CryptTest {
+public class CrypterTest {
 
 	@Test
 	public void testCryptUtil() {
-		Crypt c = new Crypt();
+		Crypter c = new Crypter();
 		KeyPair k = c.createKeyPairs(2048);
 		String plaintext = "待加密文本";
 		System.out.println("加密前： " + plaintext);
