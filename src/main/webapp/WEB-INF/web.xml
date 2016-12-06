@@ -10,6 +10,7 @@
     <welcome-file>default.jsp</welcome-file>
     <welcome-file>app/starter.html</welcome-file>
   </welcome-file-list>
+  <distributable/>
   <session-config>
     <session-timeout>30</session-timeout>
     <cookie-config>

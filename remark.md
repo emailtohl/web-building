@@ -1,4 +1,4 @@
-# 环境迁移与开发参考
+# 部署与开发参考
 
 ## 一、数据源
 系统中存在3份数据源配置，要保持一致：
@@ -161,7 +161,80 @@ truststoreFile="D:\\home\\tomcat.keystore" truststorePass="password" />
 ### 8. 测试
 在浏览器中输入:https://localhost:8443/，会弹出选择客户端证书界面，点击“确定”，会进入tomcat主页，地址栏后会有“锁”图标，表示本次会话已经通过HTTPS双向验证，接下来的会话过程中所传输的信息都已经过SSL信息加密。
 
-## 五、关于单元测试
+## 五、关于tomcat的集群配置
+
+在tomcat的server.xml的<Engine>标签中添加下面这段配置，（直接copy），配置具体含义见[tomcat8官方的集群配置文档](http://tomcat.apache.org/tomcat-8.0-doc/cluster-howto.html)）
+
+```xml
+
+        <Cluster className="org.apache.catalina.ha.tcp.SimpleTcpCluster"
+                 channelSendOptions="6">
+
+          <Manager className="org.apache.catalina.ha.session.BackupManager"
+                   expireSessionsOnShutdown="false"
+                   notifyListenersOnReplication="true"
+                   mapSendOptions="6"/>
+          <!--
+          <Manager className="org.apache.catalina.ha.session.DeltaManager"
+                   expireSessionsOnShutdown="false"
+                   notifyListenersOnReplication="true"/>
+          -->
+          <Channel className="org.apache.catalina.tribes.group.GroupChannel">
+            <Membership className="org.apache.catalina.tribes.membership.McastService"
+                        address="228.0.0.4"
+                        port="45564"
+                        frequency="500"
+                        dropTime="3000"/>
+            <Receiver className="org.apache.catalina.tribes.transport.nio.NioReceiver"
+                      address="auto"
+                      port="5000"
+                      selectorTimeout="100"
+                      maxThreads="6"/>
+
+            <Sender className="org.apache.catalina.tribes.transport.ReplicationTransmitter">
+              <Transport className="org.apache.catalina.tribes.transport.nio.PooledParallelSender"/>
+            </Sender>
+            <Interceptor className="org.apache.catalina.tribes.group.interceptors.TcpFailureDetector"/>
+            <Interceptor className="org.apache.catalina.tribes.group.interceptors.MessageDispatch15Interceptor"/>
+            <Interceptor className="org.apache.catalina.tribes.group.interceptors.ThroughputInterceptor"/>
+          </Channel>
+
+          <Valve className="org.apache.catalina.ha.tcp.ReplicationValve"
+                 filter=".*\.gif|.*\.js|.*\.jpeg|.*\.jpg|.*\.png|.*\.htm|.*\.html|.*\.css|.*\.txt"/>
+
+          <Deployer className="org.apache.catalina.ha.deploy.FarmWarDeployer"
+                    tempDir="/tmp/war-temp/"
+                    deployDir="/tmp/war-deploy/"
+                    watchDir="/tmp/war-listen/"
+                    watchEnabled="false"/>
+
+          <ClusterListener className="org.apache.catalina.ha.session.ClusterSessionListener"/>
+        </Cluster>
+        
+```
+
+然后再在<Engine>标签中添加jvmRoute属性，每个tomcat的jvmRoute不同，该属性将作为sessionId的后缀。
+
+将这个tomcat复制到不同服务器中，如果是在同一服务器中，需要修改server.xml中的三个端口，以防冲突：
+
+```xml
+
+<Server port="8006" shutdown="SHUTDOWN"><!-- 服务端口 -->
+    //...
+    <Connector port="8081" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="8443" /><!-- http端口 -->
+    //...
+    <Connector port="8010" protocol="AJP/1.3" redirectPort="8443" /><!-- AJP端口 --> 
+   //...
+</Server>
+
+```
+
+分别启动项目后，若用同一浏览器访问不同tomcat，会发现sessionId是一样的（后缀jvmRoute不同）。剩下的就是负载均衡器的配置了。
+
+
+## 六、关于单元测试
 查看单元测试覆盖率可以在项目根目录下运行如下命令:mvn cobertura:cobertura
 常用命令
 
@@ -176,7 +249,7 @@ mvn cobertura:check
 
 在target文件夹下出现了一个site目录，下面是一个静态站点，里面就是单元测试的覆盖率报告。
 
-## 六、关于Spring Security內建表达式说明
+## 七、关于Spring Security內建表达式说明
 |             表达式                              |                说明                                                                                             |
 | ------------------------- |:------------------------------------------------:|
 | hasRole([role])           | 返回 true 如果当前主体拥有特定角色。                                                                      |
@@ -191,7 +264,7 @@ mvn cobertura:check
 | isFullyAuthenticated()    | 如果用户不是通过匿名也不是通过remember-me登录的用户时， 就会返回true|
 
 
-## 七、关于Spring data内建表达式说明
+## 八、关于Spring data内建表达式说明
 
 |表达式				|						例子								|					jpql查询语句							|
 |-------------------|-------------------------------------------------------|-------------------------------------------------------|
