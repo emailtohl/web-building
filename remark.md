@@ -163,7 +163,13 @@ truststoreFile="D:\\home\\tomcat.keystore" truststorePass="password" />
 
 ## 五、关于tomcat的集群配置
 
-在tomcat的server.xml的<Engine>标签中添加下面这段配置，（直接copy），配置具体含义见[tomcat8官方的集群配置文档](http://tomcat.apache.org/tomcat-8.0-doc/cluster-howto.html)）
+### 1. 应用程序提供集群支持
+
+在应用的web.xml的<web-app></web-app>标签下添加<distributable/>标签，开启对集群的支持。
+
+### 2. 开启tomcat的对集群的支持
+
+在tomcat的server.xml的<Engine>标签中添加下面这段配置，（直接copy），配置具体含义见[tomcat8官方的集群配置文档](http://tomcat.apache.org/tomcat-8.0-doc/cluster-howto.html)
 
 ```xml
 
@@ -233,6 +239,57 @@ truststoreFile="D:\\home\\tomcat.keystore" truststorePass="password" />
 
 分别启动项目后，若用同一浏览器访问不同tomcat，会发现sessionId是一样的（后缀jvmRoute不同）。剩下的就是负载均衡器的配置了。
 
+### 3. 负载均衡器Apache的配置
+
+在apache conf的目录下新建一个balance.conf配置文件，内容如下：
+   
+```
+#提供基础的代理功能
+LoadModule proxy_module modules/mod_proxy.so
+#提供负载均衡的功能
+LoadModule proxy_balancer_module modules/mod_proxy_balancer.so
+#代理http协议
+LoadModule proxy_http_module modules/mod_proxy_http.so
+
+#负载均衡的算法模块
+LoadModule lbmethod_byrequests_module modules/mod_lbmethod_byrequests.so
+LoadModule slotmem_shm_module modules/mod_slotmem_shm.so
+#兼容低版本访问
+LoadModule access_compat_module modules/mod_access_compat.so
+
+ProxyRequests Off
+ProxyPass / balancer://building/
+
+#设置代理的算法
+#ProxySet lbmethod=bytraffic
+
+#代理关联配置loadfactor可以分发请求权重，loadfactor越大，权重越大
+#route与tomcat中server.xml<Engine>标签的jvmRoute属性一致
+#将localhost替换成实际tomcat的ip或域名
+<Proxy balancer://building>
+  BalancerMember http://localhost:8080 loadfactor=1 route=jvm1
+  BalancerMember http://localhost:8081 loadfactor=1 route=jvm2
+
+  #热部署，当着备份服务，当jvm1和jvm2死掉的时候，就自动访问jvm3
+  #BalancerMember http://localhost:9080 loadfactor=1 route=jvm3  status=+H
+</Proxy>
+
+#负载均衡控制台，通过http://localhost/balancer-manager 访问
+<Location /balancer-manager>
+    SetHandler balancer-manager
+    Order Deny,Allow
+    Allow from all
+    #Allow from localhost
+</Location>
+```
+
+打开conf/httpd.conf将balance.conf引进去，在httpd.conf最下面通过下面命令引入
+
+```sh
+include conf\balance.conf
+```
+
+启动apache，在浏览器的地址栏输入http://localhost发现它已经路由到tomcat的主页上了，说明apache路径分发成功，这里我们在地址栏输入http://localhost/building，发现他能路由到相应的页面，并在jvm1和jvm2进行切换
 
 ## 六、关于单元测试
 查看单元测试覆盖率可以在项目根目录下运行如下命令:mvn cobertura:cobertura
