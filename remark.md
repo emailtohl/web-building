@@ -219,7 +219,11 @@ truststoreFile="D:\\home\\tomcat.keystore" truststorePass="password" />
         
 ```
 
-然后再在<Engine>标签中添加jvmRoute属性，每个tomcat的jvmRoute不同，该属性将作为sessionId的后缀。
+然后再在
+```xml
+<Engine name="Catalina" defaultHost="localhost" jvmRoute="jvm1"></Engine>
+```
+标签中添加jvmRoute属性，每个tomcat的jvmRoute不同，该属性将作为sessionId的后缀。
 
 将这个tomcat复制到不同服务器中，如果是在同一服务器中，需要修改server.xml中的三个端口，以防冲突：
 
@@ -237,7 +241,7 @@ truststoreFile="D:\\home\\tomcat.keystore" truststorePass="password" />
 
 ```
 
-分别启动项目后，若用同一浏览器访问不同tomcat，会发现sessionId是一样的（后缀jvmRoute不同）。剩下的就是负载均衡器的配置了。
+分别启动项目后，若用同一浏览器访问不同tomcat，会发现sessionId是一样的（后缀jvmRoute不同）这说明tomcat之间复制了session。
 
 ### 3. 负载均衡器Apache的配置
 
@@ -270,7 +274,7 @@ ProxyPass / balancer://building/
   BalancerMember http://localhost:8080 loadfactor=1 route=jvm1
   BalancerMember http://localhost:8081 loadfactor=1 route=jvm2
 
-  #热部署，当着备份服务，当jvm1和jvm2死掉的时候，就自动访问jvm3
+  #热部署，当着备份服务，当jvm1和jvm2宕机时，就自动访问jvm3
   #BalancerMember http://localhost:9080 loadfactor=1 route=jvm3  status=+H
 </Proxy>
 
@@ -289,7 +293,9 @@ ProxyPass / balancer://building/
 include conf\balance.conf
 ```
 
-启动apache，在浏览器的地址栏输入http://localhost发现它已经路由到tomcat的主页上了，说明apache路径分发成功，这里我们在地址栏输入http://localhost/building，发现他能路由到相应的页面，并在jvm1和jvm2进行切换
+启动apache，在浏览器的地址栏输入http://localhost发现它已经路由到tomcat的主页上了，说明apache路径分发成功，输入项目地址http://localhost/building，它能路由到相应的页面，并在jvm1和jvm2进行切换。
+
+若想在控制台上查看监控情况，可以在地址栏上输入http://localhost/balancer-manager
 
 ## 六、关于单元测试
 查看单元测试覆盖率可以在项目根目录下运行如下命令:mvn cobertura:cobertura
