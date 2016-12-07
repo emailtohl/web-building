@@ -1,5 +1,7 @@
 package com.github.emailtohl.building.common.security;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -11,7 +13,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
-import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -20,11 +21,8 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
 import org.apache.logging.log4j.LogManager;
@@ -176,27 +174,72 @@ public class Crypter {
 		out.write(outBytes);
 	}
 
+	/**
+	 * 加密字符串
+	 * @param plaintext
+	 * @param publicKey
+	 * @return
+	 */
 	public String encrypt(String plaintext, PublicKey publicKey) {
 		try {
+			ByteArrayInputStream in = new ByteArrayInputStream(plaintext.getBytes());
+			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			DataOutputStream out = new DataOutputStream(bout);
+
+			KeyGenerator keygen;
+			keygen = KeyGenerator.getInstance("AES");
+
+			SecureRandom random = new SecureRandom();
+			keygen.init(random);
+			SecretKey key = keygen.generateKey();
+
 			Cipher cipher = Cipher.getInstance("RSA");
-			cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-			byte[] ciphertextByteArray = cipher.doFinal(plaintext.getBytes());
-			String ciphertext = hex.encodeHexStr(ciphertextByteArray);
+			cipher.init(Cipher.WRAP_MODE, publicKey);
+			byte[] wrappedKey = cipher.wrap(key);
+			out.writeInt(wrappedKey.length);
+			out.write(wrappedKey);
+
+			cipher = Cipher.getInstance("AES");
+			cipher.init(Cipher.ENCRYPT_MODE, key);
+			crypt(in, out, cipher);
+			
+			String ciphertext = hex.encodeHexStr(bout.toByteArray());
 			return ciphertext;
-		} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
-			throw new RuntimeException("加密失败", e);
+		} catch (IOException | GeneralSecurityException e) {
+			logger.fatal("加密失败", e);
+			throw new RuntimeException(e);
 		}
 	}
 	
+	/**
+	 * 解密字符串
+	 * @param ciphertext
+	 * @param privateKey
+	 * @return
+	 */
 	public String decrypt(String ciphertext, PrivateKey privateKey) {
 		try {
-			Cipher cipher = Cipher.getInstance("RSA");
-			cipher.init(Cipher.DECRYPT_MODE, privateKey);
 			byte[] ciphertextByteArray = hex.decodeHex(ciphertext.toCharArray());
-			byte[] plaintextByteArray = cipher.doFinal(ciphertextByteArray);
-			return new String(plaintextByteArray);
-		} catch (InvalidKeyException | NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
-			throw new RuntimeException("解密失败", e);
+			ByteArrayInputStream bin = new ByteArrayInputStream(ciphertextByteArray);
+			DataInputStream in = new DataInputStream(bin);
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			
+			int length = in.readInt();
+			byte[] wrappedKey = new byte[length];
+			in.read(wrappedKey, 0, length);
+
+			Cipher cipher = Cipher.getInstance("RSA");
+			cipher.init(Cipher.UNWRAP_MODE, privateKey);
+			Key key = cipher.unwrap(wrappedKey, "AES", Cipher.SECRET_KEY);
+
+			cipher = Cipher.getInstance("AES");
+			cipher.init(Cipher.DECRYPT_MODE, key);
+
+			crypt(in, out, cipher);
+			return new String(out.toByteArray());
+		} catch (IOException | GeneralSecurityException e) {
+			logger.fatal("解密失败", e);
+			throw new RuntimeException(e);
 		}
 	}
 	
