@@ -181,11 +181,9 @@ public class Crypter {
 	 * @return
 	 */
 	public String encrypt(String plaintext, PublicKey publicKey) {
-		try {
-			ByteArrayInputStream in = new ByteArrayInputStream(plaintext.getBytes());
-			ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			DataOutputStream out = new DataOutputStream(bout);
-
+		try (ByteArrayInputStream in = new ByteArrayInputStream(plaintext.getBytes());
+				ByteArrayOutputStream bout = new ByteArrayOutputStream();
+				DataOutputStream out = new DataOutputStream(bout);) {
 			KeyGenerator keygen;
 			keygen = KeyGenerator.getInstance("AES");
 
@@ -218,12 +216,10 @@ public class Crypter {
 	 * @return
 	 */
 	public String decrypt(String ciphertext, PrivateKey privateKey) {
-		try {
-			byte[] ciphertextByteArray = hex.decodeHex(ciphertext.toCharArray());
-			ByteArrayInputStream bin = new ByteArrayInputStream(ciphertextByteArray);
-			DataInputStream in = new DataInputStream(bin);
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			
+		byte[] ciphertextByteArray = hex.decodeHex(ciphertext.toCharArray());
+		try (ByteArrayInputStream bin = new ByteArrayInputStream(ciphertextByteArray);
+				DataInputStream in = new DataInputStream(bin);
+				ByteArrayOutputStream out = new ByteArrayOutputStream();) {
 			int length = in.readInt();
 			byte[] wrappedKey = new byte[length];
 			in.read(wrappedKey, 0, length);

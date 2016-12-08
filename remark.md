@@ -219,6 +219,12 @@ truststoreFile="D:\\home\\tomcat.keystore" truststorePass="password" />
         
 ```
 
+> 注意：集群中tomcat间用组播方式进行通信，如果机器上有多个网卡（也可能是虚拟机的网卡）则可能导致组播失败，解决的办法是<Cluster>元素的<Membership>元素配置bind属性，它用于明确知道组播地址。
+
+```xml
+<Membership className="org.apache.catalina.tribes.membership.McastService" bind="127.0.0.1".../>
+```
+
 然后再在
 ```xml
 <Engine name="Catalina" defaultHost="localhost" jvmRoute="jvm1"></Engine>
