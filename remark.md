@@ -260,6 +260,8 @@ LoadModule proxy_module modules/mod_proxy.so
 LoadModule proxy_balancer_module modules/mod_proxy_balancer.so
 #代理http协议
 LoadModule proxy_http_module modules/mod_proxy_http.so
+#支持转发websocket协议
+LoadModule proxy_wstunnel_module modules/mod_proxy_wstunnel.so
 
 #负载均衡的算法模块
 LoadModule lbmethod_byrequests_module modules/mod_lbmethod_byrequests.so
@@ -270,7 +272,14 @@ LoadModule access_compat_module modules/mod_access_compat.so
 ProxyRequests Off
 #启动了ProxyPass后，ProxyRequests一定是Off
 #配置含义是凡是到根目录“/”的请求均交由均衡器“balancer://cluster/”处理，对应下面<Proxy balancer://cluster>
+
+#websocket是长连接不能像http请求那样被负载器一个个地转发，这里只能直接转交到处理服务器上
+#转发到具体的websocket服务器上，该规则需配置在“/”前面，否则会被先当作http处理
+ProxyPass /building/systemInfo ws://192.168.70.1:8080/building/systemInfo
+ProxyPass /building/chat/ ws://192.168.70.1:8080/building/chat/
+
 ProxyPass / balancer://cluster/
+
 
 #设置代理的算法
 #ProxySet lbmethod=bytraffic
