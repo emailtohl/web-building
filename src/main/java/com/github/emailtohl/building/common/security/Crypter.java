@@ -184,9 +184,7 @@ public class Crypter {
 		try (ByteArrayInputStream in = new ByteArrayInputStream(plaintext.getBytes());
 				ByteArrayOutputStream bout = new ByteArrayOutputStream();
 				DataOutputStream out = new DataOutputStream(bout);) {
-			KeyGenerator keygen;
-			keygen = KeyGenerator.getInstance("AES");
-
+			KeyGenerator keygen = KeyGenerator.getInstance("AES");
 			SecureRandom random = new SecureRandom();
 			keygen.init(random);
 			SecretKey key = keygen.generateKey();

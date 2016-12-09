@@ -268,17 +268,18 @@ LoadModule slotmem_shm_module modules/mod_slotmem_shm.so
 LoadModule access_compat_module modules/mod_access_compat.so
 
 ProxyRequests Off
-ProxyPass / balancer://building/
+#启动了ProxyPass后，ProxyRequests一定是Off
+#配置含义是凡是到根目录“/”的请求均交由均衡器“balancer://cluster/”处理，对应下面<Proxy balancer://cluster>
+ProxyPass / balancer://cluster/
 
 #设置代理的算法
 #ProxySet lbmethod=bytraffic
 
 #代理关联配置loadfactor可以分发请求权重，loadfactor越大，权重越大
 #route与tomcat中server.xml<Engine>标签的jvmRoute属性一致
-#将localhost替换成实际tomcat的ip或域名
-<Proxy balancer://building>
-  BalancerMember http://localhost:8080 loadfactor=1 route=jvm1
-  BalancerMember http://localhost:8081 loadfactor=1 route=jvm2
+<Proxy balancer://cluster>
+  BalancerMember http://192.168.70.1:8080 loadfactor=1 route=jvm1
+  BalancerMember http://192.168.70.130:8080 loadfactor=1 route=jvm2
 
   #热部署，当着备份服务，当jvm1和jvm2宕机时，就自动访问jvm3
   #BalancerMember http://localhost:9080 loadfactor=1 route=jvm3  status=+H
