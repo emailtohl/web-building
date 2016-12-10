@@ -41,6 +41,7 @@ public class CreateTable1 {
 		entityManager.persist(foo);
 		entityManager.persist(bar);
 		entityManager.persist(baz);
+		entityManager.persist(qux);
 	
 
 		entityManager.getTransaction().commit();

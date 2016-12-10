@@ -13,5 +13,30 @@ import javax.persistence.Table;
 @Table(name = "t_customer")
 public class Customer extends User {
 	private static final long serialVersionUID = -1136305533524407299L;
+	/**
+	 * 客户职位
+	 */
+	private String title;
+	/**
+	 * 所属机构
+	 */
+	private String affiliation;
+	
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	public String getAffiliation() {
+		return affiliation;
+	}
+	public void setAffiliation(String affiliation) {
+		this.affiliation = affiliation;
+	}
+	@Override
+	public String toString() {
+		return "Customer [title=" + title + ", affiliation=" + affiliation + "]";
+	}
 	
 }

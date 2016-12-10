@@ -174,27 +174,24 @@ truststoreFile="D:\\home\\tomcat.keystore" truststorePass="password" />
 ```xml
 
         <Cluster className="org.apache.catalina.ha.tcp.SimpleTcpCluster"
-                 channelSendOptions="6">
+                 channelSendOptions="8">
 
-          <Manager className="org.apache.catalina.ha.session.BackupManager"
-                   expireSessionsOnShutdown="false"
-                   notifyListenersOnReplication="true"
-                   mapSendOptions="6"/>
-          <!--
           <Manager className="org.apache.catalina.ha.session.DeltaManager"
                    expireSessionsOnShutdown="false"
                    notifyListenersOnReplication="true"/>
-          -->
+
           <Channel className="org.apache.catalina.tribes.group.GroupChannel">
             <Membership className="org.apache.catalina.tribes.membership.McastService"
+						bind="127.0.0.1"
                         address="228.0.0.4"
                         port="45564"
                         frequency="500"
                         dropTime="3000"/>
             <Receiver className="org.apache.catalina.tribes.transport.nio.NioReceiver"
                       address="auto"
-                      port="5000"
-                      selectorTimeout="100"
+                      port="4000"
+                      autoBind="100"
+                      selectorTimeout="5000"
                       maxThreads="6"/>
 
             <Sender className="org.apache.catalina.tribes.transport.ReplicationTransmitter">
@@ -202,11 +199,11 @@ truststoreFile="D:\\home\\tomcat.keystore" truststorePass="password" />
             </Sender>
             <Interceptor className="org.apache.catalina.tribes.group.interceptors.TcpFailureDetector"/>
             <Interceptor className="org.apache.catalina.tribes.group.interceptors.MessageDispatch15Interceptor"/>
-            <Interceptor className="org.apache.catalina.tribes.group.interceptors.ThroughputInterceptor"/>
           </Channel>
 
           <Valve className="org.apache.catalina.ha.tcp.ReplicationValve"
-                 filter=".*\.gif|.*\.js|.*\.jpeg|.*\.jpg|.*\.png|.*\.htm|.*\.html|.*\.css|.*\.txt"/>
+                 filter=""/>
+          <Valve className="org.apache.catalina.ha.session.JvmRouteBinderValve"/>
 
           <Deployer className="org.apache.catalina.ha.deploy.FarmWarDeployer"
                     tempDir="/tmp/war-temp/"

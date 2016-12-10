@@ -65,6 +65,7 @@ public class PersistenceData {
 	public final static Employee foo = new Employee();
 	public final static Employee bar = new Employee();
 	public final static Customer baz = new Customer();
+	public final static Customer qux = new Customer();
 	
 	public final static Company company = new Company();
 	public final static Department product = new Department(), qa = new Department();
@@ -94,7 +95,7 @@ public class PersistenceData {
 		admin.getUsers().add(emailtohl);
 		manager.getUsers().add(foo);
 		employee.getUsers().add(bar);
-		user.getUsers().addAll(Arrays.asList(emailtohl, baz));
+		user.getUsers().addAll(Arrays.asList(emailtohl, baz, qux));
 		
 		String salt = BCrypt.gensalt(HASHING_ROUNDS, r);
 //		URL url = PersistenceData.class.getProtectionDomain().getCodeSource().getLocation();
@@ -206,6 +207,8 @@ public class PersistenceData {
 		bar.setIconSrc("download/img/icon-head-bar.jpg");
 		
 		baz.setName("baz");
+		baz.setTitle("客户经理");
+		baz.setAffiliation("客户咨询公司");
 		baz.setUsername("baz@test.com");
 		baz.setEmail("baz@test.com");
 		baz.setEnabled(true);
@@ -230,6 +233,34 @@ public class PersistenceData {
 			e.printStackTrace();
 		}
 		baz.setIconSrc("download/img/icon-head-baz.jpg");
+		
+		qux.setName("qux");
+		qux.setTitle("销售经理");
+		qux.setAffiliation("客户咨询公司");
+		qux.setUsername("qux@test.com");
+		qux.setEmail("qux@test.com");
+		qux.setEnabled(true);
+		qux.setIcon(null);
+		qux.setPassword(BCrypt.hashpw("123456", salt));
+		qux.setDescription("高级客户");
+		s = new Subsidiary();
+		s.setCity("重庆");
+		s.setCountry("中国");
+		s.setProvince("重庆");
+		s.setLanguage("zh");
+		s.setMobile("177******05");
+		qux.setSubsidiary(s);
+		qux.setGender(Gender.FEMALE);
+		qux.getRoles().add(user);
+		try (InputStream is = cl.getResourceAsStream("img/icon-head-qux.jpg")) {
+			qux.setBirthday(sdf.parse("1992-07-17"));
+			icon = new byte[is.available()];
+			is.read(icon);
+			qux.setIcon(icon);
+		} catch (ParseException | IOException e) {
+			e.printStackTrace();
+		}
+		qux.setIconSrc("download/img/icon-head-qux.jpg");
 		
 		product.setEmployees(new HashSet<Employee>(Arrays.asList(foo)));
 		qa.setEmployees(new HashSet<Employee>(Arrays.asList(bar)));
