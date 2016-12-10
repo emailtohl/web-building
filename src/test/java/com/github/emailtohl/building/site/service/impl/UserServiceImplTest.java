@@ -104,6 +104,9 @@ public class UserServiceImplTest {
 		cc.setLanguage("zh");
 		cc.setProvince("四川");
 		cus.setSubsidiary(cc);
+		cus.setTitle("客户甲乙丙");
+		cus.setAffiliation("某某科技公司");
+		
 		set = Validator.validate(cus);
 		logger.debug(set);
 	}

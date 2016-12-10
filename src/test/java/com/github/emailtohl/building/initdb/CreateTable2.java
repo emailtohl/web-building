@@ -29,6 +29,7 @@ public class CreateTable2 {
 		entityManager.persist(user_update_all);
 		entityManager.persist(user_update_self);
 		entityManager.persist(user_delete);
+		entityManager.persist(user_custom);
 		entityManager.persist(application_form_transit);
 		entityManager.persist(application_form_read_history);
 		entityManager.persist(application_form_delete);

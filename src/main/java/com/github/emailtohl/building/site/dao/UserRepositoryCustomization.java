@@ -8,7 +8,11 @@ import org.springframework.data.domain.Pageable;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.CriterionQueryRepository;
 import com.github.emailtohl.building.site.entities.User;
-
+/**
+ * 用户管理数据访问的自定义接口
+ * @author HeLei
+ *
+ */
 public interface UserRepositoryCustomization extends CriterionQueryRepository<User> {
 	
 	Pager<User> dynamicQuery(User user, Pageable pageable);

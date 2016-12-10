@@ -7,6 +7,7 @@ import static com.github.emailtohl.building.initdb.PersistenceData.emailtohl;
 import static com.github.emailtohl.building.initdb.PersistenceData.foo;
 import static com.github.emailtohl.building.initdb.PersistenceData.product;
 import static com.github.emailtohl.building.initdb.PersistenceData.qa;
+import static com.github.emailtohl.building.initdb.PersistenceData.qux;
 
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
@@ -38,6 +39,9 @@ public class CleanTestData {
 		try {
 			forumPostRepository.delete(forumPostRepository.findByUserEmail(baz.getEmail()));
 		} catch (InvalidDataAccessApiUsageException e) {}
+		try {
+			forumPostRepository.delete(forumPostRepository.findByUserEmail(qux.getEmail()));
+		} catch (InvalidDataAccessApiUsageException e) {}
 		
 		
 		try {
@@ -51,6 +55,9 @@ public class CleanTestData {
 		} catch (InvalidDataAccessApiUsageException e) {}
 		try {
 			userRepository.delete(userRepository.findByEmail(baz.getEmail()));
+		} catch (InvalidDataAccessApiUsageException e) {}
+		try {
+			userRepository.delete(userRepository.findByEmail(qux.getEmail()));
 		} catch (InvalidDataAccessApiUsageException e) {}
 		
 		

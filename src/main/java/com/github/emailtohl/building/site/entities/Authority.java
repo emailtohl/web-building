@@ -63,6 +63,10 @@ public class Authority extends BaseEntity {
 	 */
 	public static final String USER_DELETE = "user_delete";
 	/**
+	 * 客户管理的权限
+	 */
+	public static final String USER_CUSTOM = "user_custom";
+	/**
 	 * 处理申请单状态的权限
 	 */
 	public static final String APPLICATION_FORM_TRANSIT = "application_form_transit";

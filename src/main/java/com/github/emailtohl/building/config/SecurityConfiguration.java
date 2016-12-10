@@ -1,18 +1,6 @@
 package com.github.emailtohl.building.config;
 
-import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_DELETE;
-import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_READ_HISTORY;
-import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_TRANSIT;
-import static com.github.emailtohl.building.site.entities.Authority.FORUM_DELETE;
-import static com.github.emailtohl.building.site.entities.Authority.USER_CREATE_SPECIAL;
-import static com.github.emailtohl.building.site.entities.Authority.USER_DELETE;
-import static com.github.emailtohl.building.site.entities.Authority.USER_DISABLE;
-import static com.github.emailtohl.building.site.entities.Authority.USER_GRANT_ROLES;
-import static com.github.emailtohl.building.site.entities.Authority.USER_READ_ALL;
-import static com.github.emailtohl.building.site.entities.Authority.USER_READ_SELF;
-import static com.github.emailtohl.building.site.entities.Authority.USER_ROLE_AUTHORITY_ALLOCATION;
-import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_ALL;
-import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_SELF;
+import static com.github.emailtohl.building.site.entities.Authority.*;
 
 import java.io.IOException;
 
@@ -167,6 +155,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.antMatchers(HttpMethod.PUT, "/user/grantRoles/**").hasAuthority(USER_GRANT_ROLES)
 					.antMatchers(HttpMethod.PUT, "/user/disableUser/**").hasAuthority(USER_DISABLE)
 					.antMatchers(HttpMethod.POST, "/user/icon").fullyAuthenticated()
+					.antMatchers("/custom/**").hasAuthority(USER_CUSTOM)
 					.antMatchers(HttpMethod.POST, "/fileUploadServer/**").fullyAuthenticated()
 					.antMatchers(HttpMethod.GET, "/applicationForm/query").hasAuthority(APPLICATION_FORM_TRANSIT)
 					.antMatchers(HttpMethod.PUT, "/applicationForm").hasAuthority(APPLICATION_FORM_TRANSIT)
