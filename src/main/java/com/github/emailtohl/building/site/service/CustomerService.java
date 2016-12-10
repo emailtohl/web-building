@@ -1,6 +1,6 @@
 package com.github.emailtohl.building.site.service;
 
-import static com.github.emailtohl.building.site.entities.Authority.USER_CUSTOM;
+import static com.github.emailtohl.building.site.entities.Authority.USER_CUSTOMER;
 
 import javax.transaction.Transactional;
 import javax.validation.constraints.Min;
@@ -19,7 +19,7 @@ import com.github.emailtohl.building.site.entities.Customer;
  */
 @Transactional
 @Validated
-@PreAuthorize("hasAuthority('" + USER_CUSTOM + "')")
+@PreAuthorize("hasAuthority('" + USER_CUSTOMER + "')")
 public interface CustomerService {
 	/**
 	 * 根据用户名和公司进行组合查询

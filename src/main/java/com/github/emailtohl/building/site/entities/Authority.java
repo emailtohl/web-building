@@ -65,7 +65,7 @@ public class Authority extends BaseEntity {
 	/**
 	 * 客户管理的权限
 	 */
-	public static final String USER_CUSTOM = "user_custom";
+	public static final String USER_CUSTOMER = "user_customer";
 	/**
 	 * 处理申请单状态的权限
 	 */

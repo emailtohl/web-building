@@ -53,7 +53,7 @@ public class PersistenceData {
 			user_update_all = new Authority(USER_UPDATE_ALL, "修改所有用户的权限，用于管理员"),
 			user_update_self = new Authority(USER_UPDATE_SELF, "修改自己账号的权限，用于普通用户"),
 			user_delete = new Authority(USER_DELETE, "删除用户的权限"),
-			user_custom = new Authority(USER_CUSTOM, "客户管理的权限"),
+			user_customer = new Authority(USER_CUSTOMER, "客户管理的权限"),
 			application_form_transit = new Authority(APPLICATION_FORM_TRANSIT, "处理申请单的权限"),
 			application_form_read_history = new Authority(APPLICATION_FORM_READ_HISTORY, "查看申请单历史记录的权限"),
 			application_form_delete = new Authority(APPLICATION_FORM_DELETE, "删除申请单"),
@@ -83,15 +83,15 @@ public class PersistenceData {
 		user_update_all.getRoles().addAll(Arrays.asList(admin));
 		user_update_self.getRoles().addAll(Arrays.asList(admin, manager, employee, user));
 		user_delete.getRoles().add(admin);
-		user_custom.getRoles().addAll(Arrays.asList(admin, manager, employee));
+		user_customer.getRoles().addAll(Arrays.asList(admin, manager, employee));
 		application_form_transit.getRoles().addAll(Arrays.asList(admin, manager, employee));
 		application_form_read_history.getRoles().addAll(Arrays.asList(admin, manager, employee));
 		application_form_delete.getRoles().addAll(Arrays.asList(admin));
 		forum_delete.getRoles().addAll(Arrays.asList(admin));
 		
-		admin.getAuthorities().addAll(Arrays.asList(user_role_authority_allocation, user_create_ordinary, user_create_special, user_enable, user_disable, user_grant_roles, user_read_all, user_read_self, user_update_all, user_update_self, user_delete, user_custom, application_form_transit, application_form_read_history, application_form_delete, forum_delete));
-		manager.getAuthorities().addAll(Arrays.asList(user_create_ordinary, user_create_special, user_enable, user_disable, user_grant_roles, user_read_all, user_read_self, user_update_self, user_custom, application_form_transit, application_form_read_history));
-		employee.getAuthorities().addAll(Arrays.asList(user_create_ordinary, user_enable, user_read_all, user_read_self, user_update_self, user_custom, application_form_transit, application_form_read_history));
+		admin.getAuthorities().addAll(Arrays.asList(user_role_authority_allocation, user_create_ordinary, user_create_special, user_enable, user_disable, user_grant_roles, user_read_all, user_read_self, user_update_all, user_update_self, user_delete, user_customer, application_form_transit, application_form_read_history, application_form_delete, forum_delete));
+		manager.getAuthorities().addAll(Arrays.asList(user_create_ordinary, user_create_special, user_enable, user_disable, user_grant_roles, user_read_all, user_read_self, user_update_self, user_customer, application_form_transit, application_form_read_history));
+		employee.getAuthorities().addAll(Arrays.asList(user_create_ordinary, user_enable, user_read_all, user_read_self, user_update_self, user_customer, application_form_transit, application_form_read_history));
 		user.getAuthorities().addAll(Arrays.asList(user_create_ordinary, user_enable, user_read_self, user_update_self));
 		
 		admin.getUsers().add(emailtohl);
