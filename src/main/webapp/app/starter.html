@@ -271,22 +271,28 @@ desired effect
         <!-- Optionally, you can add icons to the links -->
         <li ng-class="{active: $state.includes('dashboard')}"><a ui-sref="dashboard"><i class="fa fa-dashboard"></i> <span>首页</span></a></li>
         <li class="treeview" ng-class="{active: $state.includes('forum')}">
-          <a href="#"><i class="fa fa-forumbee"></i> <span>论坛</span> <i class="fa fa-angle-left pull-right"></i></a>
+          <a href="#">
+            <i class="fa fa-forumbee"></i>
+            <span>论坛</span>
+            <i class="fa fa-angle-left pull-right"></i>
+          </a>
           <ul class="treeview-menu">
             <li ng-class="{active: $state.includes('forum.search')}" ><a ui-sref="forum.search" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>全文查找</a></li>
             <li ng-class="{active: $state.includes('forum.add')}"><a ui-sref="forum.add" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>发帖</a></li>
           </ul>
         </li>
-        <li class=""  ng-class="{active: $state.includes('crm')}" ui-sref="crm">
+        <li class="" ng-if="hasAuthority('user_customer')" ng-class="{active: $state.includes('crm')}" ui-sref="crm">
           <a href="#">
-            <i class="fa fa-th"></i> <span>客户管理</span>
-            <span class="pull-right-container">
-              <small class="label pull-right bg-red">crm</small>
-            </span>
+            <i class="fa fa-th"></i>
+            <span>客户管理</span>
           </a>
         </li>
         <li class="treeview" ng-class="{active: $state.includes('applicationForm')}">
-          <a href="#"><i class="fa fa-tasks"></i> <span>申请表</span> <i class="fa fa-angle-left pull-right"></i></a>
+          <a href="#">
+          	  <i class="fa fa-tasks"></i>
+	          <span>申请表</span>
+	          <i class="fa fa-angle-left pull-right"></i>
+	      </a>
           <ul class="treeview-menu">
             <li ng-class="{active: $state.includes('applicationForm.submit')}" ><a ui-sref="applicationForm.submit" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>提交申请表</a></li>
             <li ng-class="{active: $state.includes('applicationForm.audit')}" ><a ui-sref="applicationForm.audit" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>处理申请表</a></li>
@@ -294,7 +300,11 @@ desired effect
           </ul>
         </li>
         <li class="treeview" ng-class="{active: $state.includes('user')}">
-          <a href="#"><i class="fa fa-users"></i> <span>用户管理</span> <i class="fa fa-angle-left pull-right"></i></a>
+          <a href="#">
+          	<i class="fa fa-users"></i>
+          	<span>用户管理</span> 
+          	<i class="fa fa-angle-left pull-right"></i>
+          </a>
           <ul class="treeview-menu">
             <li ng-class="{active: $state.includes('user.list') || $state.includes('user.detail')}"><a ui-sref="user.list" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>账户管理</a></li>
             <li ng-class="{active: $state.includes('user.role')}" ng-if="hasAuthority('user_grant_roles')"><a ui-sref="user.role" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>角色配置</a></li>
@@ -310,7 +320,11 @@ desired effect
           </a>
         </li>
         <li class="treeview" ng-class="{active: $state.includes('test')}">
-          <a href="#"><i class="fa fa-laptop"></i> <span>组件测试</span> <i class="fa fa-angle-left pull-right"></i></a>
+          <a href="#">
+            <i class="fa fa-laptop"></i>
+            <span>组件测试</span>
+            <i class="fa fa-angle-left pull-right"></i>
+          </a>
           <ul class="treeview-menu">
             <li ng-class="{active: $state.includes('test.datetimepicker')}"><a ui-sref="test.datetimepicker" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>datetimepicker</a></li>
             <li ng-class="{active: $state.includes('test.select2')}"><a ui-sref="test.select2" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>select2</a></li>

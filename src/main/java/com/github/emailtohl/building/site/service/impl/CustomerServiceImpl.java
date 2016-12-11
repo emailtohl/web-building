@@ -2,6 +2,7 @@ package com.github.emailtohl.building.site.service.impl;
 
 import javax.inject.Inject;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,12 +20,20 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public Page<Customer> query(String name, String title, String affiliation, Pageable pageable) {
-		return customRepository.query(name, title, affiliation, pageable);
+		return customRepository.query(isEmpty(name) ? name : name.trim() + '%', 
+				isEmpty(title) ? title : title.trim() + '%', 
+				isEmpty(affiliation) ? affiliation : affiliation.trim() + '%', 
+				pageable);
 	}
 
 	@Override
 	public Customer getCustomer(Long id) {
-		return customRepository.getCustomer(id);
+		Customer t = new Customer();// 瞬时
+		Customer p = customRepository.getCustomer(id);// 持久化
+		if (p != null) {
+			BeanUtils.copyProperties(p, t, "password", "icon", "roles");
+		}
+		return t;
 	}
 
 	@Override

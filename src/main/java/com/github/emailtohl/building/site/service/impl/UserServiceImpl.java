@@ -389,7 +389,7 @@ public class UserServiceImpl implements UserService {
 		} else {
 			result = new User();
 		}
-		BeanUtils.copyProperties(user, result, "password");
+		BeanUtils.copyProperties(user, result, "password", "icon");
 		return result;
 	}
 
