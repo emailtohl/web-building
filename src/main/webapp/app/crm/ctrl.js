@@ -42,18 +42,16 @@ define(['crm/module', 'crm/service'], function(crmModule) {
 		};
 		self.modal = {
 			open : false,
-			title : '编辑用户信息',
+			title : '客户信息',
 			type : '',
 			whenConfirm : function() {
-				if (self.detail.empNum && self.detail.empNum > 0) {
-					userService.updateEmployee(self.form).success(function(data) {
-//							$state.go('user.detail', { id : self.form.id }, { reload : true });
-						self.getDetail(self.form.id);
+				if (self.customer.id) {
+					crmService.update(self.customer).success(function(data) {
+						query();
 					});
 				} else {
-					userService.updateCustomer(self.form).success(function(data) {
-//							$state.go('user.detail', { id : self.form.id }, { reload : true });
-						self.getDetail(self.form.id);
+					crmService.add(self.customer).success(function(data) {
+						query();
 					});
 				}
 			},

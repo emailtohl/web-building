@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.dao.CustomerRepository;
+import com.github.emailtohl.building.site.entities.BaseEntity;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.service.CustomerService;
 /**
@@ -50,7 +51,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public void update(Long id, Customer customer) {
 		Customer c = customRepository.getCustomer(id);
-		BeanUtils.copyProperties(customer, c, "id", "roles", "password", "enabled");
+		BeanUtils.copyProperties(customer, c, BaseEntity.ID_PROPERTY_NAME, BaseEntity.CREATE_DATE_PROPERTY_NAME, BaseEntity.MODIFY_DATE_PROPERTY_NAME, "email", "username", "roles", "password", "enabled");
 	}
 	
 	private boolean isEmpty(String s) {

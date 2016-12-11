@@ -47,6 +47,7 @@ define([ 'user/module', 'common/context' ], function(userModule) {
 				f.department = {name : e.department ? e.department.name : ''};
 				f.description = e.description;
 				f.address = e.address;
+				f.subsidiary.mobile = e.subsidiary && e.subsidiary.mobile;
 				f.subsidiary.city = e.subsidiary && e.subsidiary.city;
 				f.subsidiary.province = e.subsidiary && e.subsidiary.province;
 				f.subsidiary.country = e.subsidiary && e.subsidiary.country;

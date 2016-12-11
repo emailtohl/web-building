@@ -52,30 +52,33 @@
 							<tr>
 								<th class="col-md-1">姓名</th>
 								<th class="col-md-1">职位</th>
-								<th class="col-md-3">组织</th>
+								<th class="col-md-2">组织</th>
 								<th class="col-md-2">邮箱</th>
 								<th class="col-md-2">电话</th>
 								<th class="col-md-3">地址</th>
+								<th class="col-md-1">可用</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr ng-repeat="x in ctrl.pager.content" style="cursor:pointer" ng-click="ctrl.openModal(x.id)">
 								<td ng-bind="x.name" class="col-md-1"></td>
 								<td ng-bind="x.title" class="col-md-1"></td>
-								<td ng-bind="x.affiliation" class="col-md-3"></td>
+								<td ng-bind="x.affiliation" class="col-md-2"></td>
 								<td ng-bind="x.email" class="col-md-2"></td>
 								<td ng-bind="x.telephone" class="col-md-2"></td>
 								<td ng-bind="x.address" class="col-md-3"></td>
+								<td ng-bind="x.enabled ? '是' : '否'" class="col-md-1"></td>
 							</tr>
 						</tbody>
 						<tfoot>
 							<tr>
 								<th class="col-md-1">姓名</th>
 								<th class="col-md-1">职位</th>
-								<th class="col-md-3">组织</th>
+								<th class="col-md-2">组织</th>
 								<th class="col-md-2">邮箱</th>
 								<th class="col-md-2">电话</th>
 								<th class="col-md-3">地址</th>
+								<th class="col-md-1">可用</th>
 							</tr>
 						</tfoot>
 					</table>
@@ -126,7 +129,7 @@
 		This field is invalid
 		</span>
       </div>
-      <div class="form-group has-feedback" ng-class="{'has-success':f.email.$valid,'has-warning':f.email.$error.required,'has-error':f.email.$invalid}">
+      <div class="form-group">
         <label for="">手机</label>
         <input type="tel" placeholder="mobile" name="mobile" class="form-control" ng-model="ctrl.customer.subsidiary.mobile" required="required">
       </div>
@@ -141,7 +144,7 @@
     </div>
     
     <div class="box-body col-xs-6">
-      <div class="form-group has-feedback" ng-class="{'has-success':f.email.$valid,'has-warning':f.email.$error.required,'has-error':f.email.$invalid}">
+      <div class="form-group">
         <label for="">联系电话</label>
         <input type="tel" placeholder="telephone" name="telephone" class="form-control" ng-model="ctrl.customer.telephone">
       </div>
