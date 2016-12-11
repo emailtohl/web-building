@@ -27,7 +27,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
-import com.github.emailtohl.building.site.controller.CustomerCtrl.Form;
+import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.service.CustomerService;
 import com.github.emailtohl.building.stub.SecurityContextManager;
@@ -54,7 +54,11 @@ public class CustomerCtrlTest {
 		};
 		CustomerService customerService = mock(CustomerService.class);
 		when(customerService.getCustomer(100L)).thenReturn(new Customer());
-		doAnswer(answer).when(customerService).update(100L, "xxx", "yyy", "zzz");
+		Customer form = new Customer();
+		form.setName("xxx");
+		form.setTitle("yyy");
+		form.setAffiliation("zzz");
+		doAnswer(answer).when(customerService).update(100L, form);
 		CustomerCtrl ctrl = new CustomerCtrl();
 		ctrl.setCustomerService(customerService);
 		mockMvc = standaloneSetup(ctrl).build();
@@ -72,7 +76,7 @@ public class CustomerCtrlTest {
 
 	@Test
 	public void testUpdate() throws Exception {
-		Form f = new Form();
+		UserDto f = new UserDto();
 		f.setName("xxx");
 		f.setTitle("yyy");
 		f.setAffiliation("zzz");

@@ -48,17 +48,9 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public void update(Long id, String name, String title, String affiliation) {
+	public void update(Long id, Customer customer) {
 		Customer c = customRepository.getCustomer(id);
-		if (!isEmpty(name)) {
-			c.setName(name);
-		}
-		if (!isEmpty(title)) {
-			c.setTitle(title);
-		}
-		if (!isEmpty(affiliation)) {
-			c.setAffiliation(affiliation);
-		}
+		BeanUtils.copyProperties(customer, c, "id", "roles", "password", "enabled");
 	}
 	
 	private boolean isEmpty(String s) {

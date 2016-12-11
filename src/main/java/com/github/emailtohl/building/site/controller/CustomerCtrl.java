@@ -3,8 +3,6 @@ package com.github.emailtohl.building.site.controller;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
-import java.io.Serializable;
-
 import javax.inject.Inject;
 
 import org.springframework.data.domain.Pageable;
@@ -17,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.service.CustomerService;
 
@@ -55,41 +54,15 @@ public class CustomerCtrl {
 	/**
 	 * 修改客户的基本资料
 	 * @param id
-	 * @param name
-	 * @param title
-	 * @param affiliation
+	 * @param form
 	 */
 	@RequestMapping(value = "{id}", method = PUT, produces = "application/json; charset=utf-8")
-	public void update(@PathVariable("id") Long id, @RequestBody Form form) {
-		customerService.update(id, form.getName(), form.getTitle(), form.getAffiliation());
+	public void update(@PathVariable("id") Long id, @RequestBody UserDto form) {
+		customerService.update(id, form.convertCustomer());
 	}
 	
 	public void setCustomerService(CustomerService customerService) {
 		this.customerService = customerService;
 	}
 
-	public static class Form implements Serializable {
-		private static final long serialVersionUID = 3551766794688095565L;
-		String name;
-		String title;
-		String affiliation;
-		public String getName() {
-			return name;
-		}
-		public void setName(String name) {
-			this.name = name;
-		}
-		public String getTitle() {
-			return title;
-		}
-		public void setTitle(String title) {
-			this.title = title;
-		}
-		public String getAffiliation() {
-			return affiliation;
-		}
-		public void setAffiliation(String affiliation) {
-			this.affiliation = affiliation;
-		}
-	}
 }

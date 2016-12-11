@@ -103,7 +103,11 @@ public class CustomServiceImplTest {
 	@Test
 	public void testUpdate() {
 		String name = "甲乙丙", title = "总监", affiliation = "某某科技公司";
-		customService.update(id, name, title, affiliation);
+		Customer form = new Customer();
+		form.setName(name);
+		form.setTitle(title);
+		form.setAffiliation(affiliation);
+		customService.update(id, form);
 		Customer c = customService.getCustomer(id);
 		assertEquals(name, c.getName());
 		assertEquals(title, c.getTitle());

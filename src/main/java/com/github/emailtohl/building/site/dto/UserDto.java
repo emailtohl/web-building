@@ -24,6 +24,8 @@ public class UserDto extends User {
 	private String post;
 	private Double salary;
 	private Department department;
+	private String title;
+	private String affiliation;
 	
 	public String getPlainPassword() {
 		return plainPassword;
@@ -64,6 +66,22 @@ public class UserDto extends User {
 
 	public void setDepartment(Department department) {
 		this.department = department;
+	}
+	
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getAffiliation() {
+		return affiliation;
+	}
+
+	public void setAffiliation(String affiliation) {
+		this.affiliation = affiliation;
 	}
 
 	/**

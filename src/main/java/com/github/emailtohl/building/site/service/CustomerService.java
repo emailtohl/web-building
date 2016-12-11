@@ -40,10 +40,8 @@ public interface CustomerService {
 	/**
 	 * 修改客户的基本资料
 	 * @param id
-	 * @param name
-	 * @param title
-	 * @param affiliation
+	 * @param customer
 	 */
-	void update(@NotNull @Min(1) Long id, String name, String title, String affiliation);
+	void update(@NotNull @Min(1) Long id, Customer customer);
 	
 }
