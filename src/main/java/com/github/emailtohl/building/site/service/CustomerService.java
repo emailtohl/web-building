@@ -6,11 +6,11 @@ import javax.transaction.Transactional;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 
+import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.entities.Customer;
 
 /**
@@ -28,7 +28,7 @@ public interface CustomerService {
 	 * @param pageable
 	 * @return
 	 */
-	Page<Customer> query(String name, String title, String affiliation, Pageable pageable);
+	Pager<Customer> query(String name, String title, String affiliation, Pageable pageable);
 	
 	/**
 	 * 获取客户详情

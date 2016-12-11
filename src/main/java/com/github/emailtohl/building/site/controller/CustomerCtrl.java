@@ -7,7 +7,6 @@ import java.io.Serializable;
 
 import javax.inject.Inject;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
@@ -38,10 +37,9 @@ public class CustomerCtrl {
 	 * @return
 	 */
 	@RequestMapping(value = "pager", method = GET, produces = "application/json; charset=utf-8")
-	Pager<Customer> query(@RequestParam(required = false) String name, @RequestParam(required = false) String title, @RequestParam(required = false) String affiliation, 
+	public Pager<Customer> query(@RequestParam(required = false) String name, @RequestParam(required = false) String title, @RequestParam(required = false) String affiliation, 
 			@PageableDefault(page = 0, size = 20, sort = {"name", "title", "affiliation"}, direction = Direction.DESC) Pageable pageable) {
-		Page<Customer> p = customerService.query(name, title, affiliation, pageable);
-		return new Pager<Customer>(p.getContent(), p.getTotalElements(), pageable.getPageNumber(), pageable.getPageSize());
+		return customerService.query(name, title, affiliation, pageable);
 	}
 	
 	/**
@@ -50,7 +48,7 @@ public class CustomerCtrl {
 	 * @return
 	 */
 	@RequestMapping(value = "{id}", method = GET, produces = "application/json; charset=utf-8")
-	Customer getCustomer(@PathVariable("id") Long id) {
+	public Customer getCustomer(@PathVariable("id") Long id) {
 		return customerService.getCustomer(id);
 	}
 	
@@ -62,7 +60,7 @@ public class CustomerCtrl {
 	 * @param affiliation
 	 */
 	@RequestMapping(value = "{id}", method = PUT, produces = "application/json; charset=utf-8")
-	void update(@PathVariable("id") Long id, @RequestBody Form form) {
+	public void update(@PathVariable("id") Long id, @RequestBody Form form) {
 		customerService.update(id, form.getName(), form.getTitle(), form.getAffiliation());
 	}
 	

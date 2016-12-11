@@ -1,5 +1,8 @@
 package com.github.emailtohl.building.site.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.springframework.beans.BeanUtils;
@@ -7,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.dao.CustomerRepository;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.service.CustomerService;
@@ -19,11 +23,18 @@ public class CustomerServiceImpl implements CustomerService {
 	@Inject CustomerRepository customRepository;
 
 	@Override
-	public Page<Customer> query(String name, String title, String affiliation, Pageable pageable) {
-		return customRepository.query(isEmpty(name) ? name : name.trim() + '%', 
+	public Pager<Customer> query(String name, String title, String affiliation, Pageable pageable) {
+		Page<Customer> page = customRepository.query(isEmpty(name) ? name : name.trim() + '%', 
 				isEmpty(title) ? title : title.trim() + '%', 
 				isEmpty(affiliation) ? affiliation : affiliation.trim() + '%', 
 				pageable);
+		List<Customer> ls = new ArrayList<>();
+		page.getContent().forEach((p/*持久化*/ -> {
+			Customer t = new Customer();// 瞬时
+			BeanUtils.copyProperties(p, t, "password", "icon", "roles");
+			ls.add(t);
+		}));
+		return new Pager<Customer>(ls, page.getTotalElements(), pageable.getPageNumber(), pageable.getPageSize());
 	}
 
 	@Override

@@ -1,26 +1,16 @@
 define([ 'crm/module', 'common/context' ], function(crmModule) {
 	return crmModule.factory('crmService', [ '$http', 'util', function($http, util) {
 		return {
-			getRole : function(id) {
-				return $http.get('role/' + id);
+			query : function(params) {
+				return $http.get('customer/pager?' + util.encodeUrlParams(params));
 			},
-			getRoles : function() {
-				return $http.get('role');
+			get : function(id) {
+				return $http.get('customer/' + id);
 			},
-			getAuthorities : function() {
-				return $http.get('authority');
-			},
-			createRole : function(role) {
-				return $http.post('role', role);
-			},
-			updateRole : function(id, role) {
-				return $http.put('role/' + id, role);
-			},
-			grantAuthorities : function(id, authorityNames) {
-				return $http.put('role/' + id + '/authorityNames/' + authorityNames);
-			},
-			deleteRole : function(id) {
-				return $http['delete']('role/' + id);
+			add : function(customer) {
+				// 默认密码是123456
+				customer.plainPassword = '123456';
+				return $http.post('user/customer', customer);
 			},
 		};
 	}]);

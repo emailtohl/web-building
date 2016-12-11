@@ -1,7 +1,9 @@
 package com.github.emailtohl.building.site.service.impl;
 
 import static com.github.emailtohl.building.initdb.PersistenceData.user;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -16,7 +18,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -25,6 +26,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
+import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.Subsidiary;
@@ -89,7 +91,7 @@ public class CustomServiceImplTest {
 	@Test
 	public void testQuery() {
 		Pageable pageable = new PageRequest(0, 20, Direction.DESC, "name", "title", "affiliation");
-		Page<Customer> p = customService.query(name, title, affiliation, pageable);
+		Pager<Customer> p = customService.query(name, title, affiliation, pageable);
 		assertTrue(p.getTotalElements() > 0);
 	}
 

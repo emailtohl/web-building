@@ -40,6 +40,7 @@ define([ 'user/module', 'common/context' ], function(userModule) {
 				};
 				f.id = e.id;
 				f.email = e.email;
+				f.telephone = e.telephone;
 				f.name = e.name;
 				f.enabled = e.enabled;
 				f.post = e.post;
