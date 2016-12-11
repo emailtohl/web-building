@@ -61,6 +61,21 @@ public class CustomerCtrl {
 		customerService.update(id, form.convertCustomer());
 	}
 	
+	/**
+	 * 下载报表
+	 * @param name
+	 * @param title
+	 * @param affiliation
+	 * @param pageable
+	 * @return
+	 */
+	@RequestMapping(value = "download", method = GET, produces = "application/json; charset=utf-8")
+	public void download(@RequestParam(required = false) String name, @RequestParam(required = false) String title, @RequestParam(required = false) String affiliation, 
+			@PageableDefault(page = 0, size = 20, sort = {"name", "title", "affiliation"}, direction = Direction.DESC) Pageable pageable) {
+		Pager<Customer> p = customerService.query(name, title, affiliation, pageable);
+		
+	}
+	
 	public void setCustomerService(CustomerService customerService) {
 		this.customerService = customerService;
 	}
