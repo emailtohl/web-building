@@ -1,8 +1,5 @@
 package com.github.emailtohl.building.site.service.impl;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,14 +65,18 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public void excel(OutputStream out) throws IOException {
+	public Workbook getCustomerExcel() {
 		List<Customer> ls = customRepository.findAll();
+		List<Row> rs = new ArrayList<Row>();
 		Workbook wb = new HSSFWorkbook();
 		// Workbook wb = new XSSFWorkbook();
 		CreationHelper createHelper = wb.getCreationHelper();
 		Sheet sheet = wb.createSheet("sheet1");
 
 		// Create a row and put some cells in it. Rows are 0 based.
+		Row heads = sheet.createRow(0);
+		heads.createCell(0);
+		
 		Row row = sheet.createRow((short) 0);
 		// Create a cell and put a value in it.
 		Cell cell = row.createCell(0);
@@ -87,7 +88,13 @@ public class CustomerServiceImpl implements CustomerService {
 		row.createCell(3).setCellValue(true);
 
 		// Write the output to a file
-		wb.write(out);
+		// wb.write(out);
+		return wb;
+	}
+
+	@Override
+	public List<Customer> findAll() {
+		return customRepository.findAll();
 	}
 	
 }

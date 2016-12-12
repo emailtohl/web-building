@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
@@ -83,7 +84,8 @@ public class CustomerCtrl {
 		// 设置文件ContentType类型，是通用的，二进制内容类型，这样容器就不会使用字符编码对该数据进行处理（当然更规范的是使用附件真正的MIME内容类型）
 		response.setContentType("application/octet-stream");
 		OutputStream out = response.getOutputStream();
-		customerService.excel(out);
+		Workbook wb = customerService.getCustomerExcel();
+		wb.write(out);
 		out.close();
 	}
 	

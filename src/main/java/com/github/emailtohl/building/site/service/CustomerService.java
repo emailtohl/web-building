@@ -2,13 +2,13 @@ package com.github.emailtohl.building.site.service;
 
 import static com.github.emailtohl.building.site.entities.Authority.USER_CUSTOMER;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.util.List;
 
 import javax.transaction.Transactional;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -50,8 +50,14 @@ public interface CustomerService {
 	/**
 	 * 将客户表生成为Excel报表
 	 * @param out
-	 * @throws IOException 
+	 * @return 
 	 */
-	void excel(OutputStream out) throws IOException;
+	Workbook getCustomerExcel();
+	
+	/**
+	 * 获取所有客户列表
+	 * @return
+	 */
+	List<Customer> findAll();
 	
 }
