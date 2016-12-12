@@ -2,6 +2,8 @@ package com.github.emailtohl.building.site.service;
 
 import static com.github.emailtohl.building.site.entities.Authority.USER_CUSTOMER;
 
+import java.io.OutputStream;
+
 import javax.transaction.Transactional;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -43,5 +45,11 @@ public interface CustomerService {
 	 * @param customer
 	 */
 	void update(@NotNull @Min(1) Long id, Customer customer);
+	
+	/**
+	 * 将客户表生成为Excel报表
+	 * @param out
+	 */
+	void excel(OutputStream out);
 	
 }

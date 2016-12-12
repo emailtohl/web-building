@@ -1,5 +1,7 @@
 package com.github.emailtohl.building.site.dao;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -18,4 +20,6 @@ public interface CustomerRepository extends SearchableRepository<Customer> {
 	void merge(Customer c);
 
 	void delete(Long id);
+	
+	List<Customer> findAll();
 }

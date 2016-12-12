@@ -1,5 +1,6 @@
 package com.github.emailtohl.building.site.service.impl;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +57,12 @@ public class CustomerServiceImpl implements CustomerService {
 	
 	private boolean isEmpty(String s) {
 		return s == null || s.isEmpty();
+	}
+
+	@Override
+	public void excel(OutputStream out) {
+		List<Customer> ls = customRepository.findAll();
+		
 	}
 	
 }

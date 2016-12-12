@@ -3,6 +3,10 @@ package com.github.emailtohl.building.site.dao.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -50,6 +54,14 @@ public class CustomerRepositoryImpl extends AbstractSearchableRepository<Custome
 	public void delete(Long id) {
 		Customer c = entityManager.find(entityClass, id);
 		entityManager.remove(c);
+	}
+
+	@Override
+	public List<Customer> findAll() {
+		CriteriaBuilder b = entityManager.getCriteriaBuilder();
+		CriteriaQuery<Customer> q = b.createQuery(entityClass);
+		Root<Customer> r = q.from(entityClass);
+		return entityManager.createQuery(q.select(r)).getResultList();
 	}
 	
 	private boolean isEmpty(String s) {
