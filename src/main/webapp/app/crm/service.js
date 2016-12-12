@@ -15,6 +15,9 @@ define([ 'crm/module', 'common/context' ], function(crmModule) {
 			update : function(customer) {
 				return $http.put('customer/' + customer.id, this.entity2form(customer));
 			},
+			download : function() {
+				window.open('customer/download');
+			},
 			/**
 			 * 将实体对象中的数据复制到表单对象中
 			 */

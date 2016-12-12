@@ -44,7 +44,7 @@
 			<div class="box">
 				<div class="box-header">
 					<h3 class="box-title">客户表</h3>
-					<button type="button" class="btn btn-default pull-right">下载</button>
+					<button type="button" class="btn btn-default pull-right" ng-click="ctrl.download()">下载</button>
 				</div>
 				<!-- /.box-header -->
 				<div class="box-body">
@@ -140,7 +140,7 @@
       </div>
       <div class="form-group">
         <label for="">组织</label>
-        <input type="text" placeholder="title" class="form-control" ng-model="ctrl.customer.affiliation">
+        <input type="text" placeholder="affiliation" class="form-control" ng-model="ctrl.customer.affiliation">
       </div>
     </div>
     

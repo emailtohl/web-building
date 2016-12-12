@@ -70,12 +70,9 @@ public class CustomerCtrl {
 	
 	/**
 	 * 下载报表
-	 * @param name
-	 * @param title
-	 * @param affiliation
-	 * @param pageable
-	 * @return
-	 * @throws IOException 
+	 * @param request
+	 * @param response
+	 * @throws IOException
 	 */
 	@RequestMapping(value = "download", method = GET)
 	public void download(HttpServletRequest request, HttpServletResponse response) throws IOException {

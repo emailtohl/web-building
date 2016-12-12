@@ -14,7 +14,6 @@ define(['crm/module', 'crm/service'], function(crmModule) {
 		self.customer = {};
 		function query() {
 			crmService.query(self.form).success(function(data) {
-				console.log(data);
 				self.pager = data;
 			});
 		}
@@ -32,7 +31,6 @@ define(['crm/module', 'crm/service'], function(crmModule) {
 		self.openModal = function(id) {
 			if (id) {// 有id表示编辑
 				crmService.get(id).success(function(data) {
-					console.log(data);
 					self.customer = data;
 				});
 			} else {// 否则就是新增
@@ -55,6 +53,9 @@ define(['crm/module', 'crm/service'], function(crmModule) {
 					});
 				}
 			},
+		};
+		self.download = function() {
+			crmService.download();
 		};
 	}]);
 });
