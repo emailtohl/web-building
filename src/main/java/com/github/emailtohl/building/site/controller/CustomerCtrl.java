@@ -80,7 +80,7 @@ public class CustomerCtrl {
 	@RequestMapping(value = "download", method = GET)
 	public void download(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		// 设置响应头Content-Disposition，将强制浏览器询问客户是保存还是下载文件，而不是在浏览器中在线打开该文件
-		response.setHeader("Content-Disposition", "attachment;filename=" + "客户信息_" + Instant.now().toString());
+		response.setHeader("Content-Disposition", "attachment;filename=" + "customer_" + Instant.now().toString() + ".xls");
 		// 设置文件ContentType类型，是通用的，二进制内容类型，这样容器就不会使用字符编码对该数据进行处理（当然更规范的是使用附件真正的MIME内容类型）
 		response.setContentType("application/octet-stream");
 		OutputStream out = response.getOutputStream();

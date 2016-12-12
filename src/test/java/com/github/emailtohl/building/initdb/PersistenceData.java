@@ -124,7 +124,7 @@ public class PersistenceData {
 		emailtohl.setName("hl");
 		emailtohl.setUsername("emailtohl@163.com");
 		emailtohl.setEmail("emailtohl@163.com");
-		emailtohl.setTelephone("69922113");
+		emailtohl.setTelephone(null);
 		emailtohl.setAddress("回龙路66号");
 		emailtohl.setEnabled(true);
 		emailtohl.setPassword(BCrypt.hashpw("123456", salt));

@@ -6,8 +6,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -67,25 +65,25 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public Workbook getCustomerExcel() {
 		List<Customer> ls = customRepository.findAll();
-		List<Row> rs = new ArrayList<Row>();
 		Workbook wb = new HSSFWorkbook();
 		// Workbook wb = new XSSFWorkbook();
-		CreationHelper createHelper = wb.getCreationHelper();
+//		CreationHelper createHelper = wb.getCreationHelper();
 		Sheet sheet = wb.createSheet("sheet1");
 
 		// Create a row and put some cells in it. Rows are 0 based.
 		Row heads = sheet.createRow(0);
-		heads.createCell(0);
+		setRowData(heads, new String[] {"客户名", "电话", "邮箱", "职务", "组织", "地址", "城市", "省份", "国别"});
 		
-		Row row = sheet.createRow((short) 0);
-		// Create a cell and put a value in it.
-		Cell cell = row.createCell(0);
-		cell.setCellValue(1);
-
-		// Or do it on one line.
-		row.createCell(1).setCellValue(1.2);
-		row.createCell(2).setCellValue(createHelper.createRichTextString("This is a string"));
-		row.createCell(3).setCellValue(true);
+		int i = 1;
+		for (Customer c : ls) {
+			Row row = sheet.createRow(i);
+			setRowData(row, new String[] {c.getName(), c.getTelephone(), c.getEmail(), c.getTitle(), c.getAffiliation(), c.getAddress(),
+					c.getSubsidiary() == null ? "" : c.getSubsidiary().getCity(), 
+					c.getSubsidiary() == null ? "" : c.getSubsidiary().getProvince(),
+					c.getSubsidiary() == null ? "" : c.getSubsidiary().getCountry()
+			});
+			i++;
+		}
 
 		// Write the output to a file
 		// wb.write(out);
@@ -95,6 +93,12 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public List<Customer> findAll() {
 		return customRepository.findAll();
+	}
+	
+	private void setRowData(Row row, String[] data) {
+		for (int i = 0; i < data.length; i++) {
+			row.createCell(i).setCellValue(data[i]);
+		}
 	}
 	
 }

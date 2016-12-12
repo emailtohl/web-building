@@ -372,9 +372,9 @@
 			<version>3.15</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jeecg</groupId>
-			<artifactId>easypoi-base</artifactId>
-			<version>2.3.1</version>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.15</version>
 		</dependency>
 	</dependencies>
 

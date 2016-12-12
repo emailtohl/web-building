@@ -14,6 +14,9 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -112,6 +115,21 @@ public class CustomServiceImplTest {
 		assertEquals(name, c.getName());
 		assertEquals(title, c.getTitle());
 		assertEquals(affiliation, c.getAffiliation());
+	}
+	
+	@Test
+	public void testGetCustomerExcel() {
+		Workbook wb = customService.getCustomerExcel();
+		Sheet sheet = wb.getSheetAt(0);
+		int firstRow = sheet.getFirstRowNum(), lastRow = sheet.getLastRowNum();
+		for (int i = firstRow; i <= lastRow; i++) {
+			Row r = sheet.getRow(i);
+			short firstCell = r.getFirstCellNum(), lastCell = r.getLastCellNum();
+			for (int j = firstCell; j <= lastCell; j++) {
+				System.out.println(r.getCell(j));
+			}
+		}
+		
 	}
 
 }
