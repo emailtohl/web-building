@@ -2,6 +2,7 @@ package com.github.emailtohl.building.site.service;
 
 import static com.github.emailtohl.building.site.entities.Authority.USER_CUSTOMER;
 
+import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.transaction.Transactional;
@@ -49,7 +50,8 @@ public interface CustomerService {
 	/**
 	 * 将客户表生成为Excel报表
 	 * @param out
+	 * @throws IOException 
 	 */
-	void excel(OutputStream out);
+	void excel(OutputStream out) throws IOException;
 	
 }
