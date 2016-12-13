@@ -141,8 +141,8 @@ keytool -keystore D:\home\tomcat.keystore -export -alias tomcat -file D:\home\to
 <Connector port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol"
 SSLEnabled="true" maxThreads="150" scheme="https"
 secure="true" clientAuth="true" sslProtocol="TLS"
-keystoreFile="D:\\home\\tomcat.keystore" keystorePass="password"
-truststoreFile="D:\\home\\tomcat.keystore" truststorePass="password" />
+keystoreFile="D:\home\tomcat.keystore" keystorePass="password"
+truststoreFile="D:\home\tomcat.keystore" truststorePass="password" />
 ```
 > tomcat要与生成的服务端证书名一致
 
