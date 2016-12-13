@@ -64,7 +64,7 @@ public class AbstractCriterionQueryRepositoryTest {
 		c2 = new Criterion("age", Criterion.Operator.GTE, 10);
 		c3 = new Criterion("age", Criterion.Operator.LTE, 150);
 		c4 = new Criterion("subsidiary.mobile", Criterion.Operator.NOT_NULL, null);
-		c5 = new Criterion("telephone", Criterion.Operator.NULL, null);
+		c5 = new Criterion("affiliation", Criterion.Operator.NULL, null);
 		
 		Set<Integer> in = new HashSet<>(), notIn = new HashSet<>();
 		for (int i = 0; i < 150; i++) {

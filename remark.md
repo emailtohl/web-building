@@ -257,6 +257,8 @@ LoadModule proxy_module modules/mod_proxy.so
 LoadModule proxy_balancer_module modules/mod_proxy_balancer.so
 #代理http协议
 LoadModule proxy_http_module modules/mod_proxy_http.so
+#代理ajp协议
+LoadModule proxy_ajp_module modules/mod_proxy_ajp.so
 #支持转发websocket协议
 LoadModule proxy_wstunnel_module modules/mod_proxy_wstunnel.so
 
@@ -272,10 +274,10 @@ ProxyRequests Off
 
 #websocket是长连接不能像http请求那样被负载器一个个地转发，这里只能直接转交到处理服务器上
 #转发到具体的websocket服务器上，该规则需配置在“/”前面，否则会被先当作http处理
-ProxyPass /building/systemInfo ws://192.168.70.1:8080/building/systemInfo
-ProxyPass /building/chat/ ws://192.168.70.1:8080/building/chat/
+ProxyPass /building/systemInfo ws://192.168.100.1:8080/building/systemInfo
+ProxyPass /building/chat/ ws://192.168.100.1:8080/building/chat/
 
-ProxyPass / balancer://cluster/
+ProxyPass / balancer://cluster/ stickysession=JSESSIONID nofailover=On
 
 
 #设置代理的算法
@@ -284,8 +286,13 @@ ProxyPass / balancer://cluster/
 #代理关联配置loadfactor可以分发请求权重，loadfactor越大，权重越大
 #route与tomcat中server.xml<Engine>标签的jvmRoute属性一致
 <Proxy balancer://cluster>
-  BalancerMember http://192.168.70.1:8080 loadfactor=1 route=jvm1
-  BalancerMember http://192.168.70.130:8080 loadfactor=1 route=jvm2
+  #用http协议分发
+  BalancerMember http://192.168.100.1:8080 loadfactor=1 route=jvm1
+  BalancerMember http://192.168.100.130:8080 loadfactor=1 route=jvm2
+
+  #用ajp协议分发
+  #BalancerMember ajp://192.168.100.1:8009 loadfactor=1 route=jvm1
+  #BalancerMember ajp://192.168.100.130:8009 loadfactor=1 route=jvm2
 
   #热部署，当着备份服务，当jvm1和jvm2宕机时，就自动访问jvm3
   #BalancerMember http://localhost:9080 loadfactor=1 route=jvm3  status=+H
@@ -306,9 +313,10 @@ ProxyPass / balancer://cluster/
 include conf\balance.conf
 ```
 
-启动apache，在浏览器的地址栏输入http://localhost发现它已经路由到tomcat的主页上了，说明apache路径分发成功，输入项目地址http://localhost/building，它能路由到相应的页面，并在jvm1和jvm2进行切换。
+> 若想在控制台上查看监控情况，可以在地址栏上输入http://localhost/balancer-manager
 
-若想在控制台上查看监控情况，可以在地址栏上输入http://localhost/balancer-manager
+配置中，可以选用两种连接方式：HTTP和AJP，此外“stickysession=JSESSIONID”保证了负载均衡机制能够感知会话，并总是将来自于同一会话的请求发送到相同服务器上。
+
 
 ## 六、关于单元测试
 查看单元测试覆盖率可以在项目根目录下运行如下命令:mvn cobertura:cobertura
