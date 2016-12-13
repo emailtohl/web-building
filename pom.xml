@@ -13,13 +13,13 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<springframework.version>4.3.4.RELEASE</springframework.version>
-		<spring.security.version>4.1.2.RELEASE</spring.security.version>
+		<spring.security.version>4.2.0.RELEASE</spring.security.version>
 		<!-- 
 		<hibernate.version>5.2.2.Final</hibernate.version>
 		注意：Hibernate search版本只能和5.0.11.Final匹配，否则会异常
 		 -->
 		<hibernate.version>5.0.11.Final</hibernate.version>
-		<log4j.version>2.7</log4j.version>
+		<log4j.version>2.6.2</log4j.version>
 	</properties>
 
 	<dependencies>
