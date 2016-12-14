@@ -277,7 +277,7 @@ ProxyRequests Off
 ProxyPass /building/systemInfo ws://192.168.100.1:8080/building/systemInfo
 ProxyPass /building/chat/ ws://192.168.100.1:8080/building/chat/
 
-ProxyPass / balancer://cluster/ stickysession=JSESSIONID nofailover=On
+ProxyPass / balancer://cluster/ stickysession=JSESSIONID
 
 
 #设置代理的算法

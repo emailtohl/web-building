@@ -247,6 +247,7 @@ public class UserServiceImplTest {
 	@Test
 	public void testAuthenticate() {
 		Authentication a = userService.authenticate(foo.getEmail(), "123456");
+		assertNotNull(a);
 		// 查看认证结果
 		logger.debug(gson.toJson(a));
 	}

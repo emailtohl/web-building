@@ -1,17 +1,26 @@
 package com.github.emailtohl.building.config;
 
-import static com.github.emailtohl.building.site.entities.Authority.*;
+import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_DELETE;
+import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_READ_HISTORY;
+import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_TRANSIT;
+import static com.github.emailtohl.building.site.entities.Authority.FORUM_DELETE;
+import static com.github.emailtohl.building.site.entities.Authority.USER_CREATE_SPECIAL;
+import static com.github.emailtohl.building.site.entities.Authority.USER_CUSTOMER;
+import static com.github.emailtohl.building.site.entities.Authority.USER_DELETE;
+import static com.github.emailtohl.building.site.entities.Authority.USER_DISABLE;
+import static com.github.emailtohl.building.site.entities.Authority.USER_GRANT_ROLES;
+import static com.github.emailtohl.building.site.entities.Authority.USER_READ_ALL;
+import static com.github.emailtohl.building.site.entities.Authority.USER_READ_SELF;
+import static com.github.emailtohl.building.site.entities.Authority.USER_ROLE_AUTHORITY_ALLOCATION;
+import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_ALL;
+import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_SELF;
 
 import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,7 +46,6 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
@@ -167,9 +175,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				// HTTP Basic Authentication是基于REST风格，通过HTTP状态码与访问它的应用程序进行沟通
 				/*.and().httpBasic()*/
 				// 登录配置
-				.and()
-				.addFilterBefore(new CORSFilter(), ChannelProcessingFilter.class)
-				.formLogin()
+				.and().formLogin()
 					.loginPage("/login").failureUrl("/login?error").defaultSuccessUrl("/")
 					.usernameParameter("email").passwordParameter("password").permitAll()
 				// 登出配置，注意：Spring security在启动CSRF时，默认只使用HTTP POST，这是为了确保注销需要CSRF令牌和恶意用户不能强行注销你的用户
@@ -206,11 +212,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	 * 注意：OncePerRequestFilter需要在Spring security过滤链之后，这样才能访问得到CsrfToken
 	 */
 	class CsrfHeaderFilter extends OncePerRequestFilter {
+		private String csrfTokenName = CsrfToken.class.getName();
+		
 		@Override
 		protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 				throws ServletException, IOException {
-			CsrfToken csrf = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
+			CsrfToken csrf = (CsrfToken) request.getAttribute(csrfTokenName);
 			if (csrf != null) {
+				request.getSession().setAttribute(csrfTokenName, csrf);
 				Cookie cookie = WebUtils.getCookie(request, "XSRF-TOKEN");
 				String token = csrf.getToken();
 				if (cookie == null || token != null && !token.equals(cookie.getValue())) {
@@ -232,32 +241,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		repository.setHeaderName("X-XSRF-TOKEN");
 		return repository;
 	}
-	
-	/**
-	 * 放开浏览器的同源策略，主要是应用于集群环境下，重定向loginPage的情况
-	 * @author HeLei
-	 */
-	class CORSFilter implements Filter {
-		@Override
-		public void init(FilterConfig filterConfig) throws ServletException {
-		}
-
-		@Override
-		public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-				throws IOException, ServletException {
-			HttpServletResponse res = (HttpServletResponse) response;
-			res.setHeader("Access-Control-Allow-Origin", "*");
-			res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-			res.setHeader("Access-Control-Max-Age", "3600");
-			res.setHeader("Access-Control-Allow-Headers", "x-requested-with");
-			chain.doFilter(request, res);			
-		}
-
-		@Override
-		public void destroy() {
-		}
-	}
-	
 	
 	/**
 	 * 在应用程序中，有时需要访问用户的身份信息，默认的WebSecurityConfigurerAdapter没有暴露AuthenticationManager Bean

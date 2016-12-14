@@ -3,7 +3,6 @@ package com.github.emailtohl.building.listener;
 import javax.inject.Inject;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.servlet.http.HttpSessionActivationListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionIdListener;
 import javax.servlet.http.HttpSessionListener;
@@ -22,7 +21,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * @author HeLei
  */
 //@WebListener
-public class SessionListener implements HttpSessionListener, HttpSessionIdListener, ServletContextListener, HttpSessionActivationListener {
+public class SessionListener implements HttpSessionListener, HttpSessionIdListener, ServletContextListener {
 	private final static Logger log = LogManager.getLogger();
 	@Inject SessionRegistry sessionRegistry;
 
@@ -75,14 +74,4 @@ public class SessionListener implements HttpSessionListener, HttpSessionIdListen
     	log.debug("session id： " + e.getSession().getId() + " 失效");
     }
 
-	@Override
-	public void sessionWillPassivate(HttpSessionEvent se) {
-		log.debug("会话即将复制到其他容器上： " + se.getSession().getAttributeNames());
-	}
-
-	@Override
-	public void sessionDidActivate(HttpSessionEvent se) {
-		log.debug("会话被复制到本容器上： " + se.getSession().getAttributeNames());
-	}
-	
 }

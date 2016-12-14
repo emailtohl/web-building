@@ -18,6 +18,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.RequestToViewNameTranslator;
 import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator;
@@ -74,6 +75,17 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
 	@Override
 	public org.springframework.validation.Validator getValidator() {
 		return this.validator;
+	}
+	
+	/**
+	 * 集群环境下，登录页面由于重定向，需要支持跨域
+	 */
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/login/**").allowedOrigins("*").allowedMethods("GET", "POST", "OPTIONS", "PUT")
+			.allowedHeaders("Content-Type", "X-Requested-With", "accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers")
+			.exposedHeaders("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials")
+			.allowCredentials(true).maxAge(3600);
 	}
 	
 	@Bean
