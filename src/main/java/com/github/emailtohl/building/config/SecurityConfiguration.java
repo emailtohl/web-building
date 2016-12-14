@@ -50,7 +50,6 @@ import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
@@ -179,10 +178,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 					.loginPage("/login").failureUrl("/login?error").defaultSuccessUrl("/")
 					.usernameParameter("email").passwordParameter("password").permitAll()
 				// 登出配置，注意：Spring security在启动CSRF时，默认只使用HTTP POST，这是为了确保注销需要CSRF令牌和恶意用户不能强行注销你的用户
-				// 虽然不推荐，但如果一定要使用<a>标签链接，get等方式退出，则必须更新下面的Java配置：logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+				// 如果要使用<a>标签链接，get等方式退出，则必须更新下面的Java配置：logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 				.and().logout()
-					/*.logoutUrl("/logout")*/
-					.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+					.logoutUrl("/logout")
+					/*.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))*/
 					.logoutSuccessUrl("/login?loggedOut").invalidateHttpSession(true)
 					.deleteCookies("JSESSIONID").permitAll()
 				// session管理，例如登录后切换sessionid，只允许一个人一处登录，控制用户同时登录等功能

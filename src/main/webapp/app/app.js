@@ -57,6 +57,12 @@ define([ 'angular', 'uirouter', 'common/context', 'test/context', 'user/context'
 				$state.go('forum.search', {query : $(this).find('input').val()}, { reload : true});
 			});
 			
+			$rootScope.logout = function() {
+				$http.post('logout').success(function(data) {
+					location.replace('login');
+				});
+			};
+			
 			// 获取图片信息
 			$rootScope.getIconSrc = function() {
 				var iconSrc = $rootScope.authentication && $rootScope.authentication.iconSrc;
