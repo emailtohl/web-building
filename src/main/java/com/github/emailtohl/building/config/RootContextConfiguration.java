@@ -87,7 +87,9 @@ import com.google.gson.Gson;
 		Controller.class, Configuration.class }))
 // 代理功能时，如事务，安全等，proxyTargetClass = false 表示使用Java的动态代理
 @EnableAsync(mode = AdviceMode.PROXY, proxyTargetClass = false, order = Ordered.HIGHEST_PRECEDENCE)
-@EnableCaching// 开启缓存功能
+//开启缓存功能，当执行到一个被@Cacheable注解的方法时，Spring首先检查condition条件是否满足，如果不满足，执行方法，返回；
+//如果满足，在name所命名的缓存空间中查找使用key存储的对象，如果找到，将找到的结果返回，如果没有找到执行方法，将方法的返回值以key-value对象的方式存入name缓存中，然后方法返回。
+@EnableCaching
 @Import({ DataSourceConfiguration.class, JPAConfiguration.class, SecurityConfiguration.class })
 public class RootContextConfiguration
 		implements SchedulingConfigurer, AsyncConfigurer, TransactionManagementConfigurer {

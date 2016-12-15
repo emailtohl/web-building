@@ -17,6 +17,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -41,15 +43,22 @@ public class RoleServiceImplTest {
 	@Inject SecurityContextManager securityContextManager;
 	@Inject RoleService roleService;
 	@Inject AuthorityRepository authorityRepository;
+	@Inject CacheManager cacheManager;
 	
-	Employee u = new Employee();
-	Role r = new Role();
-	Authority auth1 = new Authority("authorityTest1", "测试权限1的描述"), auth2 = new Authority("authorityTest2", "测试权限2的描述");
+	Employee u;
+	Role r;
+	Authority auth1, auth2;
 	Long userId, roleId, auth1Id, auth2Id;
 
 	@Before
 	public void setUp() throws Exception {
 		securityContextManager.setEmailtohl();
+		
+		u = new Employee();
+		r = new Role();
+		
+		auth1 = new Authority("authorityTest1", "测试权限1的描述");
+		auth2 = new Authority("authorityTest2", "测试权限2的描述");
 		
 		u.setName("userEmailTest");
 		u.setEmail("userEmailTest@test.com");
@@ -99,6 +108,9 @@ public class RoleServiceImplTest {
 		if (auth2Id != null) {
 			authorityRepository.delete(auth2Id);
 		}
+		
+		Cache c = cacheManager.getCache(AuthorityRepository.CACHE_NAME);
+		c.clear();
 	}
 
 	@Test
