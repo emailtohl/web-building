@@ -269,7 +269,7 @@ LoadModule slotmem_shm_module modules/mod_slotmem_shm.so
 LoadModule access_compat_module modules/mod_access_compat.so
 
 ProxyRequests Off
-#启动了ProxyPass后，ProxyRequests一定是Off
+#ProxyRequests是Off，负载均衡器就是一个反向代理，即：对于客户端而言它就像是原始服务器，并且客户端不需要进行任何特别的设置
 #配置含义是凡是到根目录“/”的请求均交由均衡器“balancer://cluster/”处理，对应下面<Proxy balancer://cluster>
 
 #websocket是长连接不能像http请求那样被负载器一个个地转发，这里只能直接转交到处理服务器上
@@ -313,7 +313,7 @@ ProxyPass / balancer://cluster/ stickysession=JSESSIONID
 include conf\balance.conf
 ```
 
-> 若想在控制台上查看监控情况，可以在地址栏上输入http://localhost/balancer-manager
+> 若想在控制台上查看监控情况，可以在地址栏上输入http://localhost/balancer-manager，但注意生产环境中要禁止。
 
 配置中，可以选用两种连接方式：HTTP和AJP，此外“stickysession=JSESSIONID”保证了负载均衡机制能够感知会话，并总是将来自于同一会话的请求发送到相同服务器上。
 
