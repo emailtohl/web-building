@@ -26,7 +26,7 @@
         </p>
         <p>
         principal: 
-        	The user’s principal
+        	The user's principal
         </p>
         
         <br />

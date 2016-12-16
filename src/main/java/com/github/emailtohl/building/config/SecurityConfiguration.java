@@ -19,8 +19,12 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.Filter;
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,10 +50,13 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
+import org.springframework.util.StringUtils;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
@@ -148,54 +155,59 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			"/fileUploadServer/test"
 		};
 		security
-				.authorizeRequests()
-					.antMatchers(permitUrl).permitAll()
-					.antMatchers("/user/**").fullyAuthenticated()
-					.antMatchers("/secure").fullyAuthenticated()
-					.antMatchers("/forum/**").fullyAuthenticated()
-					.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-					.antMatchers(HttpMethod.GET, UserCtrl.ICON_DIR + "/**").permitAll()
-					.antMatchers(HttpMethod.GET, "/user/**").hasAnyAuthority(USER_READ_ALL, USER_READ_SELF)
-					.antMatchers(HttpMethod.DELETE, "/user/**").hasAnyAuthority(USER_DELETE)
-					.antMatchers(HttpMethod.POST, "/user/employee").hasAuthority(USER_CREATE_SPECIAL)
-					.antMatchers(HttpMethod.PUT, "/user/**").hasAnyAuthority(USER_UPDATE_ALL, USER_UPDATE_SELF)
-					.antMatchers(HttpMethod.PUT, "/user/grantRoles/**").hasAuthority(USER_GRANT_ROLES)
-					.antMatchers(HttpMethod.PUT, "/user/disableUser/**").hasAuthority(USER_DISABLE)
-					.antMatchers(HttpMethod.POST, "/user/icon").fullyAuthenticated()
-					.antMatchers("/customer/**").hasAuthority(USER_CUSTOMER)
-					.antMatchers(HttpMethod.POST, "/fileUploadServer/**").fullyAuthenticated()
-					.antMatchers(HttpMethod.GET, "/applicationForm/query").hasAuthority(APPLICATION_FORM_TRANSIT)
-					.antMatchers(HttpMethod.PUT, "/applicationForm").hasAuthority(APPLICATION_FORM_TRANSIT)
-					.antMatchers(HttpMethod.GET, "/applicationForm/history").hasAuthority(APPLICATION_FORM_READ_HISTORY)
-					.antMatchers(HttpMethod.DELETE, "/applicationForm").hasAuthority(APPLICATION_FORM_DELETE)
-					.antMatchers(HttpMethod.DELETE, "/forum").hasAuthority(FORUM_DELETE)
-					.antMatchers("/role/**").hasAuthority(USER_ROLE_AUTHORITY_ALLOCATION)
-					.anyRequest().authenticated()
-				// HTTP Basic Authentication是基于REST风格，通过HTTP状态码与访问它的应用程序进行沟通
-				/*.and().httpBasic()*/
-				// 登录配置
-				.and().formLogin()
-					.loginPage("/login").failureUrl("/login?error").defaultSuccessUrl("/")
-					.usernameParameter("email").passwordParameter("password").permitAll()
-				// 登出配置，注意：Spring security在启动CSRF时，默认只使用HTTP POST，这是为了确保注销需要CSRF令牌和恶意用户不能强行注销你的用户
-				// 如果要使用<a>标签链接，get等方式退出，则必须更新下面的Java配置：logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-				.and().logout()
-					.logoutUrl("/logout")
-					/*.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))*/
-					.logoutSuccessUrl("/login?loggedOut").invalidateHttpSession(true)
-					.deleteCookies("JSESSIONID").permitAll()
-				// session管理，例如登录后切换sessionid，只允许一个人一处登录，控制用户同时登录等功能
-				.and().sessionManagement()
-				// 要启用并发控制,还必须配置一个特殊的Spring Security HttpListener发布HttpSession-related事件
-				// 这允许Spring Security注册表建立一个会话它可以用来检测并发会话，见SecurityBootstrap.java
-				// maxSessionsPreventsLogin设置为true时，不允许用户在第二个地方同时登录，默认为false：如果用户在第二个地方登录则将前一会话置为失效
-				// 请注意,如果设置为true,没有明确的用户注销(例如刚刚关闭了浏览器)将无法再次登录,直到他们最初的会话到期
-					.sessionFixation().changeSessionId().maximumSessions(1).maxSessionsPreventsLogin(true)
-					.sessionRegistry(sessionRegistryImpl())
-				.and().and().csrf()/*.disable()*/.csrfTokenRepository(csrfTokenRepository())
-				.and().addFilterAfter(new CsrfHeaderFilter(), CsrfFilter.class)
-				// rememberMe默认的过期时间是2周，这里设为四周；默认的私钥名是SpringSecured，这里设为"building"
-				.rememberMe().tokenValiditySeconds(2419200).key("building");
+			.authorizeRequests()
+				.antMatchers("/login").permitAll()
+				// 跨域请求登录页面时，要发送一个预访问请求：PreflightRequest，让spring security不做拦截
+				.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+				.antMatchers(permitUrl).permitAll()
+				.antMatchers("/user/**").fullyAuthenticated()
+				.antMatchers("/secure").fullyAuthenticated()
+				.antMatchers("/forum/**").fullyAuthenticated()
+				.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+				.antMatchers(HttpMethod.GET, UserCtrl.ICON_DIR + "/**").permitAll()
+				.antMatchers(HttpMethod.GET, "/user/**").hasAnyAuthority(USER_READ_ALL, USER_READ_SELF)
+				.antMatchers(HttpMethod.DELETE, "/user/**").hasAnyAuthority(USER_DELETE)
+				.antMatchers(HttpMethod.POST, "/user/employee").hasAuthority(USER_CREATE_SPECIAL)
+				.antMatchers(HttpMethod.PUT, "/user/**").hasAnyAuthority(USER_UPDATE_ALL, USER_UPDATE_SELF)
+				.antMatchers(HttpMethod.PUT, "/user/grantRoles/**").hasAuthority(USER_GRANT_ROLES)
+				.antMatchers(HttpMethod.PUT, "/user/disableUser/**").hasAuthority(USER_DISABLE)
+				.antMatchers(HttpMethod.POST, "/user/icon").fullyAuthenticated()
+				.antMatchers("/customer/**").hasAuthority(USER_CUSTOMER)
+				.antMatchers(HttpMethod.POST, "/fileUploadServer/**").fullyAuthenticated()
+				.antMatchers(HttpMethod.GET, "/applicationForm/query").hasAuthority(APPLICATION_FORM_TRANSIT)
+				.antMatchers(HttpMethod.PUT, "/applicationForm").hasAuthority(APPLICATION_FORM_TRANSIT)
+				.antMatchers(HttpMethod.GET, "/applicationForm/history").hasAuthority(APPLICATION_FORM_READ_HISTORY)
+				.antMatchers(HttpMethod.DELETE, "/applicationForm").hasAuthority(APPLICATION_FORM_DELETE)
+				.antMatchers(HttpMethod.DELETE, "/forum").hasAuthority(FORUM_DELETE)
+				.antMatchers("/role/**").hasAuthority(USER_ROLE_AUTHORITY_ALLOCATION)
+				.anyRequest().authenticated()
+			// HTTP Basic Authentication是基于REST风格，通过HTTP状态码与访问它的应用程序进行沟通
+			/*.and().httpBasic()*/
+			// 登录配置
+			.and()
+			.addFilterBefore(new CORSFilter(), ChannelProcessingFilter.class)
+			.formLogin()
+				.loginPage("/login").failureUrl("/login?error").defaultSuccessUrl("/")
+				.usernameParameter("email").passwordParameter("password").permitAll()
+			// 登出配置，注意：Spring security在启动CSRF时，默认只使用HTTP POST，这是为了确保注销需要CSRF令牌和恶意用户不能强行注销你的用户
+			// 如果要使用<a>标签链接，get等方式退出，则必须更新下面的Java配置：logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+			.and().logout()
+				.logoutUrl("/logout")
+				/*.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))*/
+				.logoutSuccessUrl("/login?loggedOut").invalidateHttpSession(true)
+				.deleteCookies("JSESSIONID").permitAll()
+			// session管理，例如登录后切换sessionid，只允许一个人一处登录，控制用户同时登录等功能
+			.and().sessionManagement()
+			// 要启用并发控制,还必须配置一个特殊的Spring Security HttpListener发布HttpSession-related事件
+			// 这允许Spring Security注册表建立一个会话它可以用来检测并发会话，见SecurityBootstrap.java
+			// maxSessionsPreventsLogin设置为true时，不允许用户在第二个地方同时登录，默认为false：如果用户在第二个地方登录则将前一会话置为失效
+			// 请注意,如果设置为true,没有明确的用户注销(例如刚刚关闭了浏览器)将无法再次登录,直到他们最初的会话到期
+				.sessionFixation().changeSessionId().maximumSessions(1).maxSessionsPreventsLogin(true)
+				.sessionRegistry(sessionRegistryImpl())
+			.and().and().csrf()/*.disable()*/.csrfTokenRepository(csrfTokenRepository())
+			.and().addFilterAfter(new CsrfHeaderFilter(), CsrfFilter.class)
+			// rememberMe默认的过期时间是2周，这里设为四周；默认的私钥名是SpringSecured，这里设为"building"
+			.rememberMe().tokenValiditySeconds(2419200).key("building");
 		
 	}
 	
@@ -239,6 +251,65 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		HttpSessionCsrfTokenRepository repository = new HttpSessionCsrfTokenRepository();
 		repository.setHeaderName("X-XSRF-TOKEN");
 		return repository;
+	}
+	
+	/**
+	 * 集群环境下需开启跨域访问登录页面，所以需要设置HTTP响应头
+	 */
+	class CORSFilter implements Filter {
+		@Override
+		public void init(FilterConfig filterConfig) throws ServletException {
+		}
+
+		@Override
+		public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+				throws IOException, ServletException {
+			HttpServletRequest req = (HttpServletRequest) request;
+			HttpServletResponse resp = (HttpServletResponse) response;
+			if (req.getHeader("Origin") == null || "null".equalsIgnoreCase(req.getHeader("Origin"))) {
+				resp.setHeader("Access-Control-Allow-Origin", "*");// Access-Control-Allow-Origin: <origin> | * // 授权的源控制  
+				resp.setHeader("Access-Control-Max-Age", "1000");// Access-Control-Max-Age: <delta-seconds> // 授权的时间
+				resp.setHeader("Access-Control-Allow-Credentials", "true");// Access-Control-Allow-Credentials: true | false // 控制是否开启与Ajax的Cookie提交方式，如果用到Session必须要打开
+				resp.setHeader("Access-Control-Allow-Methods", "HEAD,GET,POST,OPTIONS");// Access-Control-Allow-Methods: <method>[, <method>]* // 允许请求的HTTP Method
+				String reqHead = resp.getHeader("Access-Control-Request-Headers");
+	            if (!StringUtils.isEmpty(reqHead)) {
+	            	resp.addHeader("Access-Control-Allow-Headers", reqHead);
+	            }
+			}
+			if ("OPTIONS".equalsIgnoreCase(req.getMethod())) {
+				System.out.println(req.getMethod());
+			}
+			
+			chain.doFilter(request, resp);
+			/*
+			 * 注意：浏览器在默认情况下通过CORS这样的方式是不会传递cookie，一般强制性将cookie添加到header的做法,也会被浏览器拒绝并报错。
+			 * angular：
+			 * $http.post(url, {withCredentials: true, ...})
+			 * 或者
+			 * http({withCredentials: true, ...}).post(...)
+			 * 或者
+			 * .config(function ($httpProvider) {
+			 * 		$httpProvider.defaults.withCredentials = true;
+			 * }
+			 * 
+			 * jQuery：
+			 * $.ajax("www.cros.com/api/data", {
+			 * 		type: "GET",
+			 * 		xhrFields: {
+			 * 			withCredentials: true
+			 * 		},
+			 * 		crossDomain: true,
+			 * 		success: function(data, status, xhr) {
+			 * 
+			 * 		}
+			 * }
+			 */
+		}
+
+		@Override
+		public void destroy() {
+		}
+		
 	}
 	
 	/**
