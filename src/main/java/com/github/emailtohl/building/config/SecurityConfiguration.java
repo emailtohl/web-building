@@ -50,7 +50,6 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
@@ -97,7 +96,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	protected SessionRegistry sessionRegistryImpl() {
 		return new SessionRegistryImpl();
 	}
-
+	
+	/**
+	 * 在应用程序中，有时需要访问用户的身份信息，默认的WebSecurityConfigurerAdapter没有暴露AuthenticationManager Bean
+	 * 若在应用程序中使用AuthenticationManager，则可以将其注册进spring容器中
+	 */
+	@Bean
+	@Override
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean();
+	}
+	
 	/**
 	 * 创建认证管理器：AuthenticationManager，它是spring security的核心
 	 * 在这里的配置中，可以直接告诉AuthenticationManager如何获取用户名、密码、授权
@@ -185,7 +194,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			/*.and().httpBasic()*/
 			// 登录配置
 			.and()
-			.addFilterBefore(new CORSFilter(), ChannelProcessingFilter.class)
+//			.addFilterBefore(new CORSFilter(), ChannelProcessingFilter.class)
 			.formLogin()
 				.loginPage("/login").failureUrl("/login?error").defaultSuccessUrl("/")
 				.usernameParameter("email").passwordParameter("password").permitAll()
@@ -254,7 +263,31 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	}
 	
 	/**
-	 * 集群环境下需开启跨域访问登录页面，所以需要设置HTTP响应头
+	 * 有时候需要支持跨域访问，例如登录页面，所以需要设置HTTP响应头
+	 * 
+	 * 注意：浏览器在默认情况下通过CORS这样的方式是不会传递cookie，一般强制性将cookie添加到header的做法,也会被浏览器拒绝并报错。
+	 * angular：
+	 * $http.post(url, {withCredentials: true, ...})
+	 * 或者
+	 * http({withCredentials: true, ...}).post(...)
+	 * 或者
+	 * .config(function ($httpProvider) {
+	 * 		$httpProvider.defaults.withCredentials = true;
+	 * }
+	 * 
+	 * jQuery：
+	 * $.ajax("www.cros.com/api/data", {
+	 * 		type: "GET",
+	 * 		xhrFields: {
+	 * 			withCredentials: true
+	 * 		},
+	 * 		crossDomain: true,
+	 * 		success: function(data, status, xhr) {
+	 * 
+	 * 		}
+	 * }
+	 * 
+	 * 不过这是全局设置不推荐，最好使用Spring提供的@CrossOrigin注解指定支持跨域访问的接口
 	 */
 	class CORSFilter implements Filter {
 		@Override
@@ -276,50 +309,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	            	resp.addHeader("Access-Control-Allow-Headers", reqHead);
 	            }
 			}
-			if ("OPTIONS".equalsIgnoreCase(req.getMethod())) {
-				System.out.println(req.getMethod());
-			}
-			
 			chain.doFilter(request, resp);
-			/*
-			 * 注意：浏览器在默认情况下通过CORS这样的方式是不会传递cookie，一般强制性将cookie添加到header的做法,也会被浏览器拒绝并报错。
-			 * angular：
-			 * $http.post(url, {withCredentials: true, ...})
-			 * 或者
-			 * http({withCredentials: true, ...}).post(...)
-			 * 或者
-			 * .config(function ($httpProvider) {
-			 * 		$httpProvider.defaults.withCredentials = true;
-			 * }
-			 * 
-			 * jQuery：
-			 * $.ajax("www.cros.com/api/data", {
-			 * 		type: "GET",
-			 * 		xhrFields: {
-			 * 			withCredentials: true
-			 * 		},
-			 * 		crossDomain: true,
-			 * 		success: function(data, status, xhr) {
-			 * 
-			 * 		}
-			 * }
-			 */
 		}
 
 		@Override
 		public void destroy() {
 		}
 		
-	}
-	
-	/**
-	 * 在应用程序中，有时需要访问用户的身份信息，默认的WebSecurityConfigurerAdapter没有暴露AuthenticationManager Bean
-	 * 若在应用程序中使用AuthenticationManager，则可以将其注册进spring容器中
-	 */
-	@Bean
-	@Override
-	public AuthenticationManager authenticationManagerBean() throws Exception {
-		return super.authenticationManagerBean();
 	}
 	
 	/**

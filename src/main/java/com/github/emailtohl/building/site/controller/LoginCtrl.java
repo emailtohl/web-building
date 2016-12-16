@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -34,6 +35,7 @@ import com.github.emailtohl.building.site.service.UserService;
  * 认证控制器，管理用户注册，更改密码，授权等功能
  * @author HeLei
  */
+@CrossOrigin(maxAge = 3600)// 支持跨站（CORS）访问登录页面
 @Controller
 public class LoginCtrl {
 	private static final Logger logger = LogManager.getLogger();
