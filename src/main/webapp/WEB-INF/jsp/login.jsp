@@ -125,33 +125,50 @@
 <script src="lib/iCheck/icheck.min.js"></script>
 <script>
   $(function () {
-    $('input').iCheck({
-      checkboxClass: 'icheckbox_square-blue',
-      radioClass: 'iradio_square-blue',
-      increaseArea: '20%' // optional
-    });
-  });
-  
-  function tip(content) {
-	  var div = $('div.modal');
-	  div.find('#content').text(content);
-	  div.modal('show');                // initializes and invokes show immediately
-  }
-  
-  $('a#forgot').on('click', function() {
-	  var email, _csrf, p;
-	  p = /^[a-z0-9`!#$%^&*'{}?/+=|_~-]+(\.[a-z0-9`!#$%^&*'{}?/+=|_~-]+)*@([a-z0-9]([a-z0-9-]*[a-z0-9])?)+(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/
-	  email = $('input[name="email"]').val();
-	  _csrf = $('input[name="_csrf"]').val();
-	  if (!email || email.match(p) == null) {
-		  tip('请正确填写你的邮箱地址');
-		  return false;
-	  }
-	  $.post('forgetPassword', {
-		  email : email,
-		  _csrf : _csrf
-	  });
-	  tip('请检查邮件，重置密码');
+	$('input').iCheck({
+	  checkboxClass: 'icheckbox_square-blue',
+	  radioClass: 'iradio_square-blue',
+	  increaseArea: '20%' // optional
+	});
+    
+	function tip(content) {
+	 var div = $('div.modal');
+	 div.find('#content').text(content);
+	 div.modal('show');                // initializes and invokes show immediately
+	}
+	
+	$('a#forgot').on('click', function() {
+	 var email, _csrf, p;
+	 p = /^[a-z0-9`!#$%^&*'{}?/+=|_~-]+(\.[a-z0-9`!#$%^&*'{}?/+=|_~-]+)*@([a-z0-9]([a-z0-9-]*[a-z0-9])?)+(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*$/
+	 email = $('input[name="email"]').val();
+	 _csrf = $('input[name="_csrf"]').val();
+	 if (!email || email.match(p) == null) {
+	  tip('请正确填写你的邮箱地址');
+	  return false;
+	 }
+	 $.post('forgetPassword', {
+	  email : email,
+	  _csrf : _csrf
+	 });
+	 tip('请检查邮件，重置密码');
+	});
+    /* 
+	$('form').on('submit', function(e) {
+		e.preventDefault();
+		$.ajax('login', {
+			type : "POST",
+			xhrFields : {
+				withCredentials : true
+			},
+			crossDomain : true,
+			success : function(data, status, xhr) {
+				window.location('/');
+			},
+			data : $('form').serialize()
+		})
+	});
+	 */
+	
   });
   
 </script>

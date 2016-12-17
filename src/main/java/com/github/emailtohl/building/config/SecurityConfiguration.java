@@ -210,8 +210,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			// 要启用并发控制,还必须配置一个特殊的Spring Security HttpListener发布HttpSession-related事件
 			// 这允许Spring Security注册表建立一个会话它可以用来检测并发会话，见SecurityBootstrap.java
 			// maxSessionsPreventsLogin设置为true时，不允许用户在第二个地方同时登录，默认为false：如果用户在第二个地方登录则将前一会话置为失效
-			// 请注意,如果设置为true,没有明确的用户注销(例如刚刚关闭了浏览器)将无法再次登录,直到他们最初的会话到期
-				.sessionFixation().changeSessionId().maximumSessions(1).maxSessionsPreventsLogin(true)
+			// 请注意,如果maxSessionsPreventsLogin设置为true,因异常导致浏览器更换sessionId后，则该用户将在会话到期前无法再次登录
+				.sessionFixation().changeSessionId().maximumSessions(1)/*.maxSessionsPreventsLogin(true)*/
 				.sessionRegistry(sessionRegistryImpl())
 			.and().and().csrf()/*.disable()*/.csrfTokenRepository(csrfTokenRepository())
 			.and().addFilterAfter(new CsrfHeaderFilter(), CsrfFilter.class)
@@ -273,7 +273,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	 * 或者
 	 * .config(function ($httpProvider) {
 	 * 		$httpProvider.defaults.withCredentials = true;
-	 * }
+	 * })
 	 * 
 	 * jQuery：
 	 * $.ajax("www.cros.com/api/data", {
@@ -285,7 +285,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	 * 		success: function(data, status, xhr) {
 	 * 
 	 * 		}
-	 * }
+	 * })
 	 * 
 	 * 不过这是全局设置不推荐，最好使用Spring提供的@CrossOrigin注解指定支持跨域访问的接口
 	 */

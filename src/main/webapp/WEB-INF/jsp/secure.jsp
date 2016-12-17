@@ -27,6 +27,14 @@
         <p>
         principal: 
         	The user's principal
+        	${sessionInformation.sessionId}
+	        <h6>allPrincipals</h6>
+	        <label>${allPrincipalsJson}</label>
+	        <ol>
+	        	<c:forEach var="x" items="${authorities}">
+	        		<li>${x}</li>
+	        	</c:forEach>
+	        </ol>
         </p>
         
         <br />

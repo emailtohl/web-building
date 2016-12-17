@@ -55,15 +55,16 @@ import com.github.emailtohl.building.site.service.UserService;
  * @author HeLei
  */
 @Service
-public class UserServiceImpl implements UserService {
-	private static final Logger logger = LogManager.getLogger();
-	private static final SecureRandom RANDOM = new SecureRandom();
-	private static final int HASHING_ROUNDS = 10;
-	@Inject SecurityContextUtils securityContextUtils;
-	@Inject UserRepository userRepository;
-	@Inject RoleRepository roleRepository;
-	@Inject DepartmentRepository departmentRepository;
-	private Role admin;
+public class UserServiceImpl implements UserService, Serializable {
+	private static final long serialVersionUID = 6570774356558489623L;
+	private static final transient Logger logger = LogManager.getLogger();
+	private static final transient SecureRandom RANDOM = new SecureRandom();
+	private static final transient int HASHING_ROUNDS = 10;
+	@Inject transient SecurityContextUtils securityContextUtils;
+	@Inject transient UserRepository userRepository;
+	@Inject transient RoleRepository roleRepository;
+	@Inject transient DepartmentRepository departmentRepository;
+	private transient Role admin;
 	
 	@PostConstruct
 	public void setRoles() {
@@ -396,7 +397,7 @@ public class UserServiceImpl implements UserService {
 	/**
 	 * 实现UserDetailsService
 	 */
-	private Pattern p = Pattern.compile("username=(" + Constant.PATTERN_EMAIL.substring(1, Constant.PATTERN_EMAIL.length() - 1) + ')');
+	private transient Pattern p = Pattern.compile("username=(" + Constant.PATTERN_EMAIL.substring(1, Constant.PATTERN_EMAIL.length() - 1) + ')');
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Matcher m = p.matcher(username);

@@ -10,6 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,6 +19,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -31,6 +33,7 @@ import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.mail.EmailService;
 import com.github.emailtohl.building.site.service.UserService;
+import com.google.gson.Gson;
 /**
  * 认证控制器，管理用户注册，更改密码，授权等功能
  * @author HeLei
@@ -42,6 +45,9 @@ public class LoginCtrl {
 	@Inject private UserService userService;
 	@Inject private EmailService emailService;
 	@Inject private ThreadPoolTaskScheduler taskScheduler;
+	@Inject private SessionRegistry sessionRegistry;
+	@Inject private Gson gson;
+	
 	
 	/**
 	 * 忘记密码时，当发送邮件时，会记录一个token，该token有时效，过期会被清除
@@ -249,7 +255,21 @@ public class LoginCtrl {
 	 * @return
 	 */
 	@RequestMapping({ "secure" })
-	public String securePage() {
+	public String securePage(HttpSession session, Map<String, Object> model) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		if (context != null) {
+			Authentication authentication = context.getAuthentication();
+			if (authentication != null) {
+				model.put("credentials", authentication.getCredentials());
+				model.put("details", authentication.getDetails());
+				model.put("principal", authentication.getPrincipal());
+				model.put("authorities", authentication.getAuthorities());
+				model.put("allSessions", sessionRegistry.getAllSessions(authentication.getPrincipal(), true));
+			}
+		}
+		model.put("sessionInformation", sessionRegistry.getSessionInformation(session.getId()));
+		model.put("allPrincipals", sessionRegistry.getAllPrincipals());
+		model.put("allPrincipalsJson", gson.toJson(sessionRegistry.getAllPrincipals()));
 		return "secure";
 	}
 
@@ -263,6 +283,14 @@ public class LoginCtrl {
 
 	public void setTaskScheduler(ThreadPoolTaskScheduler taskScheduler) {
 		this.taskScheduler = taskScheduler;
+	}
+
+	public void setSessionRegistry(SessionRegistry sessionRegistry) {
+		this.sessionRegistry = sessionRegistry;
+	}
+
+	public void setGson(Gson gson) {
+		this.gson = gson;
 	}
 	
 }

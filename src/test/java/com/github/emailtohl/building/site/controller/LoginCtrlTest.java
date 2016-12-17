@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.stubbing.Answer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -33,6 +34,7 @@ import com.github.emailtohl.building.site.mail.EmailService;
 import com.github.emailtohl.building.site.service.UserService;
 import com.github.emailtohl.building.stub.SecurityContextManager;
 import com.github.emailtohl.building.stub.ServiceStub;
+import com.google.gson.Gson;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SpringConfigForTest.class)
@@ -66,6 +68,8 @@ public class LoginCtrlTest {
 		LoginCtrl authenticationCtrl = new LoginCtrl();
 		authenticationCtrl.setUserService(userService);
 		authenticationCtrl.setEmailService(emailService);
+		authenticationCtrl.setGson(new Gson());
+		authenticationCtrl.setSessionRegistry(mock(SessionRegistry.class));
 //		不测试定时任务，否则需要等到时后才停止
 //		authenticationCtrl.setTaskScheduler(taskScheduler);
 		mockMvc = standaloneSetup(authenticationCtrl).setViewResolvers(viewResolver).build();
