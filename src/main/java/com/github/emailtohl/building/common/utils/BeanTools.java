@@ -69,7 +69,7 @@ public final class BeanTools {
 				try {
 					map.put(name, fields[i]);
 				} catch (IllegalArgumentException e) {
-					e.printStackTrace();
+					logger.warn("IllegalArgumentException", e);
 				}
 			}
 			clz = clz.getSuperclass();
@@ -99,7 +99,7 @@ public final class BeanTools {
 				try {
 					map.put(name, fields[i].get(bean));
 				} catch (IllegalArgumentException | IllegalAccessException e) {
-					e.printStackTrace();
+					logger.warn("IllegalArgumentException | IllegalAccessException", e);
 				}
 			}
 			clz = clz.getSuperclass();
@@ -120,7 +120,7 @@ public final class BeanTools {
 				map.put(prop.getName(), prop);
 			}
 		} catch (IntrospectionException e) {
-			e.printStackTrace();
+			logger.warn("分析bean对象有异常", e);
 		}
 		return map;
 	}
@@ -136,6 +136,9 @@ public final class BeanTools {
 		for (Entry<String, PropertyDescriptor> e : pmap.entrySet()) {
 			try {
 				Method m = e.getValue().getReadMethod();
+				if (m == null) {
+					continue;
+				}
 				m.setAccessible(true);
 				Object value = m.invoke(javabean, new Object[] {});
 				nvmap.put(e.getKey(), value);
@@ -165,7 +168,7 @@ public final class BeanTools {
 			try {
 				f = clz.getDeclaredField(fieldName);
 			} catch (NoSuchFieldException | SecurityException e) {
-				// e.printStackTrace();
+				logger.warn("获取 " + fieldName + " field失败", e);
 			}
 			if (f == null) {
 				clz = clz.getSuperclass();
@@ -214,7 +217,7 @@ public final class BeanTools {
 		try {
 			obj = targetObjectClass.newInstance();
 		} catch (InstantiationException | IllegalAccessException e) {
-			e.printStackTrace();
+			logger.warn("异常： ", e);
 			throw new IllegalArgumentException("实例化目标对象失败，检查此类是否有无参构造器", e);
 		}
 		Class<? super T> superClass = targetObjectClass;
@@ -268,7 +271,6 @@ public final class BeanTools {
 			ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bout.toByteArray()));
 			return (T) in.readObject();
 		} catch (IOException | ClassNotFoundException e) {
-			e.printStackTrace();
 			logger.warn("检查是否加载了类文件", e);
 			throw new RuntimeException(e);
 		}
@@ -372,7 +374,7 @@ public final class BeanTools {
 				}
 			}
 		} catch (IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
+			logger.warn("IllegalArgumentException | IllegalAccessException", e);
 		}
 	}
 
@@ -501,10 +503,9 @@ public final class BeanTools {
 				}
 			}
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			logger.warn("数字解析错误，此字段注入失败");
+			logger.warn("数字解析错误，此字段注入失败", e);
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.warn("IllegalAccessException", e);
 		}
 	}
 	
@@ -688,7 +689,7 @@ public final class BeanTools {
 								w.invoke(dest, value);
 							}
 						} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-							e.printStackTrace();
+							logger.warn("IllegalAccessException | IllegalArgumentException | InvocationTargetException", e);
 						}
 					}
 				}
@@ -722,7 +723,7 @@ public final class BeanTools {
 					K key = (K) keyField.get(obj);
 					map.put(key, obj);
 				} catch (IllegalArgumentException | IllegalAccessException e) {
-					e.printStackTrace();
+					logger.warn("IllegalArgumentException | IllegalAccessException", e);
 				}
 			}
 		return map;
@@ -744,7 +745,7 @@ public final class BeanTools {
 				try {
 					ls.add(Class.forName(className.trim()));
 				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
+					logger.warn("ClassNotFoundException", e);
 				}
 			}
 		}
@@ -770,7 +771,7 @@ public final class BeanTools {
 				try {
 					ls.add(Class.forName(className.trim()));
 				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
+					logger.warn("ClassNotFoundException", e);
 				}
 			}
 		}
@@ -809,7 +810,7 @@ public final class BeanTools {
 			try {
 				relativelyValue = field.get(relativelyObj);
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.warn("IllegalAccessException", e);
 			}
 			if (baseValue == null) {
 				if (relativelyValue != null) {

@@ -4,6 +4,7 @@ import static com.github.emailtohl.building.site.entities.Authority.USER_ROLE_AU
 import static com.github.emailtohl.building.site.entities.BaseEntity.CREATE_DATE_PROPERTY_NAME;
 import static com.github.emailtohl.building.site.entities.BaseEntity.ID_PROPERTY_NAME;
 import static com.github.emailtohl.building.site.entities.BaseEntity.MODIFY_DATE_PROPERTY_NAME;
+import static com.github.emailtohl.building.site.entities.BaseEntity.VERSION_PROPERTY_NAME;
 import static com.github.emailtohl.building.site.entities.Role.ADMIN;
 
 import java.io.Serializable;
@@ -74,7 +75,7 @@ public class UserServiceImpl implements UserService, Serializable {
 	@Override
 	public Long addEmployee(Employee u) {
 		Employee e = new Employee();
-		BeanUtils.copyProperties(u, e, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, "roles", "enabled", "department");
+		BeanUtils.copyProperties(u, e, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, VERSION_PROPERTY_NAME, "roles", "enabled", "department");
 		// 关于工号
 		synchronized (this) {
 			Integer max = userRepository.getMaxEmpNo();
@@ -108,7 +109,7 @@ public class UserServiceImpl implements UserService, Serializable {
 	@Override
 	public Long addCustomer(Customer u) {	
 		Customer e = new Customer();
-		BeanUtils.copyProperties(u, e, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, "roles", "enabled", "password", "department");
+		BeanUtils.copyProperties(u, e, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, VERSION_PROPERTY_NAME, "roles", "enabled", "password", "department");
 		Role r = roleRepository.findByName(Role.USER);
 		e.getRoles().add(r);
 		r.getUsers().add(e);

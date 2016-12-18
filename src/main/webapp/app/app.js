@@ -51,6 +51,7 @@ define([ 'angular', 'uirouter', 'common/context', 'test/context', 'user/context'
 				&& $rootScope.authentication.principal.username;
 			};
 			
+			// 注销
 			$rootScope.logout = function() {
 				$http.post('logout').success(function(data) {
 					location.replace('login');

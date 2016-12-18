@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import javax.persistence.OptimisticLockException;
 
 /**
  * RestFul不应该返回错误页面，此控制器将返回RestFul风格的错误信息
@@ -44,6 +45,15 @@ public class RestExceptionHandler {
 			errors.addError(error);
 		}
 		return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(OptimisticLockException.class)
+	public ResponseEntity<ErrorResponse> handleOptimisticLockException(OptimisticLockException e) {
+		ErrorResponse errors = new ErrorResponse();
+		ErrorItem i = new ErrorItem();
+		i.setMessage(e.getMessage());
+		errors.addError(i);
+		return new ResponseEntity<>(errors, HttpStatus.CONFLICT);
 	}
 	
 	@ExceptionHandler(DataIntegrityViolationException.class)

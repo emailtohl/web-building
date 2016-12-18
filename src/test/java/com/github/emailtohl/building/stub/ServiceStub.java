@@ -101,8 +101,9 @@ public class ServiceStub {
 	public final Long applicationFormId = 100L;
 	public final Long historyId = 100L;
 	public final String applicationFormTitle = "测试申请单标题";
+	public final String applicationFormDescription = "测试申请单的内容……";
 	public final Status applicationFormStatus = Status.REQUEST;
-	public final ApplicationForm applicationForm = new ApplicationForm(customer, applicationFormTitle, "测试申请单的内容……");
+	public final ApplicationForm applicationForm = new ApplicationForm(customer, applicationFormTitle, applicationFormDescription);
 	public final ApplicationHandleHistory applicationHandleHistory = new ApplicationHandleHistory(applicationForm, employee, "处理意见", applicationFormStatus);
 	public ApplicationFormService getApplicationFormService() {
 		ApplicationFormService applicationFormService = mock(ApplicationFormService.class);
@@ -111,7 +112,7 @@ public class ServiceStub {
 			logger.debug(invocation.getArguments());
 			return invocation.getMock();
 		};
-		when(applicationFormService.application(applicationForm)).thenReturn(applicationFormId);
+		when(applicationFormService.application(applicationFormTitle, applicationFormDescription)).thenReturn(applicationFormId);
 		when(applicationFormService.findById(applicationFormId)).thenReturn(applicationForm);
 		
 		Page<ApplicationForm> page = new PageImpl<ApplicationForm>(Arrays.asList(applicationForm), pageable, 1L);

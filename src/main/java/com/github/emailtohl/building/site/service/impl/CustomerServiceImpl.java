@@ -1,5 +1,10 @@
 package com.github.emailtohl.building.site.service.impl;
 
+import static com.github.emailtohl.building.site.entities.BaseEntity.CREATE_DATE_PROPERTY_NAME;
+import static com.github.emailtohl.building.site.entities.BaseEntity.ID_PROPERTY_NAME;
+import static com.github.emailtohl.building.site.entities.BaseEntity.MODIFY_DATE_PROPERTY_NAME;
+import static com.github.emailtohl.building.site.entities.BaseEntity.VERSION_PROPERTY_NAME;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.dao.CustomerRepository;
-import com.github.emailtohl.building.site.entities.BaseEntity;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.service.CustomerService;
 /**
@@ -55,7 +59,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public void update(Long id, Customer customer) {
 		Customer c = customRepository.getCustomer(id);
-		BeanUtils.copyProperties(customer, c, BaseEntity.ID_PROPERTY_NAME, BaseEntity.CREATE_DATE_PROPERTY_NAME, BaseEntity.MODIFY_DATE_PROPERTY_NAME, "email", "username", "roles", "password", "enabled");
+		BeanUtils.copyProperties(customer, c, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, VERSION_PROPERTY_NAME, "email", "username", "roles", "password", "enabled");
 	}
 	
 	private boolean isEmpty(String s) {

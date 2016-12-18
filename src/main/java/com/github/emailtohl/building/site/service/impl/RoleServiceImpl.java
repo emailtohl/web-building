@@ -3,6 +3,7 @@ package com.github.emailtohl.building.site.service.impl;
 import static com.github.emailtohl.building.site.entities.BaseEntity.CREATE_DATE_PROPERTY_NAME;
 import static com.github.emailtohl.building.site.entities.BaseEntity.ID_PROPERTY_NAME;
 import static com.github.emailtohl.building.site.entities.BaseEntity.MODIFY_DATE_PROPERTY_NAME;
+import static com.github.emailtohl.building.site.entities.BaseEntity.VERSION_PROPERTY_NAME;
 
 import java.util.List;
 import java.util.Set;
@@ -45,7 +46,7 @@ public class RoleServiceImpl implements RoleService {
 	public long createRole(Role role) {
 		Role r = new Role();
 		// 仅仅只复制基本属性，权限集合通过手工代码完成
-		BeanUtils.copyProperties(role, r, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, "users", "authorities");
+		BeanUtils.copyProperties(role, r, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, VERSION_PROPERTY_NAME, "users", "authorities");
 		r.getAuthorities().addAll(role.getAuthorities());
 		roleRepository.save(r);
 		return r.getId();
@@ -67,7 +68,7 @@ public class RoleServiceImpl implements RoleService {
 	public void updateRole(long id, Role role) {
 		Role r = roleRepository.findOne(id);
 		// 仅复制基本属性
-		BeanUtils.copyProperties(role, r, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, "users", "authorities");
+		BeanUtils.copyProperties(role, r, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, VERSION_PROPERTY_NAME, "users", "authorities");
 		r.getAuthorities().clear();
 		r.getAuthorities().addAll(role.getAuthorities());
 	}

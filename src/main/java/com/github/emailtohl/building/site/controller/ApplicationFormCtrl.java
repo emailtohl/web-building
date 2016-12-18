@@ -113,25 +113,25 @@ public class ApplicationFormCtrl {
 	
 	/**
 	 * 提交申请表
-	 * @param form
+	 * @param af
 	 * @param e
 	 * @return
 	 */
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
-	public ResponseEntity<ApplicationForm> add(@RequestBody @Valid ApplicationForm form, Errors e) {
+	public ResponseEntity<ApplicationForm> add(@RequestBody @Valid ApplicationForm af, Errors e) {
 		if (e.hasErrors()) {
 			for (ObjectError oe : e.getAllErrors()) {
 				logger.info(oe);
 			}
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
-		long id = applicationFormService.application(form);
+		long id = applicationFormService.application(af.getName(), af.getDescription());
 		String uri = ServletUriComponentsBuilder.fromCurrentServletMapping().path("/applicationForm/{id}")
 				.buildAndExpand(id).toString();
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Location", uri);
-		return new ResponseEntity<>(form, headers, HttpStatus.CREATED);
+		return new ResponseEntity<>(af, headers, HttpStatus.CREATED);
 	}
 	
 	/**

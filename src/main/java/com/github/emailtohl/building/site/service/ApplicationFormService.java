@@ -1,12 +1,13 @@
 package com.github.emailtohl.building.site.service;
 
-import static com.github.emailtohl.building.site.entities.Authority.*;
+import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_DELETE;
+import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_READ_HISTORY;
+import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_TRANSIT;
 
 import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.data.domain.Page;
@@ -30,12 +31,12 @@ import com.github.emailtohl.building.site.entities.ApplicationHandleHistory;
 public interface ApplicationFormService {
 
 	/**
-	 * 提交申请
+	 * 提交申请，从安全上下文获取被认证的用户作为申请人实体
 	 * @param applicationForm
 	 * @return
 	 */
-	@PostAuthorize("isAuthenticated()")
-	Long application(@Valid ApplicationForm applicationForm);
+	@PreAuthorize("isAuthenticated()")
+	Long application(String name, String description);
 	
 	/**
 	 * 查询申请单
@@ -99,7 +100,7 @@ public interface ApplicationFormService {
 	Page<ApplicationForm> findMyApplicationForm(@NotNull Pageable pageable);
 	
 	/**
-	 * 改变申请单状态
+	 * 改变申请单状态，从安全上下文中获取处理人实体
 	 * 注意：实现需记录处理的历史记录
 	 * @param id
 	 * @param status

@@ -36,15 +36,12 @@ import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.entities.ApplicationForm;
 import com.github.emailtohl.building.site.entities.ApplicationForm.Status;
 import com.github.emailtohl.building.site.entities.ApplicationHandleHistory;
-import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.service.ApplicationFormService;
 import com.github.emailtohl.building.stub.SecurityContextManager;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SpringConfigForTest.class)
 @ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
-//ApplicationForm#getApplicationHandleHistory()使用懒加载，事务不能在service层关闭，所以在此添加上@Transactional
-@Transactional
 public class ApplicationFormServiceImplTest {
 	static final Logger logger = LogManager.getLogger();
 	@Inject UserRepository userRepository;
@@ -53,19 +50,14 @@ public class ApplicationFormServiceImplTest {
 	@Inject ApplicationFormService applicationFormService;
 	@Inject SecurityContextManager securityContextManager;
 	private final String title = "test";
-	private Long id;
+	private final String description = "test content";
 	private Pageable pageable = new PageRequest(0, 20);
+	private Long id;
 	
 	@Before
 	public void setUp() throws Exception {
 		securityContextManager.setBaz();
-		Customer c = (Customer) userRepository.findByEmail(baz.getEmail());
-		ApplicationForm af = new ApplicationForm();
-		af.setApplicant(c);
-		af.setName(title);
-		af.setDescription("test content");
-		applicationFormService.application(af);
-		id = af.getId();
+		id = applicationFormService.application(title, description);
 	}
 
 	@After
@@ -132,6 +124,8 @@ public class ApplicationFormServiceImplTest {
 	}
 
 	@Test
+	//ApplicationForm#getApplicationHandleHistory()使用懒加载，事务不能在service层关闭，所以在此添加上@Transactional
+	@Transactional
 	public void testTransit() {
 		securityContextManager.setBar();
 		String cause = "缘由是：……";

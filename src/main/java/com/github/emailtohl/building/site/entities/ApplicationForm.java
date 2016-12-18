@@ -3,6 +3,7 @@ package com.github.emailtohl.building.site.entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -111,7 +112,7 @@ public class ApplicationForm extends BaseEntity {
 		this.status = status;
 	}
 	// 此处若设置为默认的LAZY，会在控制层报异常，似乎是因为关联的User使用了lob导致无法再加载
-	@OneToMany(fetch = FetchType.LAZY, targetEntity = ApplicationHandleHistory.class, mappedBy = "applicationForm", orphanRemoval = false)
+	@OneToMany(fetch = FetchType.LAZY, targetEntity = ApplicationHandleHistory.class, mappedBy = "applicationForm", orphanRemoval = false, cascade = CascadeType.REMOVE)
 	public List<ApplicationHandleHistory> getApplicationHandleHistory() {
 		return applicationHandleHistory;
 	}

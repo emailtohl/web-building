@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -15,12 +14,12 @@ import org.springframework.stereotype.Service;
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.Criterion;
 import com.github.emailtohl.building.site.dao.ApplicationFormRepository;
 import com.github.emailtohl.building.site.dao.ApplicationHandleHistoryRepository;
+import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.entities.ApplicationForm;
 import com.github.emailtohl.building.site.entities.ApplicationForm.Status;
 import com.github.emailtohl.building.site.entities.ApplicationHandleHistory;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.ApplicationFormService;
-import com.github.emailtohl.building.site.service.UserService;
 /**
  * 申请表业务流程实现类
  * @author HeLei
@@ -30,14 +29,14 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 
 	@Inject ApplicationFormRepository applicationFormRepository;
 	@Inject ApplicationHandleHistoryRepository applicationHandleHistoryRepository;
-	@Inject @Named("userServiceImpl") UserService userService;
+	@Inject UserRepository userRepository;
 	
 	@Override
-	public Long application(ApplicationForm applicationForm) {
-		User u = userService.getUserByEmail(getEmail());
-		applicationForm.setApplicant(u);
-		applicationFormRepository.save(applicationForm);
-		return applicationForm.getId();
+	public Long application(String name, String description) {
+		User u = userRepository.findByEmail(getEmail());
+		ApplicationForm af = new ApplicationForm(u, name, description);
+		applicationFormRepository.save(af);
+		return af.getId();
 	}
 
 	@Override
@@ -99,7 +98,7 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 		af.setStatus(status);
 		af.setCause(cause);
 		
-		User u = userService.getUserByEmail(getEmail());
+		User u = userRepository.findByEmail(getEmail());
 		
 		ApplicationHandleHistory history = new ApplicationHandleHistory();
 		history.setApplicationForm(af);

@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 
 /**
  * Entity 基类
@@ -40,6 +41,13 @@ public abstract class BaseEntity implements Serializable {
 	 * "修改日期"属性名称
 	 */
 	public static final String MODIFY_DATE_PROPERTY_NAME = "modifyDate";
+	
+	/**
+	 * "并发控制的版本号"属性名称
+	 */
+	public static final String VERSION_PROPERTY_NAME = "version";
+	
+	public static final String[] PROPERTY_NAMES = {ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, VERSION_PROPERTY_NAME};
 
 	/** ID */
 	protected Long id;
@@ -53,6 +61,16 @@ public abstract class BaseEntity implements Serializable {
 	 * 修改日期
 	 */
 	protected Date modifyDate;
+	
+	/**
+	 * 乐观锁并发控制
+	 * 假如获取本实例时，version = 0， 在提交事务时，JPA提供程序会执行如下语句
+	 * 
+	 * update item set name = ?, version = 1 where id = ? and version = 0
+	 * 若jdbc返回0，要么item不存在，要么不再有版本0，此时会抛javax.persistence.OptimisticLockException异常
+	 * 需捕获此异常给用户适当提示。
+	 */
+	protected int version;
 	
 	/**
 	 * 获取ID
@@ -88,7 +106,7 @@ public abstract class BaseEntity implements Serializable {
 	 * 设置创建日期
 	 * @param createDate 创建日期
 	 */
-	public void setCreateDate(Date createDate) {
+	protected void setCreateDate(Date createDate) {
 		this.createDate = createDate;
 	}
 
@@ -106,8 +124,17 @@ public abstract class BaseEntity implements Serializable {
 	 * 设置修改日期
 	 * @param modifyDate 修改日期
 	 */
-	public void setModifyDate(Date modifyDate) {
+	protected void setModifyDate(Date modifyDate) {
 		this.modifyDate = modifyDate;
+	}
+	
+	@Version
+	protected int getVersion() {
+		return version;
+	}
+
+	protected void setVersion(int version) {
+		this.version = version;
 	}
 
 	/**

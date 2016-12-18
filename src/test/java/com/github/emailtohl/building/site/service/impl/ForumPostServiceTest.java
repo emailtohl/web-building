@@ -25,6 +25,7 @@ import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.dto.ForumPostDto;
 import com.github.emailtohl.building.site.service.ForumPostService;
+import com.github.emailtohl.building.stub.SecurityContextManager;
 /**
  * 全文搜索测试
  * 先存储论坛帖子，然后再通过索引查询
@@ -36,10 +37,12 @@ import com.github.emailtohl.building.site.service.ForumPostService;
 @ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
 public class ForumPostServiceTest {
 	static final Logger logger = LogManager.getLogger();
+	static String TITLE_EMAILTOHL = "emailtohl's post", TITLE_FOO = "foo's post", TITLE_BAR = "bar's post";
+	@Inject SecurityContextManager securityContextManager;
 	@Inject ForumPostService forumPostService;
 	@Inject UserRepository userRepository;
 	ForumPostDto p1 = new ForumPostDto(), p2 = new ForumPostDto(), p3 = new ForumPostDto();
-	static String TITLE_EMAILTOHL = "emailtohl's post", TITLE_FOO = "foo's post", TITLE_BAR = "bar's post";
+	
 	@Before
 	public void setUp() throws Exception {
 		p1.setTitle(TITLE_EMAILTOHL);
@@ -87,6 +90,7 @@ public class ForumPostServiceTest {
 
 	@After
 	public void clean() {
+		securityContextManager.setEmailtohl();
 		forumPostService.delete(forumPostService.getForumPostByTitle(TITLE_EMAILTOHL).getId());
 		forumPostService.delete(forumPostService.getForumPostByTitle(TITLE_FOO).getId());
 		forumPostService.delete(forumPostService.getForumPostByTitle(TITLE_BAR).getId());

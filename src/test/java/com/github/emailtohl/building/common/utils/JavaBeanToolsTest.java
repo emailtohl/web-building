@@ -57,6 +57,7 @@ import com.github.emailtohl.building.common.jpa.relationEntities.Relation2;
 import com.github.emailtohl.building.site.entities.Subsidiary;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.entities.User.Gender;
+
 public class JavaBeanToolsTest {
 	private static final Logger logger = LogManager.getLogger();
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -326,10 +327,18 @@ public class JavaBeanToolsTest {
 	}
 	
 	@Test
-	public void testSaveListToMap() {
-		emailtohl.setId(1L);
-		foo.setId(2L);
-		bar.setId(3L);
+	public void testSaveListToMap() throws IllegalArgumentException, IllegalAccessException {
+		Field f = getDeclaredField(emailtohl, "id");
+		f.setAccessible(true);
+		f.set(emailtohl, 1L);
+		
+		f = getDeclaredField(foo, "id");
+		f.setAccessible(true);
+		f.set(foo, 2L);
+		
+		f = getDeclaredField(bar, "id");
+		f.setAccessible(true);
+		f.set(bar, 3L);
 		Map<Long, User> map = saveListToMap(Arrays.asList(emailtohl, foo, bar), "id");
 		logger.debug(map);
 		assertEquals(emailtohl, map.get(1L));
