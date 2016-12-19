@@ -1,10 +1,5 @@
 package com.github.emailtohl.building.site.service.impl;
 
-import static com.github.emailtohl.building.site.entities.BaseEntity.CREATE_DATE_PROPERTY_NAME;
-import static com.github.emailtohl.building.site.entities.BaseEntity.ID_PROPERTY_NAME;
-import static com.github.emailtohl.building.site.entities.BaseEntity.MODIFY_DATE_PROPERTY_NAME;
-import static com.github.emailtohl.building.site.entities.BaseEntity.VERSION_PROPERTY_NAME;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.fullTextSearch.SearchResult;
+import com.github.emailtohl.building.common.utils.SecurityContextUtils;
 import com.github.emailtohl.building.site.dao.ForumPostRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.dto.ForumPostDto;
@@ -63,16 +59,31 @@ public class ForumPostServiceImpl implements ForumPostService {
 	}
 	
 	@Override
-	public ForumPostDto getForumPostByTitle(String title) {
-		ForumPost entity = forumPostRepository.findByTitle(title);
-		return convert(entity);
+	public List<ForumPostDto> findForumPostByTitle(String title) {
+		List<ForumPost> entities = forumPostRepository.findByTitleLike(title.trim() + "%");
+		List<ForumPostDto> ls = new ArrayList<>();
+		entities.forEach(e -> {
+			ls.add(convert(e));
+		});
+		return ls;
 	}
 
 	@Override
-	@Transactional
-	public void save(String email, ForumPostDto dto) {
+	public List<ForumPostDto> findByUserEmail(String userEmail) {
+		List<ForumPost> entities = forumPostRepository.findByUserEmail(userEmail);
+		List<ForumPostDto> ls = new ArrayList<>();
+		entities.forEach(e -> {
+			ls.add(convert(e));
+		});
+		return ls;
+	}
+
+	@Override
+	public void save(String email, String title, String keywords, String body) {
 		ForumPost forumPost = new ForumPost();
-		BeanUtils.copyProperties(dto, forumPost, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, VERSION_PROPERTY_NAME, "user");
+		forumPost.setTitle(title);
+		forumPost.setKeywords(keywords);
+		forumPost.setBody(body);
 		User u = userRepository.findByEmail(email);
 		if (u == null) {
 			throw new IllegalArgumentException("User does not exist.");
@@ -80,13 +91,26 @@ public class ForumPostServiceImpl implements ForumPostService {
 		forumPost.setUser(u);
 		this.forumPostRepository.save(forumPost);
 	}
-
+	
 	@Override
-	@Transactional
+	public void save(String title, String keywords, String body) {
+		String email = SecurityContextUtils.getCurrentUsername();
+		this.save(email, title, keywords, body);
+	}
+	
+	@Override
 	public void delete(long id) {
 		this.forumPostRepository.delete(id);
 	}
 
+	@Override
+	public void deleteByEmail(String userEmail) {
+		findByUserEmail(userEmail).forEach(dto -> {
+			this.forumPostRepository.delete(dto.getId());
+		});
+		
+	}
+	
 	private ForumPostDto convert(ForumPost entity) {
 		ForumPostDto dto = new ForumPostDto();
 		BeanUtils.copyProperties(entity, dto, "user");

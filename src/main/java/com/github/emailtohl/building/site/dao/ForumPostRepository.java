@@ -1,5 +1,7 @@
 package com.github.emailtohl.building.site.dao;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.github.emailtohl.building.common.jpa.fullTextSearch.SearchableRepository;
@@ -11,7 +13,7 @@ import com.github.emailtohl.building.site.entities.ForumPost;
  * @author HeLei
  */
 public interface ForumPostRepository extends JpaRepository<ForumPost, Long>, SearchableRepository<ForumPost> {
-	ForumPost findByTitle(String title);
+	List<ForumPost> findByTitleLike(String title);
 
-	ForumPost findByUserEmail(String email);
+	List<ForumPost> findByUserEmail(String email);
 }

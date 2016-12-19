@@ -51,7 +51,7 @@ public class RestExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleOptimisticLockException(OptimisticLockException e) {
 		ErrorResponse errors = new ErrorResponse();
 		ErrorItem i = new ErrorItem();
-		i.setMessage(e.getMessage());
+		i.setMessage("有人与你同时修改此处，所以你的修改未能生效\n" + e.getMessage());
 		errors.addError(i);
 		return new ResponseEntity<>(errors, HttpStatus.CONFLICT);
 	}

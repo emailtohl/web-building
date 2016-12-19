@@ -61,7 +61,6 @@ public class UserServiceImpl implements UserService, Serializable {
 	private static final transient Logger logger = LogManager.getLogger();
 	private static final transient SecureRandom RANDOM = new SecureRandom();
 	private static final transient int HASHING_ROUNDS = 10;
-	@Inject transient SecurityContextUtils securityContextUtils;
 	@Inject transient UserRepository userRepository;
 	@Inject transient RoleRepository roleRepository;
 	@Inject transient DepartmentRepository departmentRepository;
@@ -138,7 +137,7 @@ public class UserServiceImpl implements UserService, Serializable {
 	@Override
 	public void grantRoles(long id, String... roleNames) {
 		// 能进此接口的拥有USER_ROLE_AUTHORITY_ALLOCATION权限，现在认为含有该权限的人就拥有ADMIN角色
-		boolean isAdmin = securityContextUtils.hasAnyAuthority(USER_ROLE_AUTHORITY_ALLOCATION);
+		boolean isAdmin = SecurityContextUtils.hasAnyAuthority(USER_ROLE_AUTHORITY_ALLOCATION);
 		User u = userRepository.findOne(id);
 		// 先删除原有的
 		/* 虽然在User实体上已定义了级联关系，但从业务逻辑理解和保险的角度上来看，还是手工操作关系的删除

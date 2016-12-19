@@ -49,13 +49,6 @@ public class ForumPostCtrl {
 		this.forumPostService = forumPostService;
 	}
 	
-	/*	@RequestMapping(value = "", method = RequestMethod.GET)
-	public String form(Map<String, Object> model) {
-		model.put("added", null);
-		model.put("addForm", new PostForm());
-		return "add";
-	}
-*/
 	@RequestMapping(value = "", method = RequestMethod.POST)
 	public void add(@RequestBody @Valid ForumPostDto form, Errors e) {
 		if (e.hasErrors()) {
@@ -64,17 +57,9 @@ public class ForumPostCtrl {
 			}
 			return;
 		}
-		this.forumPostService.save(form.getEmail(), form);
+		this.forumPostService.save(form.getTitle(), form.getKeywords(), form.getBody());
 	}
-/*
-	@RequestMapping(value = "search")
-	public String search(Map<String, Object> model) {
-		model.put("searchPerformed", false);
-		model.put("searchForm", new SearchForm());
-
-		return "search";
-	}
-*/
+	
 	@RequestMapping(value = "search", method = RequestMethod.GET)
 	public Pager<SearchResult<ForumPostDto>> search(@RequestParam String query,
 			@PageableDefault(page = 0, size = 5, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {

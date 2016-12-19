@@ -22,7 +22,6 @@ import com.github.emailtohl.building.stub.SecurityContextManager;
 @ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)
 public class SecurityContextUtilsTest {
 	@Inject SecurityContextManager securityContextManager;
-	@Inject SecurityContextUtils securityContextUtils;
 
 	@Before
 	public void setUp() throws Exception {
@@ -35,22 +34,22 @@ public class SecurityContextUtilsTest {
 
 	@Test
 	public void testGetAuthentication() {
-		assertNotNull(securityContextUtils.getAuthentication());
+		assertNotNull(SecurityContextUtils.getAuthentication());
 	}
 
 	@Test
 	public void testGetCurrentUsername() {
-		assertEquals(emailtohl.getEmail(), securityContextUtils.getCurrentUsername());
+		assertEquals(emailtohl.getEmail(), SecurityContextUtils.getCurrentUsername());
 	}
 
 	@Test
 	public void testGetAuthorities() {
-		assertTrue(securityContextUtils.getAuthorities().contains(user_delete.getName()));
+		assertTrue(SecurityContextUtils.getAuthorities().contains(user_delete.getName()));
 	}
 
 	@Test
 	public void testHasAnyAuthority() {
-		assertTrue(securityContextUtils.hasAnyAuthority(user_delete.getName(), user_disable.getName(), user_grant_roles.getName()));
+		assertTrue(SecurityContextUtils.hasAnyAuthority(user_delete.getName(), user_disable.getName(), user_grant_roles.getName()));
 	}
 
 }

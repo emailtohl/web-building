@@ -63,7 +63,7 @@ public abstract class BaseEntity implements Serializable {
 	protected Date modifyDate;
 	
 	/**
-	 * 乐观锁并发控制
+	 * 本字段存在的意义在于并发修改同一记录时，抛出OptimisticLockException异常提醒用户，使用的乐观锁并发控制策略
 	 * 假如获取本实例时，version = 0， 在提交事务时，JPA提供程序会执行如下语句
 	 * 
 	 * update item set name = ?, version = 1 where id = ? and version = 0
@@ -158,14 +158,15 @@ public abstract class BaseEntity implements Serializable {
 		if (obj == null)
 			return false;
 		Class<?> thisClass = getClass(), otherClass = obj.getClass();
-		// 两者都不在同一继承结构上
-		if (!(thisClass.isAssignableFrom(otherClass) || otherClass.isAssignableFrom(thisClass)))
+		// 两者都不在同一继承结构上，包括JPA提供程序生成的代理
+		// 由于this是BaseEntity的实例，所以这种判断涵盖other instanceof BaseEntity
+		if (!thisClass.isAssignableFrom(otherClass) && !otherClass.isAssignableFrom(thisClass))
 			return false;
 		BaseEntity other = (BaseEntity) obj;
-		if (id == null || other.id == null) {
+		if (id == null || other.getId() == null) {// 注意此处不能直接访问other的字段：other.id，因为other可能是JPA提供程序生成的代理
 			return false;
 		} else {
-			return id.equals(other.id);
+			return id.equals(other.getId());
 		}
 	}
 

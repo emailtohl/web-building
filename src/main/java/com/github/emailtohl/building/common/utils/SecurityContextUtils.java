@@ -8,19 +8,20 @@ import java.util.Set;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 
 /**
  * 基于Spring Security上下文，判断用户授权的工具
  * @author HeLei
  */
-@Component
-public class SecurityContextUtils {
+public final class SecurityContextUtils {
+	
+	private SecurityContextUtils() {}
+	
 	/**
 	 * 获取认证信息
 	 * @return
 	 */
-	public Authentication getAuthentication() {
+	public static Authentication getAuthentication() {
 		return SecurityContextHolder.getContext().getAuthentication();
 	}
 	
@@ -28,7 +29,7 @@ public class SecurityContextUtils {
 	 * 获取用户名
 	 * @return
 	 */
-	public String getCurrentUsername() {
+	public static String getCurrentUsername() {
 		Authentication a = getAuthentication();
 		if (a != null)
 			return a.getName();
@@ -40,7 +41,7 @@ public class SecurityContextUtils {
 	 * 获取授权的字符串集合
 	 * @return
 	 */
-	public Set<String> getAuthorities() {
+	public static Set<String> getAuthorities() {
 		Set<String> set = new HashSet<>();
 		Authentication a = getAuthentication();
 		if (a != null) {
@@ -56,7 +57,7 @@ public class SecurityContextUtils {
 	 * @param authorities
 	 * @return
 	 */
-	public boolean hasAnyAuthority(String... authorities) {
+	public static boolean hasAnyAuthority(String... authorities) {
 		Authentication a = getAuthentication();
 		if (a == null || a.getAuthorities() == null)
 			return false;

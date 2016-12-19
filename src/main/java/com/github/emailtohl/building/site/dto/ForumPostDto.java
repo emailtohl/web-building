@@ -2,7 +2,9 @@ package com.github.emailtohl.building.site.dto;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+
+import com.github.emailtohl.building.common.Constant;
 /**
  * 为满足Hibernate Search，论坛实体中含有User实体，而User实体中有些信息是不能被暴露在接口中
  * 故用ForumPostDto作为数据传输对象
@@ -13,7 +15,7 @@ public class ForumPostDto implements Serializable {
 	private static final long serialVersionUID = 981676092735989648L;
 	private Long id;
 	private String username;
-	@NotNull
+	@Pattern(regexp = Constant.PATTERN_EMAIL, flags = { Pattern.Flag.CASE_INSENSITIVE })
 	private String email;
 	private String title;
 	private String body;
