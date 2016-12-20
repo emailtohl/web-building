@@ -1,9 +1,9 @@
 /**
  * 这是主要的app模块，运行前Angular的各个module已组装好，本模块仅仅将各module组合起来
  */
-define([ 'angular', 'uirouter', 'common/context', 'test/context', 'user/context', 'roleAuthCfg/context', 'dashboard/context', 'forum/context', 'applicationForm/context', 'crm/context' ],
+define([ 'angular', 'uirouter', 'angular-animate', 'angular-cookies', 'common/context', 'test/context', 'user/context', 'roleAuthCfg/context', 'dashboard/context', 'forum/context', 'applicationForm/context', 'crm/context' ],
 	function(angular) {
-		return angular.module('webBuilding', [ 'ui.router', 'commonModule', 'testModule', 'userModule', 'roleAuthCfgModule', 'dashboardModule', 'forumModule', 'applicationFormModule', 'crmModule' ])
+		var webBuilding = angular.module('webBuilding', [ 'ui.router', 'ngAnimate', 'commonModule', 'testModule', 'userModule', 'roleAuthCfgModule', 'dashboardModule', 'forumModule', 'applicationFormModule', 'crmModule' ])
 		.run([ '$rootScope', '$state', '$stateParams', '$http', function($rootScope, $state, $stateParams, $http) {
 			// 让页面能同步状态，显示出该状态应有的效果，例如某菜单被激活的样式
 			$rootScope.$state = $state;
@@ -73,6 +73,38 @@ define([ 'angular', 'uirouter', 'common/context', 'test/context', 'user/context'
 					iconSrc = 'lib/AdminLTE/img/user2-160x160.jpg';
 				return iconSrc;
 			}
+			
+			
 		} ]);
+		
+		// 对class="pop"的元素定义动画
+		webBuilding.animation(".pop", [ "$animateCss", function($animateCss) {
+			return {
+				enter : function(element) {
+					return $animateCss(element, {
+						from : {
+							opacity : 0
+						},
+						to : {
+							opacity : 1
+						},
+						duration : 1.5
+					});
+				},
+				leave : function(element) {
+					return $animateCss(element, {
+						from : {
+							opacity : 1
+						},
+						to : {
+							opacity : 0
+						},
+						duration : 1.5
+					});
+				}
+			}
+		} ]);
+		
+		return webBuilding;
 	}
 );
