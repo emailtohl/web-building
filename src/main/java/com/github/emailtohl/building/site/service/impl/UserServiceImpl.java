@@ -37,8 +37,8 @@ import org.springframework.stereotype.Service;
 
 import com.github.emailtohl.building.common.Constant;
 import com.github.emailtohl.building.common.jpa.Pager;
-import com.github.emailtohl.building.common.utils.BeanTools;
-import com.github.emailtohl.building.common.utils.SecurityContextUtils;
+import com.github.emailtohl.building.common.utils.BeanUtil;
+import com.github.emailtohl.building.common.utils.SecurityContextUtil;
 import com.github.emailtohl.building.site.dao.DepartmentRepository;
 import com.github.emailtohl.building.site.dao.RoleRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
@@ -137,7 +137,7 @@ public class UserServiceImpl implements UserService, Serializable {
 	@Override
 	public void grantRoles(long id, String... roleNames) {
 		// 能进此接口的拥有USER_ROLE_AUTHORITY_ALLOCATION权限，现在认为含有该权限的人就拥有ADMIN角色
-		boolean isAdmin = SecurityContextUtils.hasAnyAuthority(USER_ROLE_AUTHORITY_ALLOCATION);
+		boolean isAdmin = SecurityContextUtil.hasAnyAuthority(USER_ROLE_AUTHORITY_ALLOCATION);
 		User u = userRepository.findOne(id);
 		// 先删除原有的
 		/* 虽然在User实体上已定义了级联关系，但从业务逻辑理解和保险的角度上来看，还是手工操作关系的删除
@@ -217,7 +217,7 @@ public class UserServiceImpl implements UserService, Serializable {
 		emp.setPassword(null);
 		emp.setEnabled(null);
 		emp.setDepartment(null);
-		BeanTools.merge(entity, emp);
+		BeanUtil.merge(entity, emp);
 		userRepository.save(entity);
 	}
 	
@@ -231,7 +231,7 @@ public class UserServiceImpl implements UserService, Serializable {
 		cus.setRoles(null);
 		cus.setPassword(null);
 		cus.setEnabled(null);
-		BeanTools.merge(entity, cus);
+		BeanUtil.merge(entity, cus);
 		userRepository.save(entity);
 	}
 

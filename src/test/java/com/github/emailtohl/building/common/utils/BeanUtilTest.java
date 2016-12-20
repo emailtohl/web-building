@@ -1,22 +1,22 @@
 package com.github.emailtohl.building.common.utils;
 
-import static com.github.emailtohl.building.common.utils.BeanTools.compareProperties;
-import static com.github.emailtohl.building.common.utils.BeanTools.copyList;
-import static com.github.emailtohl.building.common.utils.BeanTools.copyProperties;
-import static com.github.emailtohl.building.common.utils.BeanTools.deepCopy;
-import static com.github.emailtohl.building.common.utils.BeanTools.getAnnotation;
-import static com.github.emailtohl.building.common.utils.BeanTools.getDeclaredField;
-import static com.github.emailtohl.building.common.utils.BeanTools.getFieldMap;
-import static com.github.emailtohl.building.common.utils.BeanTools.getFieldNameValueMap;
-import static com.github.emailtohl.building.common.utils.BeanTools.getGenericClass;
-import static com.github.emailtohl.building.common.utils.BeanTools.getModifiedField;
-import static com.github.emailtohl.building.common.utils.BeanTools.getPropertyMap;
-import static com.github.emailtohl.building.common.utils.BeanTools.getPropertyNameValueMap;
-import static com.github.emailtohl.building.common.utils.BeanTools.injectField;
-import static com.github.emailtohl.building.common.utils.BeanTools.injectFieldWithString;
-import static com.github.emailtohl.building.common.utils.BeanTools.injectPropertyWithString;
-import static com.github.emailtohl.building.common.utils.BeanTools.merge;
-import static com.github.emailtohl.building.common.utils.BeanTools.saveListToMap;
+import static com.github.emailtohl.building.common.utils.BeanUtil.compareProperties;
+import static com.github.emailtohl.building.common.utils.BeanUtil.copyList;
+import static com.github.emailtohl.building.common.utils.BeanUtil.copyProperties;
+import static com.github.emailtohl.building.common.utils.BeanUtil.deepCopy;
+import static com.github.emailtohl.building.common.utils.BeanUtil.getAnnotation;
+import static com.github.emailtohl.building.common.utils.BeanUtil.getDeclaredField;
+import static com.github.emailtohl.building.common.utils.BeanUtil.getFieldMap;
+import static com.github.emailtohl.building.common.utils.BeanUtil.getFieldNameValueMap;
+import static com.github.emailtohl.building.common.utils.BeanUtil.getGenericClass;
+import static com.github.emailtohl.building.common.utils.BeanUtil.getModifiedField;
+import static com.github.emailtohl.building.common.utils.BeanUtil.getPropertyMap;
+import static com.github.emailtohl.building.common.utils.BeanUtil.getPropertyNameValueMap;
+import static com.github.emailtohl.building.common.utils.BeanUtil.injectField;
+import static com.github.emailtohl.building.common.utils.BeanUtil.injectFieldWithString;
+import static com.github.emailtohl.building.common.utils.BeanUtil.injectPropertyWithString;
+import static com.github.emailtohl.building.common.utils.BeanUtil.merge;
+import static com.github.emailtohl.building.common.utils.BeanUtil.saveListToMap;
 import static com.github.emailtohl.building.initdb.PersistenceData.bar;
 import static com.github.emailtohl.building.initdb.PersistenceData.emailtohl;
 import static com.github.emailtohl.building.initdb.PersistenceData.foo;
@@ -58,7 +58,7 @@ import com.github.emailtohl.building.site.entities.Subsidiary;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.entities.User.Gender;
 
-public class JavaBeanToolsTest {
+public class BeanUtilTest {
 	private static final Logger logger = LogManager.getLogger();
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 

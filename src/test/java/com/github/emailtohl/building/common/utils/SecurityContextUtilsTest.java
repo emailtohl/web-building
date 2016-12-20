@@ -34,22 +34,22 @@ public class SecurityContextUtilsTest {
 
 	@Test
 	public void testGetAuthentication() {
-		assertNotNull(SecurityContextUtils.getAuthentication());
+		assertNotNull(SecurityContextUtil.getAuthentication());
 	}
 
 	@Test
 	public void testGetCurrentUsername() {
-		assertEquals(emailtohl.getEmail(), SecurityContextUtils.getCurrentUsername());
+		assertEquals(emailtohl.getEmail(), SecurityContextUtil.getCurrentUsername());
 	}
 
 	@Test
 	public void testGetAuthorities() {
-		assertTrue(SecurityContextUtils.getAuthorities().contains(user_delete.getName()));
+		assertTrue(SecurityContextUtil.getAuthorities().contains(user_delete.getName()));
 	}
 
 	@Test
 	public void testHasAnyAuthority() {
-		assertTrue(SecurityContextUtils.hasAnyAuthority(user_delete.getName(), user_disable.getName(), user_grant_roles.getName()));
+		assertTrue(SecurityContextUtil.hasAnyAuthority(user_delete.getName(), user_disable.getName(), user_grant_roles.getName()));
 	}
 
 }

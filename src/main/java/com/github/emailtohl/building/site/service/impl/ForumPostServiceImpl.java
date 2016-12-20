@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.fullTextSearch.SearchResult;
-import com.github.emailtohl.building.common.utils.SecurityContextUtils;
+import com.github.emailtohl.building.common.utils.SecurityContextUtil;
 import com.github.emailtohl.building.site.dao.ForumPostRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.dto.ForumPostDto;
@@ -94,7 +94,7 @@ public class ForumPostServiceImpl implements ForumPostService {
 	
 	@Override
 	public void save(String title, String keywords, String body) {
-		String email = SecurityContextUtils.getCurrentUsername();
+		String email = SecurityContextUtil.getCurrentUsername();
 		this.save(email, title, keywords, body);
 	}
 	

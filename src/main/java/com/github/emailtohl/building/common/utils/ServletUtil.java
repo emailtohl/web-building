@@ -31,10 +31,10 @@ import javax.servlet.http.Part;
  * 本类使用HttpServletRequest和HttpServletResponse，与业务结合较紧，根据实际需要进行调整
  * @author HeLei
  */
-public final class ServletUtils {
-	private static final Logger logger = Logger.getLogger(ServletUtils.class.getName());
+public final class ServletUtil {
+	private static final Logger logger = Logger.getLogger(ServletUtil.class.getName());
 
-	private ServletUtils() {
+	private ServletUtil() {
 	}
 	
 	/**
@@ -295,7 +295,7 @@ public final class ServletUtils {
 					} catch (UnsupportedEncodingException e) {
 						e.printStackTrace();
 					}
-					BeanTools.injectPropertyWithString(pd, obj, value);
+					BeanUtil.injectPropertyWithString(pd, obj, value);
 				}
 			}
 		} catch (IntrospectionException e) {

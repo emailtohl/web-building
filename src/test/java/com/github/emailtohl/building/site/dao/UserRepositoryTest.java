@@ -28,7 +28,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.common.jpa.Pager;
-import com.github.emailtohl.building.common.utils.BeanTools;
+import com.github.emailtohl.building.common.utils.BeanUtil;
 import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.initdb.PersistenceData;
 import com.github.emailtohl.building.site.entities.Subsidiary;
@@ -49,9 +49,9 @@ public class UserRepositoryTest {
 	public void setUp() {
 		u = new User();
 		u.setEmail(foo.getEmail());
-		Subsidiary s = BeanTools.deepCopy(foo.getSubsidiary());
+		Subsidiary s = BeanUtil.deepCopy(foo.getSubsidiary());
 		u.setSubsidiary(s);
-		u.setRoles(BeanTools.deepCopy(foo.getRoles()));
+		u.setRoles(BeanUtil.deepCopy(foo.getRoles()));
 	}
 	
 	/**

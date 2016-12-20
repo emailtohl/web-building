@@ -43,9 +43,9 @@ import org.apache.logging.log4j.Logger;
  * 未归类的方法
  * @author HeLei
  */
-public final class BeanTools {
+public final class BeanUtil {
 	private static final Logger logger = LogManager.getLogger();
-	private BeanTools() {}
+	private BeanUtil() {}
 
 	/**
 	 * 本方法分析对象bean，将其Field名和Field转存到map中

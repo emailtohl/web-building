@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.github.emailtohl.building.common.utils.ServletUtils;
+import com.github.emailtohl.building.common.utils.ServletUtil;
 import com.github.emailtohl.building.exception.VerifyFailure;
 import com.github.emailtohl.building.site.dto.UserDto;
 /**
@@ -55,7 +55,7 @@ public class FileUploadServer {
 		logger.debug(multiplefiles);
 		logger.debug(singlefile);
 		logger.debug(user);
-		String result = ServletUtils.multipartOnload(request, "upload/");
+		String result = ServletUtil.multipartOnload(request, "upload/");
 		return result;
 	}
 }

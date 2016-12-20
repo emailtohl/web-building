@@ -36,7 +36,7 @@ import javax.persistence.TypedQuery;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.github.emailtohl.building.common.utils.BeanTools;
+import com.github.emailtohl.building.common.utils.BeanUtil;
 
 /**
  * JPA的实体管理器entityManager已经提供了简便的增、删、改功能，所以很容易封装，这里主要提供自定义的动态查询解决方案
@@ -244,7 +244,7 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 				}
 				PropertyDescriptor[] descriptors = info.getPropertyDescriptors();
 				for (PropertyDescriptor descriptor : descriptors) {
-					if (BeanTools.getAnnotation(descriptor, Transient.class) != null) {
+					if (BeanUtil.getAnnotation(descriptor, Transient.class) != null) {
 						continue;
 					}
 					Object value = null;
@@ -281,9 +281,9 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 						args.add(value);
 						position++;
 					} else {
-						ManyToOne manyToOne = BeanTools.getAnnotation(descriptor, ManyToOne.class);
-						OneToOne oneToOne = BeanTools.getAnnotation(descriptor, OneToOne.class);
-						Embedded embedded = BeanTools.getAnnotation(descriptor, Embedded.class);
+						ManyToOne manyToOne = BeanUtil.getAnnotation(descriptor, ManyToOne.class);
+						OneToOne oneToOne = BeanUtil.getAnnotation(descriptor, OneToOne.class);
+						Embedded embedded = BeanUtil.getAnnotation(descriptor, Embedded.class);
 						if (manyToOne != null || oneToOne != null || embedded != null) {
 							if (set.contains(o)) {// 若遇到相互关联的情况，则终止递归
 								return;
