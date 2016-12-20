@@ -1,11 +1,10 @@
 define(['angular', 'dashboard/module', 'sparkline', 'knob'], function(angular) {
 	return angular.module('dashboardModule')
-	.controller('DashboardCtrl', ['$scope', '$http', '$state', function($scope, $http, $state) {
+	.controller('DashboardCtrl', ['$scope', '$http', '$state', '$cookies', function($scope, $http, $state, $cookies) {
 		var self = this, isHttps = window.location.protocol == 'https:' ? true : false;
 		// AdminLTE dashboard demo (This is only for demo purposes)
 		// AdminLTE for demo purposes
 		require(['dashboard/dashboard2', 'dashboard/demo'], function() {});
-		
 		self.chatlist = [];
 		
 		/**
@@ -17,7 +16,7 @@ define(['angular', 'dashboard/module', 'sparkline', 'knob'], function(angular) {
 				var url = (isHttps ? 'wss://' : 'ws://') + window.location.host + '/building/chat/' + data.username;
 				var connection = new WebSocket(url);
 				
-				connection.onopen = function() {
+				connection.onopen = function(e) {
 					console.log('打开聊天连接');
 				};
 				
@@ -74,7 +73,7 @@ define(['angular', 'dashboard/module', 'sparkline', 'knob'], function(angular) {
 			var connection = new WebSocket(url);
 			var $knob = $(".knob"), isCreated = false;
 			
-			connection.onopen = function() {
+			connection.onopen = function(e) {
 				console.log('打开系统信息连接');
 			};
 			

@@ -301,10 +301,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			HttpServletResponse resp = (HttpServletResponse) response;
 			if (req.getHeader("Origin") == null || "null".equalsIgnoreCase(req.getHeader("Origin"))) {
 				resp.setHeader("Access-Control-Allow-Origin", "*");// Access-Control-Allow-Origin: <origin> | * // 授权的源控制  
-				resp.setHeader("Access-Control-Max-Age", "1000");// Access-Control-Max-Age: <delta-seconds> // 授权的时间
-				resp.setHeader("Access-Control-Allow-Credentials", "true");// Access-Control-Allow-Credentials: true | false // 控制是否开启与Ajax的Cookie提交方式，如果用到Session必须要打开
+				resp.setHeader("Access-Control-Max-Age", "1000");// Access-Control-Max-Age: <delta-seconds> // 用来指定本次预检（preflight）请求的有效期，单位为秒
+				resp.setHeader("Access-Control-Allow-Credentials", "true");// Access-Control-Allow-Credentials: true | false // 控制是否开启与Ajax的Cookie提交方式，如果用到Session必须要打开，AJAX方面需要做这样的设置：var xhr = new XMLHttpRequest(); xhr.withCredentials = true; 需要注意的是，如果要发送Cookie，Access-Control-Allow-Origin就不能设为星号，必须指定明确的、与请求网页一致的域名
 				resp.setHeader("Access-Control-Allow-Methods", "HEAD,GET,POST,OPTIONS");// Access-Control-Allow-Methods: <method>[, <method>]* // 允许请求的HTTP Method
-				String reqHead = resp.getHeader("Access-Control-Request-Headers");
+				String reqHead = resp.getHeader("Access-Control-Request-Headers");// CORS请求时，XMLHttpRequest对象的getResponseHeader()方法只能拿到6个基本字段：Cache-Control、Content-Language、Content-Type、Expires、Last-Modified、Pragma。如果想拿到其他字段，就必须在Access-Control-Expose-Headers里面指定
 	            if (!StringUtils.isEmpty(reqHead)) {
 	            	resp.addHeader("Access-Control-Allow-Headers", reqHead);
 	            }

@@ -38,7 +38,7 @@ public class ChatEndpoint {
 	private static final Map<String, Session> map = new ConcurrentHashMap<String, Session>();
 
 	@OnOpen
-	public void onOpen(Session session, @PathParam("username") String username, EndpointConfig config) {
+	public void onOpen(Session session, @PathParam("username") String username, EndpointConfig config) throws IOException {
 		this.username = username;
 		this.session = session;
 		// 在配置类中获取HttpSession

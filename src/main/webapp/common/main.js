@@ -26,6 +26,8 @@ require.config({
 		'bootstrap' : '../lib/bootstrap/js/bootstrap.min',
 		'adminLTE' : '../lib/AdminLTE/js/app.min',
 		'angular' : '../lib/angular/angular.min',
+		'angular-animate' : '../lib/angular/angular-animate.min',
+		'angular-cookies' : '../lib/angular/angular-cookies.min',
 		'uirouter' : '../lib/angular/ui-router',
 		'bootstrap-slider' : '../lib/bootstrap-slider/bootstrap-slider',
 		'bootstrap-wysihtml5' : '../lib/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min',
@@ -84,6 +86,14 @@ require.config({
 		'angular' : {
 			deps : [ 'jquery' ],
 			exports : 'angular'
+		},
+		'angular-animate' : {
+			deps : [ 'angular' ],
+			exports : 'ngAnimate'
+		},
+		'angular-cookies' : {
+			deps : [ 'angular' ],
+			exports : 'ngCookies'
 		},
 		'uirouter' : {
 			deps : [ 'angular' ],
