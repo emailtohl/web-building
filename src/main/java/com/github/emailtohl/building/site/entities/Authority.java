@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
  * 角色关联的授权
  * @author HeLei
  */
+@org.hibernate.annotations.BatchSize(size = 10)// 因n+1查询问题，盲猜优化，一次性加载size个代理
 @Entity
 @Table(name = "t_authority")
 public class Authority extends BaseEntity {

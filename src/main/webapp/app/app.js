@@ -88,7 +88,7 @@ define([ 'angular', 'uirouter', 'angular-animate', 'angular-cookies', 'common/co
 						to : {
 							opacity : 1
 						},
-						duration : 1.5
+						duration : 0.8
 					});
 				},
 				leave : function(element) {
@@ -99,7 +99,7 @@ define([ 'angular', 'uirouter', 'angular-animate', 'angular-cookies', 'common/co
 						to : {
 							opacity : 0
 						},
-						duration : 1.5
+						duration : 0.8
 					});
 				}
 			}

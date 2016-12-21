@@ -13,6 +13,7 @@ import com.github.emailtohl.building.site.entities.ApplicationForm.Status;
  * 申请表的历史处理记录
  * @author HeLei
  */
+@org.hibernate.annotations.BatchSize(size = 10)// 因n+1查询问题，盲猜优化，一次性加载size个代理
 @Entity
 @Table(name = "t_application_handle_history")
 public class ApplicationHandleHistory extends BaseEntity {

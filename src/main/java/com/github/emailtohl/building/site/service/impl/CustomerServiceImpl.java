@@ -5,8 +5,8 @@ import static com.github.emailtohl.building.site.entities.BaseEntity.ID_PROPERTY
 import static com.github.emailtohl.building.site.entities.BaseEntity.MODIFY_DATE_PROPERTY_NAME;
 import static com.github.emailtohl.building.site.entities.BaseEntity.VERSION_PROPERTY_NAME;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -37,12 +37,20 @@ public class CustomerServiceImpl implements CustomerService {
 				isEmpty(title) ? title : title.trim() + '%', 
 				isEmpty(affiliation) ? affiliation : affiliation.trim() + '%', 
 				pageable);
+		/*
 		List<Customer> ls = new ArrayList<>();
-		page.getContent().forEach((p/*持久化*/ -> {
+		page.getContent().forEach((p持久化 -> {
 			Customer t = new Customer();// 瞬时
 			BeanUtils.copyProperties(p, t, "password", "icon", "roles");
 			ls.add(t);
 		}));
+		*/
+		List<Customer> ls = page.getContent().parallelStream().map((p/*持久化*/ -> {
+			Customer t = new Customer();// 瞬时
+			BeanUtils.copyProperties(p, t, "password", "icon", "roles");
+			return t;
+		})).collect(Collectors.toList());
+		
 		return new Pager<Customer>(ls, page.getTotalElements(), pageable.getPageNumber(), pageable.getPageSize());
 	}
 

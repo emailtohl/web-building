@@ -73,9 +73,10 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 		q.setFirstResult(pageable.getOffset()).setMaxResults(pageable.getPageSize());
 
 		List<Object[]> results = q.getResultList();
-		List<SearchResult<E>> list = new ArrayList<>();
-		results.forEach(o -> list.add(new SearchResult<>((E) o[0], (Float) o[1])));
-		
+		List<SearchResult<E>> list = new ArrayList<SearchResult<E>>();
+		for (Object[] o : results) {
+			list.add(new SearchResult<>((E) o[0], (Float) o[1]));
+		}
 		return new PageImpl<>(list, pageable, total);
 	}
 	
