@@ -67,6 +67,9 @@ public class Role extends BaseEntity {
 		this.description = description;
 	}
 	
+	// Hibernate的@Fetch(FetchMode.SUBSELECT)注解只能用于懒加载的集合，它将n+1查询转成两次查询，一次查询Role自身，拿到Role的id后第二次嵌套查询User：
+	// SELECT * FROM t_user u WHERE u.id IN (SELECT ur.user_id FROM t_user_role ur WHERE ur.role_id = ?)
+	@org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
 	@ManyToMany(targetEntity = User.class, fetch = FetchType.LAZY, mappedBy = "roles")
 	public Set<User> getUsers() {
 		return users;

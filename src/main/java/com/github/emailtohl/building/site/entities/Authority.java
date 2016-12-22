@@ -14,7 +14,6 @@ import javax.validation.constraints.NotNull;
  * 角色关联的授权
  * @author HeLei
  */
-@org.hibernate.annotations.BatchSize(size = 10)// 因n+1查询问题，盲猜优化，一次性加载size个代理
 @Entity
 @Table(name = "t_authority")
 public class Authority extends BaseEntity {
@@ -112,6 +111,7 @@ public class Authority extends BaseEntity {
 		this.description = description;
 	}
 	
+	@org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
 	@ManyToMany(targetEntity = Role.class, fetch = FetchType.LAZY, mappedBy = "authorities")
 	public Set<Role> getRoles() {
 		return roles;
