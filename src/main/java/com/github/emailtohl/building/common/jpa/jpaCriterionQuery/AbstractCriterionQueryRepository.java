@@ -2,6 +2,7 @@ package com.github.emailtohl.building.common.jpa.jpaCriterionQuery;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -18,43 +19,42 @@ import com.github.emailtohl.building.common.jpa.AbstractDynamicQueryRepository;
 
 /**
  * 提供标准查询的基类
- * 本实现依赖Spring data，所以让其继承AbstractDynamicQueryRepository
  * @param <E> 实体类
  * @author HeLei
  */
 public abstract class AbstractCriterionQueryRepository<E extends Serializable> extends AbstractDynamicQueryRepository<E>
 		implements CriterionQueryRepository<E> {
 	/**
-	 * 标准查询接口，根据传入的条件List得到一个Page对象 注意，Pageable的查询是从第0页开始
+	 * 标准查询接口，根据传入的条件集合得到一个Page对象 注意，Pageable的查询是从第0页开始，条件集合之间是AND关系
 	 * 
-	 * @param criteriaList 一个条件List
+	 * @param criteria 一个条件集合
 	 * @param pageable 分页对象
 	 * @return
 	 */
 	@Override
-	public Page<E> search(List<Criterion> criteriaList, Pageable pageable) {
+	public Page<E> search(Collection<Criterion> criteria, Pageable pageable) {
 		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
 
-		CriteriaQuery<Long> countCriteria = builder.createQuery(Long.class);
-		Root<E> countRoot = countCriteria.from(this.entityClass);
+		CriteriaQuery<Long> countQuery = builder.createQuery(Long.class);
+		Root<E> countRoot = countQuery.from(this.entityClass);
 		long total = this.entityManager.createQuery(
-				countCriteria.select(builder.count(countRoot)).where(toPredicates(criteriaList, countRoot, builder)))
+				countQuery.select(builder.count(countRoot)).where(toPredicates(criteria, countRoot, builder)))
 				.getSingleResult();
 
-		CriteriaQuery<E> pageCriteria = builder.createQuery(this.entityClass);
-		Root<E> pageRoot = pageCriteria.from(this.entityClass);
+		CriteriaQuery<E> query = builder.createQuery(this.entityClass);
+		Root<E> queryRoot = query.from(this.entityClass);
 		List<E> list = this.entityManager
-				.createQuery(pageCriteria.select(pageRoot).where(toPredicates(criteriaList, pageRoot, builder))
-						.orderBy(QueryUtils.toOrders(pageable.getSort(), pageRoot, builder)))
+				.createQuery(query.select(queryRoot).where(toPredicates(criteria, queryRoot, builder))
+						.orderBy(QueryUtils.toOrders(pageable.getSort(), queryRoot, builder)))
 				.setFirstResult(pageable.getOffset()).setMaxResults(pageable.getPageSize()).getResultList();
 
-		return new PageImpl<>(new ArrayList<>(list), pageable, total);
+		return new PageImpl<E>(new ArrayList<E>(list), pageable, total);
 	}
 
-	private static Predicate[] toPredicates(List<Criterion> criteriaList, Root<?> root, CriteriaBuilder builder) {
-		Predicate[] predicates = new Predicate[criteriaList.size()];
+	private static Predicate[] toPredicates(Collection<Criterion> criteria, Root<?> root, CriteriaBuilder builder) {
+		Predicate[] predicates = new Predicate[criteria.size()];
 		int i = 0;
-		for (Criterion c : criteriaList)
+		for (Criterion c : criteria)
 			predicates[i++] = c.getOperator().toPredicate(c, root, builder);
 		return predicates;
 	}

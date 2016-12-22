@@ -1,7 +1,8 @@
 package com.github.emailtohl.building.site.dao.impl;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -26,17 +27,17 @@ public class CustomerRepositoryImpl extends AbstractSearchableRepository<Custome
 
 	@Override
 	public Page<Customer> query(String name, String title, String affiliation, Pageable pageable) {
-		List<Criterion> ls = new ArrayList<>();
+		Set<Criterion> set = new HashSet<>();
 		if (!isEmpty(name)) {
-			ls.add(new Criterion("name", Operator.LIKE, name));
+			set.add(new Criterion("name", Operator.LIKE, name));
 		}
 		if (!isEmpty(title)) {
-			ls.add(new Criterion("title", Operator.LIKE, title));
+			set.add(new Criterion("title", Operator.LIKE, title));
 		}
 		if (!isEmpty(affiliation)) {
-			ls.add(new Criterion("affiliation", Operator.LIKE, affiliation));
+			set.add(new Criterion("affiliation", Operator.LIKE, affiliation));
 		}
-		Page<Customer> p = search(ls, pageable);
+		Page<Customer> p = search(set, pageable);
 		return p;
 	}
 

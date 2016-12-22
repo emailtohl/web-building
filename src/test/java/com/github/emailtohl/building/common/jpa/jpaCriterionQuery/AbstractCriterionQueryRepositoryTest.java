@@ -5,9 +5,7 @@ import static com.github.emailtohl.building.initdb.PersistenceData.emailtohl;
 import static com.github.emailtohl.building.initdb.PersistenceData.foo;
 import static org.junit.Assert.assertFalse;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -58,7 +56,7 @@ public class AbstractCriterionQueryRepositoryTest {
 		Sort sort = new Sort(Sort.Direction.DESC, "createDate")
 				 .and(new Sort(Sort.Direction.ASC, "id"));
 		Pageable p = new PageRequest(0, 20, sort);
-		List<Criterion> sc = new ArrayList<>();
+		Set<Criterion> set = new HashSet<>();
 		Criterion c1, c2, c3, c4, c5, c6, c7;
 		c1 = new Criterion("email", Criterion.Operator.EQ, emailtohl.getEmail());
 		c2 = new Criterion("age", Criterion.Operator.GTE, 10);
@@ -75,14 +73,14 @@ public class AbstractCriterionQueryRepositoryTest {
 		}
 		c6 = new Criterion("age", Criterion.Operator.IN, in);
 		c7 = new Criterion("age", Criterion.Operator.NOT_IN, notIn);
-		sc.add(c1);
-		sc.add(c2);
-		sc.add(c3);
-		sc.add(c4);
-		sc.add(c5);
-		sc.add(c6);
-		sc.add(c7);
-		Page<User> page = userRepository.search(sc, p);
+		set.add(c1);
+		set.add(c2);
+		set.add(c3);
+		set.add(c4);
+		set.add(c5);
+		set.add(c6);
+		set.add(c7);
+		Page<User> page = userRepository.search(set, p);
 		logger.debug(page.getContent());
 		logger.debug(page.getNumber());
 		logger.debug(page.getNumberOfElements());
@@ -93,9 +91,9 @@ public class AbstractCriterionQueryRepositoryTest {
 		
 		
 		Criterion c8 = new Criterion("department.name", Criterion.Operator.LIKE, foo.getDepartment().getName());
-		sc.clear();
-		sc.add(c8);
-		page = userRepository.search(sc, p);
+		set.clear();
+		set.add(c8);
+		page = userRepository.search(set, p);
 	}
 	
 	@Test
@@ -103,7 +101,7 @@ public class AbstractCriterionQueryRepositoryTest {
 		Sort sort = new Sort(Sort.Direction.DESC, "createDate")
 				 .and(new Sort(Sort.Direction.ASC, "id"));
 		Pageable p = new PageRequest(0, 20, sort);
-		List<Criterion> sc = new ArrayList<>();
+		Set<Criterion> set = new HashSet<>();
 		Criterion c1, c2, c3, c4, c5, c6;
 		c1 = new Criterion("email", Criterion.Operator.EQ, foo.getEmail());
 		c2 = new Criterion("department.name", Criterion.Operator.LIKE, foo.getDepartment().getName());
@@ -111,13 +109,13 @@ public class AbstractCriterionQueryRepositoryTest {
 		c4 = new Criterion("salary", Criterion.Operator.GT, foo.getSalary() - 1);
 		c5 = new Criterion("salary", Criterion.Operator.LT, foo.getSalary() + 1);
 		c6 = new Criterion("username", Criterion.Operator.NOT_LIKE, bar.getUsername());
-		sc.add(c1);
-		sc.add(c2);
-		sc.add(c3);
-		sc.add(c4);
-		sc.add(c5);
-		sc.add(c6);
-		Page<Employee> page = employeeRepository.search(sc, p);
+		set.add(c1);
+		set.add(c2);
+		set.add(c3);
+		set.add(c4);
+		set.add(c5);
+		set.add(c6);
+		Page<Employee> page = employeeRepository.search(set, p);
 		logger.debug(page.getContent());
 		logger.debug(page.getNumber());
 		logger.debug(page.getNumberOfElements());

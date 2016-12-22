@@ -2,7 +2,9 @@ package com.github.emailtohl.building.site.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -145,26 +147,26 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 	@Override
 	public Page<ApplicationHandleHistory> history(String applicantEmail, String handlerEmail, String name, Status status, Date start, Date end, Pageable pageable) {
 		Page<ApplicationHandleHistory> page;
-		List<Criterion> ls = new ArrayList<>();
+		Set<Criterion> set = new HashSet<>();
 		if (!isEmpty(applicantEmail)) {
-			ls.add(new Criterion("applicationForm.applicant.email", Criterion.Operator.LIKE, applicantEmail.trim() + '%'));
+			set.add(new Criterion("applicationForm.applicant.email", Criterion.Operator.LIKE, applicantEmail.trim() + '%'));
 		}
 		if (!isEmpty(handlerEmail)) {
-			ls.add(new Criterion("handler.email", Criterion.Operator.LIKE, handlerEmail.trim() + '%'));
+			set.add(new Criterion("handler.email", Criterion.Operator.LIKE, handlerEmail.trim() + '%'));
 		}
 		if (!isEmpty(name)) {
-			ls.add(new Criterion("applicationForm.name", Criterion.Operator.LIKE, name.trim() + '%'));
+			set.add(new Criterion("applicationForm.name", Criterion.Operator.LIKE, name.trim() + '%'));
 		}
 		if (status != null) {
-			ls.add(new Criterion("status", Criterion.Operator.EQ, status));
+			set.add(new Criterion("status", Criterion.Operator.EQ, status));
 		}
 		if (start != null) {
-			ls.add(new Criterion("applicationForm.createDate", Criterion.Operator.GTE, start));
+			set.add(new Criterion("applicationForm.createDate", Criterion.Operator.GTE, start));
 		}
 		if (end != null) {
-			ls.add(new Criterion("applicationForm.createDate", Criterion.Operator.LTE, end));
+			set.add(new Criterion("applicationForm.createDate", Criterion.Operator.LTE, end));
 		}
-		page = applicationHandleHistoryRepository.search(ls, pageable);
+		page = applicationHandleHistoryRepository.search(set, pageable);
 		return page;
 	}
 	

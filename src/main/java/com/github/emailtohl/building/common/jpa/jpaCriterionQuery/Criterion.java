@@ -176,5 +176,5 @@ public class Criterion {
 	public String toString() {
 		return "Criterion [propertyName=" + propertyName + ", operator=" + operator + ", compareTo=" + compareTo + "]";
 	}
-	
+
 }
