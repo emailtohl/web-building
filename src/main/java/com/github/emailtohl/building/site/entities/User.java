@@ -5,6 +5,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -298,6 +299,25 @@ public class User extends BaseEntity {
 		return new Principal();
 	}
 	
+	/**
+	 * 基于唯一标识email的equals和hashCode方法
+	 */
+	@Override
+	public int hashCode() {
+		return Objects.hash(email);
+	}
+	@Override
+	public boolean equals(Object other) {
+		if (this == other)
+			return true;
+		if (!(other instanceof User))
+			return false;
+		final User that = (User) other;
+		if (this.email == null || that.getEmail() == null)
+			return false;
+		else
+			return this.email.equals(that.getEmail());
+	}
 	
 	@Override
 	public String toString() {

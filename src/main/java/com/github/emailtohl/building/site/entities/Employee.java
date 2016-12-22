@@ -50,4 +50,12 @@ public class Employee extends User {
 	public void setDepartment(Department department) {
 		this.department = department;
 	}
+	
+	@Override
+	public String toString() {
+		return "Employee [empNum=" + empNum + ", post=" + post + ", salary=" + salary + ", department=" + department
+				+ ", email=" + email + ", address=" + address + ", telephone=" + telephone + ", birthday=" + birthday
+				+ ", description=" + description + ", roles=" + roles + "]";
+	}
+	
 }

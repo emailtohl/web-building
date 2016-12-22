@@ -1,6 +1,7 @@
 package com.github.emailtohl.building.site.entities;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -92,6 +93,26 @@ public class Role extends BaseEntity {
 	@Override
 	public String toString() {
 		return "Role [name=" + name + ", authorities=" + authorities + "]";
+	}
+	
+	/**
+	 * 基于唯一标识name的equals和hashCode方法
+	 */
+	@Override
+	public int hashCode() {
+		return Objects.hash(name);
+	}
+	@Override
+	public boolean equals(Object other) {
+		if (this == other)
+			return true;
+		if (!(other instanceof Role))
+			return false;
+		final Role that = (Role) other;
+		if (this.name == null || that.getName() == null)
+			return false;
+		else
+			return this.name.equals(that.getName());
 	}
 	
 }

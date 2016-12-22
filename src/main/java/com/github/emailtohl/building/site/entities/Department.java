@@ -1,8 +1,10 @@
 package com.github.emailtohl.building.site.entities;
 
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -19,6 +21,7 @@ public class Department extends BaseEntity {
 	private transient Set<Employee> employees;
 	private Company company;
 	
+	@Column(nullable = false, unique = true)
 	public String getName() {
 		return name;
 	}
@@ -46,34 +49,29 @@ public class Department extends BaseEntity {
 	public void setCompany(Company company) {
 		this.company = company;
 	}
+	
+	@Override
+	public String toString() {
+		return "Department [name=" + name + ", description=" + description + ", company=" + company + "]";
+	}
+
+	/**
+	 * 基于唯一标识name的equals和hashCode方法
+	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((description == null) ? 0 : description.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
+		return Objects.hash(name);
 	}
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
+	public boolean equals(Object other) {
+		if (this == other)
 			return true;
-		if (obj == null)
+		if (!(other instanceof Department))
 			return false;
-		if (getClass() != obj.getClass())
+		final Department that = (Department) other;
+		if (this.name == null || that.getName() == null)
 			return false;
-		Department other = (Department) obj;
-		if (description == null) {
-			if (other.description != null)
-				return false;
-		} else if (!description.equals(other.description))
-			return false;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
+		else
+			return this.name.equals(that.getName());
 	}
-	
 }
