@@ -52,7 +52,8 @@ public class Criterion {
 			@Override
 			public Predicate toPredicate(Criterion c, Root<?> r, CriteriaBuilder b) {
 				Comparable comparable = getComparable(c);
-				return b.lessThan(getComparablePath(r, c.getPropertyName()), comparable);
+				Path<? extends Comparable> p = getComparablePath(r, c.getPropertyName());
+				return b.lessThan(p, comparable);
 			}
 		},
 		LTE {
@@ -60,7 +61,8 @@ public class Criterion {
 			@Override
 			public Predicate toPredicate(Criterion c, Root<?> r, CriteriaBuilder b) {
 				Comparable comparable = getComparable(c);
-				return b.lessThanOrEqualTo(getComparablePath(r, c.getPropertyName()), comparable);
+				Path<? extends Comparable> p = getComparablePath(r, c.getPropertyName());
+				return b.lessThanOrEqualTo(p, comparable);
 			}
 		},
 		GT {
@@ -68,7 +70,8 @@ public class Criterion {
 			@Override
 			public Predicate toPredicate(Criterion c, Root<?> r, CriteriaBuilder b) {
 				Comparable comparable = getComparable(c);
-				return b.greaterThan(getComparablePath(r, c.getPropertyName()), comparable);
+				Path<? extends Comparable> p = getComparablePath(r, c.getPropertyName());
+				return b.greaterThan(p, comparable);
 			}
 		},
 		GTE {
@@ -76,7 +79,8 @@ public class Criterion {
 			@Override
 			public Predicate toPredicate(Criterion c, Root<?> r, CriteriaBuilder b) {
 				Comparable comparable = getComparable(c);
-				return b.greaterThanOrEqualTo(getComparablePath(r, c.getPropertyName()), comparable);
+				Path<? extends Comparable> p = getComparablePath(r, c.getPropertyName());
+				return b.greaterThanOrEqualTo(p, comparable);
 			}
 		},
 		LIKE {
@@ -146,10 +150,10 @@ public class Criterion {
 			return p;
 		}
 		
-		@SuppressWarnings({ "rawtypes", "unchecked" })
-		private static Path<Comparable> getComparablePath(Root<?> r, String propertyName) {
+		@SuppressWarnings("unchecked")
+		private static Path<? extends Comparable<?>> getComparablePath(Root<?> r, String propertyName) {
 			Path<?> p = getPath(r, propertyName);
-			return (Path<Comparable>) p;
+			return (Path<? extends Comparable<?>>) p;
 		}
 		
 		@SuppressWarnings("unchecked")
@@ -160,15 +164,16 @@ public class Criterion {
 		
 		private static Comparable<?> getComparable(Criterion c) {
 			Object o = c.getCompareTo();
-			if (o != null && !(o instanceof Comparable))
+			if (!(o instanceof Comparable))
 				throw new IllegalArgumentException(c.getPropertyName());
 			return (Comparable<?>) o;
 		}
 
 		private static String getString(Criterion c) {
-			if (!(c.getCompareTo() instanceof String))
+			Object o = c.getCompareTo();
+			if (!(o instanceof String))
 				throw new IllegalArgumentException(c.getPropertyName());
-			return (String) c.getCompareTo();
+			return (String) o;
 		}
 	}
 

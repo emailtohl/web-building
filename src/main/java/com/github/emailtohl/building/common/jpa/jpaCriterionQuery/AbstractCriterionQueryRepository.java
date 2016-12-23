@@ -19,16 +19,21 @@ import com.github.emailtohl.building.common.jpa.AbstractDynamicQueryRepository;
 
 /**
  * 提供标准查询的基类
- * @param <E> 实体类
+ * 
+ * @param <E>
+ *            实体类
  * @author HeLei
  */
 public abstract class AbstractCriterionQueryRepository<E extends Serializable> extends AbstractDynamicQueryRepository<E>
 		implements CriterionQueryRepository<E> {
 	/**
-	 * 标准查询接口，根据传入的条件集合得到一个Page对象 注意，Pageable的查询是从第0页开始，条件集合之间是AND关系
+	 * 标准查询接口，根据传入的条件集合得到一个Page对象
+	 * 注意:Pageable的查询是从第0页开始，条件集合之间是AND关系
 	 * 
-	 * @param criteria 一个条件集合
-	 * @param pageable 分页对象
+	 * @param criteria
+	 *            一个条件集合
+	 * @param pageable
+	 *            分页对象
 	 * @return
 	 */
 	@Override
@@ -37,8 +42,9 @@ public abstract class AbstractCriterionQueryRepository<E extends Serializable> e
 
 		CriteriaQuery<Long> countQuery = builder.createQuery(Long.class);
 		Root<E> countRoot = countQuery.from(this.entityClass);
-		long total = this.entityManager.createQuery(
-				countQuery.select(builder.count(countRoot)).where(toPredicates(criteria, countRoot, builder)))
+		long total = this.entityManager
+				.createQuery(
+						countQuery.select(builder.count(countRoot)).where(toPredicates(criteria, countRoot, builder)))
 				.getSingleResult();
 
 		CriteriaQuery<E> query = builder.createQuery(this.entityClass);
@@ -51,7 +57,7 @@ public abstract class AbstractCriterionQueryRepository<E extends Serializable> e
 		return new PageImpl<E>(new ArrayList<E>(list), pageable, total);
 	}
 
-	private static Predicate[] toPredicates(Collection<Criterion> criteria, Root<?> root, CriteriaBuilder builder) {
+	private Predicate[] toPredicates(Collection<Criterion> criteria, Root<?> root, CriteriaBuilder builder) {
 		Predicate[] predicates = new Predicate[criteria.size()];
 		int i = 0;
 		for (Criterion c : criteria)
