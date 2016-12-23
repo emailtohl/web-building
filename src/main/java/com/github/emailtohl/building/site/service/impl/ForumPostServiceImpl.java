@@ -58,6 +58,13 @@ public class ForumPostServiceImpl implements ForumPostService {
 		List<ForumPost> ls = forumPostRepository.findAll(query);
 		return ls.stream().filter(f -> f != null).map(this::convert).collect(Collectors.toList());
 	}
+	
+	@Override
+	public Pager<ForumPostDto> find(String query, Pageable pageable) {
+		Page<ForumPost> page = forumPostRepository.find(query, pageable);
+		List<ForumPostDto> ls = page.getContent().stream().filter(f -> f != null).map(this::convert).collect(Collectors.toList());
+		return new Pager<ForumPostDto>(ls, page.getTotalElements(), pageable.getPageNumber(), pageable.getPageSize());
+	}
 
 	@Override
 	public Pager<ForumPostDto> findAllAndPaging(String query, Pageable pageable) {
@@ -107,7 +114,7 @@ public class ForumPostServiceImpl implements ForumPostService {
 	}
 	
 	@Override
-	public void save(String email, String title, String keywords, String body) {
+	public long save(String email, String title, String keywords, String body) {
 		ForumPost forumPost = new ForumPost();
 		forumPost.setTitle(title);
 		forumPost.setKeywords(keywords);
@@ -118,12 +125,13 @@ public class ForumPostServiceImpl implements ForumPostService {
 		}
 		forumPost.setUser(u);
 		this.forumPostRepository.save(forumPost);
+		return forumPost.getId();
 	}
 	
 	@Override
-	public void save(String title, String keywords, String body) {
+	public long save(String title, String keywords, String body) {
 		String email = SecurityContextUtil.getCurrentUsername();
-		this.save(email, title, keywords, body);
+		return this.save(email, title, keywords, body);
 	}
 	
 	@Override

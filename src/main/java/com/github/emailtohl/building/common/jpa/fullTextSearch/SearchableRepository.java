@@ -15,12 +15,20 @@ import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.CriterionQuery
  */
 public interface SearchableRepository<E extends Serializable> extends CriterionQueryRepository<E> {
 	/**
-	 * 全文搜索的分页结果
+	 * 全文搜索
 	 * @param query 查询内容
 	 * @param pageable 可分页
-	 * @return
+	 * @return 一个包含实体类E，相关度以及Lucence的Document的结果集
 	 */
 	Page<SearchResult<E>> search(String query, Pageable pageable);
+	
+	/**
+	 * 全文搜索
+	 * @param query
+	 * @param pageable
+	 * @return 只返回查找到的实体类E
+	 */
+	Page<E> find(String query, Pageable pageable);
 	
 	/**
 	 * 查询所有匹配的实体

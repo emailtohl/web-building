@@ -59,6 +59,8 @@ public class ForumPostCtrl {
 	@RequestMapping(value = "search", method = RequestMethod.GET)
 	public Pager<ForumPostDto> search(@RequestParam String query,
 			@PageableDefault(page = 0, size = 5, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
+//		演示时使用完全查询，因为Hibernate Search FullTextQuery getResultSize never matches getResultList().size()
+//		return this.forumPostService.find(query, pageable);
 		return this.forumPostService.findAllAndPaging(query, pageable);
 	}
 

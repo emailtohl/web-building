@@ -2,13 +2,14 @@ package com.github.emailtohl.building.site.service.impl;
 
 import static com.github.emailtohl.building.initdb.PersistenceData.bar;
 import static com.github.emailtohl.building.initdb.PersistenceData.emailtohl;
-import static com.github.emailtohl.building.initdb.PersistenceData.foo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -54,22 +55,26 @@ public class ForumPostServiceImplTest {
 	@Inject ForumPostRepository forumPostRepository;
 	@Inject UserRepository userRepository;
 	
+	private Set<Long> idSet = new HashSet<>();
+	
 	@Before
 	public void setUp() throws Exception {
 		securityContextManager.setEmailtohl();
-		forumPostService.save(title_emailtohl, Keywords_emailtohl, body_emailtohl);
+		idSet.add(forumPostService.save(title_emailtohl, Keywords_emailtohl, body_emailtohl));
 		securityContextManager.setFoo();
-		forumPostService.save(title_foo, Keywords_foo, body_foo);
+		idSet.add(forumPostService.save(title_foo, Keywords_foo, body_foo));
 		securityContextManager.setBar();
-		forumPostService.save(bar.getEmail(), title_bar, Keywords_bar, body_bar);
+		idSet.add(forumPostService.save(bar.getEmail(), title_bar, Keywords_bar, body_bar));
 	}
 
 	@After
 	public void tearDown() throws Exception {
 		securityContextManager.setEmailtohl();
-		forumPostService.deleteByEmail(emailtohl.getEmail());
-		forumPostService.deleteByEmail(foo.getEmail());
-		forumPostService.deleteByEmail(bar.getEmail());
+		idSet.forEach(id -> forumPostService.delete(id));
+		idSet.clear();
+//		forumPostService.deleteByEmail(emailtohl.getEmail());
+//		forumPostService.deleteByEmail(foo.getEmail());
+//		forumPostService.deleteByEmail(bar.getEmail());
 	}
 
 	@Test
@@ -99,7 +104,7 @@ public class ForumPostServiceImplTest {
 	}
 	
 	@Test
-	public void testFindAll() {
+	public void testFind() {
 		List<ForumPostDto> ls = forumPostService.findAll(body_foo);
 		assertFalse(ls.isEmpty());
 		ls = forumPostService.findAll(Keywords_foo);
@@ -107,6 +112,10 @@ public class ForumPostServiceImplTest {
 		
 		Pager<ForumPostDto> p = forumPostService.findAllAndPaging(body_bar, pageable);
 		assertFalse(p.getContent().isEmpty());
+		
+		p = forumPostService.find(Keywords_foo, pageable);
+		assertFalse(p.getContent().isEmpty());
+		
 	}
 
 	@Test

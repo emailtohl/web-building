@@ -50,6 +50,15 @@ public interface ForumPostService {
 	Pager<ForumPostDto> findAllAndPaging(String query, Pageable pageable);
 	
 	/**
+	 * 全文搜索
+	 * @param query
+	 * @param pageable
+	 * @return 只返回查找到的实体类E
+	 */
+	@Transactional
+	Pager<ForumPostDto> find(String query, Pageable pageable);
+	
+	/**
 	 * 分页查询所有帖子
 	 * @param pageable
 	 * @return
@@ -75,10 +84,11 @@ public interface ForumPostService {
 	 * @param title
 	 * @param keywords
 	 * @param body
+	 * @return
 	 */
 	@PreAuthorize("isAuthenticated()")
 	@Transactional
-	void save(@NotNull String title, String keywords, String body);
+	long save(@NotNull String title, String keywords, String body);
 	
 	/**
 	 * 保存帖子
@@ -86,10 +96,11 @@ public interface ForumPostService {
 	 * @param title
 	 * @param keywords
 	 * @param body
+	 * @return
 	 */
 	@PreAuthorize("isAuthenticated()")
 	@Transactional
-	void save(@NotNull String email, @NotNull String title, String keywords, String body);
+	long save(@NotNull String email, @NotNull String title, String keywords, String body);
 	
 	/**
 	 * 特殊情况下用于管理员删帖

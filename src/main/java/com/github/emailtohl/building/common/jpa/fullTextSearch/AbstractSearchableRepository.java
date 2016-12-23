@@ -8,6 +8,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -64,7 +65,7 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 		Query lucene = builder.keyword().onFields(onFields).matching(query).createQuery();
 		FullTextQuery q = manager.createFullTextQuery(lucene, entityClass);
 		q.setProjection(FullTextQuery.THIS, FullTextQuery.SCORE, FullTextQuery.DOCUMENT);
-		long total = q.getResultSize();
+		int total = q.getResultSize();
 		q.setFirstResult(pageable.getOffset()).setMaxResults(pageable.getPageSize());
 		List<Object[]> results = q.getResultList();
 		List<SearchResult<E>> list = new ArrayList<SearchResult<E>>();
@@ -74,6 +75,19 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 		return new PageImpl<SearchResult<E>>(list, pageable, total);
 	}
 	
+	@Override
+	public Page<E> find(String query, Pageable pageable) {
+		FullTextEntityManager manager = Search.getFullTextEntityManager(this.entityManagerProxy.getTargetEntityManager());
+		QueryBuilder builder = manager.getSearchFactory().buildQueryBuilder().forEntity(entityClass).get();
+		Query lucene = builder.keyword().onFields(onFields).matching(query).createQuery();
+		FullTextQuery q = manager.createFullTextQuery(lucene, entityClass);
+		q.setFirstResult(pageable.getOffset()).setMaxResults(pageable.getPageSize());
+		@SuppressWarnings("unchecked")
+		List<E> list = q.getResultList();
+		int total = q.getResultSize();
+		return new PageImpl<E>(list, pageable, total);
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<E> findAll(String query) {
@@ -81,6 +95,7 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 		QueryBuilder builder = manager.getSearchFactory().buildQueryBuilder().forEntity(entityClass).get();
 		Query lucene = builder.keyword().onFields(onFields).matching(query).createQuery();
 		FullTextQuery q = manager.createFullTextQuery(lucene, entityClass);
+		q.limitExecutionTimeTo(5000, TimeUnit.MILLISECONDS);
 		return q.getResultList();
 	}
 	
