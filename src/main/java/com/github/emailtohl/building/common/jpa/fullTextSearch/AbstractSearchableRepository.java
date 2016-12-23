@@ -13,6 +13,7 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.lucene.document.Document;
 import org.apache.lucene.search.Query;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.IndexedEmbedded;
@@ -28,7 +29,6 @@ import org.springframework.orm.jpa.EntityManagerProxy;
 
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.AbstractCriterionQueryRepository;
 import com.github.emailtohl.building.common.utils.BeanUtil;
-import com.github.emailtohl.building.site.entities.ForumPost;
 
 /**
  * 全文搜索的实现
@@ -60,24 +60,39 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 	public Page<SearchResult<E>> search(String query, Pageable pageable) {
 		// Search.getFullTextEntityManager接收具体的实现，而不是Spring的代理
 		FullTextEntityManager manager = Search.getFullTextEntityManager(this.entityManagerProxy.getTargetEntityManager());
-
-		QueryBuilder builder = manager.getSearchFactory().buildQueryBuilder().forEntity(ForumPost.class).get();
-
+		QueryBuilder builder = manager.getSearchFactory().buildQueryBuilder().forEntity(entityClass).get();
 		Query lucene = builder.keyword().onFields(onFields).matching(query).createQuery();
-
-		FullTextQuery q = manager.createFullTextQuery(lucene, ForumPost.class);
-		q.setProjection(FullTextQuery.THIS, FullTextQuery.SCORE);
-
+		FullTextQuery q = manager.createFullTextQuery(lucene, entityClass);
+		q.setProjection(FullTextQuery.THIS, FullTextQuery.SCORE, FullTextQuery.DOCUMENT);
 		long total = q.getResultSize();
-
 		q.setFirstResult(pageable.getOffset()).setMaxResults(pageable.getPageSize());
-
 		List<Object[]> results = q.getResultList();
 		List<SearchResult<E>> list = new ArrayList<SearchResult<E>>();
 		for (Object[] o : results) {
-			list.add(new SearchResult<E>((E) o[0], (Float) o[1]));
+			list.add(new SearchResult<E>((E) o[0], (Float) o[1], (Document) o[2]));
 		}
 		return new PageImpl<SearchResult<E>>(list, pageable, total);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<E> findAll(String query) {
+		FullTextEntityManager manager = Search.getFullTextEntityManager(this.entityManagerProxy.getTargetEntityManager());
+		QueryBuilder builder = manager.getSearchFactory().buildQueryBuilder().forEntity(entityClass).get();
+		Query lucene = builder.keyword().onFields(onFields).matching(query).createQuery();
+		FullTextQuery q = manager.createFullTextQuery(lucene, entityClass);
+		return q.getResultList();
+	}
+	
+	@Override
+	public Page<E> findAllAndPaging(String query, Pageable pageable) {
+		List<E> ls = findAll(query);
+		List<E> result = new ArrayList<E>();
+		int offset = pageable.getOffset(), size = pageable.getPageSize(), max = ls.size();
+		for (int i = offset; i < size && i < max; i++) {
+			result.add(ls.get(i));
+		}
+		return new PageImpl<E>(result, pageable, ls.size());
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })

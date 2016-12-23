@@ -29,7 +29,25 @@ public interface ForumPostService {
 	 * @param pageable
 	 * @return
 	 */
+	@Transactional
 	Pager<SearchResult<ForumPostDto>> search(String query, Pageable pageable);
+	
+	/**
+	 * 查询所有符合标准的对象
+	 * @param query
+	 * @return
+	 */
+	@Transactional
+	List<ForumPostDto> findAll(String query);
+	
+	/**
+	 * 查询出全部列表然后再做分页
+	 * @param query
+	 * @param pageable
+	 * @return
+	 */
+	@Transactional
+	Pager<ForumPostDto> findAllAndPaging(String query, Pageable pageable);
 	
 	/**
 	 * 分页查询所有帖子

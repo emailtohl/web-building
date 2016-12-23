@@ -9,7 +9,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.fullTextSearch.SearchResult;
@@ -29,13 +28,10 @@ import com.github.emailtohl.building.site.service.ForumPostService;
  */
 @Service
 public class ForumPostServiceImpl implements ForumPostService {
-	@Inject
-	UserRepository userRepository;
-	@Inject
-	ForumPostRepository forumPostRepository;
+	@Inject UserRepository userRepository;
+	@Inject ForumPostRepository forumPostRepository;
 
 	@Override
-	@Transactional
 	public Pager<SearchResult<ForumPostDto>> search(String query, Pageable pageable) {
 		Page<SearchResult<ForumPost>> page = this.forumPostRepository.search(query, pageable);
 		/*
@@ -51,10 +47,23 @@ public class ForumPostServiceImpl implements ForumPostService {
 		*/
 		List<SearchResult<ForumPostDto>> ls = page.getContent().stream()
 				.filter(s -> s.getEntity() != null)
-				.map(s -> new SearchResult<ForumPostDto>(convert(s.getEntity()), s.getRelevance()))
+				.map(s -> new SearchResult<ForumPostDto>(convert(s.getEntity()), s.getRelevance(), null))
 				.collect(Collectors.toList());
 		
-		return new Pager<SearchResult<ForumPostDto>>(ls, page.getTotalElements(), pageable.getPageNumber(), page.getSize());
+		return new Pager<SearchResult<ForumPostDto>>(ls, page.getTotalElements(), pageable.getPageNumber(), pageable.getPageSize());
+	}
+	
+	@Override
+	public List<ForumPostDto> findAll(String query) {
+		List<ForumPost> ls = forumPostRepository.findAll(query);
+		return ls.stream().filter(f -> f != null).map(this::convert).collect(Collectors.toList());
+	}
+
+	@Override
+	public Pager<ForumPostDto> findAllAndPaging(String query, Pageable pageable) {
+		Page<ForumPost> page = forumPostRepository.findAllAndPaging(query, pageable);
+		List<ForumPostDto> ls = page.getContent().stream().filter(f -> f != null).map(this::convert).collect(Collectors.toList());
+		return new Pager<>(ls, page.getTotalElements(), pageable.getPageNumber(), pageable.getPageSize());
 	}
 	
 	@Override
@@ -96,7 +105,7 @@ public class ForumPostServiceImpl implements ForumPostService {
 		return forumPostRepository.findByUserEmail(userEmail).parallelStream()
 				.map(this::convert).collect(Collectors.toList());
 	}
-
+	
 	@Override
 	public void save(String email, String title, String keywords, String body) {
 		ForumPost forumPost = new ForumPost();

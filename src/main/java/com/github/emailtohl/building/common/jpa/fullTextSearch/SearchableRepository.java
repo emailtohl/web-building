@@ -1,6 +1,7 @@
 package com.github.emailtohl.building.common.jpa.fullTextSearch;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,4 +21,20 @@ public interface SearchableRepository<E extends Serializable> extends CriterionQ
 	 * @return
 	 */
 	Page<SearchResult<E>> search(String query, Pageable pageable);
+	
+	/**
+	 * 查询所有匹配的实体
+	 * @param query
+	 * @return
+	 */
+	List<E> findAll(String query);
+	
+	/**
+	 * 查询全部与实体E有关的List后，再做分页
+	 * 由于先查询所有列表，然后再在内存中分页，注意性能
+	 * @param query
+	 * @param pageable
+	 * @return
+	 */
+	Page<E> findAllAndPaging(String query, Pageable pageable);
 }

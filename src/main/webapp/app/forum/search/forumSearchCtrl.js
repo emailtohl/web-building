@@ -40,9 +40,7 @@ define(['forum/module', 'forum/search/service'], function(forumModule) {
 		};
 		
 		self.getIconSrc = function(obj) {
-			return obj.entity
-			&& obj.entity.user
-			&& obj.entity.user.iconSrc;
+			return obj && obj.user && obj.user.iconSrc;
 		};
 		self['delete'] = function(id, $event) {
 			$event.stopPropagation();

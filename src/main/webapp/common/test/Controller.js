@@ -22,6 +22,10 @@ define(['angular', 'test/module'], function(angular) {
 		self.onChange = function(value) {
 			console.log('select值改为：' + value);
 		};
+		
+		self.selectModel1 = 6;
+		self.selectModel2 = [{a:5,b:6}];
+		
 	}])
 	.controller('TestPagerCtrl', ['$scope', '$http', '$state', function($scope, $http, $state) {
 		var self = this;

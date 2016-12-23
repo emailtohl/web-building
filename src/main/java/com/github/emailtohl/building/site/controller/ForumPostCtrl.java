@@ -2,9 +2,6 @@ package com.github.emailtohl.building.site.controller;
 
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -26,7 +23,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.emailtohl.building.common.jpa.Pager;
-import com.github.emailtohl.building.common.jpa.fullTextSearch.SearchResult;
 import com.github.emailtohl.building.site.dto.ForumPostDto;
 import com.github.emailtohl.building.site.entities.BaseEntity;
 import com.github.emailtohl.building.site.service.ForumPostService;
@@ -61,19 +57,14 @@ public class ForumPostCtrl {
 	}
 	
 	@RequestMapping(value = "search", method = RequestMethod.GET)
-	public Pager<SearchResult<ForumPostDto>> search(@RequestParam String query,
+	public Pager<ForumPostDto> search(@RequestParam String query,
 			@PageableDefault(page = 0, size = 5, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
-		return this.forumPostService.search(query, pageable);
+		return this.forumPostService.findAllAndPaging(query, pageable);
 	}
 
 	@RequestMapping(value = "pager", method = RequestMethod.GET)
-	Pager<SearchResult<ForumPostDto>> searchPager(@PageableDefault(page = 0, size = 5, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
-		Pager<ForumPostDto> p = forumPostService.getPager(pageable);
-		List<SearchResult<ForumPostDto>> ls = new ArrayList<SearchResult<ForumPostDto>>();
-		p.getContent().forEach(dto -> {
-			ls.add(new SearchResult<ForumPostDto>(dto, 1));
-		});
-		return new Pager<SearchResult<ForumPostDto>>(ls, p.getTotalElements(), pageable.getPageNumber(), p.getPageSize());
+	Pager<ForumPostDto> searchPager(@PageableDefault(page = 0, size = 5, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
+		return this.forumPostService.getPager(pageable);
 	}
 	
 	/**
@@ -83,6 +74,6 @@ public class ForumPostCtrl {
 	@RequestMapping(value = "{id}", method = DELETE)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void delete(@PathVariable("id") @Min(1L) long id) {
-		forumPostService.delete(id);
+		this.forumPostService.delete(id);
 	}
 }

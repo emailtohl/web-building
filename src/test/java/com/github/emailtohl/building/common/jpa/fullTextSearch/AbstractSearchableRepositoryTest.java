@@ -37,7 +37,7 @@ public class AbstractSearchableRepositoryTest {
 	 * 需要在事务环境中使用，所以在具体类中进行测试
 	 */
 	@Test
-	public void testSearch() {
+	public void testInitialize() {
 		AutowireCapableBeanFactory factory = context.getAutowireCapableBeanFactory();
 		factory.autowireBeanProperties(forumFullTextSearch, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
 		factory.initializeBean(forumFullTextSearch, "forumFullTextSearch");

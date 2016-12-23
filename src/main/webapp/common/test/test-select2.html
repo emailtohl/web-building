@@ -60,7 +60,18 @@
 	  </div>
 	  <!-- /.col -->
 	</div>
-
+	<div class="row">
+	  <div class="col-md-6">
+	  	原生select: {{ctrl.selectModel1}}
+	  	<select class="form-control" ng-model="ctrl.selectModel1" ng-options="obj.b as obj.a for obj in ctrl.objList">
+		</select>
+	  </div>
+	  <div class="col-md-6">
+	  	原生multi select: {{ctrl.selectModel2}}
+	  	<select multiple="multiple" class="form-control" ng-model="ctrl.selectModel2" ng-options="obj as obj.a for obj in ctrl.objList">
+		</select>
+	  </div>
+	</div>
 <!-- 
 
 	TestStringList

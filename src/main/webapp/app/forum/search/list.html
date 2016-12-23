@@ -15,20 +15,20 @@
       <div class="box box-info pop" ng-repeat="x in ctrl.pager.content" repeat-finish="ctrl.renderFinish()">
         <div class="box-header">
           <div class="pull-left image">
-            <img width="39" height="50" ng-src="{{x.entity.user.iconSrc}}" class="img-circle" alt="User Image">
+            <img width="39" height="50" ng-src="{{x.user.iconSrc}}" class="img-circle" alt="User Image">
           </div>
           <div class="pull-left info">
-            <p>{{x.entity.user.username}}</p>
+            <p>{{x.user.username}}</p>
           </div>
           <div class="pull-left box-body">
-            <h3 class="box-title">{{x.entity.title}}
-              <small>关键字：{{x.entity.keywords}}</small>
-              <small>相关度：{{x.relevance}}</small>
+            <h3 class="box-title">{{x.title}}
+              <small>关键字：{{x.keywords}}</small>
+              <!-- <small>相关度：{{x.relevance}}</small> -->
             </h3>
           </div>
           <!-- tools box -->
           <div class="pull-right box-tools">
-            <button type="button" class="btn btn-danger btn-sm" data-widget="remove" data-toggle="tooltip" title="Physics Remove" ng-click="ctrl.delete(x.entity.id, $event)">
+            <button type="button" class="btn btn-danger btn-sm" data-widget="remove" data-toggle="tooltip" title="Physics Remove" ng-click="ctrl.delete(x.id, $event)">
               <i class="fa fa-times"></i></button>
             <button type="button" class="btn btn-info btn-sm" data-widget="collapse" data-toggle="tooltip" title="Collapse">
               <i class="fa fa-minus"></i></button>
@@ -40,7 +40,7 @@
         <!-- /.box-header -->
         <div class="box-body pad">
            <textarea name="body" rows="10" cols="80">
-               {{x.entity.body}}
+               {{x.body}}
            </textarea>
         </div>
       </div>
