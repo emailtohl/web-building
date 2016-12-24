@@ -13,6 +13,8 @@ import java.util.concurrent.TimeUnit;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.Query;
 import org.hibernate.search.annotations.Field;
@@ -37,21 +39,22 @@ import com.github.emailtohl.building.common.utils.BeanUtil;
  * @param <E extends Serializable> 存储搜索结果的实体类
  */
 public abstract class AbstractSearchableRepository<E extends Serializable> extends AbstractCriterionQueryRepository<E> implements SearchableRepository<E> {
+	private static final Logger logger = LogManager.getLogger();
 	@PersistenceContext
 	protected EntityManager entityManager;
 	protected Class<E> entityClass;
 	protected String[] onFields;
 	
 	/**
-	 * 根据this.entityClass、索引字段以及query参数获取FullTextQuery
+	 * 根据entityClass、索引字段以及query参数获取FullTextQuery
 	 * @param query
 	 * @return
 	 */
 	protected FullTextQuery getFullTextQuery(String query) {
-		FullTextEntityManager manager = Search.getFullTextEntityManager(this.entityManager);
-		QueryBuilder builder = manager.getSearchFactory().buildQueryBuilder().forEntity(this.entityClass).get();
+		FullTextEntityManager manager = Search.getFullTextEntityManager(entityManager);
+		QueryBuilder builder = manager.getSearchFactory().buildQueryBuilder().forEntity(entityClass).get();
 		Query lucene = builder.keyword().onFields(onFields).matching(query).createQuery();
-		return manager.createFullTextQuery(lucene, this.entityClass);
+		return manager.createFullTextQuery(lucene, entityClass);
 	}
 	
 	/**
@@ -104,7 +107,7 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected AbstractSearchableRepository() {
-		Type genericSuperclass = this.getClass().getGenericSuperclass();
+		Type genericSuperclass = getClass().getGenericSuperclass();
 		while (!(genericSuperclass instanceof ParameterizedType)) {
 			if (!(genericSuperclass instanceof Class))
 				throw new IllegalStateException("Unable to determine type "
@@ -116,19 +119,19 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 		}
 		ParameterizedType type = (ParameterizedType) genericSuperclass;
 		Type[] arguments = type.getActualTypeArguments();
-		this.entityClass = (Class<E>) arguments[0];
+		entityClass = (Class<E>) arguments[0];
 		
 		// 初始化索引域
 		List<String> fields = new ArrayList<>();
-		findProper("", this.entityClass, fields);
-		findField("", this.entityClass, fields);
+		findProper("", entityClass, fields);
+		findField("", entityClass, fields);
 		onFields = fields.toArray(new String[fields.size()]);
 	}
 
 	/**
 	 * 分析传入的类型，分析其JavaBean属性，解析其带有@org.hibernate.search.annotations.Field注解的属性
 	 * 将该属性的名字存储在fields列表中
-	 * @param name 递归计算时的前缀
+	 * @param name 属性Path的前缀
 	 * @param clz
 	 * @param fields
 	 */
@@ -147,14 +150,14 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 				}
 			}
 		} catch (IntrospectionException e) {
-			e.printStackTrace();
+			logger.warn("通过Javabean属性获取" + clz.getName() + "的索引出现异常！", e);
 		}
 	}
 	
 	/**
 	 * 分析传入的类型，分析其Field字段，解析其带有@org.hibernate.search.annotations.Field注解的属性
 	 * 将该属性的名字存储在fields列表中
-	 * @param name
+	 * @param name 属性Path的前缀
 	 * @param clz
 	 * @param fields
 	 */
