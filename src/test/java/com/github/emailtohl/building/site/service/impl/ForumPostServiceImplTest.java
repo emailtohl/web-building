@@ -2,7 +2,6 @@ package com.github.emailtohl.building.site.service.impl;
 
 import static com.github.emailtohl.building.initdb.PersistenceData.bar;
 import static com.github.emailtohl.building.initdb.PersistenceData.emailtohl;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -99,7 +98,7 @@ public class ForumPostServiceImplTest {
 			logger.debug(s.getEntity().getUser().getEmail());
 			logger.debug(s.getEntity().getUser().getName());
 			logger.debug(s.getRelevance());
-			assertEquals(title_emailtohl, s.getEntity().getTitle());
+			assertTrue(ls.contains(s.getEntity().getTitle()));
 		}
 	}
 	

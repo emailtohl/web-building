@@ -2,7 +2,6 @@ package com.github.emailtohl.building.common.jpa.fullTextSearch;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
 
@@ -41,7 +40,6 @@ public class AbstractSearchableRepositoryTest {
 		AutowireCapableBeanFactory factory = context.getAutowireCapableBeanFactory();
 		factory.autowireBeanProperties(forumFullTextSearch, AutowireCapableBeanFactory.AUTOWIRE_BY_TYPE, true);
 		factory.initializeBean(forumFullTextSearch, "forumFullTextSearch");
-		assertNotNull(forumFullTextSearch.entityManagerProxy);
 	}
 
 	@Test

@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -22,11 +21,9 @@ import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
-import org.springframework.beans.FatalBeanException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.orm.jpa.EntityManagerProxy;
 
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.AbstractCriterionQueryRepository;
 import com.github.emailtohl.building.common.utils.BeanUtil;
@@ -42,15 +39,20 @@ import com.github.emailtohl.building.common.utils.BeanUtil;
 public abstract class AbstractSearchableRepository<E extends Serializable> extends AbstractCriterionQueryRepository<E> implements SearchableRepository<E> {
 	@PersistenceContext
 	protected EntityManager entityManager;
-	/**
-	 * Spring 注入的EntityManager实际上就是EntityManagerProxy
-	 * 但是本程序需要访问entityManagerProxy.getTargetEntityManager()获取
-	 * “actual Hibernate ORM EntityManager implementation”
-	 * 所以在注入EntityManager后，将其向下转型为EntityManagerProxy
-	 */
-	protected EntityManagerProxy entityManagerProxy;
 	protected Class<E> entityClass;
 	protected String[] onFields;
+	
+	/**
+	 * 根据this.entityClass、索引字段以及query参数获取FullTextQuery
+	 * @param query
+	 * @return
+	 */
+	protected FullTextQuery getFullTextQuery(String query) {
+		FullTextEntityManager manager = Search.getFullTextEntityManager(this.entityManager);
+		QueryBuilder builder = manager.getSearchFactory().buildQueryBuilder().forEntity(this.entityClass).get();
+		Query lucene = builder.keyword().onFields(onFields).matching(query).createQuery();
+		return manager.createFullTextQuery(lucene, this.entityClass);
+	}
 	
 	/**
 	 * Lucene的默认排序是按照Document的得分进行排序的
@@ -59,11 +61,7 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 	@SuppressWarnings("unchecked")
 	@Override
 	public Page<SearchResult<E>> search(String query, Pageable pageable) {
-		// Search.getFullTextEntityManager接收具体的实现，而不是Spring的代理
-		FullTextEntityManager manager = Search.getFullTextEntityManager(this.entityManagerProxy.getTargetEntityManager());
-		QueryBuilder builder = manager.getSearchFactory().buildQueryBuilder().forEntity(entityClass).get();
-		Query lucene = builder.keyword().onFields(onFields).matching(query).createQuery();
-		FullTextQuery q = manager.createFullTextQuery(lucene, entityClass);
+		FullTextQuery q = getFullTextQuery(query);
 		q.setProjection(FullTextQuery.THIS, FullTextQuery.SCORE, FullTextQuery.DOCUMENT);
 		int total = q.getResultSize();
 		q.setFirstResult(pageable.getOffset()).setMaxResults(pageable.getPageSize());
@@ -77,10 +75,7 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 	
 	@Override
 	public Page<E> find(String query, Pageable pageable) {
-		FullTextEntityManager manager = Search.getFullTextEntityManager(this.entityManagerProxy.getTargetEntityManager());
-		QueryBuilder builder = manager.getSearchFactory().buildQueryBuilder().forEntity(entityClass).get();
-		Query lucene = builder.keyword().onFields(onFields).matching(query).createQuery();
-		FullTextQuery q = manager.createFullTextQuery(lucene, entityClass);
+		FullTextQuery q = getFullTextQuery(query);
 		q.setFirstResult(pageable.getOffset()).setMaxResults(pageable.getPageSize());
 		@SuppressWarnings("unchecked")
 		List<E> list = q.getResultList();
@@ -91,10 +86,7 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<E> findAll(String query) {
-		FullTextEntityManager manager = Search.getFullTextEntityManager(this.entityManagerProxy.getTargetEntityManager());
-		QueryBuilder builder = manager.getSearchFactory().buildQueryBuilder().forEntity(entityClass).get();
-		Query lucene = builder.keyword().onFields(onFields).matching(query).createQuery();
-		FullTextQuery q = manager.createFullTextQuery(lucene, entityClass);
+		FullTextQuery q = getFullTextQuery(query);
 		q.limitExecutionTimeTo(5000, TimeUnit.MILLISECONDS);
 		return q.getResultList();
 	}
@@ -136,7 +128,7 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 	/**
 	 * 分析传入的类型，分析其JavaBean属性，解析其带有@org.hibernate.search.annotations.Field注解的属性
 	 * 将该属性的名字存储在fields列表中
-	 * @param name
+	 * @param name 递归计算时的前缀
 	 * @param clz
 	 * @param fields
 	 */
@@ -186,17 +178,6 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 			}
 			clzz = clzz.getSuperclass();
 		}
-	}
-	
-	/**
-	 * Spring完成该类实例化后执行的方法
-	 */
-	@PostConstruct
-	public void initialize() {
-		if (!(this.entityManager instanceof EntityManagerProxy))
-			throw new FatalBeanException("Entity manager " + this.entityManager + " was not a proxy");
-
-		this.entityManagerProxy = (EntityManagerProxy) this.entityManager;
 	}
 	
 }
