@@ -1,0 +1,27 @@
+<section class="content-header">
+  <h1>
+    TEST
+    <small>pattern</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li ui-sref="dashboard"><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li class="active">Here</li>
+  </ol>
+</section>
+
+<section class="content">
+	<div class="row">
+       <div class="form-group col-md-12">
+         <label for="">正则表达式</label>
+         <input type="text" class="form-control" ng-model="ctrl.pattern" placeholder="模式字符串">
+       </div>
+       <div class="form-group col-md-12">
+         <label for="">匹配字符串</label>
+         <input type="text" class="form-control" ng-model="ctrl.text" placeholder="匹配字符串">
+       </div>
+       <div class="form-group col-md-12">
+         <label for="">匹配结果：<strong>{{ctrl.match()}}</strong></label>
+         <label for="">匹配位置：<strong>{{ctrl.index()}}</strong></label>
+       </div>
+	</div>
+</section>

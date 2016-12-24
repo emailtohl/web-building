@@ -36,6 +36,11 @@ define(['test/module', 'uirouter', 'test/Controller' ], function(testModule) {
 			templateUrl : 'common/test/test-ztree.html',
 			controller : 'TestZtreeCtrl as ctrl'
 		})
+		.state('test.pattern', {
+			url : '/pattern',
+			templateUrl : 'common/test/test-pattern.html',
+			controller : 'TestPatternCtrl as ctrl'
+		})
 		;
 	});
 });

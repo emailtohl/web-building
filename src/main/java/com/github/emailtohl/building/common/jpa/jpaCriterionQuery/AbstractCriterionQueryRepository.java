@@ -20,8 +20,7 @@ import com.github.emailtohl.building.common.jpa.AbstractDynamicQueryRepository;
 /**
  * 提供标准查询的基类
  * 
- * @param <E>
- *            实体类
+ * @param <E> 实体类
  * @author HeLei
  */
 public abstract class AbstractCriterionQueryRepository<E extends Serializable> extends AbstractDynamicQueryRepository<E>
@@ -30,10 +29,8 @@ public abstract class AbstractCriterionQueryRepository<E extends Serializable> e
 	 * 标准查询接口，根据传入的条件集合得到一个Page对象
 	 * 注意:Pageable的查询是从第0页开始，条件集合之间是AND关系
 	 * 
-	 * @param criteria
-	 *            一个条件集合
-	 * @param pageable
-	 *            分页对象
+	 * @param criteria 一个条件集合
+	 * @param pageable 分页对象
 	 * @return
 	 */
 	@Override

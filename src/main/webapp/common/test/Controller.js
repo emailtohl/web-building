@@ -124,5 +124,24 @@ define(['angular', 'test/module'], function(angular) {
 			console.log(self.nodes);
 		}
 	}])
+	.controller('TestPatternCtrl', ['$rootScope', '$scope', '$http', '$state', function($rootScope, $scope, $http, $state) {
+		var self = this;
+		self.pattern = '';
+		self.text = '';
+		self.flag = false;
+		self.match = function() {
+			var pattern = new RegExp();
+			pattern.compile(self.pattern);
+			return pattern.test(self.text);
+		};
+		self.index = function() {
+			var pattern = new RegExp();
+			pattern.compile(self.pattern);
+			return pattern.exec(self.text);
+		};
+//		$scope.$watch('pattern', function(nv, ov) {
+//			console.log(new RegExp(nv));
+//		});
+	}])
 	;
 });
