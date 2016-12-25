@@ -1,7 +1,10 @@
 package com.github.emailtohl.building.site.entities;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -186,14 +189,18 @@ public class User extends BaseEntity {
 	public void setBirthday(Date birthday) {
 		this.birthday = birthday;
 	}
-	
+
 	public Integer getAge() {
 		Integer age;
 		if (this.birthday != null) {
-			Instant now = Instant.now();
-			Instant past = Instant.ofEpochMilli(this.birthday.getTime());
-			long daysBetween = ChronoUnit.DAYS.between(past, now);
-			age = (int) (daysBetween / 365);
+//			java.sql.Date不支持toInstant方法
+//			Instant timestamp = this.birthday.toInstant();
+			Instant timestamp = Instant.ofEpochMilli(this.birthday.getTime());
+			LocalDateTime date = LocalDateTime.ofInstant(timestamp, ZoneId.systemDefault());
+			LocalDate today = LocalDate.now();
+			LocalDate pastDate = date.toLocalDate();
+			Period years = Period.between(pastDate, today);
+			age = years.getYears();
 		} else {
 			age = this.age;
 		}

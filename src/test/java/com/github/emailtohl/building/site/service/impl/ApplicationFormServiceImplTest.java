@@ -162,7 +162,7 @@ public class ApplicationFormServiceImplTest {
 			page = applicationFormService.history("", "", title, Status.REJECT, start, end, pageable);
 			assertTrue(page.getTotalElements() > 0);
 			
-			List<ApplicationHandleHistory> ls = applicationFormService.findByApplicationFormId(id);
+			List<ApplicationHandleHistory> ls = applicationFormService.findHistoryByApplicationFormId(id);
 			assertFalse(ls.isEmpty());
 			
 		} else {

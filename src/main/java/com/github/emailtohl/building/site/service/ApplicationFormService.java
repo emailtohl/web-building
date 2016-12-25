@@ -53,7 +53,7 @@ public interface ApplicationFormService {
 	 * @return
 	 */
 	@PreAuthorize("isAuthenticated() && hasAuthority('" + APPLICATION_FORM_READ_HISTORY + "')")
-	List<ApplicationHandleHistory> findByApplicationFormId(long id);
+	List<ApplicationHandleHistory> findHistoryByApplicationFormId(long id);
 	
 	/**
 	 * 当出现懒加载异常时，重新开辟事务访问底层数据

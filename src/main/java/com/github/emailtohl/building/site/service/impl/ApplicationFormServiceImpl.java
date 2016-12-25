@@ -43,11 +43,13 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 
 	@Override
 	public ApplicationForm findById(long id) {
-		return applicationFormRepository.findById(id);
+		ApplicationForm af = applicationFormRepository.findById(id);
+		af.getApplicationHandleHistory().size();// 初始化集合
+		return af;
 	}
 
 	@Override
-	public List<ApplicationHandleHistory> findByApplicationFormId(long id) {
+	public List<ApplicationHandleHistory> findHistoryByApplicationFormId(long id) {
 		return applicationHandleHistoryRepository.findByApplicationFormId(id);
 	}
 	
