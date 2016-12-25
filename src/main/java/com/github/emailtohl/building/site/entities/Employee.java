@@ -13,6 +13,7 @@ import javax.validation.constraints.Min;
  * 
  * @author HeLei
  */
+@org.hibernate.envers.Audited
 @Entity
 @Table(name = "t_employee")
 public class Employee extends User {
@@ -42,6 +43,8 @@ public class Employee extends User {
 	public void setSalary(Double salary) {
 		this.salary = salary;
 	}
+	
+	@org.hibernate.envers.NotAudited
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "department_id")
 	public Department getDepartment() {

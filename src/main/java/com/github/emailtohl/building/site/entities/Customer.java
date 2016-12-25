@@ -9,6 +9,7 @@ import javax.persistence.Table;
  * 
  * @author HeLei
  */
+@org.hibernate.envers.Audited
 @Entity
 @Table(name = "t_customer")
 public class Customer extends User {

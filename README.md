@@ -1,6 +1,6 @@
 # web-building项目
 
-**Java JavaScript 业务框架 spring springmvc springsecurity springdata JPA Hibernate search angularjs1.×**
+**Java JavaScript 业务框架 spring springmvc springsecurity springdata JPA Hibernate search Envers angularjs1.×**
 
 ## 一、 说明
 此项目被称为“building”，意指“不断完善”的项目，我将日常学习或自己开发的工具、框架整合在一起。这不仅是一个总结，同时还可以在此基础上开发业务项目。
@@ -9,7 +9,7 @@
 #### Java
  - 容器：spring、spring mvc、Websocket
  - 安全：spring security
- - 数据访问层：JPA Hibernate、spring data
+ - 数据访问层：JPA Hibernate、Hibernate Envers（审计）、spring data
  - 其他：Hibernate校验、Hibernate Search（全文搜索）、lucence等
  
 #### JavaScript

@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
  * 角色关联的授权
  * @author HeLei
  */
+@org.hibernate.envers.Audited
 @Entity
 @Table(name = "t_authority")
 public class Authority extends BaseEntity {
@@ -83,6 +84,10 @@ public class Authority extends BaseEntity {
 	 * 删除论坛帖子
 	 */
 	public static final String FORUM_DELETE = "forum_delete";
+	/**
+	 * 查看版本审计的内容
+	 */
+	public static final String AUDITED = "audited";
 	
 	public Authority() {
 		super();
@@ -105,6 +110,7 @@ public class Authority extends BaseEntity {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
 	public String getDescription() {
 		return description;
 	}

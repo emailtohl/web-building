@@ -17,6 +17,7 @@ import javax.validation.constraints.NotNull;
  * 角色类
  * @author HeLei
  */
+@org.hibernate.envers.Audited
 @Entity
 @Table(name = "t_role")
 public class Role extends BaseEntity {

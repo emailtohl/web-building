@@ -16,8 +16,12 @@
          <input type="text" class="form-control" ng-model="ctrl.pattern" placeholder="模式字符串">
        </div>
        <div class="form-group col-md-12">
-         <label for="">匹配字符串</label>
-         <input type="text" class="form-control" ng-model="ctrl.text" placeholder="匹配字符串">
+         <label for="">参数</label>
+         <select class="form-control" ng-model="ctrl.attributes" ng-options="obj.value as obj.name for obj in ctrl.objList"></select>
+       </div>
+       <div class="form-group col-md-12">
+        <label for="">匹配字符串</label>
+        <textarea rows="3" placeholder="匹配字符串" class="form-control" ng-model="ctrl.text"></textarea>
        </div>
        <div class="form-group col-md-12">
          <label for="">匹配结果：<strong>{{ctrl.match()}}</strong></label>

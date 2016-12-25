@@ -20,6 +20,7 @@ import javax.validation.constraints.NotNull;
  * @author HeLei
  *
  */
+@org.hibernate.envers.Audited
 @Entity
 @Table(name = "t_application_form")
 public class ApplicationForm extends BaseEntity {
@@ -111,6 +112,8 @@ public class ApplicationForm extends BaseEntity {
 	public void setStatus(Status status) {
 		this.status = status;
 	}
+	
+	@org.hibernate.envers.NotAudited
 	// 此处若设置为默认的LAZY，会在控制层报异常，似乎是因为关联的User使用了lob导致无法再加载
 	@OneToMany(fetch = FetchType.LAZY, targetEntity = ApplicationHandleHistory.class, mappedBy = "applicationForm", orphanRemoval = false, cascade = CascadeType.REMOVE)
 	public List<ApplicationHandleHistory> getApplicationHandleHistory() {

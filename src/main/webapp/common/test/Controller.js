@@ -126,17 +126,19 @@ define(['angular', 'test/module'], function(angular) {
 	}])
 	.controller('TestPatternCtrl', ['$rootScope', '$scope', '$http', '$state', function($rootScope, $scope, $http, $state) {
 		var self = this;
+		self.objList = [{name : 'i:执行对大小写不敏感的匹配', value : 'i'}, {name : 'g:执行全局匹配（查找所有匹配而非在找到第一个匹配后停止）', value : 'g'}, {name : 'm:执行多行匹配', value : 'm'}];
 		self.pattern = '';
+		self.attributes = [];
 		self.text = '';
 		self.flag = false;
 		self.match = function() {
-			var pattern = new RegExp();
-			pattern.compile(self.pattern);
+			var pattern = new RegExp(self.pattern, self.attributes);
+//			pattern.compile(self.pattern);
 			return pattern.test(self.text);
 		};
 		self.index = function() {
-			var pattern = new RegExp();
-			pattern.compile(self.pattern);
+			var pattern = new RegExp(self.pattern, self.attributes);
+//			pattern.compile(self.pattern);
 			return pattern.exec(self.text);
 		};
 //		$scope.$watch('pattern', function(nv, ov) {

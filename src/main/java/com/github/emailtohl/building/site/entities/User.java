@@ -54,6 +54,7 @@ import com.github.emailtohl.building.common.Constant;
  * javax校验的注解在field上，JPA约束的注解写在JavaBean属性上
  * @author HeLei
  */
+@org.hibernate.envers.Audited
 @Entity
 @Table(name = "t_user")
 @Access(AccessType.PROPERTY) // 实际上这就是默认的配置，Hibernate实现会根据@Id所在地方进行判断
@@ -147,33 +148,34 @@ public class User extends BaseEntity {
 		this.enabled = enabled;
 	}
 	
+	@org.hibernate.envers.NotAudited
 	@Column(name = "account_non_expired")
 	public Boolean getAccountNonExpired() {
 		return accountNonExpired;
 	}
-	
 	public void setAccountNonExpired(Boolean accountNonExpired) {
 		this.accountNonExpired = accountNonExpired;
 	}
 	
+	@org.hibernate.envers.NotAudited
 	@Column(name = "credentials_non_expired")
 	public Boolean getCredentialsNonExpired() {
 		return credentialsNonExpired;
 	}
-	
 	public void setCredentialsNonExpired(Boolean credentialsNonExpired) {
 		this.credentialsNonExpired = credentialsNonExpired;
 	}
 	
+	@org.hibernate.envers.NotAudited
 	@Column(name = "account_non_locked")
 	public Boolean getAccountNonLocked() {
 		return accountNonLocked;
 	}
-	
 	public void setAccountNonLocked(Boolean accountNonLocked) {
 		this.accountNonLocked = accountNonLocked;
 	}
 	
+	@org.hibernate.envers.NotAudited
 	@Column(nullable = false)
 	public String getPassword() {
 		return password;
@@ -190,6 +192,7 @@ public class User extends BaseEntity {
 		this.birthday = birthday;
 	}
 
+	@org.hibernate.envers.NotAudited
 	public Integer getAge() {
 		Integer age;
 		if (this.birthday != null) {
@@ -219,6 +222,7 @@ public class User extends BaseEntity {
 		this.gender = gender;
 	}
 	
+	@org.hibernate.envers.NotAudited
 	@Embedded
 	/*嵌入属性的映射可在嵌入实体中声明，不必要在此覆盖
 	@AttributeOverrides({
@@ -232,6 +236,7 @@ public class User extends BaseEntity {
 		this.subsidiary = subsidiary;
 	}
 	
+	@org.hibernate.envers.NotAudited
 	@Lob
 	@Basic(fetch = FetchType.LAZY)
 	public byte[] getIcon() {
