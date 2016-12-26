@@ -32,9 +32,9 @@ public interface AuditedRepository<E extends Serializable> {
 	
 	/**
 	 * 查询某个实体在某个修订版时的历史记录
-	 * @param userId
+	 * @param id
 	 * @param revision
 	 * @return
 	 */
-	E getEntityAtRevision(Long userId, Number revision);
+	E getEntityAtRevision(Long id, Number revision);
 }

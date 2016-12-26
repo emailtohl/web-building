@@ -111,10 +111,10 @@ public abstract class AbstractAuditedRepository<E extends Serializable> implemen
 	}
 
 	@Override
-	public E getEntityAtRevision(Long userId, Number revision) {
+	public E getEntityAtRevision(Long id, Number revision) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		AuditReader auditReader = AuditReaderFactory.get(entityManager);
-		return auditReader.find(entityClass, userId, revision);
+		return auditReader.find(entityClass, id, revision);
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
