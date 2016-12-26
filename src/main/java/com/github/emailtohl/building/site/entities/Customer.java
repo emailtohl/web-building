@@ -37,7 +37,7 @@ public class Customer extends User {
 	}
 	@Override
 	public String toString() {
-		return "Customer [title=" + title + ", affiliation=" + affiliation + ", email=" + email + ", address=" + address
+		return "Customer [name=" + name + ", title=" + title + ", affiliation=" + affiliation + ", email=" + email + ", address=" + address
 				+ ", telephone=" + telephone + ", birthday=" + birthday + ", id=" + id + "]";
 	}
 	

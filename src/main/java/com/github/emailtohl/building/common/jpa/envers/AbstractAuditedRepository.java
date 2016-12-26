@@ -48,9 +48,11 @@ public abstract class AbstractAuditedRepository<E extends Serializable> implemen
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		AuditReader auditReader = AuditReaderFactory.get(entityManager);
 		AuditQuery query = auditReader.createQuery().forRevisionsOfEntity(entityClass, false, false);
-		for (Entry<String, String> e : propertyNameValueMap.entrySet()) {
-			query.add(AuditEntity.property(e.getKey()).like(e.getValue(), MatchMode.START));
+		if (propertyNameValueMap != null) {
+			for (Entry<String, String> e : propertyNameValueMap.entrySet()) {
+				query.add(AuditEntity.property(e.getKey()).like(e.getValue(), MatchMode.START));
 //			query.add(AuditEntity.relatedId("role").eq(ROLE_ID));
+			}
 		}
 		Sort sort = pageable.getSort();
 		if (sort != null) {
@@ -67,16 +69,24 @@ public abstract class AbstractAuditedRepository<E extends Serializable> implemen
 		query.setFirstResult(pageable.getOffset()).setMaxResults(pageable.getPageSize());
 		List<Object[]> result = query.getResultList();
 		List<Tuple<E>> ls = new ArrayList<Tuple<E>>();
-		int offset = pageable.getOffset(), size = pageable.getPageSize(), max = result.size();
-		for (int i = offset; i < size && i < max; i++) {
-			Object[] o = result.get(i);
+		for (Object[] o : result) {
 			Tuple<E> tuple = new Tuple<E>();
 			tuple.setEntity((E) o[0]);
 			tuple.setDefaultRevisionEntity((DefaultRevisionEntity) o[1]);
 			tuple.setRevisionType((RevisionType) o[2]);
 			ls.add(tuple);
 		}
-		return new PageImpl<Tuple<E>>(ls);
+		/*
+		 * 由于AuditQuery没有提供获取总条数的接口，所以此处对total进行猜测：
+		 * 如果列表数目等于页码尺寸，那就认为还有下一页，否则到本页为止
+		 */
+		int total = pageable.getOffset();
+		if (result.size() == pageable.getPageSize()) {
+			total += 2 * pageable.getPageSize();
+		} else {
+			total += result.size();
+		}
+		return new PageImpl<Tuple<E>>(ls, pageable, total);
 	}
 
 	@Override
@@ -102,12 +112,17 @@ public abstract class AbstractAuditedRepository<E extends Serializable> implemen
 		query.setFirstResult(pageable.getOffset()).setMaxResults(pageable.getPageSize());
 		@SuppressWarnings("unchecked")
 		List<E> result = query.getResultList();
-		List<E> ls = new ArrayList<E>();
-		int offset = pageable.getOffset(), size = pageable.getPageSize(), max = result.size();
-		for (int i = offset; i < size && i < max; i++) {
-			ls.add(result.get(i));
+		/*
+		 * 由于AuditQuery没有提供获取总条数的接口，所以此处对total进行猜测：
+		 * 如果列表数目等于页码尺寸，那就认为还有下一页，否则到本页为止
+		 */
+		int total = pageable.getOffset();
+		if (result.size() == pageable.getPageSize()) {
+			total += 2 * pageable.getPageSize();
+		} else {
+			total += result.size();
 		}
-		return new PageImpl<E>(ls);
+		return new PageImpl<E>(result, pageable, total);
 	}
 
 	@Override

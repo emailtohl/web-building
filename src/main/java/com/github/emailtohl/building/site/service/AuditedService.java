@@ -1,8 +1,6 @@
 package com.github.emailtohl.building.site.service;
 
-import static com.github.emailtohl.building.site.entities.Authority.*;
-
-import java.util.Map;
+import static com.github.emailtohl.building.site.entities.Authority.AUDITED;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,11 +28,11 @@ public interface AuditedService {
 	/**
 	 * 查询User某个修订版下所有的历史记录
 	 * @param revision
-	 * @param propertyNameValueMap
+	 * @param email
 	 * @param pageable
 	 * @return
 	 */
-	Page<User> getUsersAtRevision(Number revision, Map<String, String> propertyNameValueMap, Pageable pageable);
+	Page<User> getUsersAtRevision(Number revision, String email, Pageable pageable);
 	
 	/**
 	 * 查询User在某个修订版时的历史记录
@@ -45,21 +43,21 @@ public interface AuditedService {
 	User getUserAtRevision(Long userId, Number revision);
 	
 	/**
-	 * 根据Role属性名和属性值查询某实体所有历史记录
-	 * @param propertyNameValueMap 实体属性名和属性值
+	 * 根据Role的名字查询某实体所有历史记录
+	 * @param name 实体属性名和属性值
 	 * @param pageable
 	 * @return
 	 */
-	Page<Tuple<Role>> getRoleRevision(Map<String, String> propertyNameValueMap, Pageable pageable);
+	Page<Tuple<Role>> getRoleRevision(String name, Pageable pageable);
 	
 	/**
 	 * 查询Role修订版下所有的历史记录
 	 * @param revision
-	 * @param propertyNameValueMap
+	 * @param name
 	 * @param pageable
 	 * @return
 	 */
-	Page<Role> getEntitiesAtRevision(Number revision, Map<String, String> propertyNameValueMap, Pageable pageable);
+	Page<Role> getRolesAtRevision(Number revision, String name, Pageable pageable);
 	
 	/**
 	 * 查询Role在某个修订版时的历史记录
@@ -67,24 +65,24 @@ public interface AuditedService {
 	 * @param revision
 	 * @return
 	 */
-	Role getEntityAtRevision(Long roleId, Number revision);
+	Role getRoleAtRevision(Long roleId, Number revision);
 	
 	/**
-	 * 根据ApplicationForm属性名和属性值查询某实体所有历史记录
-	 * @param propertyNameValueMap 实体属性名和属性值
+	 * 根据ApplicationForm的名字查询其所有历史记录
+	 * @param name ApplicationForm的名字
 	 * @param pageable
 	 * @return
 	 */
-	Page<Tuple<ApplicationForm>> getApplicationFormRevision(Map<String, String> propertyNameValueMap, Pageable pageable);
+	Page<Tuple<ApplicationForm>> getApplicationFormRevision(String name, Pageable pageable);
 	
 	/**
 	 * 查询ApplicationForm修订版下所有的历史记录
 	 * @param revision
-	 * @param propertyNameValueMap
+	 * @param name ApplicationForm的名字
 	 * @param pageable
 	 * @return
 	 */
-	Page<ApplicationForm> getApplicationFormsAtRevision(Number revision, Map<String, String> propertyNameValueMap, Pageable pageable);
+	Page<ApplicationForm> getApplicationFormsAtRevision(Number revision, String name, Pageable pageable);
 	
 	/**
 	 * 查询ApplicationForm在某个修订版时的历史记录

@@ -65,6 +65,7 @@ public class AbstractAuditedRepositoryTest {
 		Customer uu = (Customer) userService.getUser(id);
 		uu.setName("forAuditTestForUpdate");
 		uu.setTitle("cto");
+		userService.mergeCustomer(uu.getEmail(), uu);
 		userService.grantRoles(id, "employee");
 	}
 
