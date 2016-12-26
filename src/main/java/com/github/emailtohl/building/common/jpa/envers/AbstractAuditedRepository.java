@@ -1,0 +1,136 @@
+package com.github.emailtohl.building.common.jpa.envers;
+
+import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.envers.AuditReader;
+import org.hibernate.envers.AuditReaderFactory;
+import org.hibernate.envers.DefaultRevisionEntity;
+import org.hibernate.envers.RevisionType;
+import org.hibernate.envers.query.AuditEntity;
+import org.hibernate.envers.query.AuditQuery;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
+
+import com.github.emailtohl.building.common.jpa.fullTextSearch.AbstractSearchableRepository;
+/**
+ * 查询Hibernate envers对实体的审计记录
+ * @author HeLei
+ *
+ * @param <E> 实体类型
+ */
+public abstract class AbstractAuditedRepository<E extends Serializable> implements AuditedRepository<E> {
+	@SuppressWarnings("unused")
+	private static final Logger logger = LogManager.getLogger();
+	
+	@Inject EntityManagerFactory entityManagerFactory;
+	protected Class<E> entityClass;
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Page<Tuple<E>> getEntityRevision(Map<String, String> propertyNameValueMap, Pageable pageable) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		AuditReader auditReader = AuditReaderFactory.get(entityManager);
+		AuditQuery query = auditReader.createQuery().forRevisionsOfEntity(entityClass, false, false);
+		for (Entry<String, String> e : propertyNameValueMap.entrySet()) {
+			query.add(AuditEntity.property(e.getKey()).like(e.getValue(), MatchMode.START));
+//			query.add(AuditEntity.relatedId("role").eq(ROLE_ID));
+		}
+		Sort sort = pageable.getSort();
+		if (sort != null) {
+			Iterator<Order> i = sort.iterator();
+			while (i.hasNext()) {
+				Order o = i.next();
+				if (o.isAscending()) {
+					query.addOrder(AuditEntity.property(o.getProperty()).asc());
+				} else {
+					query.addOrder(AuditEntity.property(o.getProperty()).desc());
+				}
+			}
+		}
+		query.setFirstResult(pageable.getOffset()).setMaxResults(pageable.getPageSize());
+		List<Object[]> result = query.getResultList();
+		List<Tuple<E>> ls = new ArrayList<Tuple<E>>();
+		int offset = pageable.getOffset(), size = pageable.getPageSize(), max = result.size();
+		for (int i = offset; i < size && i < max; i++) {
+			Object[] o = result.get(i);
+			Tuple<E> tuple = new Tuple<E>();
+			tuple.setEntity((E) o[0]);
+			tuple.setDefaultRevisionEntity((DefaultRevisionEntity) o[1]);
+			tuple.setRevisionType((RevisionType) o[2]);
+			ls.add(tuple);
+		}
+		return new PageImpl<Tuple<E>>(ls);
+	}
+
+	@Override
+	public Page<E> getEntitiesAtRevision(Number revision, Map<String, String> propertyNameValueMap, Pageable pageable) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		AuditReader auditReader = AuditReaderFactory.get(entityManager);
+		AuditQuery query = auditReader.createQuery().forEntitiesAtRevision(entityClass, revision);
+		for (Entry<String, String> e : propertyNameValueMap.entrySet()) {
+			query.add(AuditEntity.property(e.getKey()).like(e.getValue(), MatchMode.START));
+		}
+		Sort sort = pageable.getSort();
+		if (sort != null) {
+			Iterator<Order> i = sort.iterator();
+			while (i.hasNext()) {
+				Order o = i.next();
+				if (o.isAscending()) {
+					query.addOrder(AuditEntity.property(o.getProperty()).asc());
+				} else {
+					query.addOrder(AuditEntity.property(o.getProperty()).desc());
+				}
+			}
+		}
+		query.setFirstResult(pageable.getOffset()).setMaxResults(pageable.getPageSize());
+		@SuppressWarnings("unchecked")
+		List<E> result = query.getResultList();
+		List<E> ls = new ArrayList<E>();
+		int offset = pageable.getOffset(), size = pageable.getPageSize(), max = result.size();
+		for (int i = offset; i < size && i < max; i++) {
+			ls.add(result.get(i));
+		}
+		return new PageImpl<E>(ls);
+	}
+
+	@Override
+	public E getEntityAtRevision(Long userId, Number revision) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		AuditReader auditReader = AuditReaderFactory.get(entityManager);
+		return auditReader.find(entityClass, userId, revision);
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	protected AbstractAuditedRepository() {
+		Type genericSuperclass = getClass().getGenericSuperclass();
+		while (!(genericSuperclass instanceof ParameterizedType)) {
+			if (!(genericSuperclass instanceof Class))
+				throw new IllegalStateException("Unable to determine type "
+						+ "arguments because generic superclass neither " + "parameterized type nor class.");
+			if (genericSuperclass == AbstractSearchableRepository.class)
+				throw new IllegalStateException("Unable to determine type "
+						+ "arguments because no parameterized generic superclass " + "found.");
+			genericSuperclass = ((Class) genericSuperclass).getGenericSuperclass();
+		}
+		ParameterizedType type = (ParameterizedType) genericSuperclass;
+		Type[] arguments = type.getActualTypeArguments();
+		entityClass = (Class<E>) arguments[0];
+	}
+}
