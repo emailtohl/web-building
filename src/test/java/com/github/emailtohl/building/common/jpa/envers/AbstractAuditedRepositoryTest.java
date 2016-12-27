@@ -2,9 +2,7 @@ package com.github.emailtohl.building.common.jpa.envers;
 
 import static org.junit.Assert.assertFalse;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -22,13 +20,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
+import com.github.emailtohl.building.initdb.CleanAuditData;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
@@ -41,14 +39,14 @@ public class AbstractAuditedRepositoryTest {
 	private static final Logger logger = LogManager.getLogger();
 	@Inject ApplicationContext context;
 	@Inject SecurityContextManager securityContextManager;
-	@Inject JdbcTemplate jdbcTemplate;
-	AuditedRepositoryForTest audRepos;
 	@Inject @Named("userServiceImpl") UserService userService;
+	@Inject CleanAuditData cleanAuditTestData;
+	class AuditedRepositoryForTest extends AbstractAuditedRepository<User> {}
+	AuditedRepositoryForTest audRepos;
 	private Long id;
 	private Sort sort = new Sort(Sort.Direction.DESC, "name");
 	private Pageable pageable = new PageRequest(0, 20, sort);
 	
-	class AuditedRepositoryForTest extends AbstractAuditedRepository<User> {}
 
 	@Before
 	public void setUp() throws Exception {
@@ -77,18 +75,7 @@ public class AbstractAuditedRepositoryTest {
 	public void tearDown() throws Exception {
 		// 删除后还有一次审计记录
 		userService.deleteUser(id);
-		String select_rev = "SELECT rev FROM t_user_aud WHERE id = ?";
-		String delete_user_role_aud = "DELETE FROM t_user_role_aud WHERE user_id = ?";
-		String delete_user_aud = "DELETE FROM t_user_aud t WHERE id = ?";
-		String delete_revinfo = "DELETE FROM revinfo WHERE rev = ?";
-		List<Long> revs = jdbcTemplate.queryForList(select_rev, Long.class, id);
-		List<Object[]> args = new ArrayList<Object[]>();
-		revs.forEach(rev -> {
-			args.add(new Long[] {rev});
-		});
-		jdbcTemplate.update(delete_user_role_aud, id);
-		jdbcTemplate.update(delete_user_aud, id);
-		jdbcTemplate.batchUpdate(delete_revinfo, args);
+		cleanAuditTestData.cleanUserAudit(id);
 	}
 
 	@Test

@@ -31,6 +31,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.config.RootContextConfiguration;
+import com.github.emailtohl.building.initdb.CleanAuditData;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.Subsidiary;
 import com.github.emailtohl.building.site.entities.User.Gender;
@@ -49,7 +50,7 @@ public class CustomServiceImplTest {
 	@Inject SecurityContextManager securityContextManager;
 	@Inject CustomerService customService;
 	@Inject @Named("userServiceImpl") UserService userService;
-	
+	@Inject CleanAuditData cleanAuditData;
 	
 	Customer cus = null;
 	Long id = null;
@@ -88,6 +89,7 @@ public class CustomServiceImplTest {
 	@After
 	public void tearDown() throws Exception {
 		userService.deleteUser(id);
+		cleanAuditData.cleanUserAudit(id);
 		cus = null;
 	}
 

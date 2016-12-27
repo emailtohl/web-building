@@ -20,7 +20,6 @@ import javax.validation.constraints.NotNull;
  * @author HeLei
  *
  */
-@org.hibernate.envers.Audited
 @Entity
 @Table(name = "t_application_form")
 public class ApplicationForm extends BaseEntity {
@@ -63,7 +62,6 @@ public class ApplicationForm extends BaseEntity {
 		this.status = status;
 	}
 
-	@org.hibernate.envers.NotAudited
 	@ManyToOne
 	@JoinColumn(name = "user_applicant_id")
 	public User getApplicant() {
@@ -73,7 +71,6 @@ public class ApplicationForm extends BaseEntity {
 		this.applicant = applicant;
 	}
 	
-	@org.hibernate.envers.NotAudited
 	@Column(nullable = false)
 	public String getName() {
 		return name;
@@ -82,7 +79,6 @@ public class ApplicationForm extends BaseEntity {
 		this.name = name;
 	}
 	
-	@org.hibernate.envers.NotAudited
 	@Column(nullable = false)
 	public String getDescription() {
 		return description;

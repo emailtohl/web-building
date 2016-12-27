@@ -1,6 +1,10 @@
 package com.github.emailtohl.building.site.service.impl;
 
-import static com.github.emailtohl.building.initdb.PersistenceData.*;
+import static com.github.emailtohl.building.initdb.PersistenceData.bar;
+import static com.github.emailtohl.building.initdb.PersistenceData.employee;
+import static com.github.emailtohl.building.initdb.PersistenceData.foo;
+import static com.github.emailtohl.building.initdb.PersistenceData.manager;
+import static com.github.emailtohl.building.initdb.PersistenceData.user;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -34,6 +38,7 @@ import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.Validator;
 import com.github.emailtohl.building.config.RootContextConfiguration;
+import com.github.emailtohl.building.initdb.CleanAuditData;
 import com.github.emailtohl.building.initdb.PersistenceData;
 import com.github.emailtohl.building.site.dao.RoleRepository;
 import com.github.emailtohl.building.site.entities.Customer;
@@ -55,6 +60,7 @@ public class UserServiceImplTest {
 	@Inject SecurityContextManager securityContextManager;
 	@Inject RoleRepository roleRepository;
 	@Inject Gson gson;
+	@Inject CleanAuditData cleanAuditData;
 	Employee emp;
 	Customer cus;
 	
@@ -149,6 +155,7 @@ public class UserServiceImplTest {
 			throw e;
 		} finally {
 			userService.deleteUser(id);
+			cleanAuditData.cleanUserAudit(id);
 		}
 
 	}
@@ -191,6 +198,7 @@ public class UserServiceImplTest {
 			throw e;
 		} finally {
 			userService.deleteUser(id);
+			cleanAuditData.cleanUserAudit(id);
 		}
 	}
 

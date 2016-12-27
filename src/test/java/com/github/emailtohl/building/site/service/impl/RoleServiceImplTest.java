@@ -25,6 +25,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
+import com.github.emailtohl.building.initdb.CleanAuditData;
 import com.github.emailtohl.building.site.dao.AuthorityRepository;
 import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.Employee;
@@ -44,6 +45,7 @@ public class RoleServiceImplTest {
 	@Inject RoleService roleService;
 	@Inject AuthorityRepository authorityRepository;
 	@Inject CacheManager cacheManager;
+	@Inject CleanAuditData cleanAuditData;
 	
 	Employee u;
 	Role r;
@@ -86,6 +88,7 @@ public class RoleServiceImplTest {
 	public void tearDown() throws Exception {
 		if (roleId != null) {// 先删角色的，roleService会将其关联的权限和用户全部删除
 			roleService.deleteRole(roleId);
+			cleanAuditData.cleanRoleAudit(roleId);
 			// 测试用户是否与角色切断关系
 			User qu = userService.getUser(userId);
 			assertFalse(qu.getRoles().contains(r));
@@ -100,13 +103,16 @@ public class RoleServiceImplTest {
 		
 		if (userId != null) {
 			userService.deleteUser(userId);
+			cleanAuditData.cleanUserAudit(userId);
 		}
 		
 		if (auth1Id != null) {
 			authorityRepository.delete(auth1Id);
+			cleanAuditData.cleanAuthorityAudit(auth1Id);
 		}
 		if (auth2Id != null) {
 			authorityRepository.delete(auth2Id);
+			cleanAuditData.cleanAuthorityAudit(auth2Id);
 		}
 		
 		Cache c = cacheManager.getCache(AuthorityRepository.CACHE_NAME);
@@ -146,8 +152,10 @@ public class RoleServiceImplTest {
 			assertTrue(q.getAuthorities().contains(auth1));
 			assertTrue(q.getAuthorities().contains(auth2));
 		} finally {
-			if (id != null)
+			if (id != null) {
 				roleService.deleteRole(id);
+				cleanAuditData.cleanRoleAudit(id);
+			}
 		}
 	}
 

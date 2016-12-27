@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.github.emailtohl.building.common.jpa.envers.Tuple;
-import com.github.emailtohl.building.site.entities.ApplicationForm;
 import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
 
@@ -67,28 +66,4 @@ public interface AuditedService {
 	 */
 	Role getRoleAtRevision(Long roleId, Number revision);
 	
-	/**
-	 * 根据ApplicationForm的名字查询其所有历史记录
-	 * @param name ApplicationForm的名字
-	 * @param pageable
-	 * @return
-	 */
-	Page<Tuple<ApplicationForm>> getApplicationFormRevision(String name, Pageable pageable);
-	
-	/**
-	 * 查询ApplicationForm修订版下所有的历史记录
-	 * @param revision
-	 * @param name ApplicationForm的名字
-	 * @param pageable
-	 * @return
-	 */
-	Page<ApplicationForm> getApplicationFormsAtRevision(Number revision, String name, Pageable pageable);
-	
-	/**
-	 * 查询ApplicationForm在某个修订版时的历史记录
-	 * @param id
-	 * @param revision
-	 * @return
-	 */
-	ApplicationForm getApplicationFormAtRevision(Long applicationFormid, Number revision);
 }

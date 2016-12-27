@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import com.github.emailtohl.building.site.dao.audit.ApplicationFormAudit;
 import com.github.emailtohl.building.site.dao.audit.RoleAudit;
 import com.github.emailtohl.building.site.dao.audit.UserAudit;
 import com.github.emailtohl.building.site.service.AuditedService;
@@ -24,8 +23,7 @@ public class AuditedServiceImplTest {
 	public void setUp() throws Exception {
 		UserAudit userAudit = mock(UserAudit.class);
 		RoleAudit roleAudit = mock(RoleAudit.class);
-		ApplicationFormAudit applicationFormAudit = mock(ApplicationFormAudit.class);
-		auditedService = new AuditedServiceImpl(userAudit, roleAudit, applicationFormAudit);
+		auditedService = new AuditedServiceImpl(userAudit, roleAudit);
 	}
 
 	@After
@@ -60,21 +58,6 @@ public class AuditedServiceImplTest {
 	@Test
 	public void testGetRoleAtRevision() {
 		auditedService.getRoleAtRevision(null, null);
-	}
-
-	@Test
-	public void testGetApplicationFormRevision() {
-		auditedService.getApplicationFormRevision(null, pageable);
-	}
-
-	@Test
-	public void testGetApplicationFormsAtRevision() {
-		auditedService.getApplicationFormAtRevision(null, null);
-	}
-
-	@Test
-	public void testGetApplicationFormAtRevision() {
-		auditedService.getApplicationFormAtRevision(null, null);
 	}
 
 }
