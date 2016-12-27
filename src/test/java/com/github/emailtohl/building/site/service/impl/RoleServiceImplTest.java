@@ -25,8 +25,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
-import com.github.emailtohl.building.initdb.CleanAuditData;
 import com.github.emailtohl.building.site.dao.AuthorityRepository;
+import com.github.emailtohl.building.site.dao.audit.CleanAuditData;
 import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.Employee;
 import com.github.emailtohl.building.site.entities.Role;

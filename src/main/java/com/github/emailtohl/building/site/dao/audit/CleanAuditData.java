@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.initdb;
+package com.github.emailtohl.building.site.dao.audit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 /**
- * 用于清理测试时产生的审计记录
+ * 用于清理Hibernate Envers产生审计记录
  * @author HeLei
  */
 @Component
