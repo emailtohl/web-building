@@ -1,8 +1,10 @@
 package com.github.emailtohl.building.common.jpa.envers;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -38,6 +41,7 @@ public class AbstractAuditedRepositoryTest {
 	private static final Logger logger = LogManager.getLogger();
 	@Inject ApplicationContext context;
 	@Inject SecurityContextManager securityContextManager;
+	@Inject JdbcTemplate jdbcTemplate;
 	AuditedRepositoryForTest audRepos;
 	@Inject @Named("userServiceImpl") UserService userService;
 	private Long id;
@@ -71,16 +75,26 @@ public class AbstractAuditedRepositoryTest {
 
 	@After
 	public void tearDown() throws Exception {
-		if (id != null) {
-			userService.deleteUser(id);
-		}
+		// 删除后还有一次审计记录
+		userService.deleteUser(id);
+		String select_rev = "SELECT rev FROM t_user_aud WHERE id = ?";
+		String delete_user_role_aud = "DELETE FROM t_user_role_aud WHERE user_id = ?";
+		String delete_user_aud = "DELETE FROM t_user_aud t WHERE id = ?";
+		String delete_revinfo = "DELETE FROM revinfo WHERE rev = ?";
+		List<Long> revs = jdbcTemplate.queryForList(select_rev, Long.class, id);
+		List<Object[]> args = new ArrayList<Object[]>();
+		revs.forEach(rev -> {
+			args.add(new Long[] {rev});
+		});
+		jdbcTemplate.update(delete_user_role_aud, id);
+		jdbcTemplate.update(delete_user_aud, id);
+		jdbcTemplate.batchUpdate(delete_revinfo, args);
 	}
 
 	@Test
 	public void test() {
 		Map<String, String> propertyNameValueMap = new HashMap<>();
 		propertyNameValueMap.put("name", "forAuditTest");
-		
 		// test getEntityRevision
 		Page<Tuple<User>> page = audRepos.getEntityRevision(propertyNameValueMap, pageable);
 		page.getContent().forEach(tuple -> {

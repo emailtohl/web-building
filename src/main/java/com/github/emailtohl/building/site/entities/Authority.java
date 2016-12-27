@@ -103,6 +103,7 @@ public class Authority extends BaseEntity {
 	private String description;
 	private transient Set<Role> roles = new HashSet<Role>();
 	
+	@org.hibernate.envers.NotAudited
 	@Column(nullable = false, unique = true)
 	public String getName() {
 		return name;
@@ -111,6 +112,7 @@ public class Authority extends BaseEntity {
 		this.name = name;
 	}
 	
+	@org.hibernate.envers.NotAudited
 	public String getDescription() {
 		return description;
 	}
@@ -118,6 +120,7 @@ public class Authority extends BaseEntity {
 		this.description = description;
 	}
 	
+	@org.hibernate.envers.NotAudited
 	@org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)
 	@ManyToMany(targetEntity = Role.class, fetch = FetchType.LAZY, mappedBy = "authorities")
 	public Set<Role> getRoles() {
