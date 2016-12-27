@@ -15,6 +15,8 @@ import javax.persistence.EntityManagerFactory;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.ReplicationMode;
+import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
@@ -130,6 +132,16 @@ public abstract class AbstractAuditedRepository<E extends Serializable> implemen
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		AuditReader auditReader = AuditReaderFactory.get(entityManager);
 		return auditReader.find(entityClass, id, revision);
+	}
+	
+	@Override
+	public void rollback(Long id, Number revision) {
+		E bygone = getEntityAtRevision(id, revision);
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+		entityManager.unwrap(Session.class).replicate(bygone, ReplicationMode.OVERWRITE);
+		entityManager.getTransaction().commit();
+		entityManager.close();
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })

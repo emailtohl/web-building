@@ -10,6 +10,7 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.envers.RevisionType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -80,11 +81,13 @@ public class AbstractAuditedRepositoryTest {
 
 	@Test
 	public void test() {
+		Number origin = null;
+		
 		Map<String, String> propertyNameValueMap = new HashMap<>();
 		propertyNameValueMap.put("name", "forAuditTest");
 		// test getEntityRevision
 		Page<Tuple<User>> page = audRepos.getEntityRevision(propertyNameValueMap, pageable);
-		page.getContent().forEach(tuple -> {
+		for (Tuple<User> tuple : page.getContent()) {
 			logger.debug(tuple.getEntity());
 			logger.debug(tuple.getDefaultRevisionEntity());
 			logger.debug(tuple.getRevisionType());
@@ -93,14 +96,28 @@ public class AbstractAuditedRepositoryTest {
 			// test getEntityAtRevision
 			User ru = audRepos.getEntityAtRevision(id, rev);
 			logger.debug(ru);
+			if (tuple.getRevisionType() == RevisionType.ADD) {
+				origin = rev;
+			}
 			
 			Page<User> pu = audRepos.getEntitiesAtRevision(rev, propertyNameValueMap, pageable);
 			assertFalse(pu.getContent().isEmpty());
 			pu.getContent().forEach(u -> {
 				logger.debug(u);
 			});
-		});
+		
+		}
 		assertFalse(page.getContent().isEmpty());
+		
+		if (origin != null) {
+			// 由于实体基类BaseEntity的createDate为不可变，所以回滚时遭遇数据库约束异常，暂时不能使用此接口
+			/*
+			audRepos.rollback(id, origin);
+			User bygone = userService.getUser(id);
+			assertEquals("forAuditTestForUpdate", bygone.getName());
+			logger.debug(bygone.getRoles());
+			*/
+		}
 	}
 
 }

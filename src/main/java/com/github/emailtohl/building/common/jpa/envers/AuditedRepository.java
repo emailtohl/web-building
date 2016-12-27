@@ -37,4 +37,9 @@ public interface AuditedRepository<E extends Serializable> {
 	 * @return
 	 */
 	E getEntityAtRevision(Long id, Number revision);
+	
+	/**
+	 * 回滚到某历史版本上
+	 */
+	void rollback(Long id, Number revision);
 }
