@@ -4,20 +4,17 @@ define([ 'user/module', 'common/context' ], function(userModule) {
 			/**
 			 * 获取Pager<Tuple<User>>：根据User的email查询某实体所有历史记录
 			 */
-			userRevision : function(email) {
-				return $http.get('audited/userRevision' + (email ? '?email=' + email : ''));
+			userRevision : function(params) {
+				var args = util.encodeUrlParams(params);
+				return $http.get('audited/userRevision' + (args ? '?' + args : ''));
 			},
 			/**
 			 * 获取Pager<User>：查询User某个修订版下所有的历史记录
 			 */
-			usersAtRevision : function(revision, email) {
-				if (!revision) {
+			usersAtRevision : function(params) {
+				if (!params.revision) {
 					throw new ReferenceError('修订版本号revision为空');
 				}
-				var params = {
-					revision : revision,
-					email : email
-				};
 				return $http.get('audited/usersAtRevision?' + util.encodeUrlParams(params));
 			},
 			/**
@@ -29,7 +26,7 @@ define([ 'user/module', 'common/context' ], function(userModule) {
 				}
 				var params = {
 					userId : userId,
-					revision : revision,
+					revision : revision
 				};
 				return $http.get('audited/userAtRevision?' + util.encodeUrlParams(params));
 			},
