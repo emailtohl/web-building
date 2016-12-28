@@ -37,27 +37,27 @@ public class AuditedServiceImplTest {
 
 	@Test
 	public void testGetUsersAtRevision() {
-		auditedService.getUserAtRevision(null, null);
+		auditedService.getUserAtRevision(0, 0);
 	}
 
 	@Test
 	public void testGetUserAtRevision() {
-		auditedService.getUserAtRevision(null, null);
+		auditedService.getUserAtRevision(0, 0);
 	}
 
 	@Test
 	public void testGetRoleRevision() {
-		auditedService.getRoleAtRevision(null, null);
+		auditedService.getRoleAtRevision(0, 0);
 	}
 
 	@Test
 	public void testGetRolesAtRevision() {
-		auditedService.getRolesAtRevision(null, null, pageable);
+		auditedService.getRolesAtRevision(0, null, pageable);
 	}
 
 	@Test
 	public void testGetRoleAtRevision() {
-		auditedService.getRoleAtRevision(null, null);
+		auditedService.getRoleAtRevision(0, 0);
 	}
 
 }

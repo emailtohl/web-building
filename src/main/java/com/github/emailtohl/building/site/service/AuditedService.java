@@ -30,7 +30,7 @@ public interface AuditedService {
 	 * @param pageable
 	 * @return
 	 */
-	Pager<UserDto> getUsersAtRevision(Number revision, String email, Pageable pageable);
+	Pager<UserDto> getUsersAtRevision(int revision, String email, Pageable pageable);
 	
 	/**
 	 * 查询User在某个修订版时的历史记录
@@ -38,7 +38,7 @@ public interface AuditedService {
 	 * @param revision
 	 * @return
 	 */
-	UserDto getUserAtRevision(Long userId, Number revision);
+	UserDto getUserAtRevision(long userId, int revision);
 	
 	/**
 	 * 根据Role的名字查询某实体所有历史记录
@@ -55,7 +55,7 @@ public interface AuditedService {
 	 * @param pageable
 	 * @return
 	 */
-	Pager<RoleDto> getRolesAtRevision(Number revision, String name, Pageable pageable);
+	Pager<RoleDto> getRolesAtRevision(int revision, String name, Pageable pageable);
 	
 	/**
 	 * 查询Role在某个修订版时的历史记录
@@ -63,6 +63,6 @@ public interface AuditedService {
 	 * @param revision
 	 * @return
 	 */
-	RoleDto getRoleAtRevision(Long roleId, Number revision);
+	RoleDto getRoleAtRevision(long roleId, int revision);
 	
 }

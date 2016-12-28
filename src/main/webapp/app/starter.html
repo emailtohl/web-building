@@ -308,7 +308,7 @@ desired effect
           <ul class="treeview-menu">
             <li ng-class="{active: $state.includes('user.list') || $state.includes('user.detail')}"><a ui-sref="user.list" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>账户管理</a></li>
             <li ng-class="{active: $state.includes('user.role')}" ng-if="hasAuthority('user_grant_roles')"><a ui-sref="user.role" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>角色配置</a></li>
-            <li ng-class="{active: $state.includes('user.audit')}" ng-if="hasAuthority('audit')"><a ui-sref="user.audit" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>用户审计</a></li>
+            <li ng-class="{active: $state.includes('user.audit')}" ng-if="hasAuthority('audit')"><a ui-sref="user.audit.list" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>用户审计</a></li>
             <li><a href="secure" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>security测试</a></li>
           </ul>
         </li>

@@ -56,7 +56,7 @@ public class AuditCtrl {
 	 * @return
 	 */
 	@RequestMapping(value = "usersAtRevision", method = RequestMethod.GET)
-	public Pager<UserDto> getUsersAtRevision(@RequestParam(required = true) Number revision, @RequestParam(required = false) String email,
+	public Pager<UserDto> getUsersAtRevision(@RequestParam(required = true) Integer revision, @RequestParam(required = false) String email,
 			@PageableDefault(page = 0, size = 20, sort = {ID_PROPERTY_NAME}, direction = Direction.DESC) Pageable pageable) {
 		return auditedService.getUsersAtRevision(revision, email, pageable);
 	}
@@ -69,7 +69,7 @@ public class AuditCtrl {
 	 * @return
 	 */
 	@RequestMapping(value = "userAtRevision", method = RequestMethod.GET)
-	public User getUserAtRevision(@RequestParam(required = true) Long userId, @RequestParam(required = true) Number revision) {
+	public User getUserAtRevision(@RequestParam(required = true) Long userId, @RequestParam(required = true) Integer revision) {
 		return auditedService.getUserAtRevision(userId, revision);
 	}
 
@@ -95,7 +95,7 @@ public class AuditCtrl {
 	 * @return
 	 */
 	@RequestMapping(value = "rolesAtRevision", method = RequestMethod.GET)
-	public Pager<RoleDto> getRolesAtRevision(@RequestParam(required = true) Number revision, @RequestParam(required = false) String name,
+	public Pager<RoleDto> getRolesAtRevision(@RequestParam(required = true) Integer revision, @RequestParam(required = false) String name,
 			@PageableDefault(page = 0, size = 20, sort = {ID_PROPERTY_NAME}, direction = Direction.DESC) Pageable pageable) {
 		return auditedService.getRolesAtRevision(revision, name, pageable);
 	}
@@ -108,7 +108,7 @@ public class AuditCtrl {
 	 * @return
 	 */
 	@RequestMapping(value = "roleAtRevision", method = RequestMethod.GET)
-	public Role getRoleAtRevision(@RequestParam(required = true) Long roleId, @RequestParam(required = true) Number revision) {
+	public Role getRoleAtRevision(@RequestParam(required = true) Long roleId, @RequestParam(required = true) Integer revision) {
 		return auditedService.getRoleAtRevision(roleId, revision);
 	}
 	

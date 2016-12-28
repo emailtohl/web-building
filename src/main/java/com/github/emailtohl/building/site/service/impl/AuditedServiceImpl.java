@@ -46,7 +46,7 @@ public class AuditedServiceImpl implements AuditedService {
 	}
 
 	@Override
-	public Pager<UserDto> getUsersAtRevision(Number revision, String email, Pageable pageable) {
+	public Pager<UserDto> getUsersAtRevision(int revision, String email, Pageable pageable) {
 		Map<String, String> propertyNameValueMap = new HashMap<>();
 		propertyNameValueMap.put("email", email);
 		Page<User> page = userAudit.getEntitiesAtRevision(revision, propertyNameValueMap, pageable);
@@ -56,7 +56,7 @@ public class AuditedServiceImpl implements AuditedService {
 	}
 
 	@Override
-	public UserDto getUserAtRevision(Long userId, Number revision) {
+	public UserDto getUserAtRevision(long userId, int revision) {
 		return convert(userAudit.getEntityAtRevision(userId, revision));
 	}
 
@@ -71,7 +71,7 @@ public class AuditedServiceImpl implements AuditedService {
 	}
 
 	@Override
-	public Pager<RoleDto> getRolesAtRevision(Number revision, String name, Pageable pageable) {
+	public Pager<RoleDto> getRolesAtRevision(int revision, String name, Pageable pageable) {
 		Map<String, String> propertyNameValueMap = new HashMap<>();
 		propertyNameValueMap.put("name", name);
 		Page<Role> page = roleAudit.getEntitiesAtRevision(revision, propertyNameValueMap, pageable);
@@ -81,7 +81,7 @@ public class AuditedServiceImpl implements AuditedService {
 	}
 
 	@Override
-	public RoleDto getRoleAtRevision(Long roleId, Number revision) {
+	public RoleDto getRoleAtRevision(long roleId, int revision) {
 		return convert(roleAudit.getEntityAtRevision(roleId, revision));
 	}
 	

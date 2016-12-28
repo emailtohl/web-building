@@ -32,9 +32,19 @@ define(['user/module',
 			controller : 'RoleAllocationCtrl as ctrl'
 		})
 		.state('user.audit', {
+			'abstract' : 'true',
 			url : '/audit',
-			templateUrl : 'app/user/audit/audit.html',
-			controller : 'UserAuditCtrl as ctrl'
+			template : '<div ui-view></div>',
+		})
+		.state('user.audit.list', {
+			url : '/list',
+			templateUrl : 'app/user/audit/list.html',
+			controller : 'UserAuditListCtrl as ctrl'
+		})
+		.state('user.audit.detail', {
+			url : '/detail/id/{id}/revision/{revision}',
+			templateUrl : 'app/user/audit/detail.html',
+			controller : 'UserAuditDetailCtrl as ctrl'
 		})
 		;
 	});

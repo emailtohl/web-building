@@ -5,7 +5,8 @@
   </h1>
   <ol class="breadcrumb">
     <li ui-sref="dashboard"><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-    <li class="active">user audit</li>
+    <li ui-sref="user.audit.list"><a href="#"><i class="fa"></i> user audit list</a></li>
+    <li class="active">user audit detail</li>
   </ol>
 </section>
 <!-- Main content -->
@@ -39,7 +40,7 @@
         <div class="col-xs-12">
           <div class="box">
             <div class="box-header">
-              <h3 class="box-title">用户表</h3>
+              <h3 class="box-title">用户审计表</h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
@@ -48,35 +49,30 @@
                 <tr>
                   <th class="col-md-2">姓名</th>
                   <th class="col-md-2">邮箱</th>
-                  <th class="col-md-2">是否启用</th>
                   <th class="col-md-2">描述</th>
-                  <th class="col-md-4">授权</th>
+                  <th class="col-md-2">角色</th>
+                  <th class="col-md-2">修改时间</th>
+                  <th class="col-md-2">修改类型</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="x in ctrl.pager.content">
+                <tr ng-repeat="x in ctrl.pager.content" style="cursor:pointer" ng-click="">
                   <td ng-bind="x.name" class="col-md-2"></td>
                   <td ng-bind="x.email" class="col-md-2"></td>
-                  <td ng-bind="x.enabled ? '是' : '否'" class="col-md-2"></td>
                   <td ng-bind="x.description" class="col-md-2"></td>
-                  <td class="col-md-4">
-                    <div class="form-group">
-                      <select class="form-control select2 select2-hidden-accessible" multiple="multiple" select2 ng-model="x.roleNames" on-change="ctrl.onChange(x.id, value)">
-				        <!-- 认为含有配置角色权限的人就拥有ADMIN角色 -->
-				        <option ng-repeat="x in ctrl.roles" value="{{x.name}}" ng-if="!(x.name == 'admin' && !hasAuthority('user_role_authority_allocation'))">{{x.description}}</option>
-                      </select>
-                      <!-- <button type="button" class="btn btn-default" ng-click="ctrl.authorizeModal(x.id)">授权</button> -->
-                    </div>
-                  </td>
+                  <td ng-bind="x.roleNames" class="col-md-2"></td>
+                  <td ng-bind="x.revisionDate" class="col-md-2"></td>
+                  <td ng-bind="ctrl.typeMap[x.revisionType]" class="col-md-2"></td>
                 </tr>
                 </tbody>
                 <tfoot>
                 <tr>
                   <th class="col-md-2">用户名</th>
                   <th class="col-md-2">邮箱</th>
-                  <th class="col-md-2">是否启用</th>
                   <th class="col-md-2">描述</th>
-                  <th class="col-md-4">授权</th>
+                  <th class="col-md-2">角色</th>
+                  <th class="col-md-2">修改时间</th>
+                  <th class="col-md-2">修改类型</th>
                 </tr>
                 </tfoot>
               </table>
@@ -92,9 +88,3 @@
     <!-- /.row -->
 </section>
 <!-- /.content -->
-<div modal open="ctrl.modal.success.open" title="修改结果" type="success">
-	<h3>修改成功</h3>
-</div>
-<div modal open="ctrl.modal.fail.open" title="修改结果" type="danger">
-	<h3>修改失败</h3>
-</div>
