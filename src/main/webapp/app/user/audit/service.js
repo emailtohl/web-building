@@ -6,7 +6,7 @@ define([ 'user/module', 'common/context' ], function(userModule) {
 			 */
 			userRevision : function(params) {
 				var args = util.encodeUrlParams(params);
-				return $http.get('audited/userRevision' + (args ? '?' + args : ''));
+				return $http.get('audit/userRevision' + (args ? '?' + args : ''));
 			},
 			/**
 			 * 获取Pager<User>：查询User某个修订版下所有的历史记录
@@ -15,7 +15,7 @@ define([ 'user/module', 'common/context' ], function(userModule) {
 				if (!params.revision) {
 					throw new ReferenceError('修订版本号revision为空');
 				}
-				return $http.get('audited/usersAtRevision?' + util.encodeUrlParams(params));
+				return $http.get('audit/usersAtRevision?' + util.encodeUrlParams(params));
 			},
 			/**
 			 * 查询User在某个修订版时的历史记录
@@ -28,7 +28,7 @@ define([ 'user/module', 'common/context' ], function(userModule) {
 					userId : userId,
 					revision : revision
 				};
-				return $http.get('audited/userAtRevision?' + util.encodeUrlParams(params));
+				return $http.get('audit/userAtRevision?' + util.encodeUrlParams(params));
 			},
 		};
 	}]);

@@ -87,7 +87,7 @@ public class Authority extends BaseEntity {
 	/**
 	 * 查看版本审计的内容
 	 */
-	public static final String AUDITED = "audited";
+	public static final String AUDIT = "audit";
 	
 	public Authority() {
 		super();

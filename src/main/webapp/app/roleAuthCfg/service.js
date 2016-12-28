@@ -27,7 +27,7 @@ define([ 'roleAuthCfg/module', 'common/context' ], function(roleAuthCfgModule) {
 			 */
 			roleRevision : function(params) {
 				var args = util.encodeUrlParams(params);
-				return $http.get('audited/roleRevision' + (args ? '?' + args : ''));
+				return $http.get('audit/roleRevision' + (args ? '?' + args : ''));
 			},
 			/**
 			 * 获取Pager<Role>：查询Role在某个修订版时的历史记录
@@ -36,7 +36,7 @@ define([ 'roleAuthCfg/module', 'common/context' ], function(roleAuthCfgModule) {
 				if (!params.revision) {
 					throw new ReferenceError('修订版本号revision为空');
 				}
-				return $http.get('audited/rolesAtRevision?' + util.encodeUrlParams(params));
+				return $http.get('audit/rolesAtRevision?' + util.encodeUrlParams(params));
 			},
 			/**
 			 * 查询Role在某个修订版时的历史记录
@@ -49,7 +49,7 @@ define([ 'roleAuthCfg/module', 'common/context' ], function(roleAuthCfgModule) {
 					roleId : roleId,
 					revision : revision
 				};
-				return $http.get('audited/roleAtRevision?' + util.encodeUrlParams(params));
+				return $http.get('audit/roleAtRevision?' + util.encodeUrlParams(params));
 			},
 		};
 	}]);

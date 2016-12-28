@@ -1,5 +1,10 @@
 package com.github.emailtohl.building.site.dto;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+
+import org.hibernate.envers.RevisionType;
 import org.springframework.beans.BeanUtils;
 
 import com.github.emailtohl.building.site.entities.Customer;
@@ -26,6 +31,18 @@ public class UserDto extends User {
 	private Department department;
 	private String title;
 	private String affiliation;
+	/**
+	 * 用于审计数据的修订版本号
+	 */
+	private Integer revision;
+	/**
+	 * 用于审计数据的修订时间戳
+	 */
+	private String revisionDate;
+	/**
+	 * 用于审计数据的的操作类型
+	 */
+	private RevisionType revisionType;
 	
 	public String getPlainPassword() {
 		return plainPassword;
@@ -82,6 +99,36 @@ public class UserDto extends User {
 
 	public void setAffiliation(String affiliation) {
 		this.affiliation = affiliation;
+	}
+
+	public Integer getRevision() {
+		return revision;
+	}
+
+	public void setRevision(Integer revision) {
+		this.revision = revision;
+	}
+
+	public static void main(String[] args) {
+		Date d = new Date();
+		LocalDateTime dt = LocalDateTime.ofInstant(d.toInstant(), ZoneId.systemDefault());
+		System.out.println(dt);
+	}
+	
+	public String getRevisionDate() {
+		return revisionDate;
+	}
+
+	public void setRevisionDate(String revisionDate) {
+		this.revisionDate = revisionDate;
+	}
+
+	public RevisionType getRevisionType() {
+		return revisionType;
+	}
+
+	public void setRevisionType(RevisionType revisionType) {
+		this.revisionType = revisionType;
 	}
 
 	/**

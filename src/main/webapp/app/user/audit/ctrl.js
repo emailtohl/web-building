@@ -22,7 +22,10 @@ define(['user/module', 'user/audit/service'], function(userModule) {
 				console.log(data);
 			});
 		}
-		
+		userRevision();
+		self.userAtRevision = function(userId, revision) {
+			userAtRevision(userId, revision);
+		};
 		
 	}]);
 });

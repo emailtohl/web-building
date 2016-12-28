@@ -42,6 +42,7 @@ import com.github.emailtohl.building.common.utils.SecurityContextUtil;
 import com.github.emailtohl.building.site.dao.DepartmentRepository;
 import com.github.emailtohl.building.site.dao.RoleRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
+import com.github.emailtohl.building.site.entities.BaseEntity;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.Department;
 import com.github.emailtohl.building.site.entities.Employee;
@@ -362,16 +363,16 @@ public class UserServiceImpl implements UserService, Serializable {
 	private List<User> convert(List<? extends User> users) {
 		List<User> ls = new ArrayList<User>();
 		users.forEach(u -> {
-			User result;
+			User target;
 			if (u instanceof Employee) {
-				result = new Employee();
+				target = new Employee();
 			} else if (u instanceof Customer) {
-				result = new Customer();
+				target = new Customer();
 			} else {
-				result = new User();
+				target = new User();
 			}
-			BeanUtils.copyProperties(u, result, "password", "authorities");
-			ls.add(result);
+			BeanUtils.copyProperties(u, target, "password", "authorities", BaseEntity.VERSION_PROPERTY_NAME);
+			ls.add(target);
 		});
 		return ls;
 	}
@@ -390,7 +391,7 @@ public class UserServiceImpl implements UserService, Serializable {
 		} else {
 			result = new User();
 		}
-		BeanUtils.copyProperties(user, result, "password", "icon");
+		BeanUtils.copyProperties(user, result, "password", "icon", BaseEntity.VERSION_PROPERTY_NAME);
 		return result;
 	}
 

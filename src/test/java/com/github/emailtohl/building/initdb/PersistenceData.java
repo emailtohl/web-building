@@ -1,26 +1,7 @@
 package com.github.emailtohl.building.initdb;
 
-import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_DELETE;
-import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_READ_HISTORY;
-import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_TRANSIT;
-import static com.github.emailtohl.building.site.entities.Authority.AUDITED;
-import static com.github.emailtohl.building.site.entities.Authority.FORUM_DELETE;
-import static com.github.emailtohl.building.site.entities.Authority.USER_CREATE_ORDINARY;
-import static com.github.emailtohl.building.site.entities.Authority.USER_CREATE_SPECIAL;
-import static com.github.emailtohl.building.site.entities.Authority.USER_CUSTOMER;
-import static com.github.emailtohl.building.site.entities.Authority.USER_DELETE;
-import static com.github.emailtohl.building.site.entities.Authority.USER_DISABLE;
-import static com.github.emailtohl.building.site.entities.Authority.USER_ENABLE;
-import static com.github.emailtohl.building.site.entities.Authority.USER_GRANT_ROLES;
-import static com.github.emailtohl.building.site.entities.Authority.USER_READ_ALL;
-import static com.github.emailtohl.building.site.entities.Authority.USER_READ_SELF;
-import static com.github.emailtohl.building.site.entities.Authority.USER_ROLE_AUTHORITY_ALLOCATION;
-import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_ALL;
-import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_SELF;
-import static com.github.emailtohl.building.site.entities.Role.ADMIN;
-import static com.github.emailtohl.building.site.entities.Role.EMPLOYEE;
-import static com.github.emailtohl.building.site.entities.Role.MANAGER;
-import static com.github.emailtohl.building.site.entities.Role.USER;
+import static com.github.emailtohl.building.site.entities.Authority.*;
+import static com.github.emailtohl.building.site.entities.Role.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,7 +47,7 @@ public class PersistenceData {
 			application_form_read_history = new Authority(APPLICATION_FORM_READ_HISTORY, "查看申请单历史记录的权限"),
 			application_form_delete = new Authority(APPLICATION_FORM_DELETE, "删除申请单"),
 			forum_delete = new Authority(FORUM_DELETE, "删除论坛帖子"),
-			audited = new Authority(AUDITED, "查看版本审计的内容");
+			audit = new Authority(AUDIT, "查看版本审计的内容");
 	
 	public final static Role admin = new Role(ADMIN, "管理员"), manager = new Role(MANAGER, "经理"),
 			employee = new Role(EMPLOYEE, "雇员"), user = new Role(USER, "普通用户");
@@ -97,9 +78,9 @@ public class PersistenceData {
 		application_form_read_history.getRoles().addAll(Arrays.asList(admin, manager, employee));
 		application_form_delete.getRoles().addAll(Arrays.asList(admin));
 		forum_delete.getRoles().addAll(Arrays.asList(admin));
-		audited.getRoles().addAll(Arrays.asList(admin));
+		audit.getRoles().addAll(Arrays.asList(admin));
 		
-		admin.getAuthorities().addAll(Arrays.asList(user_role_authority_allocation, user_create_ordinary, user_create_special, user_enable, user_disable, user_grant_roles, user_read_all, user_read_self, user_update_all, user_update_self, user_delete, user_customer, application_form_transit, application_form_read_history, application_form_delete, forum_delete, audited));
+		admin.getAuthorities().addAll(Arrays.asList(user_role_authority_allocation, user_create_ordinary, user_create_special, user_enable, user_disable, user_grant_roles, user_read_all, user_read_self, user_update_all, user_update_self, user_delete, user_customer, application_form_transit, application_form_read_history, application_form_delete, forum_delete, audit));
 		manager.getAuthorities().addAll(Arrays.asList(user_create_ordinary, user_create_special, user_enable, user_disable, user_grant_roles, user_read_all, user_read_self, user_update_self, user_customer, application_form_transit, application_form_read_history));
 		employee.getAuthorities().addAll(Arrays.asList(user_create_ordinary, user_enable, user_read_all, user_read_self, user_update_self, user_customer, application_form_transit, application_form_read_history));
 		user.getAuthorities().addAll(Arrays.asList(user_create_ordinary, user_enable, user_read_self, user_update_self));

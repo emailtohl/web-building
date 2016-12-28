@@ -52,7 +52,10 @@ public abstract class AbstractAuditedRepository<E extends Serializable> implemen
 		AuditQuery query = auditReader.createQuery().forRevisionsOfEntity(entityClass, false, false);
 		if (propertyNameValueMap != null) {
 			for (Entry<String, String> e : propertyNameValueMap.entrySet()) {
-				query.add(AuditEntity.property(e.getKey()).like(e.getValue(), MatchMode.START));
+				String v = e.getValue();
+				if (v != null && !v.isEmpty()) {
+					query.add(AuditEntity.property(e.getKey()).like(v.trim(), MatchMode.START));
+				}
 //			query.add(AuditEntity.relatedId("role").eq(ROLE_ID));
 			}
 		}
@@ -97,7 +100,10 @@ public abstract class AbstractAuditedRepository<E extends Serializable> implemen
 		AuditReader auditReader = AuditReaderFactory.get(entityManager);
 		AuditQuery query = auditReader.createQuery().forEntitiesAtRevision(entityClass, revision);
 		for (Entry<String, String> e : propertyNameValueMap.entrySet()) {
-			query.add(AuditEntity.property(e.getKey()).like(e.getValue(), MatchMode.START));
+			String v = e.getValue();
+			if (v != null && !v.isEmpty()) {
+				query.add(AuditEntity.property(e.getKey()).like(v.trim(), MatchMode.START));
+			}
 		}
 		Sort sort = pageable.getSort();
 		if (sort != null) {

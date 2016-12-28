@@ -1,20 +1,19 @@
 package com.github.emailtohl.building.site.service;
 
-import static com.github.emailtohl.building.site.entities.Authority.AUDITED;
+import static com.github.emailtohl.building.site.entities.Authority.AUDIT;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import com.github.emailtohl.building.common.jpa.envers.Tuple;
-import com.github.emailtohl.building.site.entities.Role;
-import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.site.dto.RoleDto;
+import com.github.emailtohl.building.site.dto.UserDto;
 
 /**
  * 查询被审计的实体的历史记录
  * @author HeLei
  */
-@PreAuthorize("hasAuthority('" + AUDITED + "')")
+@PreAuthorize("hasAuthority('" + AUDIT + "')")
 public interface AuditedService {
 	/**
 	 * 根据User的email查询某实体所有历史记录
@@ -22,7 +21,7 @@ public interface AuditedService {
 	 * @param pageable
 	 * @return
 	 */
-	Page<Tuple<User>> getUserRevision(String email, Pageable pageable);
+	Pager<UserDto> getUserRevision(String email, Pageable pageable);
 	
 	/**
 	 * 查询User某个修订版下所有的历史记录
@@ -31,7 +30,7 @@ public interface AuditedService {
 	 * @param pageable
 	 * @return
 	 */
-	Page<User> getUsersAtRevision(Number revision, String email, Pageable pageable);
+	Pager<UserDto> getUsersAtRevision(Number revision, String email, Pageable pageable);
 	
 	/**
 	 * 查询User在某个修订版时的历史记录
@@ -39,7 +38,7 @@ public interface AuditedService {
 	 * @param revision
 	 * @return
 	 */
-	User getUserAtRevision(Long userId, Number revision);
+	UserDto getUserAtRevision(Long userId, Number revision);
 	
 	/**
 	 * 根据Role的名字查询某实体所有历史记录
@@ -47,7 +46,7 @@ public interface AuditedService {
 	 * @param pageable
 	 * @return
 	 */
-	Page<Tuple<Role>> getRoleRevision(String name, Pageable pageable);
+	Pager<RoleDto> getRoleRevision(String name, Pageable pageable);
 	
 	/**
 	 * 查询Role修订版下所有的历史记录
@@ -56,7 +55,7 @@ public interface AuditedService {
 	 * @param pageable
 	 * @return
 	 */
-	Page<Role> getRolesAtRevision(Number revision, String name, Pageable pageable);
+	Pager<RoleDto> getRolesAtRevision(Number revision, String name, Pageable pageable);
 	
 	/**
 	 * 查询Role在某个修订版时的历史记录
@@ -64,6 +63,6 @@ public interface AuditedService {
 	 * @param revision
 	 * @return
 	 */
-	Role getRoleAtRevision(Long roleId, Number revision);
+	RoleDto getRoleAtRevision(Long roleId, Number revision);
 	
 }
