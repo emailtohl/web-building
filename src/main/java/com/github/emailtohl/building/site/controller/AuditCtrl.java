@@ -1,5 +1,8 @@
 package com.github.emailtohl.building.site.controller;
 
+import static com.github.emailtohl.building.site.entities.BaseEntity.CREATE_DATE_PROPERTY_NAME;
+import static com.github.emailtohl.building.site.entities.BaseEntity.ID_PROPERTY_NAME;
+
 import javax.inject.Inject;
 
 import org.springframework.data.domain.Page;
@@ -13,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.envers.Tuple;
-import com.github.emailtohl.building.site.entities.BaseEntity;
 import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.AuditedService;
@@ -41,8 +43,8 @@ public class AuditCtrl {
 	 * @return
 	 */
 	@RequestMapping(value = "userRevision", method = RequestMethod.GET)
-	public Pager<Tuple<User>> getUserRevision(@RequestParam String email,
-			@PageableDefault(page = 0, size = 20, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
+	public Pager<Tuple<User>> getUserRevision(@RequestParam(required = false) String email,
+			@PageableDefault(page = 0, size = 20, sort = {CREATE_DATE_PROPERTY_NAME, ID_PROPERTY_NAME}, direction = Direction.DESC) Pageable pageable) {
 		Page<Tuple<User>> page = auditedService.getUserRevision(email, pageable);
 		return new Pager<>(page.getContent(), page.getTotalElements(), page.getNumber(), page.getSize());
 	}
@@ -56,8 +58,8 @@ public class AuditCtrl {
 	 * @return
 	 */
 	@RequestMapping(value = "usersAtRevision", method = RequestMethod.GET)
-	public Pager<User> getUsersAtRevision(@RequestParam Number revision, @RequestParam String email,
-			@PageableDefault(page = 0, size = 20, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
+	public Pager<User> getUsersAtRevision(@RequestParam(required = true) Number revision, @RequestParam(required = false) String email,
+			@PageableDefault(page = 0, size = 20, sort = {CREATE_DATE_PROPERTY_NAME, ID_PROPERTY_NAME}, direction = Direction.DESC) Pageable pageable) {
 		Page<User> page = auditedService.getUsersAtRevision(revision, email, pageable);
 		return new Pager<>(page.getContent(), page.getTotalElements(), page.getNumber(), page.getSize());
 	}
@@ -70,7 +72,7 @@ public class AuditCtrl {
 	 * @return
 	 */
 	@RequestMapping(value = "userAtRevision", method = RequestMethod.GET)
-	public User getUserAtRevision(@RequestParam Long userId, @RequestParam Number revision) {
+	public User getUserAtRevision(@RequestParam(required = true) Long userId, @RequestParam(required = true) Number revision) {
 		return auditedService.getUserAtRevision(userId, revision);
 	}
 
@@ -82,14 +84,14 @@ public class AuditCtrl {
 	 * @return
 	 */
 	@RequestMapping(value = "roleRevision", method = RequestMethod.GET)
-	public Pager<Tuple<Role>> getRoleRevision(@RequestParam String name,
-			@PageableDefault(page = 0, size = 20, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
+	public Pager<Tuple<Role>> getRoleRevision(@RequestParam(required = false) String name,
+			@PageableDefault(page = 0, size = 20, sort = {CREATE_DATE_PROPERTY_NAME, ID_PROPERTY_NAME}, direction = Direction.DESC) Pageable pageable) {
 		Page<Tuple<Role>> page = auditedService.getRoleRevision(name, pageable);
 		return new Pager<>(page.getContent(), page.getTotalElements(), page.getNumber(), page.getSize());
 	}
 
 	/**
-	 * 查询Role修订版下所有的历史记录
+	 * 查询Role在某个修订版时的历史记录
 	 * 
 	 * @param revision
 	 * @param name
@@ -97,8 +99,8 @@ public class AuditCtrl {
 	 * @return
 	 */
 	@RequestMapping(value = "rolesAtRevision", method = RequestMethod.GET)
-	public Pager<Role> getRolesAtRevision(@RequestParam Number revision, @RequestParam String name,
-			@PageableDefault(page = 0, size = 20, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
+	public Pager<Role> getRolesAtRevision(@RequestParam(required = true) Number revision, @RequestParam(required = false) String name,
+			@PageableDefault(page = 0, size = 20, sort = {CREATE_DATE_PROPERTY_NAME, ID_PROPERTY_NAME}, direction = Direction.DESC) Pageable pageable) {
 		Page<Role> page = auditedService.getRolesAtRevision(revision, name, pageable);
 		return new Pager<>(page.getContent(), page.getTotalElements(), page.getNumber(), page.getSize());
 	}
@@ -111,7 +113,7 @@ public class AuditCtrl {
 	 * @return
 	 */
 	@RequestMapping(value = "roleAtRevision", method = RequestMethod.GET)
-	public Role getRoleAtRevision(@RequestParam Long roleId, @RequestParam Number revision) {
+	public Role getRoleAtRevision(@RequestParam(required = true) Long roleId, @RequestParam(required = true) Number revision) {
 		return auditedService.getRoleAtRevision(roleId, revision);
 	}
 	

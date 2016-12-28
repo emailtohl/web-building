@@ -92,5 +92,15 @@ define(['roleAuthCfg/module', 'roleAuthCfg/service'], function(roleAuthCfgModule
 				});
 			}
 		};
+	}])
+	.controller('RoleAuditCtrl', ['$scope', '$http', '$state', 'roleAuthCfgService',
+	                          function($scope, $http, $state, roleAuthCfgService) {
+		var self = this;
+		$scope.getAuthentication();
+		self.params = {
+				page : 1,
+				pageSize : 20,
+				name : '',
+		};
 	}]);
 });
