@@ -23,14 +23,14 @@ define([ 'roleAuthCfg/module', 'common/context' ], function(roleAuthCfgModule) {
 				return $http['delete']('role/' + id);
 			},
 			/**
-			 * 获取Pager<Tuple<Role>>：根据Role的名字查询某实体所有历史记录
+			 * 根据Role的名字查询某实体所有历史记录
 			 */
 			roleRevision : function(params) {
 				var args = util.encodeUrlParams(params);
 				return $http.get('audit/roleRevision' + (args ? '?' + args : ''));
 			},
 			/**
-			 * 获取Pager<Role>：查询Role在某个修订版时的历史记录
+			 * 查询Role在某个修订版时的历史记录
 			 */
 			rolesAtRevision : function(params) {
 				if (!params.revision) {

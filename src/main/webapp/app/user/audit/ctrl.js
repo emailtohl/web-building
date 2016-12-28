@@ -1,7 +1,7 @@
 define(['user/module', 'user/audit/service'], function(userModule) {
 	return userModule
-	.controller('UserAuditListCtrl', ['$scope', '$http', '$state', 'auditService',
-	                                function($scope, $http, $state, auditService) {
+	.controller('UserAuditListCtrl', ['$scope', '$http', '$state', 'userAuditService',
+	                                function($scope, $http, $state, userAuditService) {
 		var self = this;
 		self.roleMap = {
 			admin : '管理员',
@@ -21,7 +21,7 @@ define(['user/module', 'user/audit/service'], function(userModule) {
 			email : '',
 		};
 		function userRevision() {
-			auditService.userRevision(self.params).success(function(data) {
+			userAuditService.userRevision(self.params).success(function(data) {
 				self.pager = data;
 				for (var i = 0; i < self.pager.content.length; i++) {
 					bindRoleNames(self.pager.content[i]);
@@ -50,12 +50,12 @@ define(['user/module', 'user/audit/service'], function(userModule) {
 			};
 		};
 		self.detail = function(id, revision) {
-			$state.go('user.audit.detail', {id : id, revision : revision}, {reload : true})
+			$state.go('user.audit.detail', {id : id, revision : revision}, {reload : true});
 		};
 		
 	}])
-	.controller('UserAuditDetailCtrl', ['$scope', '$http', '$state', 'auditService',
-	                                function($scope, $http, $state, auditService) {
+	.controller('UserAuditDetailCtrl', ['$scope', '$http', '$state', 'userAuditService',
+	                                function($scope, $http, $state, userAuditService) {
 		var self = this;
 		self.id = $state.params.id;
 		self.revision = $state.params.revision;
@@ -69,7 +69,7 @@ define(['user/module', 'user/audit/service'], function(userModule) {
 			'UNSPECIFIED' : '未知',
 		};
 		function userAtRevision(userId, revision) {
-			auditService.userAtRevision(userId, revision).success(function(data) {
+			userAuditService.userAtRevision(userId, revision).success(function(data) {
 				self.detail = data;
 				console.log(data);
 			});

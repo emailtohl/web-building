@@ -35,7 +35,7 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 		 * 在详情中展示字符串，有的值是对象，所以需要处理
 		 */
 		self.getValue = function(k, v) {
-			var result, i, j, auth;
+			var result, i, j, temp, auth;
 			switch (k) {
 				case 'department':
 					result = v.name;

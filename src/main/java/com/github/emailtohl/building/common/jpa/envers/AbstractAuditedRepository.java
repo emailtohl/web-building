@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,13 +42,14 @@ public abstract class AbstractAuditedRepository<E extends Serializable> implemen
 	@SuppressWarnings("unused")
 	private static final Logger logger = LogManager.getLogger();
 	
+	@PersistenceContext
+	protected EntityManager entityManager;
 	@Inject EntityManagerFactory entityManagerFactory;
 	protected Class<E> entityClass;
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public Page<Tuple<E>> getEntityRevision(Map<String, String> propertyNameValueMap, Pageable pageable) {
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		AuditReader auditReader = AuditReaderFactory.get(entityManager);
 		AuditQuery query = auditReader.createQuery().forRevisionsOfEntity(entityClass, false, false);
 		if (propertyNameValueMap != null) {
@@ -96,7 +98,6 @@ public abstract class AbstractAuditedRepository<E extends Serializable> implemen
 
 	@Override
 	public Page<E> getEntitiesAtRevision(Number revision, Map<String, String> propertyNameValueMap, Pageable pageable) {
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		AuditReader auditReader = AuditReaderFactory.get(entityManager);
 		AuditQuery query = auditReader.createQuery().forEntitiesAtRevision(entityClass, revision);
 		for (Entry<String, String> e : propertyNameValueMap.entrySet()) {
@@ -135,16 +136,16 @@ public abstract class AbstractAuditedRepository<E extends Serializable> implemen
 
 	@Override
 	public E getEntityAtRevision(Long id, Number revision) {
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		entityManager.getTransaction().begin();
 		AuditReader auditReader = AuditReaderFactory.get(entityManager);
 		return auditReader.find(entityClass, id, revision);
 	}
 	
 	@Override
 	public void rollback(Long id, Number revision) {
-		E bygone = getEntityAtRevision(id, revision);
 		EntityManager em = entityManagerFactory.createEntityManager();
 		em.getTransaction().begin();
+		E bygone = getEntityAtRevision(id, revision);
 		em.unwrap(Session.class).replicate(bygone, ReplicationMode.OVERWRITE);
 		em.getTransaction().commit();
 		em.close();

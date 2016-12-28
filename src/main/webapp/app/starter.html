@@ -312,13 +312,18 @@ desired effect
             <li><a href="secure" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>security测试</a></li>
           </ul>
         </li>
-        <li class="" ng-if="hasAuthority('user_role_authority_allocation')" ng-class="{active: $state.includes('role')}" ui-sref="roleAuthCfg">
+        <li class="treeview" ng-if="hasAuthority('user_role_authority_allocation')" ng-class="{active: $state.includes('roleAuthCfg')}">
           <a href="#">
-            <i class="fa fa-th"></i> <span>权限配置</span>
+            <i class="fa fa-th"></i>
+            <span>角色权限关系</span>
             <span class="pull-right-container">
               <small class="label pull-right bg-red">notice</small>
             </span>
           </a>
+          <ul class="treeview-menu">
+            <li ng-class="{active: $state.includes('roleAuthCfg')}"><a ui-sref="roleAuthCfg" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>角色配置</a></li>
+            <li ng-class="{active: $state.includes('roleAuthCfgAudit')}" ng-if="hasAuthority('audit')"><a ui-sref="roleAuthCfgAudit.list" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>角色审计</a></li>
+          </ul>
         </li>
         <li class="treeview" ng-class="{active: $state.includes('test')}">
           <a href="#">

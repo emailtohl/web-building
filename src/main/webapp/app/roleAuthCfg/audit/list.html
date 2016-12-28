@@ -1,11 +1,11 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
-  <h1>用户修改审计
+  <h1>角色修改审计
     <small>Preview</small>
   </h1>
   <ol class="breadcrumb">
     <li ui-sref="dashboard"><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-    <li class="active">user audit list</li>
+    <li class="active">role audit list</li>
   </ol>
 </section>
 <!-- Main content -->
@@ -14,10 +14,10 @@
       <div class="col-xs-12">
         <div class="box">
           <div class="box-header">
-            <h3 class="box-title">用户审计表</h3>
+            <h3 class="box-title">角色审计表</h3>
             <div class="box-tools">
 	          <form ng-submit="ctrl.query()" class="input-group input-group-sm ng-pristine ng-valid" style="width: 150px;">
-	            <input ng-model="ctrl.params.email" name="table_search" class="form-control pull-right ng-pristine ng-valid ng-empty ng-touched" placeholder="以邮箱名查询" type="text">
+	            <input ng-model="ctrl.params.name" name="table_search" class="form-control pull-right ng-pristine ng-valid ng-empty ng-touched" placeholder="以角色名查询" type="text">
 	            <div class="input-group-btn">
 	              <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
 	            </div>
@@ -29,10 +29,9 @@
             <table class="table table-bordered table-hover">
               <thead>
               <tr>
-                <th class="col-md-2">姓名</th>
-                <th class="col-md-2">邮箱</th>
+                <th class="col-md-2">角色名</th>
                 <th class="col-md-2">描述</th>
-                <th class="col-md-2">角色</th>
+                <th class="col-md-4">权限</th>
                 <th class="col-md-2">修改时间</th>
                 <th class="col-md-2">修改类型</th>
               </tr>
@@ -40,7 +39,6 @@
               <tbody>
               <tr ng-repeat="x in ctrl.pager.content" style="cursor:pointer" ng-click="ctrl.detail(x.id, x.revision)">
                 <td ng-bind="x.name" class="col-md-2"></td>
-                <td ng-bind="x.email" class="col-md-2"></td>
                 <td ng-bind="x.description" class="col-md-2"></td>
                 <td ng-bind="x.roleNames" class="col-md-2"></td>
                 <td ng-bind="x.revisionDate" class="col-md-2"></td>
@@ -49,10 +47,9 @@
               </tbody>
               <tfoot>
               <tr>
-                <th class="col-md-2">用户名</th>
-                <th class="col-md-2">邮箱</th>
+                <th class="col-md-2">角色名</th>
                 <th class="col-md-2">描述</th>
-                <th class="col-md-2">角色</th>
+                <th class="col-md-4">权限</th>
                 <th class="col-md-2">修改时间</th>
                 <th class="col-md-2">修改类型</th>
               </tr>

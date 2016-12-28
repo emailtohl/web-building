@@ -45,4 +45,9 @@ public interface UserRepositoryCustomization extends CriterionQueryRepository<Us
 	 * 获取最大的emp_no
 	 */
 	Integer getMaxEmpNo();
+	
+	/**
+	 * 将缓存刷新到数据库
+	 */
+	void flush();
 }

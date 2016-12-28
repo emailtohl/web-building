@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.RollbackException;
+import javax.transaction.Transactional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,7 +45,7 @@ public class AbstractAuditedRepositoryTest {
 	@Inject SecurityContextManager securityContextManager;
 	@Inject @Named("userServiceImpl") UserService userService;
 	@Inject CleanAuditData cleanAuditTestData;
-	class AuditedRepositoryForTest extends AbstractAuditedRepository<User> {}
+	@Transactional class AuditedRepositoryForTest extends AbstractAuditedRepository<User> {}
 	AuditedRepositoryForTest audRepos;
 	private Long id;
 	private Sort sort = new Sort(Sort.Direction.DESC, "name");

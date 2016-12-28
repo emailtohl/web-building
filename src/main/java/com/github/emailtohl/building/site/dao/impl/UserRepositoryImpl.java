@@ -121,5 +121,10 @@ public class UserRepositoryImpl extends AbstractCriterionQueryRepository<User> i
 			
 		return result;
 	}
+
+	@Override
+	public void flush() {
+		entityManager.flush();
+	}
 	
 }

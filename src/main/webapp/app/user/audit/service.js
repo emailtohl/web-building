@@ -1,15 +1,15 @@
 define([ 'user/module', 'common/context' ], function(userModule) {
-	return userModule.factory('auditService', [ '$http', 'util', function($http, util) {
+	return userModule.factory('userAuditService', [ '$http', 'util', function($http, util) {
 		return {
 			/**
-			 * 获取Pager<Tuple<User>>：根据User的email查询某实体所有历史记录
+			 * 根据User的email查询某实体所有历史记录
 			 */
 			userRevision : function(params) {
 				var args = util.encodeUrlParams(params);
 				return $http.get('audit/userRevision' + (args ? '?' + args : ''));
 			},
 			/**
-			 * 获取Pager<User>：查询User某个修订版下所有的历史记录
+			 * 查询User某个修订版下所有的历史记录
 			 */
 			usersAtRevision : function(params) {
 				if (!params.revision) {
