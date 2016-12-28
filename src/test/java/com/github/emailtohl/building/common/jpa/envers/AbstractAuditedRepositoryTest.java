@@ -1,5 +1,6 @@
 package com.github.emailtohl.building.common.jpa.envers;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import java.util.HashMap;
@@ -7,6 +8,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.RollbackException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -111,12 +113,15 @@ public class AbstractAuditedRepositoryTest {
 		
 		if (origin != null) {
 			// 由于实体基类BaseEntity的createDate为不可变，所以回滚时遭遇数据库约束异常，暂时不能使用此接口
-			/*
-			audRepos.rollback(id, origin);
+			try {
+				audRepos.rollback(id, origin);
+			} catch (RollbackException e) {
+				logger.debug(e.getCause().getCause().getMessage());
+			}
 			User bygone = userService.getUser(id);
 			assertEquals("forAuditTestForUpdate", bygone.getName());
 			logger.debug(bygone.getRoles());
-			*/
+			
 		}
 	}
 

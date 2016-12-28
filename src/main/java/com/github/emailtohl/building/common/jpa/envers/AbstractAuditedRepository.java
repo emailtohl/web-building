@@ -137,11 +137,11 @@ public abstract class AbstractAuditedRepository<E extends Serializable> implemen
 	@Override
 	public void rollback(Long id, Number revision) {
 		E bygone = getEntityAtRevision(id, revision);
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
-		entityManager.getTransaction().begin();
-		entityManager.unwrap(Session.class).replicate(bygone, ReplicationMode.OVERWRITE);
-		entityManager.getTransaction().commit();
-		entityManager.close();
+		EntityManager em = entityManagerFactory.createEntityManager();
+		em.getTransaction().begin();
+		em.unwrap(Session.class).replicate(bygone, ReplicationMode.OVERWRITE);
+		em.getTransaction().commit();
+		em.close();
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })

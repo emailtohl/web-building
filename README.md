@@ -8,18 +8,23 @@
 本项目在技术选型上尽量符合业界标准，主要使用的技术有：
 #### Java
  - 容器：spring、spring mvc、Websocket
- - 安全：spring security
- - 数据访问层：JPA Hibernate、Hibernate Envers（审计）、spring data
- - 其他：Hibernate校验、Hibernate Search（全文搜索）、lucence等
+ - 安全：spring security（XSS、CSRF、Session固定、应用层安全校验）
+ - 数据访问层：JPA Hibernate、spring data
+ - 其他：Hibernate校验、Hibernate Envers（审计）、Hibernate Search（全文搜索）等
  
 #### JavaScript
-- bootstrap
+- bootstrap + adminLTE
 - RequireJS
 - AngularJS 1.×
-- 其他组件：如select2,datepicker,ztree,codemirror等等
+- 其他组件：如select2,modal,datepicker,ztree,codemirror等等
 
 ## 二、部署
 本项目基于JDK8环境开发，框架部分为了兼容之前的JDK并未用JDK8的语法和新的时间类，但site包下的业务程序则需要调整才能兼容之前的JDK版本。
+
+> 注意：由于本项目监控和聊天功能使用websocket这种长连接技术，所以集群环境下websocket只能转到固定服务器上，若与登录时的服务器不同，前端浏览器的sessionId就会被更新，使得登录状态失效。
+
+> 事实上websocket是改变规则的技术，它让服务器与浏览器、服务器与服务器之间（代码中有示例）通信更实时，完全可以自定义集群之间的数据共享。
+
 ### 1. 数据源
 由于属于学习研究型项目，所以本系统中存在3份数据源配置，要保持一致（真实生产环境可以简化为一份）：
 ###(1) 位于src/main/resources/database.properties
@@ -123,4 +128,4 @@ README仅简述了项目概况，该项目是我学习所用，如何配置和�
 ## 六、 持续开发
 目前框架搭建以及基础组件以及创建完毕：如对用户、授权的实体建模，基础数据访问仓库，通用工具，通用过滤器，通用组件等，前端的拦截器、分页、select2等angular指令也都已齐备。
 
-目前基础功能完成了：角色的权限配置、用户管理、用户的认证授权等；业务功能完成了：首页实时数据监控、论坛全文搜索，工单流程申请，客户关系管理等，项目持续进行中……
+目前基础功能完成了：角色的权限配置、用户管理、用户的认证授权等；业务功能完成了：首页聊天室、实时数据监控、论坛全文搜索，工单流程申请，客户关系管理等，项目持续进行中……
