@@ -102,6 +102,7 @@ public class AuditedServiceImpl implements AuditedService {
 	}
 	
 	private UserDto convert(User user) {
+		user.getRoles().size();// 让代理初始化
 		UserDto dto = new UserDto();
 		BeanUtils.copyProperties(user, dto, "password", "icon", BaseEntity.VERSION_PROPERTY_NAME);
 		return dto;

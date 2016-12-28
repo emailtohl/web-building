@@ -1,6 +1,6 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
-  <h1>用户修改审计
+  <h1>历史详情
     <small>Preview</small>
   </h1>
   <ol class="breadcrumb">
@@ -11,80 +11,64 @@
 </section>
 <!-- Main content -->
 <section class="content">
-  <div class="row">
-	<div class="col-xs-12">
-	    <!-- general form elements -->
-	    <div class="box box-primary">
-	      <div class="box-header with-border">
-	        <h3 class="box-title">搜索用户</h3>
-	      </div>
-	      <!-- /.box-header -->
-	      <!-- form start -->
-	      <form role="form">
-	        <div class="box-body">
-	          <div class="form-group col-md-6">
-	            <label for="exampleInputEmail1">邮箱</label>
-	            <input type="text" class="form-control" ng-model="ctrl.params.email" placeholder="可模糊查询">
-	          </div>
-	        </div>
-	        <!-- /.box-body -->
-	
-	        <div class="box-footer">
-	          <button type="reset" class="btn btn-default" ng-click="ctrl.reset()">重置</button>
-	          <button type="submit" class="btn btn-primary pull-right" ng-click="ctrl.query()">查询</button>
+	<div class="row">
+	  <div class="box">
+	  <!-- 
+	    <div class="box-header">
+	      <form class="box box-danger form-group image" upload upload-to="user/icon" when-done="ctrl.whenDone()">
+	        <div class="box-body no-padding">
+	        	<div class="col-md-2">
+			        <img style="height: 90px;width: 90px;" ng-src="{{ctrl.detail.iconSrc}}" class="img-circle" alt="User Image">
+			        <a class="users-list-name" href="#">{{ctrl.detail.email}}</a>
+			        <span class="users-list-date">{{ctrl.detail.createDate}}</span>
+	        	</div>
+	        	<div class="col-md-4">
+	        		<div class="form-group">
+	                  <label for="exampleInputFile">浏览</label>
+	                  <input type="file" name="icon" class="btn">
+	                  <p class="help-block">选择你的头像</p>
+	                </div>
+			        <input type="hidden" name="id" value="{{ctrl.detail.id}}">
+			        <div class="form-group">
+				        <input type="submit" id="submit-file" class="btn btn-primary" value="上传头像" disabled="disabled">
+			        </div>
+	        	</div>
 	        </div>
 	      </form>
 	    </div>
-	    <!-- /.box -->
-    </div>
-        <div class="col-xs-12">
-          <div class="box">
-            <div class="box-header">
-              <h3 class="box-title">用户审计表</h3>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-              <table class="table table-bordered table-hover">
-                <thead>
-                <tr>
-                  <th class="col-md-2">姓名</th>
-                  <th class="col-md-2">邮箱</th>
-                  <th class="col-md-2">描述</th>
-                  <th class="col-md-2">角色</th>
-                  <th class="col-md-2">修改时间</th>
-                  <th class="col-md-2">修改类型</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr ng-repeat="x in ctrl.pager.content" style="cursor:pointer" ng-click="">
-                  <td ng-bind="x.name" class="col-md-2"></td>
-                  <td ng-bind="x.email" class="col-md-2"></td>
-                  <td ng-bind="x.description" class="col-md-2"></td>
-                  <td ng-bind="x.roleNames" class="col-md-2"></td>
-                  <td ng-bind="x.revisionDate" class="col-md-2"></td>
-                  <td ng-bind="ctrl.typeMap[x.revisionType]" class="col-md-2"></td>
-                </tr>
-                </tbody>
-                <tfoot>
-                <tr>
-                  <th class="col-md-2">用户名</th>
-                  <th class="col-md-2">邮箱</th>
-                  <th class="col-md-2">描述</th>
-                  <th class="col-md-2">角色</th>
-                  <th class="col-md-2">修改时间</th>
-                  <th class="col-md-2">修改类型</th>
-                </tr>
-                </tfoot>
-              </table>
-              <pager page-number="ctrl.pager.pageNumber" total-pages="ctrl.pager.totalPages" button-count="5" on-click="ctrl.btnClick(pageNumber)">
-            </div>
-            <!-- /.box-body -->
-          </div>
-          <!-- /.box -->
-
-        </div>
-        <!-- /.col -->
-    </div>
+	     -->
+	    <div class="box-body">
+	      <table class="table table-bordered">
+	        <tbody><tr>
+	          <th style="width: 10px">#</th>
+	          <th>属性名</th>
+	          <th>属性值</th>
+	          <!-- <th style="width: 40px">Label</th> -->
+	        </tr>
+	        <tr ng-repeat="(k, v) in ctrl.detail">
+	          <td>{{$index}}</td>
+	          <td>{{k}}</td>
+	          <td>
+	            {{ctrl.getValue(k, v, $index)}}
+	          </td>
+	          <!-- <td><span class="badge bg-red">55%</span></td> -->
+	        </tr>
+	      </tbody></table>
+	    </div>
+	    <!-- /.box-body -->
+	    <div class="box-footer clearfix">
+	      <ul class="pagination pagination-sm no-margin pull-right">
+	        <li><a href="#">«</a></li>
+	        <li><a href="#">1</a></li>
+	        <li><a href="#">2</a></li>
+	        <li><a href="#">3</a></li>
+	        <li><a href="#">»</a></li>
+	      </ul>
+	    </div>
+	  </div>
+	  <!-- /.box -->
+	
+	</div>
     <!-- /.row -->
 </section>
 <!-- /.content -->

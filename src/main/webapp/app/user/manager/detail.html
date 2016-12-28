@@ -9,67 +9,68 @@
     <li class="active">detail</li>
   </ol>
 </section>
-
-<div class="row">
-  <div class="box">
-    <div class="box-header">
-      <form class="box box-danger form-group image" upload upload-to="user/icon" when-done="ctrl.whenDone()">
-        <div class="box-body no-padding">
-        	<div class="col-md-2">
-		        <img style="height: 90px;width: 90px;" ng-src="{{ctrl.detail.iconSrc}}" class="img-circle" alt="User Image">
-		        <a class="users-list-name" href="#">{{ctrl.detail.email}}</a>
-		        <span class="users-list-date">{{ctrl.detail.createDate}}</span>
-        	</div>
-        	<div class="col-md-4">
-        		<div class="form-group">
-                  <label for="exampleInputFile">浏览</label>
-                  <input type="file" name="icon" class="btn">
-                  <p class="help-block">选择你的头像</p>
-                </div>
-		        <input type="hidden" name="id" value="{{ctrl.detail.id}}">
-		        <div class="form-group">
-			        <input type="submit" id="submit-file" class="btn btn-primary" value="上传头像" disabled="disabled">
-		        </div>
-        	</div>
-        </div>
-      </form>
-    </div>
-    <div class="box-body">
-      <table class="table table-bordered">
-        <tbody><tr>
-          <th style="width: 10px">#</th>
-          <th>属性名</th>
-          <th>属性值</th>
-          <!-- <th style="width: 40px">Label</th> -->
-        </tr>
-        <tr ng-repeat="(k, v) in ctrl.detail">
-          <td>{{$index}}</td>
-          <td>{{k}}</td>
-          <td>
-            {{ctrl.getValue(k, v, $index)}}
-          </td>
-          <!-- <td><span class="badge bg-red">55%</span></td> -->
-        </tr>
-      </tbody></table>
-    </div>
-    <!-- /.box-body -->
-    <div class="box-footer clearfix">
-      <button type="button" class="btn btn-primary pull-left margin" ng-click="ctrl.edit()">编辑</button>
-      <button type="button" class="btn btn-success pull-left margin" ng-click="ctrl.enableUser()" ng-if="!ctrl.detail.enabled">激活账户</button>
-      <button type="button" class="btn btn-warning pull-left margin" ng-click="ctrl.disableUser()" ng-if="hasAuthority('user_disable') && ctrl.detail.enabled">禁用账户</button>
-      <ul class="pagination pagination-sm no-margin pull-right">
-        <li><a href="#">«</a></li>
-        <li><a href="#">1</a></li>
-        <li><a href="#">2</a></li>
-        <li><a href="#">3</a></li>
-        <li><a href="#">»</a></li>
-      </ul>
-    </div>
-  </div>
-  <!-- /.box -->
-
-</div>
-
+<!-- Main content -->
+<section class="content">
+	<div class="row">
+	  <div class="box">
+	    <div class="box-header">
+	      <form class="box box-danger form-group image" upload upload-to="user/icon" when-done="ctrl.whenDone()">
+	        <div class="box-body no-padding">
+	        	<div class="col-md-2">
+			        <img style="height: 90px;width: 90px;" ng-src="{{ctrl.detail.iconSrc}}" class="img-circle" alt="User Image">
+			        <a class="users-list-name" href="#">{{ctrl.detail.email}}</a>
+			        <span class="users-list-date">{{ctrl.detail.createDate}}</span>
+	        	</div>
+	        	<div class="col-md-4">
+	        		<div class="form-group">
+	                  <label for="exampleInputFile">浏览</label>
+	                  <input type="file" name="icon" class="btn">
+	                  <p class="help-block">选择你的头像</p>
+	                </div>
+			        <input type="hidden" name="id" value="{{ctrl.detail.id}}">
+			        <div class="form-group">
+				        <input type="submit" id="submit-file" class="btn btn-primary" value="上传头像" disabled="disabled">
+			        </div>
+	        	</div>
+	        </div>
+	      </form>
+	    </div>
+	    <div class="box-body">
+	      <table class="table table-bordered">
+	        <tbody><tr>
+	          <th style="width: 10px">#</th>
+	          <th>属性名</th>
+	          <th>属性值</th>
+	          <!-- <th style="width: 40px">Label</th> -->
+	        </tr>
+	        <tr ng-repeat="(k, v) in ctrl.detail">
+	          <td>{{$index}}</td>
+	          <td>{{k}}</td>
+	          <td>
+	            {{ctrl.getValue(k, v, $index)}}
+	          </td>
+	          <!-- <td><span class="badge bg-red">55%</span></td> -->
+	        </tr>
+	      </tbody></table>
+	    </div>
+	    <!-- /.box-body -->
+	    <div class="box-footer clearfix">
+	      <button type="button" class="btn btn-primary pull-left margin" ng-click="ctrl.edit()">编辑</button>
+	      <button type="button" class="btn btn-success pull-left margin" ng-click="ctrl.enableUser()" ng-if="!ctrl.detail.enabled">激活账户</button>
+	      <button type="button" class="btn btn-warning pull-left margin" ng-click="ctrl.disableUser()" ng-if="hasAuthority('user_disable') && ctrl.detail.enabled">禁用账户</button>
+	      <ul class="pagination pagination-sm no-margin pull-right">
+	        <li><a href="#">«</a></li>
+	        <li><a href="#">1</a></li>
+	        <li><a href="#">2</a></li>
+	        <li><a href="#">3</a></li>
+	        <li><a href="#">»</a></li>
+	      </ul>
+	    </div>
+	  </div>
+	  <!-- /.box -->
+	
+	</div>
+</section>
 
 <div modal open="ctrl.modal.open" title="{{ctrl.modal.title}}" when-confirm="ctrl.modal.whenConfirm()" type="{{ctrl.modal.type}}" disabled="!ctrl.form.name">
   <form role="form" name="f">
