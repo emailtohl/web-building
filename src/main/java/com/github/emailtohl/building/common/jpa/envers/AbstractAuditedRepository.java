@@ -44,7 +44,8 @@ public abstract class AbstractAuditedRepository<E extends Serializable> implemen
 	
 	@PersistenceContext
 	protected EntityManager entityManager;
-	@Inject EntityManagerFactory entityManagerFactory;
+	@Inject
+	protected EntityManagerFactory entityManagerFactory;
 	protected Class<E> entityClass;
 	
 	@SuppressWarnings("unchecked")
@@ -136,7 +137,6 @@ public abstract class AbstractAuditedRepository<E extends Serializable> implemen
 
 	@Override
 	public E getEntityAtRevision(Long id, Number revision) {
-		entityManager.getTransaction().begin();
 		AuditReader auditReader = AuditReaderFactory.get(entityManager);
 		return auditReader.find(entityClass, id, revision);
 	}

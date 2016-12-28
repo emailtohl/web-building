@@ -2,6 +2,8 @@ package com.github.emailtohl.building.site.service;
 
 import static com.github.emailtohl.building.site.entities.Authority.AUDIT;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -14,6 +16,7 @@ import com.github.emailtohl.building.site.dto.UserDto;
  * @author HeLei
  */
 @PreAuthorize("hasAuthority('" + AUDIT + "')")
+@Transactional
 public interface AuditedService {
 	/**
 	 * 根据User的email查询某实体所有历史记录
