@@ -113,6 +113,7 @@ public class AuditedServiceImpl implements AuditedService {
 		Role role = t.getEntity();
 		if (role != null) {
 			BeanUtils.copyProperties(role, dto, BaseEntity.VERSION_PROPERTY_NAME);
+			role.getAuthorities().forEach(a -> dto.getAuthorityNames().add(a.getName()));
 		}
 		DefaultRevisionEntity dre = t.getDefaultRevisionEntity();
 		if (dre != null) {
@@ -127,6 +128,7 @@ public class AuditedServiceImpl implements AuditedService {
 	private RoleDto convert(Role role) {
 		RoleDto dto = new RoleDto();
 		BeanUtils.copyProperties(role, dto);
+		role.getAuthorities().forEach(a -> dto.getAuthorityNames().add(a.getName()));
 		return dto;
 	}
 	

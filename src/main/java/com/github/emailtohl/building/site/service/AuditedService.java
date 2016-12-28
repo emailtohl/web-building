@@ -1,6 +1,6 @@
 package com.github.emailtohl.building.site.service;
 
-import static com.github.emailtohl.building.site.entities.Authority.AUDIT;
+import static com.github.emailtohl.building.site.entities.Authority.*;
 
 import javax.transaction.Transactional;
 
@@ -15,7 +15,6 @@ import com.github.emailtohl.building.site.dto.UserDto;
  * 查询被审计的实体的历史记录
  * @author HeLei
  */
-@PreAuthorize("hasAuthority('" + AUDIT + "')")
 @Transactional
 public interface AuditedService {
 	/**
@@ -24,6 +23,7 @@ public interface AuditedService {
 	 * @param pageable
 	 * @return
 	 */
+	@PreAuthorize("hasAuthority('" + AUDIT_USER + "')")
 	Pager<UserDto> getUserRevision(String email, Pageable pageable);
 	
 	/**
@@ -33,6 +33,7 @@ public interface AuditedService {
 	 * @param pageable
 	 * @return
 	 */
+	@PreAuthorize("hasAuthority('" + AUDIT_USER + "')")
 	Pager<UserDto> getUsersAtRevision(int revision, String email, Pageable pageable);
 	
 	/**
@@ -41,6 +42,7 @@ public interface AuditedService {
 	 * @param revision
 	 * @return
 	 */
+	@PreAuthorize("hasAuthority('" + AUDIT_USER + "')")
 	UserDto getUserAtRevision(long userId, int revision);
 	
 	/**
@@ -49,6 +51,7 @@ public interface AuditedService {
 	 * @param pageable
 	 * @return
 	 */
+	@PreAuthorize("hasAuthority('" + AUDIT_ROLE + "')")
 	Pager<RoleDto> getRoleRevision(String name, Pageable pageable);
 	
 	/**
@@ -58,6 +61,7 @@ public interface AuditedService {
 	 * @param pageable
 	 * @return
 	 */
+	@PreAuthorize("hasAuthority('" + AUDIT_ROLE + "')")
 	Pager<RoleDto> getRolesAtRevision(int revision, String name, Pageable pageable);
 	
 	/**
@@ -66,6 +70,7 @@ public interface AuditedService {
 	 * @param revision
 	 * @return
 	 */
+	@PreAuthorize("hasAuthority('" + AUDIT_ROLE + "')")
 	RoleDto getRoleAtRevision(long roleId, int revision);
 	
 }

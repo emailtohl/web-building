@@ -94,7 +94,7 @@ define(['user/module', 'user/audit/service'], function(userModule) {
 				case 'roles':
 					temp = [];
 					for (i = 0; i < v.length; i++) {
-						/*for (j = 0; j < v[i].authorities.length; j++) {
+						for (j = 0; j < v[i].authorities.length; j++) {
 							auth = v[i].authorities[j];
 							if (auth instanceof String) {
 								temp.push(auth);
@@ -102,10 +102,8 @@ define(['user/module', 'user/audit/service'], function(userModule) {
 								temp.push(auth.name);
 							}
 							result = temp.join('，');
-						}*/
-						temp.push(v[i].name);
+						}
 					}
-					result = temp.join('，');
 					break;
 				default:
 					result = v;

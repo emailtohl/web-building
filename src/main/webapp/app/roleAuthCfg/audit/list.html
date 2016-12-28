@@ -29,29 +29,33 @@
             <table class="table table-bordered table-hover">
               <thead>
               <tr>
-                <th class="col-md-2">角色名</th>
-                <th class="col-md-2">描述</th>
-                <th class="col-md-4">权限</th>
+                <th class="col-md-1">角色名</th>
+                <th class="col-md-1">描述</th>
+                <th class="col-md-7">权限</th>
                 <th class="col-md-2">修改时间</th>
-                <th class="col-md-2">修改类型</th>
+                <th class="col-md-1">修改类型</th>
               </tr>
               </thead>
               <tbody>
               <tr ng-repeat="x in ctrl.pager.content" style="cursor:pointer" ng-click="ctrl.detail(x.id, x.revision)">
-                <td ng-bind="x.name" class="col-md-2"></td>
-                <td ng-bind="x.description" class="col-md-2"></td>
-                <td ng-bind="x.roleNames" class="col-md-2"></td>
+                <td ng-bind="x.name" class="col-md-1"></td>
+                <td ng-bind="x.description" class="col-md-1"></td>
+                <td class="col-md-7">
+                	<ul>
+                		<li ng-repeat="y in x.authorities">{{y.name}}({{y.description}})</li>
+                	</ul>
+                </td>
                 <td ng-bind="x.revisionDate" class="col-md-2"></td>
-                <td ng-bind="ctrl.typeMap[x.revisionType]" class="col-md-2"></td>
+                <td ng-bind="ctrl.typeMap[x.revisionType]" class="col-md-1"></td>
               </tr>
               </tbody>
               <tfoot>
               <tr>
-                <th class="col-md-2">角色名</th>
-                <th class="col-md-2">描述</th>
-                <th class="col-md-4">权限</th>
+                <th class="col-md-1">角色名</th>
+                <th class="col-md-1">描述</th>
+                <th class="col-md-7">权限</th>
                 <th class="col-md-2">修改时间</th>
-                <th class="col-md-2">修改类型</th>
+                <th class="col-md-1">修改类型</th>
               </tr>
               </tfoot>
             </table>

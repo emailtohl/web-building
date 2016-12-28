@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.dto.RoleDto;
 import com.github.emailtohl.building.site.dto.UserDto;
-import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.AuditedService;
 
@@ -108,7 +107,7 @@ public class AuditCtrl {
 	 * @return
 	 */
 	@RequestMapping(value = "roleAtRevision", method = RequestMethod.GET)
-	public Role getRoleAtRevision(@RequestParam(required = true) Long roleId, @RequestParam(required = true) Integer revision) {
+	public RoleDto getRoleAtRevision(@RequestParam(required = true) Long roleId, @RequestParam(required = true) Integer revision) {
 		return auditedService.getRoleAtRevision(roleId, revision);
 	}
 	

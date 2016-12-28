@@ -85,9 +85,13 @@ public class Authority extends BaseEntity {
 	 */
 	public static final String FORUM_DELETE = "forum_delete";
 	/**
-	 * 查看版本审计的内容
+	 * 审计修改用户信息
 	 */
-	public static final String AUDIT = "audit";
+	public static final String AUDIT_USER = "audit_user";
+	/**
+	 * 审计修改角色信息
+	 */
+	public static final String AUDIT_ROLE = "audit_role";
 	
 	public Authority() {
 		super();
@@ -103,7 +107,6 @@ public class Authority extends BaseEntity {
 	private String description;
 	private transient Set<Role> roles = new HashSet<Role>();
 	
-	@org.hibernate.envers.NotAudited
 	@Column(nullable = false, unique = true)
 	public String getName() {
 		return name;
@@ -112,7 +115,6 @@ public class Authority extends BaseEntity {
 		this.name = name;
 	}
 	
-	@org.hibernate.envers.NotAudited
 	public String getDescription() {
 		return description;
 	}

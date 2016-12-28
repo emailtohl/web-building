@@ -302,13 +302,13 @@ desired effect
         <li class="treeview" ng-class="{active: $state.includes('user')}">
           <a href="#">
           	<i class="fa fa-users"></i>
-          	<span>用户管理</span> 
+          	<span>用户管理</span>
           	<i class="fa fa-angle-left pull-right"></i>
           </a>
           <ul class="treeview-menu">
             <li ng-class="{active: $state.includes('user.list') || $state.includes('user.detail')}"><a ui-sref="user.list" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>账户管理</a></li>
             <li ng-class="{active: $state.includes('user.role')}" ng-if="hasAuthority('user_grant_roles')"><a ui-sref="user.role" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>角色配置</a></li>
-            <li ng-class="{active: $state.includes('user.audit')}" ng-if="hasAuthority('audit')"><a ui-sref="user.audit.list" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>用户审计</a></li>
+            <li ng-class="{active: $state.includes('user.audit')}" ng-if="hasAuthority('audit_user')"><a ui-sref="user.audit.list" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>用户审计</a></li>
             <li><a href="secure" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>security测试</a></li>
           </ul>
         </li>
@@ -322,7 +322,7 @@ desired effect
           </a>
           <ul class="treeview-menu">
             <li ng-class="{active: $state.includes('roleAuthCfg')}"><a ui-sref="roleAuthCfg" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>角色配置</a></li>
-            <li ng-class="{active: $state.includes('roleAuthCfgAudit')}" ng-if="hasAuthority('audit')"><a ui-sref="roleAuthCfgAudit.list" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>角色审计</a></li>
+            <li ng-class="{active: $state.includes('roleAuthCfgAudit')}" ng-if="hasAuthority('audit_role')"><a ui-sref="roleAuthCfgAudit.list" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>角色审计</a></li>
           </ul>
         </li>
         <li class="treeview" ng-class="{active: $state.includes('test')}">
