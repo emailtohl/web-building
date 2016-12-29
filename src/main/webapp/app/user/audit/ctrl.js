@@ -35,12 +35,15 @@ define(['user/module', 'user/audit/service'], function(userModule) {
 						user.roleNames.push(self.roleMap[user.roles[i].name]);
 					}
 				}
-				console.log(data);
 			});
 		}
 		userRevision();
 		self.query = function() {
 			userRevision();
+		};
+		self.btnClick = function(pageNumber) {
+			self.params.page = pageNumber;
+			roleRevision();
 		};
 		self.reset = function() {
 			self.params = {
@@ -71,7 +74,6 @@ define(['user/module', 'user/audit/service'], function(userModule) {
 		function userAtRevision(userId, revision) {
 			userAuditService.userAtRevision(userId, revision).success(function(data) {
 				self.detail = data;
-				console.log(data);
 			});
 		}
 		userAtRevision(self.id, self.revision);

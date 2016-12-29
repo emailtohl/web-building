@@ -81,7 +81,7 @@ public class AuditCtrl {
 	 */
 	@RequestMapping(value = "roleRevision", method = RequestMethod.GET)
 	public Pager<RoleDto> getRoleRevision(@RequestParam(required = false) String name,
-			@PageableDefault(page = 0, size = 20, sort = {ID_PROPERTY_NAME}, direction = Direction.DESC) Pageable pageable) {
+			@PageableDefault(page = 0, size = 5, sort = {ID_PROPERTY_NAME}, direction = Direction.DESC) Pageable pageable) {
 		return auditedService.getRoleRevision(name, pageable);
 	}
 
@@ -95,7 +95,7 @@ public class AuditCtrl {
 	 */
 	@RequestMapping(value = "rolesAtRevision", method = RequestMethod.GET)
 	public Pager<RoleDto> getRolesAtRevision(@RequestParam(required = true) Integer revision, @RequestParam(required = false) String name,
-			@PageableDefault(page = 0, size = 20, sort = {ID_PROPERTY_NAME}, direction = Direction.DESC) Pageable pageable) {
+			@PageableDefault(page = 0, size = 5, sort = {ID_PROPERTY_NAME}, direction = Direction.DESC) Pageable pageable) {
 		return auditedService.getRolesAtRevision(revision, name, pageable);
 	}
 

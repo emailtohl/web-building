@@ -17,17 +17,20 @@ define(['roleAuthCfg/module', 'roleAuthCfg/service'], function(roleAuthCfgModule
 		$scope.getAuthentication();
 		self.params = {
 			page : 1,
-			pageSize : 20,
+			pageSize : 5,
 			name : '',
 		};
 		function roleRevision() {
 			service.roleRevision(self.params).success(function(data) {
 				self.pager = data;
-				console.log(data);
 			});
 		}
 		roleRevision();
 		self.query = function() {
+			roleRevision();
+		};
+		self.btnClick = function(pageNumber) {
+			self.params.page = pageNumber;
 			roleRevision();
 		};
 		self.reset = function() {
@@ -50,7 +53,6 @@ define(['roleAuthCfg/module', 'roleAuthCfg/service'], function(roleAuthCfgModule
 		function roleAtRevision(roleId, revision) {
 			service.roleAtRevision(roleId, revision).success(function(data) {
 				self.detail = data;
-				console.log(data);
 			});
 		}
 		roleAtRevision(self.id, self.revision);
