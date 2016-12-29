@@ -11,37 +11,30 @@
 </section>
 <!-- Main content -->
 <section class="content">
-	<div class="row">
-		<div class="col-xs-12">
-			<div class="box">
-				<div class="box-header">
-	              <h3 class="box-title">角色列表</h3>
-	            </div>
-				<!-- /.box-header -->
-				<div class="box-body">
-					<table class="table table-bordered table-hover">
-						<thead>
-			                <tr>
-			                  <th class="col-md-5">角色名</th>
-			                  <th class="col-md-5">角色描述</th>
-			                  <th class="col-md-2">删除</th>
-			                </tr>
-		                </thead>
-		                <tbody>
-		                	<tr style="cursor:pointer;" ng-repeat="x in ctrl.roles" ng-click="ctrl.openModal(x.id)">
-                  				<td ng-bind="x.name" class="col-md-5"></td>
-                  				<td ng-bind="x.description" class="col-md-5"></td>
-                  				<td class="col-md-2"><button class="btn btn-danger btn-xs" type="button" ng-click="ctrl.delete(x.id, x.name, $event)">删除</button></td>
-                  			</tr>
-		                </tbody>
-					</table>
-				</div>
-		        <div class="box-footer clearfix">
-		          <button type="button" class="btn btn-primary btn-block" ng-click="ctrl.openModal()">新增</button>
-		        </div>
-			</div>
-		</div>
-	</div>
-    <!-- /.row -->
+<div class="row">
+    <div class="col-md-12">
+      <div class="box box-solid">
+        <div class="box-header with-border">
+          <i class="fa fa-text-width"></i>
+
+          <h3 class="box-title">{{ctrl.detail.name}}</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <ul>
+            <li ng-repeat="x in ctrl.detail.authorities">{{x.name}}
+              <ul>
+                <li>{{x.description}}</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <!-- /.box-body -->
+      </div>
+      <!-- /.box -->
+    </div>
+    <!-- ./col -->
+  </div>
+  <!-- /.row -->
 </section>
 <!-- /.content -->

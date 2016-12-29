@@ -30,6 +30,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
+import com.github.emailtohl.building.initdb.PersistenceData;
 import com.github.emailtohl.building.site.dao.audit.CleanAuditData;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.Role;
@@ -67,20 +68,25 @@ public class AbstractAuditedRepositoryTest {
 		
 		EntityManager em = entityManagerFactory.createEntityManager();
 		em.getTransaction().begin();
+		
 		em.persist(u);
+		
 		em.getTransaction().commit();
 		em.close();
+		
 		id = u.getId();
 		
 		em = entityManagerFactory.createEntityManager();
 		em.getTransaction().begin();
+		
 		Customer uu = em.find(Customer.class, id);
 		uu.setName("forAuditTestForUpdate");
 		uu.setTitle("cto");
 		Role r = (Role) em.createQuery("select r from Role r where r.name = ?1")
-		.setParameter(1, "employee").getSingleResult();
+		.setParameter(1, PersistenceData.employee.getName()).getSingleResult();
 		uu.getRoles().clear();
 		uu.getRoles().add(r);
+		
 		em.getTransaction().commit();
 		em.close();
 	}
@@ -90,10 +96,13 @@ public class AbstractAuditedRepositoryTest {
 		// 删除后还有一次审计记录
 		EntityManager em = entityManagerFactory.createEntityManager();
 		em.getTransaction().begin();
+		
 		Customer uu = em.find(Customer.class, id);
 		em.remove(uu);
+		
 		em.getTransaction().commit();
 		em.close();
+		
 		cleanAuditTestData.cleanUserAudit(id);
 	}
 
