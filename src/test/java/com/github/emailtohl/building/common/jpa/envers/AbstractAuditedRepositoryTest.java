@@ -64,6 +64,7 @@ public class AbstractAuditedRepositoryTest {
 		u.setName("forAuditTest");
 		u.setUsername("forAuditTest");
 		u.setPassword("123456");
+		
 		EntityManager em = entityManagerFactory.createEntityManager();
 		em.getTransaction().begin();
 		em.persist(u);

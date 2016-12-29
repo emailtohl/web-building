@@ -144,11 +144,16 @@ public abstract class AbstractAuditedRepository<E extends Serializable> implemen
 	@Override
 	public void rollback(Long id, Number revision) {
 		EntityManager em = entityManagerFactory.createEntityManager();
-		em.getTransaction().begin();
-		E bygone = getEntityAtRevision(id, revision);
-		em.unwrap(Session.class).replicate(bygone, ReplicationMode.OVERWRITE);
-		em.getTransaction().commit();
-		em.close();
+		try {
+			em.getTransaction().begin();
+			AuditReader auditReader = AuditReaderFactory.get(entityManager);
+			E bygone = auditReader.find(entityClass, id, revision);
+			em.unwrap(Session.class).replicate(bygone, ReplicationMode.OVERWRITE);
+			em.getTransaction().commit();
+		} finally {
+			if (em.isOpen())
+				em.close();
+		}
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
