@@ -137,13 +137,15 @@ keytool -keystore D:\home\tomcat.keystore -export -alias tomcat -file D:\home\to
 
 ### 7. 配置Tomcat服务器
 打开Tomcat根目录下的/conf/server.xml，找到Connector port="8443"配置段，修改为如下：
-```html
-<Connector port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol"
-SSLEnabled="true" maxThreads="150" scheme="https"
-secure="true" clientAuth="true" sslProtocol="TLS"
-keystoreFile="D:\home\tomcat.keystore" keystorePass="password"
-truststoreFile="D:\home\tomcat.keystore" truststorePass="password" />
+
+```xml
+<Connector protocol="org.apache.coyote.http11.Http11NioProtocol"
+           port="8443" maxThreads="200"
+           scheme="https" secure="true" SSLEnabled="true"
+           keystoreFile="D:\home\tomcat.keystore" keystorePass="password"
+           clientAuth="false" sslProtocol="TLS"/>
 ```
+
 > tomcat要与生成的服务端证书名一致
 
 属性说明：
@@ -154,7 +156,7 @@ truststoreFile="D:\home\tomcat.keystore" truststorePass="password" />
 
 * keystorePass:服务器证书密码
 
-* truststoreFile:用来验证客户端证书的根证书，此例中就是服务器证书
+* truststoreFile:用来验证客户端证书的根证书
 
 * truststorePass:根证书密码
 
@@ -169,7 +171,8 @@ truststoreFile="D:\home\tomcat.keystore" truststorePass="password" />
 
 ### 2. 开启tomcat的对集群的支持
 
-在tomcat的server.xml的<Engine>标签中添加下面这段配置，（直接copy），配置具体含义见[tomcat8官方的集群配置文档](http://tomcat.apache.org/tomcat-8.0-doc/cluster-howto.html)
+在tomcat的server.xml的<Engine>标签中添加下面这段配置，（直接copy），配置具体含义见[tomcat官方的集群配置文档](http://tomcat.apache.org/tomcat-8.0-doc/cluster-howto.html)
+(http://tomcat.apache.org/tomcat-9.0-doc/cluster-howto.html)
 
 ```xml
 
@@ -198,7 +201,10 @@ truststoreFile="D:\home\tomcat.keystore" truststorePass="password" />
               <Transport className="org.apache.catalina.tribes.transport.nio.PooledParallelSender"/>
             </Sender>
             <Interceptor className="org.apache.catalina.tribes.group.interceptors.TcpFailureDetector"/>
-            <Interceptor className="org.apache.catalina.tribes.group.interceptors.MessageDispatch15Interceptor"/>
+            <!-- tomcat8 -->
+            <!-- <Interceptor className="org.apache.catalina.tribes.group.interceptors.MessageDispatch15Interceptor"/> -->
+            <!-- tomcat9 -->
+            <Interceptor className="org.apache.catalina.tribes.group.interceptors.MessageDispatchInterceptor"/>
           </Channel>
 
           <Valve className="org.apache.catalina.ha.tcp.ReplicationValve"
