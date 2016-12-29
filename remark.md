@@ -160,6 +160,8 @@ keytool -keystore D:\home\tomcat.keystore -export -alias tomcat -file D:\home\to
 
 * truststorePass:根证书密码
 
+详情见tomcat官方文档（http://tomcat.apache.org/tomcat-9.0-doc/ssl-howto.html#SSL_and_Tomcat）
+
 ### 8. 测试
 在浏览器中输入:https://localhost:8443/，会弹出选择客户端证书界面，点击“确定”，会进入tomcat主页，地址栏后会有“锁”图标，表示本次会话已经通过HTTPS双向验证，接下来的会话过程中所传输的信息都已经过SSL信息加密。
 
