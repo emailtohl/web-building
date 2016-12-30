@@ -19,7 +19,7 @@
 - 其他组件：如select2,modal,datepicker,ztree,codemirror等等
 
 ## 二、部署
-本项目基于JDK8环境开发，框架部分为了兼容之前的JDK并未用JDK8的语法和新的时间类，但site包下的业务程序则需要调整才能兼容之前的JDK版本。
+本项目基于JDK8+tomcat9环境开发，框架部分为了兼容之前的JDK并未用JDK8的语法和新的时间类，但site包下的业务程序则需要调整才能兼容之前的JDK版本。
 
 > 注意：由于本项目监控和聊天功能使用websocket这种长连接技术，所以集群环境下websocket只能转到固定服务器上，若与登录时的服务器不同，前端浏览器的sessionId就会被更新，使得登录状态失效。
 

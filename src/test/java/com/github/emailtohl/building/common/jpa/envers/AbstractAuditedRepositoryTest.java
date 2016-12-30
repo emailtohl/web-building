@@ -75,20 +75,23 @@ public class AbstractAuditedRepositoryTest {
 		em.close();
 		
 		id = u.getId();
+		u.setName("forAuditTestForUpdate");
+		u.setTitle("cto");
 		
 		em = entityManagerFactory.createEntityManager();
 		em.getTransaction().begin();
 		
-		Customer uu = em.find(Customer.class, id);
-		uu.setName("forAuditTestForUpdate");
-		uu.setTitle("cto");
 		Role r = (Role) em.createQuery("select r from Role r where r.name = ?1")
 		.setParameter(1, PersistenceData.employee.getName()).getSingleResult();
-		uu.getRoles().clear();
-		uu.getRoles().add(r);
+		u.getRoles().clear();
+		u.getRoles().add(r);
+		
+		Customer n = em.merge(u);
+		logger.debug(n);
 		
 		em.getTransaction().commit();
 		em.close();
+		
 	}
 
 	@After

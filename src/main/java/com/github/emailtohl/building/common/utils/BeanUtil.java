@@ -168,7 +168,7 @@ public final class BeanUtil {
 			try {
 				f = clz.getDeclaredField(fieldName);
 			} catch (NoSuchFieldException | SecurityException e) {
-				logger.warn("获取 " + fieldName + " field失败", e);
+				logger.trace("获取 " + fieldName + " field失败", e);
 			}
 			if (f == null) {
 				clz = clz.getSuperclass();

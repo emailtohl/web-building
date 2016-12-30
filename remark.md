@@ -328,6 +328,9 @@ include conf\balance.conf
 
 ## 六、关于单元测试
 查看单元测试覆盖率可以在项目根目录下运行如下命令:mvn cobertura:cobertura
+
+> 注意：Java8在语法上更新较大，cobertura依赖的字节码处理器asm需要更新为最新版！即便如此，暂时还不支持Java8接口的默认方法。
+
 常用命令
 
 查看cobertura插件的帮助

@@ -46,7 +46,11 @@
                 	</ul>
                 </td>
                 <td ng-bind="x.revisionDate" class="col-md-2"></td>
-                <td ng-bind="ctrl.typeMap[x.revisionType]" class="col-md-1"></td>
+                <td class="col-md-1">
+                	<span class="label" ng-class="{'label-danger' : x.revisionType == 'DEL', 'label-warning' : x.revisionType == 'ADD', 'label-info' : x.revisionType == 'MOD'}">
+                		{{ctrl.typeMap[x.revisionType]}}
+                	</span>
+                </td>
               </tr>
               </tbody>
               <tfoot>
