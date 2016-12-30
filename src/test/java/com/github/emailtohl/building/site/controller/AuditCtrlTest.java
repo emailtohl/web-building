@@ -49,13 +49,13 @@ public class AuditCtrlTest {
 
 	@Test
 	public void testGetUserAtRevision() throws Exception {
-		mockMvc.perform(get("/audited/userAtRevision?userId=1&revision=1"))
+		mockMvc.perform(get("/audit/userAtRevision?userId=1&revision=1"))
 		.andExpect(status().isOk());
 	}
 
 	@Test
 	public void testGetRoleAtRevision() throws Exception {
-		mockMvc.perform(get("/audited/roleAtRevision?roleId=1&revision=1"))
+		mockMvc.perform(get("/audit/roleAtRevision?roleId=1&revision=1"))
 		.andExpect(status().isOk());
 	}
 

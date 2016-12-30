@@ -31,30 +31,34 @@
               <tr>
                 <th class="col-md-2">姓名</th>
                 <th class="col-md-2">邮箱</th>
-                <th class="col-md-2">描述</th>
+                <th class="col-md-3">描述</th>
                 <th class="col-md-2">角色</th>
                 <th class="col-md-2">修改时间</th>
-                <th class="col-md-2">修改类型</th>
+                <th class="col-md-1">修改类型</th>
               </tr>
               </thead>
               <tbody>
               <tr ng-repeat="x in ctrl.pager.content" style="cursor:pointer" ng-click="ctrl.detail(x.id, x.revision)">
                 <td ng-bind="x.name" class="col-md-2"></td>
                 <td ng-bind="x.email" class="col-md-2"></td>
-                <td ng-bind="x.description" class="col-md-2"></td>
+                <td ng-bind="x.description" class="col-md-3"></td>
                 <td ng-bind="x.roleNames" class="col-md-2"></td>
                 <td ng-bind="x.revisionDate" class="col-md-2"></td>
-                <td ng-bind="ctrl.typeMap[x.revisionType]" class="col-md-2"></td>
+                <td class="col-md-1">
+                	<span class="label" ng-class="{'label-danger' : x.revisionType == 'DEL', 'label-warning' : x.revisionType == 'ADD', 'label-info' : x.revisionType == 'MOD'}">
+                		{{ctrl.typeMap[x.revisionType]}}
+                	</span> 
+                </td>
               </tr>
               </tbody>
               <tfoot>
               <tr>
                 <th class="col-md-2">用户名</th>
                 <th class="col-md-2">邮箱</th>
-                <th class="col-md-2">描述</th>
+                <th class="col-md-3">描述</th>
                 <th class="col-md-2">角色</th>
                 <th class="col-md-2">修改时间</th>
-                <th class="col-md-2">修改类型</th>
+                <th class="col-md-1">修改类型</th>
               </tr>
               </tfoot>
             </table>
