@@ -1,8 +1,9 @@
 package com.github.emailtohl.building.site.service.impl;
 
+import static java.util.stream.Collectors.toList;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,8 +41,7 @@ public class AuditedServiceImpl implements AuditedService {
 		Map<String, String> propertyNameValueMap = new HashMap<>();
 		propertyNameValueMap.put("email", email);
 		Page<Tuple<User>> page = userAudit.getEntityRevision(propertyNameValueMap, pageable);
-		List<UserDto> ls = new ArrayList<>();
-		page.getContent().forEach(t -> ls.add(convert(t)));
+		List<UserDto> ls = page.getContent().stream().map(this::convert).collect(toList());
 		return new Pager<>(ls, page.getTotalElements(), page.getNumber(), page.getSize());
 	}
 
@@ -50,8 +50,7 @@ public class AuditedServiceImpl implements AuditedService {
 		Map<String, String> propertyNameValueMap = new HashMap<>();
 		propertyNameValueMap.put("email", email);
 		Page<User> page = userAudit.getEntitiesAtRevision(revision, propertyNameValueMap, pageable);
-		List<UserDto> ls = new ArrayList<>();
-		page.getContent().forEach(u -> ls.add(convert(u)));
+		List<UserDto> ls = page.getContent().stream().map(this::convert).collect(toList());
 		return new Pager<>(ls, page.getTotalElements(), page.getNumber(), page.getSize());
 	}
 
@@ -65,8 +64,7 @@ public class AuditedServiceImpl implements AuditedService {
 		Map<String, String> propertyNameValueMap = new HashMap<>();
 		propertyNameValueMap.put("name", name);
 		Page<Tuple<Role>> page = roleAudit.getEntityRevision(propertyNameValueMap, pageable);
-		List<RoleDto> ls = new ArrayList<>();
-		page.getContent().forEach(t -> ls.add(convertRole(t)));
+		List<RoleDto> ls = page.getContent().stream().map(this::convertRole).collect(toList());
 		return new Pager<>(ls, page.getTotalElements(), page.getNumber(), page.getSize());
 	}
 
@@ -75,8 +73,7 @@ public class AuditedServiceImpl implements AuditedService {
 		Map<String, String> propertyNameValueMap = new HashMap<>();
 		propertyNameValueMap.put("name", name);
 		Page<Role> page = roleAudit.getEntitiesAtRevision(revision, propertyNameValueMap, pageable);
-		List<RoleDto> ls = new ArrayList<>();
-		page.getContent().forEach(r -> ls.add(convert(r)));
+		List<RoleDto> ls = page.getContent().stream().map(this::convert).collect(toList());
 		return new Pager<>(ls, page.getTotalElements(), page.getNumber(), page.getSize());
 	}
 

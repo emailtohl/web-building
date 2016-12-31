@@ -42,4 +42,5 @@ public class Tuple<E> {
 	public void setRevisionType(RevisionType revisionType) {
 		this.revisionType = revisionType;
 	}
+
 }
