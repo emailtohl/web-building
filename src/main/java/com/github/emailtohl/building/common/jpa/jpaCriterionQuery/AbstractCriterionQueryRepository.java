@@ -26,27 +26,28 @@ import com.github.emailtohl.building.common.jpa.AbstractDynamicQueryRepository;
 public abstract class AbstractCriterionQueryRepository<E extends Serializable> extends AbstractDynamicQueryRepository<E>
 		implements CriterionQueryRepository<E> {
 	/**
-	 * 标准查询接口，根据传入的条件集合得到一个Page对象
-	 * 注意:Pageable的查询是从第0页开始，条件集合之间是AND关系
+	 * 标准查询接口，根据传入的条件集合得到一个Page对象 注意:Pageable的查询是从第0页开始，条件集合之间是AND关系
 	 * 
-	 * @param criteria 一个条件集合
-	 * @param pageable 分页对象
+	 * @param criteria
+	 *            一个条件集合
+	 * @param pageable
+	 *            分页对象
 	 * @return
 	 */
 	@Override
 	public Page<E> search(Collection<Criterion> criteria, Pageable pageable) {
-		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 
 		CriteriaQuery<Long> countQuery = builder.createQuery(Long.class);
-		Root<E> countRoot = countQuery.from(this.entityClass);
-		long total = this.entityManager
+		Root<E> countRoot = countQuery.from(entityClass);
+		long total = entityManager
 				.createQuery(
 						countQuery.select(builder.count(countRoot)).where(toPredicates(criteria, countRoot, builder)))
 				.getSingleResult();
 
-		CriteriaQuery<E> query = builder.createQuery(this.entityClass);
-		Root<E> queryRoot = query.from(this.entityClass);
-		List<E> list = this.entityManager
+		CriteriaQuery<E> query = builder.createQuery(entityClass);
+		Root<E> queryRoot = query.from(entityClass);
+		List<E> list = entityManager
 				.createQuery(query.select(queryRoot).where(toPredicates(criteria, queryRoot, builder))
 						.orderBy(QueryUtils.toOrders(pageable.getSort(), queryRoot, builder)))
 				.setFirstResult(pageable.getOffset()).setMaxResults(pageable.getPageSize()).getResultList();
