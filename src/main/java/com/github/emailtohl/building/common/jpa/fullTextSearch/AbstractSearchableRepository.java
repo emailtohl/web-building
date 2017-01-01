@@ -97,8 +97,8 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 	@Override
 	public Page<E> findAllAndPaging(String query, Pageable pageable) {
 		List<E> ls = findAll(query);
-		List<E> result = new ArrayList<E>();
 		int offset = pageable.getOffset(), size = pageable.getPageSize(), max = ls.size();
+		List<E> result = new ArrayList<E>();
 		for (int i = offset; i < size && i < max; i++) {
 			result.add(ls.get(i));
 		}

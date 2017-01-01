@@ -145,7 +145,7 @@ public class RootContextConfiguration
 		scheduler.setErrorHandler(new ErrorHandler() {
 			@Override
 			public void handleError(Throwable t) {
-				log.error("Unknown error occurred while executing task.", t);
+				schedulingLogger.error("Unknown error occurred while executing task.", t);
 			}
 		});
 		scheduler.setRejectedExecutionHandler(new RejectedExecutionHandler() {

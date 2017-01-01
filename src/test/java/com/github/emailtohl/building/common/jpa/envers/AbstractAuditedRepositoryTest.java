@@ -72,13 +72,11 @@ public class AbstractAuditedRepositoryTest {
 		em.persist(u);
 		
 		em.getTransaction().commit();
-		em.close();
 		
 		id = u.getId();
 		u.setName("forAuditTestForUpdate");
 		u.setTitle("cto");
 		
-		em = entityManagerFactory.createEntityManager();
 		em.getTransaction().begin();
 		
 		Role r = (Role) em.createQuery("select r from Role r where r.name = ?1")
