@@ -12,7 +12,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<springframework.version>4.3.4.RELEASE</springframework.version>
+		<springframework.version>4.3.5.RELEASE</springframework.version>
 		<spring.security.version>4.2.0.RELEASE</spring.security.version>
 		<!-- 
 		<hibernate.version>5.2.2.Final</hibernate.version>
