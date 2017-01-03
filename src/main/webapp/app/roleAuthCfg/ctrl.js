@@ -98,9 +98,9 @@ define(['roleAuthCfg/module', 'roleAuthCfg/service'], function(roleAuthCfgModule
 		var self = this;
 		$scope.getAuthentication();
 		self.params = {
-				page : 1,
-				pageSize : 20,
-				name : '',
+			page : 1,
+			size : 20,
+			name : '',
 		};
 	}]);
 });
