@@ -17,7 +17,7 @@ define(['user/module', 'user/audit/service'], function(userModule) {
 		$scope.getAuthentication();
 		self.params = {
 			page : 1,
-			pageSize : 20,
+			size : 10,
 			email : '',
 		};
 		function userRevision() {
@@ -43,12 +43,12 @@ define(['user/module', 'user/audit/service'], function(userModule) {
 		};
 		self.btnClick = function(pageNumber) {
 			self.params.page = pageNumber;
-			roleRevision();
+			userRevision();
 		};
 		self.reset = function() {
 			self.params = {
 				page : 1,
-				pageSize : 20,
+				size : 10,
 				email : '',
 			};
 		};

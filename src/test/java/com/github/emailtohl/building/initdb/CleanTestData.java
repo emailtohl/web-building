@@ -18,6 +18,7 @@ import com.github.emailtohl.building.site.dao.CompanyRepository;
 import com.github.emailtohl.building.site.dao.DepartmentRepository;
 import com.github.emailtohl.building.site.dao.ForumPostRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
+import com.github.emailtohl.building.site.dao.audit.CleanAuditData;
 
 public class CleanTestData {
 	
@@ -28,6 +29,7 @@ public class CleanTestData {
 		CompanyRepository companyRepository = ctx.getBean(CompanyRepository.class);
 		ForumPostRepository forumPostRepository = ctx.getBean(ForumPostRepository.class);
 		ApplicationFormRepository applicationFormRepository = ctx.getBean(ApplicationFormRepository.class);
+		CleanAuditData cleanAuditData = ctx.getBean(CleanAuditData.class);
 		
 		// 清理论坛发帖
 		try {
@@ -78,21 +80,32 @@ public class CleanTestData {
 			} catch (InvalidDataAccessApiUsageException e) {}
 		});
 		
+		Long id;
 		// 清理账户
 		try {
-//			userRepository.delete(userRepository.findByEmail(emailtohl.getEmail()));
+			id = userRepository.findByEmail(emailtohl.getEmail()).getId();
+			userRepository.delete(id);
+			cleanAuditData.cleanUserAudit(id);
 		} catch (InvalidDataAccessApiUsageException e) {}
 		try {
-			userRepository.delete(userRepository.findByEmail(foo.getEmail()));
+			id = userRepository.findByEmail(foo.getEmail()).getId();
+			userRepository.delete(id);
+			cleanAuditData.cleanUserAudit(id);
 		} catch (InvalidDataAccessApiUsageException e) {}
 		try {
-			userRepository.delete(userRepository.findByEmail(bar.getEmail()));
+			id = userRepository.findByEmail(bar.getEmail()).getId();
+			userRepository.delete(id);
+			cleanAuditData.cleanUserAudit(id);
 		} catch (InvalidDataAccessApiUsageException e) {}
 		try {
-			userRepository.delete(userRepository.findByEmail(baz.getEmail()));
+			id = userRepository.findByEmail(baz.getEmail()).getId();
+			userRepository.delete(id);
+			cleanAuditData.cleanUserAudit(id);
 		} catch (InvalidDataAccessApiUsageException e) {}
 		try {
-			userRepository.delete(userRepository.findByEmail(qux.getEmail()));
+			id = userRepository.findByEmail(qux.getEmail()).getId();
+			userRepository.delete(id);
+			cleanAuditData.cleanUserAudit(id);
 		} catch (InvalidDataAccessApiUsageException e) {}
 		
 		// 清理测试的部门和公司信息

@@ -6,7 +6,7 @@ define(['user/module', 'user/role/service'], function(userModule) {
 		$scope.getAuthentication();
 		self.params = {
 			page : 1,
-			pageSize : 20,
+			size : 10,
 			email : '',
 			roles : []
 		};

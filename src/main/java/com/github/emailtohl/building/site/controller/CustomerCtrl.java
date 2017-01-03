@@ -44,7 +44,7 @@ public class CustomerCtrl {
 	 */
 	@RequestMapping(value = "pager", method = GET, produces = "application/json; charset=utf-8")
 	public Pager<Customer> query(@RequestParam(required = false) String name, @RequestParam(required = false) String title, @RequestParam(required = false) String affiliation, 
-			@PageableDefault(page = 0, size = 20, sort = {"name", "title", "affiliation"}, direction = Direction.DESC) Pageable pageable) {
+			@PageableDefault(page = 0, size = 10, sort = {"name", "title", "affiliation"}, direction = Direction.DESC) Pageable pageable) {
 		return customerService.query(name, title, affiliation, pageable);
 	}
 	

@@ -6,7 +6,7 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 		$scope.getAuthentication();
 		self.params = {
 			page : 1,
-			size : 20,
+			size : 10,
 		};
 		self.query = function() {
 			userService.getUserPager(self.params).success(function(data) {
@@ -17,7 +17,7 @@ define(['user/module', 'user/manager/service'], function(userModule) {
 		self.reset = function() {
 			self.params = {
 				page : 1,
-				size : 20,
+				size : 10,
 				enabled : '',
 			};
 		};

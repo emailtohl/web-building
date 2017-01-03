@@ -154,7 +154,7 @@ public class UserCtrl {
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	public Pager<User> getUserPager(@ModelAttribute UserDto form, 
-			@PageableDefault(page = 0, size = 20, sort = BaseEntity.ID_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
+			@PageableDefault(page = 0, size = 10, sort = BaseEntity.ID_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
 		User u = form.convertUser();
 		return userService.getUserPager(u, pageable);
 	}
@@ -169,7 +169,7 @@ public class UserCtrl {
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	public Pager<User> getPageByRoles(String email, String roles,
-			@PageableDefault(page = 0, size = 20, sort = BaseEntity.MODIFY_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
+			@PageableDefault(page = 0, size = 10, sort = BaseEntity.MODIFY_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
 		Set<String> set = new HashSet<String>();
 		if (roles != null && !roles.isEmpty()) {
 			for (String role : roles.split(",")) {

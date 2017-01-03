@@ -17,7 +17,7 @@ define(['roleAuthCfg/module', 'roleAuthCfg/service'], function(roleAuthCfgModule
 		$scope.getAuthentication();
 		self.params = {
 			page : 1,
-			pageSize : 5,
+			size : 5,
 			name : '',
 		};
 		function roleRevision() {
@@ -36,7 +36,7 @@ define(['roleAuthCfg/module', 'roleAuthCfg/service'], function(roleAuthCfgModule
 		self.reset = function() {
 			self.params = {
 				page : 1,
-				pageSize : 20,
+				size : 10,
 				name : '',
 			};
 		};

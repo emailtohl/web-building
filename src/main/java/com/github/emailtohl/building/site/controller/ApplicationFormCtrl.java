@@ -66,7 +66,7 @@ public class ApplicationFormCtrl {
 	 */
 	@RequestMapping(value = "mine", method = RequestMethod.GET)
 	@ResponseBody
-	public Pager<ApplicationForm> findMyApplicationForm(@PageableDefault(page = 0, size = 20, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
+	public Pager<ApplicationForm> findMyApplicationForm(@PageableDefault(page = 0, size = 10, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
 		Page<ApplicationForm> page = applicationFormService.findMyApplicationForm(pageable);
 		
 		return new Pager<ApplicationForm>(page.getContent(), page.getTotalElements(), pageable.getPageNumber(), pageable.getPageSize());
@@ -83,7 +83,7 @@ public class ApplicationFormCtrl {
 	@ResponseBody
 	public Pager<ApplicationForm> queryApplicationForm(@RequestParam(name = "name", required = false) String name, 
 			@RequestParam(name = "status", required = false) Status status,
-			@PageableDefault(page = 0, size = 20, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
+			@PageableDefault(page = 0, size = 10, sort = BaseEntity.CREATE_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) {
 		Page<ApplicationForm> page = applicationFormService.findByNameAndStatus(name, status, pageable);
 		
 		return new Pager<ApplicationForm>(page.getContent(), page.getTotalElements(), pageable.getPageNumber(), pageable.getPageSize());
@@ -180,7 +180,7 @@ public class ApplicationFormCtrl {
 			@RequestParam(required = false) Status status, 
 			@RequestParam(required = false, defaultValue = "") String start,
 			@RequestParam(required = false, defaultValue = "") String end,
-			@PageableDefault(page = 0, size = 20, sort = BaseEntity.MODIFY_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) throws ParseException {
+			@PageableDefault(page = 0, size = 10, sort = BaseEntity.MODIFY_DATE_PROPERTY_NAME, direction = Direction.DESC) Pageable pageable) throws ParseException {
 		
 		Date startTime = null, endTime = null;
 		Matcher m = p.matcher(start);
