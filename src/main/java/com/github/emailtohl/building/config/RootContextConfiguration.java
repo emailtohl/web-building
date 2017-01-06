@@ -42,13 +42,11 @@ import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
-import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.Ordered;
 import org.springframework.core.env.Environment;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -66,6 +64,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 import org.springframework.util.ErrorHandler;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
@@ -78,21 +77,23 @@ import com.google.gson.Gson;
  * @author HeLei
  */
 @Configuration
+//启用注解式事务管理，配置类通常要实现TransactionManagementConfigurer接口，确定使用哪个事务管理器
+@EnableTransactionManagement
 // 启动Aspect动态代理
 @EnableAspectJAutoProxy
+// Bean中注解@Async的方法会异步执行，本注解通常需要在配置类中实现AsyncConfigurer接口，注册线程执行器和异常处理器
+@EnableAsync
 // 启动时间计划任务，spring在扫描类时，发现有@Scheduled注解的方法，即可定时执行该方法
 @EnableScheduling
 // 扫描包下的注解，将Bean纳入spring容器管理
 @ComponentScan(basePackages = "com.github.emailtohl.building", excludeFilters = @ComponentScan.Filter({
 		Controller.class, Configuration.class }))
-// 代理功能时，如事务，安全等，proxyTargetClass = false 表示使用Java的动态代理
-@EnableAsync(mode = AdviceMode.PROXY, proxyTargetClass = false, order = Ordered.HIGHEST_PRECEDENCE)
 //开启缓存功能，当执行到一个被@Cacheable注解的方法时，Spring首先检查condition条件是否满足，如果不满足，执行方法，返回；
 //如果满足，在name所命名的缓存空间中查找使用key存储的对象，如果找到，将找到的结果返回，如果没有找到执行方法，将方法的返回值以key-value对象的方式存入name缓存中，然后方法返回。
 @EnableCaching
 @Import({ DataSourceConfiguration.class, JPAConfiguration.class, SecurityConfiguration.class })
 public class RootContextConfiguration
-		implements SchedulingConfigurer, AsyncConfigurer, TransactionManagementConfigurer {
+		implements TransactionManagementConfigurer, AsyncConfigurer, SchedulingConfigurer {
 	public static final String PROFILE_DEVELPMENT = "develpment";
 	public static final String PROFILE_QA = "qa";
 	public static final String PROFILE_PRODUCTION = "production";
@@ -110,7 +111,8 @@ public class RootContextConfiguration
 	@Inject
 	@Named("jpaTransactionManager")
 	PlatformTransactionManager jpaTransactionManager;
-
+	
+	// ------------------关于数据源事务的配置------------------------------------
 	@Bean
 	public JdbcTemplate jdbcTemplate() {
 		return new JdbcTemplate(dataSource);
@@ -130,7 +132,10 @@ public class RootContextConfiguration
 	public PlatformTransactionManager annotationDrivenTransactionManager() {
 		return this.jpaTransactionManager;
 	}
+	// ------------------------------END-------------------------------------
 	
+	
+	// ------------------关于线程执行器，异步方法，时间定时器的配置------------------------
 	/**
 	 * 向Spring容器中注册任务执行执行器
 	 */
@@ -189,8 +194,10 @@ public class RootContextConfiguration
 			@Override
 			public void handleUncaughtException(Throwable ex, Method method, Object... params) {
 				schedulingLogger.error("调用异步任务出错了, message : " + method, ex);
-			}};
+			}
+		};
 	}
+	// ------------------------------END-------------------------------------
 	
 	/**
 	 * Spring可以为其管理的Bean提供统一校验的功能，遵循Java EE的Bean Validation规范
@@ -245,6 +252,7 @@ public class RootContextConfiguration
 		return new RestTemplate();
 	}
 	
+	// ---------------------------关于Http客户端的配置----------------------------------
 	@Bean
 	public CloseableHttpClient acceptsUntrustedCertsHttpClient()
 			throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException, IOException {
@@ -317,6 +325,8 @@ public class RootContextConfiguration
 		reInitMessageConverter(restTemplate);
 		return restTemplate;
 	}
+	// ------------------------------END-------------------------------------
+	
 	
 	@Bean
 	public JavaMailSender mailSender() {
