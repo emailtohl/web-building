@@ -11,16 +11,10 @@ import javax.inject.Named;
 import javax.sql.DataSource;
 
 import org.hibernate.dialect.PostgreSQL9Dialect;
-import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Condition;
-import org.springframework.context.annotation.ConditionContext;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.Ordered;
-import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.dao.support.PersistenceExceptionTranslator;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.hibernate5.HibernateExceptionTranslator;
@@ -32,7 +26,6 @@ import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * JPA的配置
@@ -40,10 +33,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  *
  */
 @Configuration
-// 启用注解式事务管理
-@EnableTransactionManagement(
-		mode = AdviceMode.PROXY, proxyTargetClass = false, 
-		order = Ordered.LOWEST_PRECEDENCE)
 // 这是SpringData的注解，启动后，它将扫描指定包中继承了Repository（实际业务代码中的接口是间接继承它）的接口，并为其提供代理
 // repositoryImplementationPostfix = "Impl" 扫描实现类的名字，若该类的名字为接口名+"Impl"，则认为该实现类将提供SpringData以外的功能
 @EnableJpaRepositories(basePackages = "com.github.emailtohl.building.site.dao", 
@@ -72,7 +61,7 @@ public class JPAConfiguration {
 	}
 
 	/**
-	 * 单元测试会脱离容器环境
+	 * 单元测试时，使用META-INFO/persistence.xml中的配置
 	 * @return
 	 */
 	@Profile(PROFILE_DEVELPMENT)
@@ -118,14 +107,12 @@ public class JPAConfiguration {
 	 * @return
 	 */
 	@Profile(PROFILE_DEVELPMENT)
-	@Conditional(value = Condition1.class)
 	@Bean(name = "jpaTransactionManager")
 	public PlatformTransactionManager development_jpaTransactionManager() {
 		return new JpaTransactionManager(LocalEntityManagerFactory().getObject());
 	}
 	
 	@Profile({ PROFILE_PRODUCTION, PROFILE_QA })
-	@Conditional(value = Condition2.class)
 	@Bean(name = "jpaTransactionManager")
 	public PlatformTransactionManager product_jpaTransactionManager() {
 		return new JpaTransactionManager(containerEntityManagerFactory().getObject());
@@ -138,44 +125,6 @@ public class JPAConfiguration {
 	@Bean
 	public PersistenceExceptionTranslator persistenceExceptionTranslator() {
 		return new HibernateExceptionTranslator();
-	}
-	
-	/**
-	 * From the ConditionContext, you can do the following:
-	 * Check for bean definitions via the BeanDefinitionRegistry returned from getRegistry(). 
-	 * Check for the presence of beans, and even dig into bean properties via the ConfigurableListableBeanFactory returned from getBeanFactory(). 
-	 * Check for the presence and values of environment variables via the Environment retrieved from getEnvironment(). 
-	 * Read and inspect the contents of resources loaded via the ResourceLoader returned from getResourceLoader().
-	 * Load and check for the presence of classes via the ClassLoader returned from getClassLoader().
-	 * 
-	 * As for the AnnotatedTypeMetadata, it offers you a chance to inspect annotations that may also be placed on the @Bean method.
-	 * Like ConditionContext, Annotated- TypeMetadata is an interface.
-	 * 
-	 */
-	public static class Condition1 implements Condition {
-		@Override
-		public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-			String[] profiles = context.getEnvironment().getActiveProfiles();
-			for (int i = 0; i < profiles.length; i++) {
-				if (PROFILE_DEVELPMENT.equalsIgnoreCase(profiles[i])) {
-					return true;
-				}
-			}
-			return false;
-		}
-	}
-	
-	public static class Condition2 implements Condition {
-		@Override
-		public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-			String[] profiles = context.getEnvironment().getActiveProfiles();
-			for (int i = 0; i < profiles.length; i++) {
-				if (PROFILE_QA.equalsIgnoreCase(profiles[i]) || PROFILE_PRODUCTION.equalsIgnoreCase(profiles[i])) {
-					return true;
-				}
-			}
-			return false;
-		}
 	}
 	
 	/**

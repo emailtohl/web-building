@@ -4,14 +4,9 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,9 +35,6 @@ import com.github.emailtohl.building.common.utils.BeanUtil;
  */
 public abstract class AbstractSearchableRepository<E extends Serializable> extends AbstractCriterionQueryRepository<E> implements SearchableRepository<E> {
 	private static final Logger logger = LogManager.getLogger();
-	@PersistenceContext
-	protected EntityManager entityManager;
-	protected Class<E> entityClass;
 	protected String[] onFields;
 	
 	/**
@@ -105,27 +97,48 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 		return new PageImpl<E>(result, pageable, ls.size());
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	protected AbstractSearchableRepository() {
-		Type genericSuperclass = getClass().getGenericSuperclass();
-		while (!(genericSuperclass instanceof ParameterizedType)) {
-			if (!(genericSuperclass instanceof Class))
-				throw new IllegalStateException("Unable to determine type "
-						+ "arguments because generic superclass neither " + "parameterized type nor class.");
-			if (genericSuperclass == AbstractSearchableRepository.class)
-				throw new IllegalStateException("Unable to determine type "
-						+ "arguments because no parameterized generic superclass " + "found.");
-			genericSuperclass = ((Class) genericSuperclass).getGenericSuperclass();
-		}
-		ParameterizedType type = (ParameterizedType) genericSuperclass;
-		Type[] arguments = type.getActualTypeArguments();
-		entityClass = (Class<E>) arguments[0];
-		
+	/**
+	 * 默认构造器会自动分析实体的类型以及索引域
+	 */
+	public AbstractSearchableRepository() {
+		super();
 		// 初始化索引域
-		List<String> fields = new ArrayList<>();
+		List<String> fields = new ArrayList<String>();
 		findProper("", entityClass, fields);
 		findField("", entityClass, fields);
 		onFields = fields.toArray(new String[fields.size()]);
+	}
+	
+	/**
+	 * 自动分析索引域
+	 * @param entityClass
+	 */
+	public AbstractSearchableRepository(Class<E> entityClass) {
+		super(entityClass);
+		// 初始化索引域
+		List<String> fields = new ArrayList<String>();
+		findProper("", entityClass, fields);
+		findField("", entityClass, fields);
+		onFields = fields.toArray(new String[fields.size()]);
+	}
+
+	/**
+	 * 默认分析实体类型，自定义索引域
+	 * @param onFields
+	 */
+	public AbstractSearchableRepository(String[] onFields) {
+		super();
+		this.onFields = onFields;
+	}
+	
+	/**
+	 * 自定义实体类型和索引域
+	 * @param entityClass
+	 * @param onFields
+	 */
+	public AbstractSearchableRepository(Class<E> entityClass, String[] onFields) {
+		super(entityClass);
+		this.onFields = onFields;
 	}
 
 	/**

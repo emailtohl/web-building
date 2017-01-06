@@ -44,12 +44,12 @@ public class AbstractSearchableRepositoryTest {
 
 	@Test
 	public void testAbstractSearchableRepository() {
-		assertEquals(ForumPost.class, forumFullTextSearch.entityClass);
+		assertEquals(ForumPost.class, forumFullTextSearch.getEntityClass());
 		logger.debug(Arrays.toString(forumFullTextSearch.onFields));
 		assertArrayEquals(new String[] {"body", "keywords", "title", "user.description", "user.email", "user.name", "user.username"}, forumFullTextSearch.onFields);
 	
 		TestFindByField t = new TestFindByField();
-		assertEquals(Relation1.class, t.entityClass);
+		assertEquals(Relation1.class, t.getEntityClass());
 		logger.debug(Arrays.toString(t.onFields));
 		assertArrayEquals(new String[] {"relation1", "relation2.relation2"}, t.onFields);
 	

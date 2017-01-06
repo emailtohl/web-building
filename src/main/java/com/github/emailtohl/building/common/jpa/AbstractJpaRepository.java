@@ -87,25 +87,33 @@ public abstract class AbstractJpaRepository<I extends Serializable, E extends Se
 		this.idClass = idClass;
 		this.entityClass = entityClass;
 	}
+	
+	/**
+	 * 若在启动事务之前打开了持久化上下文（EntityManager），则需要将持久化上下文加入到事务中
+	 */
+	public void joinTransaction() {
+		if (!entityManager.isJoinedToTransaction())
+			entityManager.joinTransaction();
+	}
 
 	public EntityManagerFactory getEntityManagerFactory() {
 		return entityManagerFactory;
 	}
 
-	/**
-	 * 若实体管理器或实体管理工厂不是由Spring注入，则提供接口让应用程序写入EntityManagerFactory
-	 * @param entityManagerFactory
-	 */
 	public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
 		this.entityManagerFactory = entityManagerFactory;
 	}
 
-	/**
-	 * 让外部使用EntityManager接口，进行增删改查操作
-	 * @return
-	 */
 	public EntityManager getEntityManager() {
 		return entityManager;
+	}
+
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
+	}
+
+	public Class<E> getEntityClass() {
+		return entityClass;
 	}
 
 }

@@ -28,10 +28,8 @@ public abstract class AbstractCriterionQueryRepository<E extends Serializable> e
 	/**
 	 * 标准查询接口，根据传入的条件集合得到一个Page对象 注意:Pageable的查询是从第0页开始，条件集合之间是AND关系
 	 * 
-	 * @param criteria
-	 *            一个条件集合
-	 * @param pageable
-	 *            分页对象
+	 * @param criteria 一个条件集合
+	 * @param pageable 分页对象
 	 * @return
 	 */
 	@Override
@@ -62,4 +60,13 @@ public abstract class AbstractCriterionQueryRepository<E extends Serializable> e
 			predicates[i++] = c.getOperator().toPredicate(c, root, builder);
 		return predicates;
 	}
+
+	public AbstractCriterionQueryRepository() {
+		super();
+	}
+
+	public AbstractCriterionQueryRepository(Class<E> entityClass) {
+		super(entityClass);
+	}
+	
 }

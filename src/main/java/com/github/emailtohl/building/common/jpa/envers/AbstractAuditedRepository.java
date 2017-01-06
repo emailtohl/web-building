@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,10 +42,10 @@ public abstract class AbstractAuditedRepository<E extends Serializable> implemen
 	@SuppressWarnings("unused")
 	private static final Logger logger = LogManager.getLogger();
 	
+	@PersistenceUnit
+	protected EntityManagerFactory entityManagerFactory;
 	@PersistenceContext
 	protected EntityManager entityManager;
-	@Inject
-	protected EntityManagerFactory entityManagerFactory;
 	protected Class<E> entityClass;
 	
 	@SuppressWarnings("unchecked")
@@ -59,7 +59,6 @@ public abstract class AbstractAuditedRepository<E extends Serializable> implemen
 				if (v != null && !v.isEmpty()) {
 					query.add(AuditEntity.property(e.getKey()).like(v.trim(), MatchMode.START));
 				}
-//			query.add(AuditEntity.relatedId("role").eq(ROLE_ID));
 			}
 		}
 		Sort sort = pageable.getSort();
@@ -172,4 +171,21 @@ public abstract class AbstractAuditedRepository<E extends Serializable> implemen
 		Type[] arguments = type.getActualTypeArguments();
 		entityClass = (Class<E>) arguments[0];
 	}
+
+	public EntityManager getEntityManager() {
+		return entityManager;
+	}
+
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
+	}
+
+	public EntityManagerFactory getEntityManagerFactory() {
+		return entityManagerFactory;
+	}
+
+	public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
+		this.entityManagerFactory = entityManagerFactory;
+	}
+
 }
