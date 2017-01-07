@@ -80,7 +80,7 @@ public class ChatEndpoint {
 			try {
 				s.getBasicRemote().sendText(str);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.debug(e);
 				map.remove(s.getId());
 			}
 		}
