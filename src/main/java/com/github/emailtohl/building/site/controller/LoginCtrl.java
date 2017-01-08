@@ -48,7 +48,6 @@ public class LoginCtrl {
 	@Inject private SessionRegistry sessionRegistry;
 	@Inject private Gson gson;
 	
-	
 	/**
 	 * 忘记密码时，当发送邮件时，会记录一个token，该token有时效，过期会被清除
 	 */
