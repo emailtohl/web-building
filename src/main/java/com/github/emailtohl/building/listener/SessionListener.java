@@ -1,6 +1,7 @@
 package com.github.emailtohl.building.listener;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpSessionEvent;
@@ -47,6 +48,9 @@ public class SessionListener implements HttpSessionListener, HttpSessionIdListen
 		WebApplicationContext context = WebApplicationContextUtils.getRequiredWebApplicationContext(sce.getServletContext());
 		ThreadPoolTaskScheduler threadPoolTaskScheduler = context.getBean(ThreadPoolTaskScheduler.class);
 		threadPoolTaskScheduler.shutdown();
+		
+		EntityManagerFactory ef = context.getBean(EntityManagerFactory.class);
+		ef.close();
 	}
 	
 	/**

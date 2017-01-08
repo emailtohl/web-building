@@ -44,7 +44,7 @@ public class ClusterMessagingEndpoint {
 	@OnOpen
 	public void open(Session session) {
 		Map<String, String> parameters = session.getPathParameters();
-		if (parameters.containsKey("securityCode") && !"a83teo83hou9883hha9".equals(parameters.get("securityCode"))) {
+		if (parameters.containsKey("securityCode") && !ClusterManager.SECURITY_CODE.equals(parameters.get("securityCode"))) {
 			try {
 				log.error("Received connection with illegal code {}.", parameters.get("securityCode"));
 				session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY, "Illegal Code"));

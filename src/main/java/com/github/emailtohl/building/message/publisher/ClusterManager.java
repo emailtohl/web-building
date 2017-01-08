@@ -26,6 +26,8 @@ import java.nio.charset.StandardCharsets;
 @Service
 public class ClusterManager implements ApplicationListener<ContextRefreshedEvent> {
 	private static final Logger log = LogManager.getLogger();
+	public static final String SECURITY_CODE = "a83teo83hou9883hha9";
+	
 	private static final String HOST;
 	private static final int PORT = 6789;
 	private static final InetAddress GROUP;
@@ -53,7 +55,7 @@ public class ClusterManager implements ApplicationListener<ContextRefreshedEvent
 	public void listenForMulticastAnnouncements() throws Exception {
 		this.pingUrl = "http://" + HOST + ":8080" + this.servletContext.getContextPath() + "/ping";
 		this.messagingUrl = "ws://" + HOST + ":8080" + this.servletContext.getContextPath()
-				+ "/services/messaging/a83teo83hou9883hha9";
+				+ "/services/messaging/" + SECURITY_CODE;
 
 		synchronized (this.mutex) {
 			this.socket = new MulticastSocket(PORT);
