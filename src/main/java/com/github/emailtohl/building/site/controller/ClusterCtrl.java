@@ -44,8 +44,7 @@ public class ClusterCtrl {
 	
 	@RequestMapping("/frontMessage")
 	@ResponseBody
-	public void broadcastMessage(HttpServletRequest request, String message) {
+	public void broadcastMessage(String message) {
 		this.publisher.publishEvent(new ClusterEvent(message));
-		this.publisher.publishEvent(new LoginEvent(request.getContextPath()));
 	}
 }

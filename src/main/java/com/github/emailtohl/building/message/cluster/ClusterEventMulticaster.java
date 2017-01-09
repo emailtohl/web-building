@@ -17,12 +17,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
-import org.springframework.stereotype.Component;
 
 import com.github.emailtohl.building.message.event.ClusterEvent;
 
-//spring感知到事件时，要使用消息广播器，提供applicationEventMulticaster名字供spring识别
-@Component("applicationEventMulticaster")
+//@Service
 public class ClusterEventMulticaster extends SimpleApplicationEventMulticaster {
 	private static final Logger log = LogManager.getLogger();
 

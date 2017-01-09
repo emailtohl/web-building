@@ -91,7 +91,7 @@ import com.google.gson.Gson;
 //开启缓存功能，当执行到一个被@Cacheable注解的方法时，Spring首先检查condition条件是否满足，如果不满足，执行方法，返回；
 //如果满足，在name所命名的缓存空间中查找使用key存储的对象，如果找到，将找到的结果返回，如果没有找到执行方法，将方法的返回值以key-value对象的方式存入name缓存中，然后方法返回。
 @EnableCaching
-@Import({ DataSourceConfiguration.class, JPAConfiguration.class, SecurityConfiguration.class })
+@Import({ DataSourceConfiguration.class, JPAConfiguration.class, SecurityConfiguration.class, EventListenerConfiguration.class })
 public class RootContextConfiguration
 		implements TransactionManagementConfigurer, AsyncConfigurer, SchedulingConfigurer {
 	public static final String PROFILE_DEVELPMENT = "develpment";
