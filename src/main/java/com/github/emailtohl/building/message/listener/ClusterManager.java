@@ -1,5 +1,8 @@
 package com.github.emailtohl.building.message.listener;
 
+import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_PRODUCTION;
+import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_QA;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.DatagramPacket;
@@ -19,11 +22,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 
-//@Service
+@Profile({ PROFILE_PRODUCTION, PROFILE_QA })
+@Service
 public class ClusterManager implements ApplicationListener<ContextRefreshedEvent> {
 	private static final Logger log = LogManager.getLogger();
 	public static final String SECURITY_CODE = "a83teo83hou9883hha9";

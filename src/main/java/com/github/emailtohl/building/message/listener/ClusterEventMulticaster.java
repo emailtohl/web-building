@@ -1,5 +1,8 @@
 package com.github.emailtohl.building.message.listener;
 
+import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_PRODUCTION;
+import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_QA;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -16,15 +19,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.core.ResolvableType;
 import org.springframework.stereotype.Service;
 
 import com.github.emailtohl.building.message.event.ClusterEvent;
 
-@SuppressWarnings("unused")
+@Profile({ PROFILE_PRODUCTION, PROFILE_QA })
 // applicationEventMulticaster这个名字是有意义的，spring会识别它并将其用作消息广播的Bean
-//@Service("applicationEventMulticaster")
+@Service("applicationEventMulticaster")
 public class ClusterEventMulticaster extends SimpleApplicationEventMulticaster {
 	private static final Logger log = LogManager.getLogger();
 
