@@ -96,10 +96,6 @@ define(['angular', 'test/module'], function(angular) {
 			self.modal.open = true;
 			$scope.$apply();
 		};
-		// 测试websocket群集
-		self.websocket = function() {
-			$http.get('chat/node');
-		};
 	}])
 	.controller('TestZtreeCtrl', ['$rootScope', '$scope', '$http', '$state', 'ztreeutil', function($rootScope, $scope, $http, $state, ztreeutil) {
 		var self = this;
@@ -144,6 +140,19 @@ define(['angular', 'test/module'], function(angular) {
 //		$scope.$watch('pattern', function(nv, ov) {
 //			console.log(new RegExp(nv));
 //		});
+	}])
+	.controller('TestClusterCtrl', ['$rootScope', '$scope', '$http', '$state', function($rootScope, $scope, $http, $state) {
+		var self = this;
+		// 测试websocket群集
+		self.configLink = function() {
+			$http.get('chat/node');
+		};
+		
+		self.message = 'message';
+		// 测试自定义群集
+		self.broadcastLink = function() {
+			$http.get('cluster/frontMessage?message=' + self.message);
+		};
 	}])
 	;
 });

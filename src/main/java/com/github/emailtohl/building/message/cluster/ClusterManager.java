@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.message.publisher;
+package com.github.emailtohl.building.message.cluster;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -1,0 +1,28 @@
+<section class="content-header">
+  <h1>
+    TEST
+    <small>cluster</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li ui-sref="dashboard"><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li class="active">Here</li>
+  </ol>
+</section>
+
+<section class="content">
+	<div class="row">
+	  <div class="col-md-6">
+	  	<p>配置方式建立websocket连接</p>
+        <button type="button" class="btn btn-primary" ng-click="ctrl.configLink()">测试websocket群集</button>
+	  </div>
+	  <div class="col-md-6">
+	    <p>广播方式建立websocket连接</p>
+	    <div class="row">
+		    <input class="form-control" ng-model="ctrl.message">
+	    </div>
+	    <div class="row">
+	        <button type="button" class="btn btn-primary" ng-click="ctrl.broadcastLink()">测试websocket群集</button>
+	    </div>
+	  </div>
+	</div>
+</section>

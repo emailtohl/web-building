@@ -8,12 +8,16 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.github.emailtohl.building.message.cluster.ClusterManager;
+import com.github.emailtohl.building.message.event.ClusterEvent;
 import com.github.emailtohl.building.message.event.LoginEvent;
 import com.github.emailtohl.building.message.event.LogoutEvent;
-import com.github.emailtohl.building.message.publisher.ClusterManager;
 
-@Controller("cluster")
+@Controller
+@RequestMapping("cluster")
 public class ClusterCtrl {
 	@Inject
 	ApplicationEventPublisher publisher;
@@ -38,4 +42,10 @@ public class ClusterCtrl {
 		return new ResponseEntity<>(ClusterManager.RESPONSE_OK, headers, HttpStatus.OK);
 	}
 	
+	@RequestMapping("/frontMessage")
+	@ResponseBody
+	public void broadcastMessage(HttpServletRequest request, String message) {
+		this.publisher.publishEvent(new ClusterEvent(message));
+		this.publisher.publishEvent(new LoginEvent(request.getContextPath()));
+	}
 }

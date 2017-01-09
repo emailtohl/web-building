@@ -41,6 +41,11 @@ define(['test/module', 'uirouter', 'test/Controller' ], function(testModule) {
 			templateUrl : 'common/test/test-pattern.html',
 			controller : 'TestPatternCtrl as ctrl'
 		})
+		.state('test.cluster', {
+			url : '/cluster',
+			templateUrl : 'common/test/test-cluster.html',
+			controller : 'TestClusterCtrl as ctrl'
+		})
 		;
 	});
 });

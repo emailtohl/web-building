@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.message.publisher;
+package com.github.emailtohl.building.message.cluster;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
