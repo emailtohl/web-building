@@ -136,6 +136,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			"/"/* 首页 */,
 			"/services/**"/* 提供服务的地址 */,
 			"/ping"/* 内部服务器之间的连接 */,
+			"/cluster/**"/* 内部服务器之间的连接 */,
 			"/register"/* 获取注册页面GET以及注册新用户POST */,
 			"/user/customer"/* 注册新用户 */,
 			"/user/enable"/* 激活账号 */,

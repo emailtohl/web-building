@@ -51,11 +51,11 @@ public class ClusterMessagingEndpoint {
 			} catch (IOException e) {
 				log.warn("Failed to close illegal connection.", e);
 			}
+		} else {
+			log.info("Successful connection onOpen.");
+			this.session = session;
+			this.multicaster.registerEndpoint(this);
 		}
-
-		log.info("Successful connection onOpen.");
-		this.session = session;
-		this.multicaster.registerEndpoint(this);
 	}
 
 	@OnMessage

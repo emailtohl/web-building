@@ -27,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 public class ClusterManager implements ApplicationListener<ContextRefreshedEvent> {
 	private static final Logger log = LogManager.getLogger();
 	public static final String SECURITY_CODE = "a83teo83hou9883hha9";
+	public static final String RESPONSE_OK = "ok";
 	
 	private static final String HOST;
 	private static final int PORT = 6789;
@@ -41,7 +42,7 @@ public class ClusterManager implements ApplicationListener<ContextRefreshedEvent
 	}
 
 	private final Object mutex = new Object();
-	private boolean initialized, destroyed = false;
+	private volatile boolean initialized = false, destroyed = false;
 	private String pingUrl, messagingUrl;
 	private MulticastSocket socket;
 	private Thread listener;
@@ -114,7 +115,7 @@ public class ClusterManager implements ApplicationListener<ContextRefreshedEvent
 				connection.setConnectTimeout(100);
 				try (InputStream stream = connection.getInputStream()) {
 					String response = StreamUtils.copyToString(stream, StandardCharsets.UTF_8);
-					if (response != null && response.equals("ok")) {
+					if (response != null && response.equals(RESPONSE_OK)) {
 						log.info("Broadcasting multicast announcement packet.");
 						DatagramPacket packet = new DatagramPacket(this.messagingUrl.getBytes(),
 								this.messagingUrl.length(), GROUP, PORT);
