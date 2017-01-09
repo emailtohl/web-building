@@ -11,10 +11,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.github.emailtohl.building.message.cluster.ClusterManager;
 import com.github.emailtohl.building.message.event.ClusterEvent;
 import com.github.emailtohl.building.message.event.LoginEvent;
 import com.github.emailtohl.building.message.event.LogoutEvent;
+import com.github.emailtohl.building.message.listener.ClusterManager;
 
 @Controller
 @RequestMapping("cluster")

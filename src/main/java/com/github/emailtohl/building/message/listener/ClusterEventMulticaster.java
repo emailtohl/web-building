@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.message.cluster;
+package com.github.emailtohl.building.message.listener;
 
 import java.io.IOException;
 import java.net.URI;
@@ -17,10 +17,14 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
+import org.springframework.core.ResolvableType;
+import org.springframework.stereotype.Service;
 
 import com.github.emailtohl.building.message.event.ClusterEvent;
 
-//@Service
+@SuppressWarnings("unused")
+// applicationEventMulticaster这个名字是有意义的，spring会识别它并将其用作消息广播的Bean
+//@Service("applicationEventMulticaster")
 public class ClusterEventMulticaster extends SimpleApplicationEventMulticaster {
 	private static final Logger log = LogManager.getLogger();
 
@@ -33,6 +37,20 @@ public class ClusterEventMulticaster extends SimpleApplicationEventMulticaster {
 	public final void multicastEvent(ApplicationEvent event) {
 		try {
 			super.multicastEvent(event);
+		} finally {
+			try {
+				if (event instanceof ClusterEvent && !((ClusterEvent) event).isRebroadcasted())
+					this.publishClusteredEvent((ClusterEvent) event);
+			} catch (Exception e) {
+				log.error("Failed to broadcast distributable event to cluster.", e);
+			}
+		}
+	}
+	
+	@Override
+	public final void multicastEvent(ApplicationEvent event, ResolvableType eventType) {
+		try {
+			super.multicastEvent(event, eventType);
 		} finally {
 			try {
 				if (event instanceof ClusterEvent && !((ClusterEvent) event).isRebroadcasted())

@@ -7,29 +7,21 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import com.github.emailtohl.building.message.cluster.ClusterEventMulticaster;
-import com.github.emailtohl.building.message.cluster.ClusterManager;
 import com.github.emailtohl.building.message.listener.AuthenticationInterestedParty;
+import com.github.emailtohl.building.message.listener.ClusterEventMulticaster;
 import com.github.emailtohl.building.message.listener.ClusterInterestedParty;
+import com.github.emailtohl.building.message.listener.ClusterManager;
 import com.github.emailtohl.building.message.listener.LoginInterestedParty;
 import com.github.emailtohl.building.message.listener.LogoutInterestedParty;
 
 /**
- * Listener需要注册ServletContext，不在测试环境中加载
+ * 在此注册那些不在测试环境中加载的Bean
  * 
  * @author HeLei
  */
 @Configuration
 @Profile({ PROFILE_PRODUCTION, PROFILE_QA })
-public class EventListenerConfiguration {
-	/**
-	 * spring感知到事件时，要使用消息广播器，提供applicationEventMulticaster名字供spring识别
-	 * @return
-	 */
-	@Bean
-	public ClusterEventMulticaster applicationEventMulticaster() {
-		return new ClusterEventMulticaster();
-	}
+public class BeanRegisterConfiguration {
 	
 	@Bean
 	public ClusterManager clusterManager() {
@@ -39,6 +31,14 @@ public class EventListenerConfiguration {
 	@Bean
 	public ClusterInterestedParty clusterInterestedParty() {
 		return new ClusterInterestedParty();
+	}
+	/**
+	 * applicationEventMulticaster这个名字是有意义的，spring会识别它并将其用作消息广播的Bean
+	 * @return
+	 */
+	@Bean
+	public ClusterEventMulticaster applicationEventMulticaster() {
+		return new ClusterEventMulticaster();
 	}
 	
 	@Bean

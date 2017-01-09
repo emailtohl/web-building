@@ -6,8 +6,8 @@ import javax.servlet.ServletContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.SimpleApplicationEventMulticaster;
 
-import com.github.emailtohl.building.message.cluster.ClusterEventMulticaster;
 import com.github.emailtohl.building.message.event.ClusterEvent;
 
 //@Service
@@ -17,11 +17,11 @@ public class ClusterInterestedParty implements ApplicationListener<ClusterEvent>
 	@Inject
 	ServletContext servletContext;
 	@Inject
-	ClusterEventMulticaster clusterEventMulticaster;
+	SimpleApplicationEventMulticaster clusterEventMulticaster;
 
 	@Override
 	public void onApplicationEvent(ClusterEvent event) {
-		log.info("Login event for context {} received in context {}.", event.getSource(),
+		log.info("Cluster event for context {} received in context {}.", event.getSource(),
 				this.servletContext.getContextPath());
 	}
 }
