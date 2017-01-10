@@ -132,6 +132,8 @@ xml的DTD、scheme校验很繁琐，项目尽可能避免使用xml，在配置�
 
 6. 一旦使用ApplicationEventPublisher#publishEvent(ClusterEvent event)，ClusterEventMulticaster的multicastEvent(ApplicationEvent event)就会广播该消息，不仅实现ApplicationListener<ClusterEvent>的类会收到，websocket中的各节点也会收到。
 
+> 注意：端点的IP是通过InetAddress.getLocalHost().getHostAddress();获取，注意多个端点在同一网段中；此外，若端点的端口号不是8080，则需要配置config.properties文件中的local.host值。
+
 ### 4.2 前端
 前端的lib存放第三方框架或工具，common是公共模块，基于angular1.×编写的service、util、directive等。
 其中，directive中定义了日常开发中最常使用的分页Pager、select、文件上传、日期选择等指令，可以在模板页面中通用，具体可以在common/test中见使用方法。

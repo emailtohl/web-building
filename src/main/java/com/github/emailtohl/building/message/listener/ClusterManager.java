@@ -24,9 +24,11 @@ import org.springframework.beans.FatalBeanException;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
+import org.springframework.util.StringUtils;
 
 @Profile({ PROFILE_PRODUCTION, PROFILE_QA })
 @Service
@@ -57,13 +59,17 @@ public class ClusterManager implements ApplicationListener<ContextRefreshedEvent
 	ServletContext servletContext;
 	@Inject
 	ClusterEventMulticaster multicaster;
+	@Inject Environment env;
 
 	@PostConstruct
 	public void listenForMulticastAnnouncements() throws Exception {
-		this.pingUrl = "http://" + HOST + ":8080" + this.servletContext.getContextPath() + "/ping";
-		this.messagingUrl = "ws://" + HOST + ":8080" + this.servletContext.getContextPath()
+		String localPort = env.getProperty("local.host");
+		if (!StringUtils.hasText(localPort))
+			localPort = "8080";
+		this.pingUrl = "http://" + HOST + ":" + localPort + this.servletContext.getContextPath() + "/ping";
+		this.messagingUrl = "ws://" + HOST + ":" + localPort + this.servletContext.getContextPath()
 				+ "/services/messaging/" + SECURITY_CODE;
-
+		
 		synchronized (this.mutex) {
 			this.socket = new MulticastSocket(PORT);
 			this.socket.joinGroup(GROUP);
