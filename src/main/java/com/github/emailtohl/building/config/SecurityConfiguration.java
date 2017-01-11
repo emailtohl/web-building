@@ -200,7 +200,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.loginPage("/login").failureUrl("/login?error")
 				.successHandler((request, response, authentication) -> {
 					publisher.publishEvent(new LoginEvent(authentication.getName()));
-					response.sendRedirect("/building");
+					response.sendRedirect(request.getContextPath());
 				})
 				.usernameParameter("email").passwordParameter("password").permitAll()
 			// 登出配置，注意：Spring security在启动CSRF时，默认只使用HTTP POST，这是为了确保注销需要CSRF令牌和恶意用户不能强行注销你的用户
@@ -209,7 +209,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.logoutUrl("/logout")
 				/*.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))*/
 				.logoutSuccessHandler((request, response, authentication) -> {
-					publisher.publishEvent(new LogoutEvent(authentication == null ? "" : authentication.getName()));
+					publisher.publishEvent(new LogoutEvent(authentication == null ? "anonymousUser" : authentication.getName()));
 				})
 				.logoutSuccessUrl("/login?loggedOut")
 				.invalidateHttpSession(true)
