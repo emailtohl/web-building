@@ -24,7 +24,7 @@ public class LoginInterestedParty implements ApplicationListener<LoginEvent> {
 
 	@Override
 	public void onApplicationEvent(LoginEvent event) {
-		log.info("Login event for context {} received in context {}.", event.getSource(),
+		log.info("Login event for user {} received in context {}.", event.getSource(),
 				this.servletContext.getContextPath());
 	}
 }

@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,6 +47,8 @@ import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
+import com.github.emailtohl.building.message.event.LoginEvent;
+import com.github.emailtohl.building.message.event.LogoutEvent;
 import com.github.emailtohl.building.site.controller.UserCtrl;
 import com.github.emailtohl.building.site.service.UserPermissionEvaluator;
 /**
@@ -74,6 +77,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Inject
 	@Named("userServiceImpl")
 	UserDetailsService userDetailsService;
+	
+	/**
+	 * 登录成功后发布消息
+	 */
+	@Inject
+	ApplicationEventPublisher publisher;
 	
 	/**
 	 * 为了在应用程序中获取到用户身份信息，将该作为Spring管理的Bean暴露给外界
@@ -188,14 +197,22 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.and()
 //			.addFilterBefore(new CORSFilter(), ChannelProcessingFilter.class)
 			.formLogin()
-				.loginPage("/login").failureUrl("/login?error").defaultSuccessUrl("/")
+				.loginPage("/login").failureUrl("/login?error")
+				.successHandler((request, response, authentication) -> {
+					publisher.publishEvent(new LoginEvent(authentication.getName()));
+					response.sendRedirect("/building");
+				})
 				.usernameParameter("email").passwordParameter("password").permitAll()
 			// 登出配置，注意：Spring security在启动CSRF时，默认只使用HTTP POST，这是为了确保注销需要CSRF令牌和恶意用户不能强行注销你的用户
 			// 如果要使用<a>标签链接，get等方式退出，则必须更新下面的Java配置：logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
 			.and().logout()
 				.logoutUrl("/logout")
 				/*.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))*/
-				.logoutSuccessUrl("/login?loggedOut").invalidateHttpSession(true)
+				.logoutSuccessHandler((request, response, authentication) -> {
+					publisher.publishEvent(new LogoutEvent(authentication == null ? "" : authentication.getName()));
+				})
+				.logoutSuccessUrl("/login?loggedOut")
+				.invalidateHttpSession(true)
 				.deleteCookies("JSESSIONID").permitAll()
 			// session管理，例如登录后切换sessionid，只允许一个人一处登录，控制用户同时登录等功能
 			.and().sessionManagement()

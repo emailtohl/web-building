@@ -1,7 +1,5 @@
 package com.github.emailtohl.building.message.event;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 import org.springframework.context.ApplicationEvent;
@@ -29,8 +27,4 @@ public class ClusterEvent extends ApplicationEvent implements Serializable {
 		return this.serializableSource;
 	}
 
-	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-		in.defaultReadObject();
-		this.source = this.serializableSource;
-	}
 }

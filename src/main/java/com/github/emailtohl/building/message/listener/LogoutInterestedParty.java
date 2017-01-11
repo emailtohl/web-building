@@ -26,7 +26,7 @@ public class LogoutInterestedParty implements ApplicationListener<LogoutEvent> {
 	@Override
 	@Async
 	public void onApplicationEvent(LogoutEvent event) {
-		log.info("Logout event for context {} received in context {}.", event.getSource(),
+		log.info("Logout event for user {} received in context {}.", event.getSource(),
 				this.servletContext.getContextPath());
 
 		try {
