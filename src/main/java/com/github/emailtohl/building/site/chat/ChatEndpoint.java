@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpSession;
 import javax.websocket.CloseReason;
 import javax.websocket.EndpointConfig;
@@ -18,8 +19,6 @@ import javax.websocket.server.ServerEndpoint;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.github.emailtohl.building.websocket.Configurator;
 import com.google.gson.Gson;
@@ -30,12 +29,15 @@ import com.google.gson.Gson;
 @ServerEndpoint(value = "/chat/{username}", configurator = Configurator.class)
 public class ChatEndpoint {
 	private static Logger logger = LogManager.getLogger();
+	private static final Map<String, Session> map = new ConcurrentHashMap<String, Session>();
 	private String username;
 	private Session session;
+	@SuppressWarnings("unused")
 	private HttpSession httpSession;
+	@Inject
 	private ChatService chatService;
+	@Inject
 	private Gson gson;
-	private static final Map<String, Session> map = new ConcurrentHashMap<String, Session>();
 
 	@OnOpen
 	public void onOpen(Session session, @PathParam("username") String username, EndpointConfig config) throws IOException {
@@ -44,10 +46,10 @@ public class ChatEndpoint {
 		// 在配置类中获取HttpSession
 		this.httpSession = Configurator.getExposedSession(session);
 		// websocket属于容器管理，要使用spring管理的Bean，需要先获取spring容器
-		WebApplicationContext context = WebApplicationContextUtils
-				.getRequiredWebApplicationContext(httpSession.getServletContext());
-		chatService = context.getBean(ChatService.class);
-		gson = context.getBean(Gson.class);
+//		WebApplicationContext context = WebApplicationContextUtils
+//				.getRequiredWebApplicationContext(httpSession.getServletContext());
+//		chatService = context.getBean(ChatService.class);
+//		gson = context.getBean(Gson.class);
 		map.put(session.getId(), session);
 	}
 

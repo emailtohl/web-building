@@ -95,24 +95,6 @@ public class ChatMessage implements Cloneable, Serializable {
 		STARTED, JOINED, ERROR, LEFT, TEXT
 	}
 
-	static abstract class MixInForLogWrite {
-
-		public abstract String getLocalizedContent();
-
-		public abstract void setLocalizedContent(String l);
-	}
-
-	static abstract class MixInForWebSocket {
-
-		public abstract String getContentCode();
-
-		public abstract void setContentCode(String c);
-
-		public abstract Object[] getContentArguments();
-
-		public abstract void setContentArguments(Object... c);
-	}
-
 	@Override
 	public String toString() {
 		return "ChatMessage [timestamp=" + timestamp + ", type=" + type + ", user=" + user + ", contentCode="

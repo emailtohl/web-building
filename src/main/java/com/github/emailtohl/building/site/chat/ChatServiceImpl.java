@@ -1,5 +1,8 @@
 package com.github.emailtohl.building.site.chat;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,7 +21,9 @@ public class ChatServiceImpl implements ChatService {
 	@Override
 	public void save(String username, ChatMessage msg) {
 		map.put(username, msg);
-		log.info("username: " + username + "\n" + msg);
+		Instant instant = msg.getTimestamp() == null ? Instant.now() : msg.getTimestamp();
+		LocalDateTime ldt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+		log.info("At time: {} user: {} say: {}", ldt.toString(), username, msg.getUserContent());
 	}
 
 }

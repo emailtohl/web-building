@@ -54,6 +54,11 @@ public abstract class ObjectCoder<T extends Serializable> implements Encoder.Bin
 		}
 	}
 	
+	public ObjectCoder(Class<T> clazz) {
+		super();
+		this.clazz = clazz;
+	}
+
 	@Override
 	public void destroy() {
 		
