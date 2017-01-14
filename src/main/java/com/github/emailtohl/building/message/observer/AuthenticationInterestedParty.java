@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.message.listener;
+package com.github.emailtohl.building.message.observer;
 
 import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_PRODUCTION;
 import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_QA;
@@ -10,24 +10,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
-import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.stereotype.Service;
 
-import com.github.emailtohl.building.message.event.ClusterEvent;
+import com.github.emailtohl.building.message.event.AuthenticationEvent;
 
 @Profile({ PROFILE_PRODUCTION, PROFILE_QA })
 @Service
-public class ClusterInterestedParty implements ApplicationListener<ClusterEvent> {
+public class AuthenticationInterestedParty implements ApplicationListener<AuthenticationEvent> {
 	private static final Logger log = LogManager.getLogger();
 
-	@Inject
-	ServletContext servletContext;
-	@Inject
-	SimpleApplicationEventMulticaster clusterEventMulticaster;
+	@Inject ServletContext servletContext;
 
 	@Override
-	public void onApplicationEvent(ClusterEvent event) {
-		log.info("Cluster event for context {} received in context {}.", event.getSource(),
+	public void onApplicationEvent(AuthenticationEvent event) {
+		log.debug("Authentication event from context {} received in context {}.", event.getSource(),
 				this.servletContext.getContextPath());
 	}
 }

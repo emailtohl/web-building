@@ -19,7 +19,9 @@ import javax.websocket.server.ServerEndpoint;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.ApplicationEventPublisher;
 
+import com.github.emailtohl.building.message.event.ChatEvent;
 import com.github.emailtohl.building.websocket.Configurator;
 import com.google.gson.Gson;
 /**
@@ -32,12 +34,10 @@ public class ChatEndpoint {
 	private static final Map<String, Session> map = new ConcurrentHashMap<String, Session>();
 	private String username;
 	private Session session;
-	@SuppressWarnings("unused")
 	private HttpSession httpSession;
-	@Inject
-	private ChatService chatService;
-	@Inject
-	private Gson gson;
+	@Inject ChatService chatService;
+	@Inject Gson gson;
+	@Inject ApplicationEventPublisher publisher;
 
 	@OnOpen
 	public void onOpen(Session session, @PathParam("username") String username, EndpointConfig config) throws IOException {
@@ -68,8 +68,11 @@ public class ChatEndpoint {
 			}*/
 			s.getBasicRemote().sendText(str);
 		}
-		
 		chatService.save(username, msg);
+		
+		ChatEvent e = new ChatEvent(httpSession.getServletContext().getContextPath());
+		e.setMessage(msg);
+		publisher.publishEvent(e);
 	}
 
 	@OnClose
