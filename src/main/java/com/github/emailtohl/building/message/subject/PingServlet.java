@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.message.listener;
+package com.github.emailtohl.building.message.subject;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author HeLei
  */
 @WebServlet("/ping")
-public class Ping extends HttpServlet {
+public class PingServlet extends HttpServlet {
 	private static final long serialVersionUID = 1048508760045030519L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.github.emailtohl.building.message.event.ClusterEvent;
 import com.github.emailtohl.building.message.event.LoginEvent;
 import com.github.emailtohl.building.message.event.LogoutEvent;
-import com.github.emailtohl.building.message.listener.ClusterManager;
+import com.github.emailtohl.building.message.subject.ClusterManager;
 
 @Controller
 @RequestMapping("cluster")
