@@ -682,10 +682,10 @@ var mine = (function(){
 		var i, j, ul, prev, next, items = '', promise = new Promise();
 		ul = document.createElement('ul');
 		ul.className = 'pagination';
-		prev = '<li><a href="#" aria-label="Previous"><span aria-hidden="true">«</span></a></li>';
-		next = '<li><a href="#" aria-label="Next"><span aria-hidden="true">»</span></a></li>'
+		prev = '<li><a href="javascript:void(0)" aria-label="Previous"><span aria-hidden="true">«</span></a></li>';
+		next = '<li><a href="javascript:void(0)" aria-label="Next"><span aria-hidden="true">»</span></a></li>'
 		for (i = 1; i <= totalPage; i++) {
-			items += '<li class="' + (i == pageNum ? 'active' : '') + '" data-pagenum="' + i + '"><a href="#">' + i + '</a></li>';
+			items += '<li class="' + (i == pageNum ? 'active' : '') + '" data-pagenum="' + i + '"><a href="javascript:void(0)">' + i + '</a></li>';
 		}
 		ul.innerHTML = prev + items + next;
 		items = ul.getElementsByTagName('li');

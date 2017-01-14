@@ -59,7 +59,8 @@ public class ClusterManager implements ApplicationListener<ContextRefreshedEvent
 	ServletContext servletContext;
 	@Inject
 	ClusterEventMulticaster multicaster;
-	@Inject Environment env;
+	@Inject
+	Environment env;
 
 	@PostConstruct
 	public void listenForMulticastAnnouncements() throws Exception {
