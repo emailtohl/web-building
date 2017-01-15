@@ -145,6 +145,7 @@ var mine = (function(){
 	/**
 	 * 发起HTTP GET请求
 	 * 若不传入callback，可使用返回的promise对象
+	 * 注意：采用callback方式需要自行判断访问出错或异常的情况
 	 */
 	function get(url, callback) {
 		var xhr = new XMLHttpRequest(), promise = new Promise();
@@ -168,6 +169,7 @@ var mine = (function(){
 	 * 发起HTTP POST请求
 	 * 若不传入callback，可使用返回的promise对象
 	 * progressListener是一个回调函数，主要用于显示文件上传进度
+	 * 注意：采用callback方式需要自行判断访问出错或异常的情况
 	 */
 	function post(url, data, callback, progressListener) {
 		var xhr = new XMLHttpRequest(), promise = new Promise(), formData, name, value;
