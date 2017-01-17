@@ -42,11 +42,13 @@ import org.springframework.aop.interceptor.AsyncUncaughtExceptionHandler;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -240,6 +242,24 @@ public class RootContextConfiguration
 	@Bean
 	public CacheManager cacheManager() {
 		return new ConcurrentMapCacheManager();
+	}
+	
+	/**
+	 * ApplicationContext的实现类本身也是一个MessageSource对象。
+	 * Bean名字为messageSource是有意义的，它将这个Bean定义的信息资源加载为容器级的国际化信息资源。
+	 * 
+	 * @return
+	 */
+	@Bean
+	public MessageSource messageSource() {
+		// 基于Java的ResourceBundle基础类实现，允许仅通过资源名加载国际化资源。
+		// ReloadableResourceBundleMessageSource提供了定时刷新功能，允许在不重启系统的情况下，更新资源的信息。
+		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+		messageSource.setCacheSeconds(-1);// 指定时间刷新，默认是-1永不刷新
+		messageSource.setDefaultEncoding(StandardCharsets.UTF_8.name());
+		messageSource.setBasenames("/WEB-INF/i18n/titles", "/WEB-INF/i18n/messages", "/WEB-INF/i18n/errors",
+				"/WEB-INF/i18n/validation");
+		return messageSource;
 	}
 	
 	@Bean
