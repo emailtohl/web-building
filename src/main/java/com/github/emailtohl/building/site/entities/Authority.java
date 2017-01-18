@@ -92,6 +92,10 @@ public class Authority extends BaseEntity {
 	 * 审计修改角色信息
 	 */
 	public static final String AUDIT_ROLE = "audit_role";
+	/**
+	 * 资源管理，文件上传，目录创建、改名以及删除
+	 */
+	public static final String RESOURCE_MANAGER = "resource_manager";
 	
 	public Authority() {
 		super();

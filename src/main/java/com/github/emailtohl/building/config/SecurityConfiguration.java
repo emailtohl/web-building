@@ -160,7 +160,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			"/about",
 			"/chat/**",
 			"/systemInfo",
-			"/fileUploadServer/test"
 		};
 		security
 			.authorizeRequests()
@@ -190,6 +189,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/audit/user*").hasAuthority(AUDIT_USER)
 				.antMatchers("/audit/role*").hasAuthority(AUDIT_ROLE)
 				.antMatchers("/role/**").hasAuthority(USER_ROLE_AUTHORITY_ALLOCATION)
+				.antMatchers("/fileUploadServer/**").hasAuthority(RESOURCE_MANAGER)
+				.antMatchers("/fileUploadServer/test").permitAll()
 				.anyRequest().authenticated()
 			// HTTP Basic Authentication是基于REST风格，通过HTTP状态码与访问它的应用程序进行沟通
 			/*.and().httpBasic()*/
