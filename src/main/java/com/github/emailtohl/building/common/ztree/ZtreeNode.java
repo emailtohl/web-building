@@ -23,6 +23,15 @@ public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 	
 	/**
 	 * 根据文件目录创建一个ZtreeNode实例
+	 * @param absolutePath 文件目录
+	 * @return ZtreeNode实例
+	 */
+	public static ZtreeNode newInstance(String absolutePath) {
+		return newInstance(new File(absolutePath));
+	}
+	
+	/**
+	 * 根据文件目录创建一个ZtreeNode实例
 	 * @param f 文件目录
 	 * @return ZtreeNode实例
 	 */
