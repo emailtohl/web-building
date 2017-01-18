@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -60,9 +59,9 @@ public class FileUploadServer {
 	 * 创建一个目录
 	 * @param dirName 目录相对路径
 	 */
-	@RequestMapping(value = "resource", method = RequestMethod.POST)
+	@RequestMapping(value = "createDir", method = RequestMethod.POST, produces = "text/plain; charset=utf-8")
 	@ResponseBody
-	public void createDir(@RequestBody String dirName) {
+	public void createDir(String dirName) {
 		File f = new File(upDownloader.getAbsolutePath(dirName));
 		if (!f.exists()) {
 			f.mkdirs();
@@ -74,9 +73,9 @@ public class FileUploadServer {
 	 * @param srcName 原来的名字
 	 * @param destName 更新的名字
 	 */
-	@RequestMapping(value = "resource/{srcName}", method = RequestMethod.PUT)
+	@RequestMapping(value = "reName", method = RequestMethod.POST, produces = "text/plain; charset=utf-8")
 	@ResponseBody
-	public void reName(@PathVariable("srcName") String srcName, @RequestBody String destName) {
+	public void reName(String srcName, String destName) {
 		File src = new File(upDownloader.getAbsolutePath(srcName));
 		File dest = new File(upDownloader.getAbsolutePath(destName));
 		if (src.exists()) {
@@ -88,9 +87,9 @@ public class FileUploadServer {
 	 * 删除目录或文件
 	 * @param filename
 	 */
-	@RequestMapping(value = "resource/{filename}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "delete", method = RequestMethod.POST, produces = "text/plain; charset=utf-8")
 	@ResponseBody
-	public void delete(@PathVariable("filename") String filename) {
+	public void delete(String filename) {
 		String absolutePath = upDownloader.getAbsolutePath(filename);
 		upDownloader.deleteDir(absolutePath);
 	}

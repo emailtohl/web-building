@@ -46,8 +46,8 @@ public class ZtreeNodeTest {
 		ZtreeNode nn = gson.fromJson(json, ZtreeNode.class);
 		System.out.println(nn);
 		assertEquals(nn, n);
-		int rootid = nn.getId();
-		int pid = nn.getChildren().iterator().next().getPid();
+		long rootid = nn.getId();
+		long pid = nn.getChildren().iterator().next().getPid();
 		assertEquals(rootid, pid);
 		
 	}
