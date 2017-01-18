@@ -12,10 +12,13 @@ import java.util.TreeSet;
  */
 public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 	private static final long serialVersionUID = -1932148922352477076L;
-	private transient static volatile int serial = 0;
+	private transient static volatile long serial = 0;
 	
 	public ZtreeNode() {
 		synchronized(ZtreeNode.class) {
+			if (serial == Long.MAX_VALUE) {
+				serial = 0;
+			}
 			serial++;
 			id = serial;
 		}
@@ -39,7 +42,7 @@ public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 		return newInstance(f, 0);
 	}
 	
-	private static ZtreeNode newInstance(File f, int pid) {
+	private static ZtreeNode newInstance(File f, long pid) {
 		ZtreeNode n = new ZtreeNode();
 		n.name = f.getName();
 		n.pid = pid;
@@ -55,10 +58,10 @@ public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 
 	
 	/** id 自动生成 */
-	private final int id;
+	private final long id;
 	
 	/** pid 父节点，根节点为0 */
-	private int pid = 0;
+	private long pid = 0;
 	
 	/** 节点名 */
 	private String name;
@@ -101,15 +104,15 @@ public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 		return children != null && !children.isEmpty();
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 	
-	public int getPid() {
+	public long getPid() {
 		return pid;
 	}
 
-	public void setPid(int pid) {
+	public void setPid(long pid) {
 		this.pid = pid;
 	}
 
@@ -218,7 +221,7 @@ public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + id;
+		result = prime * result + (int) (id ^ (id >>> 32));
 		return result;
 	}
 
