@@ -299,6 +299,16 @@ desired effect
             <li ng-if="hasAuthority('application_form_read_history')" ng-class="{active: $state.includes('applicationForm.history')}"><a ui-sref="applicationForm.history" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>处理记录</a></li>
           </ul>
         </li>
+        <li class="treeview" ng-class="{active: $state.includes('cms')}" ng-if="hasAuthority('resource_manager')">
+          <a href="#">
+          	  <i class="fa fa-file-o"></i>
+	          <span>内容管理</span>
+	          <i class="fa fa-angle-left pull-right"></i>
+	      </a>
+          <ul class="treeview-menu">
+            <li ng-class="{active: $state.includes('cms.resource')}" ><a ui-sref="cms.resource" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>资源管理</a></li>
+          </ul>
+        </li>
         <li class="treeview" ng-class="{active: $state.includes('user')}">
           <a href="#">
           	<i class="fa fa-users"></i>

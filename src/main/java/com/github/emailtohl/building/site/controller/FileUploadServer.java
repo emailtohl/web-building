@@ -46,13 +46,21 @@ public class FileUploadServer {
 		}
 	}
 	
-	@RequestMapping(value = "fileRoot", method = RequestMethod.GET)
+	/**
+	 * 获取资源管理的根目录的数据结构
+	 * @return
+	 */
+	@RequestMapping(value = "root", method = RequestMethod.GET)
 	@ResponseBody
 	public ZtreeNode getRoot() {
 		return ZtreeNode.newInstance(root);
 	}
 	
-	@RequestMapping(value = "dir", method = RequestMethod.POST)
+	/**
+	 * 创建一个目录
+	 * @param dirName 目录相对路径
+	 */
+	@RequestMapping(value = "resource", method = RequestMethod.POST)
 	@ResponseBody
 	public void createDir(@RequestBody String dirName) {
 		File f = new File(upDownloader.getAbsolutePath(dirName));
@@ -66,7 +74,7 @@ public class FileUploadServer {
 	 * @param srcName 原来的名字
 	 * @param destName 更新的名字
 	 */
-	@RequestMapping(value = "dir/{srcName}", method = RequestMethod.PUT)
+	@RequestMapping(value = "resource/{srcName}", method = RequestMethod.PUT)
 	@ResponseBody
 	public void reName(@PathVariable("srcName") String srcName, @RequestBody String destName) {
 		File src = new File(upDownloader.getAbsolutePath(srcName));
@@ -76,15 +84,19 @@ public class FileUploadServer {
 		}
 	}
 	
-	@RequestMapping(value = "dir/{dirName}", method = RequestMethod.DELETE)
+	/**
+	 * 删除目录或文件
+	 * @param filename
+	 */
+	@RequestMapping(value = "resource/{filename}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void deleteDir(@PathVariable("dirName") String dirName) {
-		String absolutePath = upDownloader.getAbsolutePath(dirName);
+	public void delete(@PathVariable("filename") String filename) {
+		String absolutePath = upDownloader.getAbsolutePath(filename);
 		upDownloader.deleteDir(absolutePath);
 	}
 	
 
-	@RequestMapping(value = "dir", method = RequestMethod.POST, produces = "text/plain; charset=utf-8")
+	@RequestMapping(value = "resource", method = RequestMethod.POST, produces = "text/plain; charset=utf-8")
 	@ResponseBody
 	public void uploadFile(@RequestBody String dir, @RequestPart("part") Part part) throws IOException {
 		upDownloader.upload(dir, part);
