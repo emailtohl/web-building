@@ -19,6 +19,9 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 				selectedMulti: false,
 				addHoverDom : addHoverDom,
 			},
+			callback : {
+				onClick : zTreeOnClick,
+			},
 			/*
 			check : {
 				enable: true,
@@ -28,11 +31,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 			*/
 		};
 		util.loadasync('lib/ztree/zTreeStyle.css');
-		// 新增按钮的样式
-		style = $('<style type="text/css">'
-				+ '.ztree li span.button.add {margin-left:2px; margin-right: -1px; background-position:-144px 0; vertical-align:top; *vertical-align:middle}'
-				+ '</style>');
-		$('head').append(style);
+		util.loadasync('lib/ztree/diy.css');
 		$scope.getAuthentication();
 		getFileRoot();
 		
@@ -70,7 +69,9 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 				} else {
 					destName = newName;
 				}
-//				service.reName(srcDir, newName);
+				service.reName(srcName, destName).success(function(data) {
+					getFileRoot();
+				});
 			}
 			return false;
 		}
@@ -85,11 +86,11 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 				return;
 			}
 			var addStr = "<span class='button add' id='addBtn_" + treeNode.tId
-				+ "' title='add node' onfocus='this.blur();'></span>";
+				+ "' title='add node' onfocus='this.blur();' style='margin-left:5px;'></span>";
 			sObj.after(addStr);
-			var btn = $("#addBtn_" + treeNode.tId);
-			if (btn) {
-				btn.bind("click", function() {
+			var addBtn = $("#addBtn_" + treeNode.tId);
+			if (addBtn) {
+				addBtn.bind("click", function() {
 					/*
 					var zTree = $.fn.zTree.getZTreeObj("resource-tree");
 					zTree.addNodes(treeNode, {
@@ -107,6 +108,14 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 				});
 			}
 		};
+		function zTreeOnClick(event, treeId, treeNode) {
+			if (!treeNode.isParent) {// 只在目录上才有效
+				return;
+			}
+			$scope.$apply(function() {
+				self.uploadPath = ztreeutil.getFilePath(treeNode);
+			});
+		}
 	}])
 	;
 });

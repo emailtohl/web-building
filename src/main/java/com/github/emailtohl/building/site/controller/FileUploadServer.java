@@ -33,7 +33,7 @@ import com.github.emailtohl.building.site.dto.UserDto;
 @RequestMapping("fileUploadServer")
 public class FileUploadServer {
 	private static final Logger logger = LogManager.getLogger();
-	public static final String FILE_DIR = "file_dir";
+	public static final String FILE_DIR = "root";
 	private File root;
 	@Inject UpDownloader upDownloader;
 	
