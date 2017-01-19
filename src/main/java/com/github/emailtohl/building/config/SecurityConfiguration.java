@@ -160,7 +160,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			"/about",
 			"/chat/**",
 			"/systemInfo",
-			"/fileUploadServer/test"
+			"/fileUploadServer/test",
 		};
 		security
 			.authorizeRequests()

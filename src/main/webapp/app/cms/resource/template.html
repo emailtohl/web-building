@@ -12,20 +12,24 @@
 
 <!-- Main content -->
 <section class="content">
-	<div class="col-ms-6">
-		<ul id="resource-tree" class="ztree"></ul>
+	<div class="row">
+		<div class="col-xs-6">
+			<ul id="resource-tree" class="ztree"></ul>
+		</div>
+		<div class="col-xs-6">
+			<form name="f" upload upload-to="fileUploadServer/resource" when-done="ctrl.callbackfun(msg)">
+			  <div class="form-group">
+	            <label>上传路径</label>
+	            <input type="text" class="form-control" name="path" ng-model="ctrl.encodeUploadPath()" readonly="readonly" required="required">
+	          </div>
+			  <div class="form-group">
+	            <label>选择文件</label>
+	            <input type="file" class="form-control" placeholder="上传文件" name="file" required="required">
+	          </div>
+	          <div class="form-group">
+	              <button type="submit" class="btn btn-primary pull-right" ng-disabled="f.$invalid">上传</button>
+	          </div>
+			</form>
+		</div>
 	</div>
-	<div class="col-ms-6">
-		<form name="f">
-		  <div class="form-group">
-            <label>上传路径</label>
-            <input type="text" class="form-control" name="path" ng-model="ctrl.uploadPath" readonly="readonly">
-          </div>
-		  <div class="form-group">
-            <label>选择文件</label>
-            <input type="file" class="form-control" placeholder="上传文件" name="file">
-          </div>
-		</form>
-	</div>
-
 </section>

@@ -2,6 +2,7 @@ package com.github.emailtohl.building.site.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -14,7 +15,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -29,6 +29,7 @@ import com.github.emailtohl.building.site.dto.UserDto;
  * 文件上传控制器
  * @author HeLei
  */
+@SuppressWarnings("deprecation")
 @Controller
 @RequestMapping("fileUploadServer")
 public class FileUploadServer {
@@ -97,8 +98,17 @@ public class FileUploadServer {
 
 	@RequestMapping(value = "resource", method = RequestMethod.POST, produces = "text/plain; charset=utf-8")
 	@ResponseBody
-	public void uploadFile(@RequestBody String dir, @RequestPart("part") Part part) throws IOException {
-		upDownloader.upload(dir, part);
+	public String uploadFile(@RequestPart("path") String path, @RequestPart("file") Part file) throws IOException {
+		String dir = URLDecoder.decode(path, "UTF-8");
+		String fullname, filename = file.getSubmittedFileName();
+		char c = dir.charAt(path.length() - 1);
+		if (c == '/') {
+			fullname = dir + filename;
+		} else {
+			fullname = dir + '/' + filename;
+		}
+		upDownloader.upload(fullname, file);
+		return filename + ": 上传成功!";
 	}
 	
 	/**
@@ -130,7 +140,7 @@ public class FileUploadServer {
 		logger.debug(multiplefiles);
 		logger.debug(singlefile);
 		logger.debug(user);
-		String result = ServletUtil.multipartOnload(request, "upload/");
+		String result = ServletUtil.multipartOnload(request, "temp/");
 		return result;
 	}
 }

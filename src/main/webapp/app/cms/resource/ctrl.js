@@ -2,7 +2,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 	return cmsModule
 	.controller('ResourceCtrl', ['$scope', '$http', '$state', 'cmsService', 'util', 'ztreeutil',
 	                                function($scope, $http, $state, service, util, ztreeutil) {
-		var self = this, style, zTreeObj;
+		var self = this, rootName, style, zTreeObj;
 		var setting = {
 			edit : {
 				enable : true,
@@ -14,13 +14,11 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 			callback : {
 				beforeRemove : zTreeBeforeRemove,
 				beforeRename: zTreeBeforeRename,
+				onClick : zTreeOnClick,
 			},
 			view : {
 				selectedMulti: false,
 				addHoverDom : addHoverDom,
-			},
-			callback : {
-				onClick : zTreeOnClick,
 			},
 			/*
 			check : {
@@ -34,11 +32,15 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 		util.loadasync('lib/ztree/diy.css');
 		$scope.getAuthentication();
 		getFileRoot();
+		self.callbackfun = function(msg) {
+			console.log(msg);
+			getFileRoot();
+		};
 		
 		function getFileRoot() {
 			service.getFileRoot().success(function(data) {
 				var zNodes = data;
-//				zNodes.name = 'root';
+				rootName = zNodes.name;
 				zNodes.open = true;
 				zTreeObj = $.fn.zTree.init($("#resource-tree"), setting, zNodes);
 			});
@@ -46,7 +48,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 		
 		function zTreeBeforeRemove(treeId, treeNode) {
 			var filename;
-			if (treeNode.isFirstNode) {
+			if (treeNode.name == rootName) {
 				alert('根目录不能删除!');
 				return false;
 			}
@@ -114,6 +116,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 			}
 			$scope.$apply(function() {
 				self.uploadPath = ztreeutil.getFilePath(treeNode);
+				self.encode = encodeURIComponent(self.uploadPath);
 			});
 		}
 	}])
