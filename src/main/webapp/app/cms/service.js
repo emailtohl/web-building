@@ -33,6 +33,7 @@ define([ 'cms/module', 'common/context' ], function(cmsModule) {
 					headers : { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' }
 				});
 			},
+			
 		};
 	}]);
 });

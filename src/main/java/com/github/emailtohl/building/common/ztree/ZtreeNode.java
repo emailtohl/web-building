@@ -52,6 +52,9 @@ public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 				children.add(newInstance(sf, n.id));
 			}
 			n.children = children;
+			n.isParent = true;
+		} else {
+			n.isParent = false;
 		}
 		return n;
 	}
@@ -66,6 +69,16 @@ public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 	/** 节点名 */
 	private String name;
 	
+	/** 记录 treeNode 节点是否为父节点 */
+	@SuppressWarnings("unused")
+	private boolean isParent = true;
+	
+	/** 判断 treeNode 节点是否被隐藏 */
+	private boolean isHidden = false;
+	
+	/** 记录 treeNode 节点的 展开 / 折叠 状态 */
+	private boolean open = false;
+	
 	/** 节点的 checkBox / radio 的 勾选状态 [setting.check.enable = true & treeNode.nocheck = false 时有效] */
 	private boolean checked = false;
 	
@@ -74,9 +87,6 @@ public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 	
 	/** 设置节点是否隐藏 checkbox / radio [setting.check.enable = true 时有效] */
 	private boolean nocheck = false;
-	
-	/** 记录 treeNode 节点的 展开 / 折叠 状态 */
-	private boolean open = false;
 	
 	/** 节点自定义图标的 URL 路径 */
 	private String icon;
@@ -98,16 +108,8 @@ public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 	
 	/** 节点的子节点数据集合， 在前端，如果是文件而非目录，该字段应该为null，所以此处不初始化 */
 	private Set<ZtreeNode> children;
-	
-	/** 记录 treeNode 节点是否为父节点 */
-	public boolean isParent() {
-		return children != null && !children.isEmpty();
-	}
 
-	public long getId() {
-		return id;
-	}
-	
+
 	public long getPid() {
 		return pid;
 	}
@@ -122,6 +124,31 @@ public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	/** 记录 treeNode 节点是否为父节点，依赖于children属性 */
+	public boolean isParent() {
+		return children != null;
+	}
+
+	public void setParent(boolean isParent) {
+		this.isParent = isParent;
+	}
+
+	public boolean isHidden() {
+		return isHidden;
+	}
+
+	public void setHidden(boolean isHidden) {
+		this.isHidden = isHidden;
+	}
+
+	public boolean isOpen() {
+		return open;
+	}
+
+	public void setOpen(boolean open) {
+		this.open = open;
 	}
 
 	public boolean isChecked() {
@@ -146,14 +173,6 @@ public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 
 	public void setNocheck(boolean nocheck) {
 		this.nocheck = nocheck;
-	}
-
-	public boolean isOpen() {
-		return open;
-	}
-
-	public void setOpen(boolean open) {
-		this.open = open;
 	}
 
 	public String getIcon() {
@@ -210,6 +229,10 @@ public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 
 	public void setChildren(Set<ZtreeNode> children) {
 		this.children = children;
+	}
+
+	public long getId() {
+		return id;
 	}
 
 	@Override
