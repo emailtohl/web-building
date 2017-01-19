@@ -31,7 +31,8 @@
 在server.xml的<host>标签下，添加如下如下配置
 
 ```xml
-<Context path="/building/icon_dir" docBase="D:\program\apache-tomcat-8.0.32\wtpwebapps\web-building-upload\icon_dir" reloadable="true" debug="0"/>
+<Context path="/building/icon_dir" docBase="F:\Server\apache-tomcat-9.0.0.M15\wtpwebapps\web-building-upload\icon_dir" reloadable="true" debug="0"/>
+<Context debug="0" docBase="F:\Server\apache-tomcat-9.0.0.M15\wtpwebapps\web-building-upload\resource_root" path="/building/resource_root" reloadable="true"/>
 ```
 
 ## 四、 HTTPS原理以及tomcat配置HTTPS方法

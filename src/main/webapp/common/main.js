@@ -207,6 +207,12 @@ require.config({
 			exports : 'ztree'
 		},
 	},
+	// codemirror
+	packages : [ {
+		name : "codemirror",
+		location : "../lib/codemirror",// codemirror base 的目录
+		main : "lib/codemirror"// 这是相对于codemirror base目录主程序所在的位置
+	} ],
 });
 
 require([ 'jquery', 'jqueryui', 'bootstrap', 'adminLTE' ], function($) {
