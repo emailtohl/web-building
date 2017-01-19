@@ -83,7 +83,17 @@ define([ 'common/module', 'ztree' ], function(commonModule) {
 					filePath = filePath.slice(1);
 				}
 				return filePath;
-			}
+			},
+			/**
+			 * 将中文目录转码
+			 */
+			encodePath : function(path) {
+				var temp = path.split('/');
+				for (var i = 0; i < temp.length; i++) {
+					temp[i] = encodeURIComponent(temp[i]);
+				}
+				return temp.join('/');
+			},
 		};
 	}]);
 });

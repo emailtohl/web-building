@@ -34,13 +34,13 @@ import com.github.emailtohl.building.site.dto.UserDto;
 @RequestMapping("fileUploadServer")
 public class FileUploadServer {
 	private static final Logger logger = LogManager.getLogger();
-	public static final String FILE_DIR = "root";
+	public static final String RESOURCE_ROOT = "resource_root";
 	private File root;
 	@Inject UpDownloader upDownloader;
 	
 	@PostConstruct
 	public void createIconDir() {
-		root = new File(upDownloader.getAbsolutePath(FILE_DIR));
+		root = new File(upDownloader.getAbsolutePath(RESOURCE_ROOT));
 		if (!root.exists()) {
 			root.mkdir();
 		}
@@ -101,8 +101,7 @@ public class FileUploadServer {
 	public String uploadFile(@RequestPart("path") String path, @RequestPart("file") Part file) throws IOException {
 		String dir = URLDecoder.decode(path, "UTF-8");
 		String fullname, filename = file.getSubmittedFileName();
-		char c = dir.charAt(path.length() - 1);
-		if (c == '/') {
+		if (dir.endsWith("/")) {
 			fullname = dir + filename;
 		} else {
 			fullname = dir + '/' + filename;

@@ -2,7 +2,7 @@
 <section class="content-header">
   <h1>
             资源管理
-    <small>上传文件</small>
+    <small>管理文件资源</small>
   </h1>
   <ol class="breadcrumb">
     <li ui-sref="dashboard"><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -19,15 +19,15 @@
 		<div class="col-xs-6">
 			<form name="f" upload upload-to="fileUploadServer/resource" when-done="ctrl.callbackfun(msg)">
 			  <div class="form-group">
-	            <label>上传路径</label>
-	            <input type="text" class="form-control" name="path" ng-model="ctrl.path" readonly="readonly" required="required">
+	            <label>上传路径（编码后）</label>
+	            <input type="text" placeholder="点击左侧目录树选择路径" class="form-control" name="path" ng-model="ctrl.path" readonly="readonly" required="required">
 	          </div>
 			  <div class="form-group">
 	            <label>选择文件</label>
 	            <input type="file" class="form-control" placeholder="上传文件" name="file" required="required">
 	          </div>
 	          <div class="form-group">
-	              <button type="submit" class="btn btn-primary pull-right" ng-disabled="f.$invalid">上传</button>
+	              <button type="submit" class="btn btn-primary pull-right" ng-disabled="f.$invalid || ctrl.invalidFile()">上传</button>
 	          </div>
 			</form>
 		</div>

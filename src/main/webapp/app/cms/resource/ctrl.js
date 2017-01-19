@@ -36,6 +36,9 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 			console.log(msg);
 			getFileRoot();
 		};
+		self.invalidFile = function() {
+			return $('input[name="file"]').val() ? false : true;
+		}
 		
 		function getFileRoot() {
 			service.getFileRoot().success(function(data) {
@@ -116,7 +119,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 			}
 			$scope.$apply(function() {
 				self.path = ztreeutil.getFilePath(treeNode);
-				self.encodePath = encodeURIComponent(self.path);
+				self.path = ztreeutil.encodePath(self.path);
 			});
 		}
 	}])
