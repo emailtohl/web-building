@@ -115,8 +115,8 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 				return;
 			}
 			$scope.$apply(function() {
-				self.uploadPath = ztreeutil.getFilePath(treeNode);
-				self.encode = encodeURIComponent(self.uploadPath);
+				self.path = ztreeutil.getFilePath(treeNode);
+				self.encodePath = encodeURIComponent(self.path);
 			});
 		}
 	}])
