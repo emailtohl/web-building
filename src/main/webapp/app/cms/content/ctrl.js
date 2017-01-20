@@ -65,16 +65,22 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 		 * 加载文本内容
 		 */
 		function loadText(path) {
+			util.loadasync('lib/codemirror/lib/codemirror.css');
+			/**
+			 * It will automatically load the modes that the mixed HTML mode depends on (XML, JavaScript, and CSS)
+			 */
 			require([ 'lib/codemirror/lib/codemirror', 'lib/codemirror/mode/htmlmixed/htmlmixed'
 				, 'lib/codemirror/mode/javascript/javascript', 'lib/codemirror/mode/xml/xml'
 				, 'lib/codemirror/mode/diff/diff', 'lib/codemirror/mode/css/css'],
 				function(CodeMirror) {
-					CodeMirror.fromTextArea(document.getElementById("cms-content-text"), {
-						lineNumbers : true,
-						mode : "htmlmixed"
-					});
 					service.loadText(path, self.charset).success(function(data) {
 						self.content = data;
+						var textarea = document.getElementById('cms-content-text');
+						textarea.value = data;
+						var cm = CodeMirror.fromTextArea(textarea, {
+							lineNumbers: true,
+						    mode: "htmlmixed"
+						});
 					});
 			});
 		}

@@ -104,7 +104,13 @@ public class FileUploadServer {
 		upDownloader.deleteDir(absolutePath);
 	}
 	
-
+	/**
+	 * 前端用到FormData对象提交multipart formdata数据，所以需要对中文编码
+	 * @param path
+	 * @param file
+	 * @return
+	 * @throws IOException
+	 */
 	@RequestMapping(value = "resource", method = POST, produces = "text/plain; charset=utf-8")
 	@ResponseBody
 	public String uploadFile(@RequestPart("path") String path, @RequestPart("file") Part file) throws IOException {

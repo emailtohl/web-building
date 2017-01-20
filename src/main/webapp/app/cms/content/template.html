@@ -13,19 +13,22 @@
 <!-- Main content -->
 <section class="content">
 	<div class="row">
-		<div class="col-xs-6">
-			<ul id="content-tree" class="ztree"></ul>
+		<div class="col-xs-4">
+			<div class="row">
+			    <select class="form-control select2" style="width: 100%;" select2 ng-model="ctrl.charset" on-change="">
+				  <option ng-repeat="x in ctrl.availableCharsets" value="{{x}}">{{x}}</option>
+			    </select>
+			</div>
+			<div class="row">
+				<ul id="content-tree" class="ztree"></ul>
+			</div>
 		</div>
-		<div class="col-xs-6">
-		    <select class="form-control select2" style="width: 100%;" select2 ng-model="ctrl.charset" on-change="">
-		      <option value="">请选择</option>
-			  <option ng-repeat="x in ctrl.availableCharsets" value="{{x}}">{{x}}</option>
-		    </select>
-			<div ng-switch="ctrl.contentType">
-				<div ng-switch-when="text">
-					<textarea id="cms-content-text" name="code"></textarea>
+		<div class="col-xs-8">
+			<div ng-switch="ctrl.contentType" class="box">
+				<div ng-switch-when="text" class="">
+					<textarea id="cms-content-text" class="form-control" rows="15"></textarea>
 				</div>
-				<div ng-switch-when="image">
+				<div ng-switch-when="image" class="">
 					<img ng-src="ctrl.content"></img>
 				</div>
 				<div ng-switch-when="video" class="ng-video-container">
@@ -37,12 +40,11 @@
 						</section>
 					</section>
 				</div>
-				<div ng-switch-when="audio">
+				<div ng-switch-when="audio" class="">
 					<a ng-audio="ctrl.content" ng-audio-hover="audio/button-4.mp3" volume-hover="0.2" class="navbar-bran"></a>
 				</div>
-				<div ng-switch-when="pdf">
+				<div ng-switch-when="pdf" class="">
 				</div>
-				
 			</div>
 		</div>
 	</div>

@@ -207,7 +207,7 @@ require.config({
 			exports : 'ztree'
 		},
 	},
-	// codemirror
+	// Do not use RequireJS' paths option to configure the path to CodeMirror, since it will break loading submodules through relative paths. Use the packages configuration option instead
 	packages : [ {
 		name : "codemirror",
 		location : "../lib/codemirror",// codemirror base 的目录
