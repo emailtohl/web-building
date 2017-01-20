@@ -31,6 +31,9 @@ import com.github.emailtohl.building.exception.VerifyFailure;
 import com.github.emailtohl.building.site.dto.UserDto;
 /**
  * 文件上传控制器
+ * 
+ * 本类涉及很多文件路径，为避免参数中的路径和实际路径冲突，所以请求统一为POST
+ * 
  * @author HeLei
  */
 @SuppressWarnings("deprecation")
@@ -120,6 +123,14 @@ public class FileUploadServer {
 	public String loadText(@RequestParam(value = "path", required = true) String path
 			, @RequestParam(value = "charset", required = false, defaultValue = "UTF-8") String charset) {
 		return textUtil.getText(upDownloader.getAbsolutePath(path), charset);
+	}
+	
+	@RequestMapping(value = "writeText", method = POST, produces = "text/plain; charset=utf-8")
+	@ResponseBody
+	public void writeText(@RequestParam(value = "path", required = true) String path
+			, @RequestParam(value = "textContext", required = true) String textContext
+			, @RequestParam(value = "charset", required = false, defaultValue = "UTF-8") String charset) {
+		textUtil.writeText(upDownloader.getAbsolutePath(path), textContext, charset);
 	}
 	
 	/**

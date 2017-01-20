@@ -44,6 +44,29 @@ define([ 'cms/module', 'common/context' ], function(cmsModule) {
 				});
 			},
 			
+			/**
+			 * 下载文件
+			 */
+			loadText : function(path, charset) {
+				return $http({
+					method : 'POST',
+					url  : 'fileUploadServer/loadText',
+					data : 'path=' + path + '&charset=' + charset,
+					headers : { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' }
+				});
+			},
+			
+			/**
+			 * 编辑文件
+			 */
+			writeText : function(path, textContext, charset) {
+				return $http({
+					method : 'POST',
+					url  : 'fileUploadServer/writeText',
+					data : 'path=' + path + '&textContext=' + textContext + '&charset=' + charset,
+					headers : { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' }
+				});
+			},
 		};
 	}]);
 });

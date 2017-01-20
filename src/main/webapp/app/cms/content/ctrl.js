@@ -3,6 +3,8 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 	.controller('ContentCtrl', ['$scope', '$http', '$state', 'cmsService', 'util', 'ztreeutil',
 	                                function($scope, $http, $state, service, util, ztreeutil) {
 		var self = this, rootName, style, zTreeObj;
+		self.charset = 'UTF-8';
+		self.contentType = 'text';
 		var setting = {
 			callback : {
 				onClick : zTreeOnClick,
@@ -31,13 +33,32 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 			suffixIndex = path.lastIndexOf('.');
 			if (suffixIndex > -1) {
 				suffix = path.substring(suffixIndex + 1, path.length);
-			}
-			switch (suffix) {
-			case 'html':
-				
+				switch (suffix) {
+				case 'jpg':
+					self.contentType = 'jpg';
+					break;
+				case 'png':
+					self.contentType = 'png';
+					break;
+				case 'mp4':
+					self.contentType = 'mp4';
+					break;
+				case 'mp3':
+					self.contentType = 'mp3';
+					break;
+				default:
+					self.contentType = 'jpg';
+					loadText(path);
+					break;
+				}
 			}
 		}
 		
+		function loadText(path) {
+			service.loadText(path, self.charset).success(function(data) {
+				
+			});
+		}
 	}])
 	;
 });
