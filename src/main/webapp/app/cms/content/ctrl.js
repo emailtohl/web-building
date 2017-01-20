@@ -39,7 +39,9 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 				switch (suffix) {
 				case 'jpg':
 					self.contentType = 'image';
-					self.content = path;
+					$scope.$apply(function() {
+						self.content = path;
+					});
 					break;
 				case 'png':
 					self.contentType = 'image';
@@ -74,13 +76,18 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 				, 'lib/codemirror/mode/diff/diff', 'lib/codemirror/mode/css/css'],
 				function(CodeMirror) {
 					service.loadText(path, self.charset).success(function(data) {
-						self.content = data;
 						var textarea = document.getElementById('cms-content-text');
+						textarea.innerHTML = '';
+						$('div.CodeMirror').remove();
+						self.content = data;
 						textarea.value = data;
 						var cm = CodeMirror.fromTextArea(textarea, {
 							lineNumbers: true,
-						    mode: "htmlmixed"
+						    mode: "htmlmixed",
 						});
+						cm.on('change', function(_codeMirror, changeObj) {
+							self.content = _codeMirror.doc.getValue();
+						});  
 					});
 			});
 		}

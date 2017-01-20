@@ -26,10 +26,10 @@
 		<div class="col-xs-8">
 			<div ng-switch="ctrl.contentType" class="box">
 				<div ng-switch-when="text" class="">
-					<textarea id="cms-content-text" class="form-control" rows="15"></textarea>
+					<textarea id="cms-content-text" class="form-control" rows="15" ng-model="ctrl.content"></textarea>
 				</div>
 				<div ng-switch-when="image" class="">
-					<img ng-src="ctrl.content"></img>
+					<img ng-src="{{ctrl.content}}"></img>
 				</div>
 				<div ng-switch-when="video" class="ng-video-container">
 					<section ng-video>
