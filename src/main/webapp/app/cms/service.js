@@ -1,4 +1,4 @@
-define([ 'cms/module', 'common/context' ], function(cmsModule) {
+define(['cms/module', 'common/context' ], function(cmsModule) {
 	return cmsModule.factory('cmsService', [ '$http', 'util', function($http, util) {
 		return {
 			/**
@@ -42,6 +42,13 @@ define([ 'cms/module', 'common/context' ], function(cmsModule) {
 					data : 'filename=' + encodeURIComponent(filename),
 					headers : { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' }
 				});
+			},
+			
+			/**
+			 * 获取可使用的字符
+			 */
+			getAvailableCharsets : function() {
+				return $http.get('fileUploadServer/availableCharsets');
 			},
 			
 			/**

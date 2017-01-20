@@ -1,10 +1,11 @@
 package com.github.emailtohl.building.site.controller;
 
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -43,7 +44,7 @@ public class FileUploadServer {
 	private static final Logger logger = LogManager.getLogger();
 	public static final String RESOURCE_ROOT = "resource_root";
 	private File root;
-	private TextUtil textUtil;
+	private TextUtil textUtil = new TextUtil();
 	@Inject UpDownloader upDownloader;
 	
 	@PostConstruct
@@ -116,6 +117,12 @@ public class FileUploadServer {
 		}
 		upDownloader.upload(fullname, file);
 		return filename + ": 上传成功!";
+	}
+	
+	@RequestMapping(value = "availableCharsets", method = GET)
+	@ResponseBody
+	public Set<String> availableCharsets() {
+		return textUtil.availableCharsets();
 	}
 	
 	@RequestMapping(value = "loadText", method = POST, produces = "text/plain; charset=utf-8")

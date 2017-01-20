@@ -17,7 +17,33 @@
 			<ul id="content-tree" class="ztree"></ul>
 		</div>
 		<div class="col-xs-6">
-			<textarea id="code" name="code"></textarea>
+		    <select class="form-control select2" style="width: 100%;" select2 ng-model="ctrl.charset" on-change="">
+		      <option value="">请选择</option>
+			  <option ng-repeat="x in ctrl.availableCharsets" value="{{x}}">{{x}}</option>
+		    </select>
+			<div ng-switch="ctrl.contentType">
+				<div ng-switch-when="text">
+					<textarea id="cms-content-text" name="code"></textarea>
+				</div>
+				<div ng-switch-when="image">
+					<img ng-src="ctrl.content"></img>
+				</div>
+				<div ng-switch-when="video" class="ng-video-container">
+					<section ng-video>
+						<video vi-screen></video>
+						<section vi-controls class="controls">
+			                <span vi-controls-play title="Play" class="glyphicon glyphicon-play"></span>
+			                <span vi-controls-pause title="Pause" class="glyphicon glyphicon-pause"></span>
+						</section>
+					</section>
+				</div>
+				<div ng-switch-when="audio">
+					<a ng-audio="ctrl.content" ng-audio-hover="audio/button-4.mp3" volume-hover="0.2" class="navbar-bran"></a>
+				</div>
+				<div ng-switch-when="pdf">
+				</div>
+				
+			</div>
 		</div>
 	</div>
 </section>

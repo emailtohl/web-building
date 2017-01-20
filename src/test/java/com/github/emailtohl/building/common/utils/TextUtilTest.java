@@ -11,8 +11,12 @@ public class TextUtilTest {
 	TextUtil util = new TextUtil();
 
 	@Test
-	public void testWriteText() {
+	public void testAvailableCharsets() {
 		System.out.println(util.charsets);
+	}
+	
+	@Test
+	public void testWriteText() {
 		File f = new File("text.txt");
 		try {
 			util.writeText("text.txt", "text", "GB2312");

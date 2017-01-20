@@ -67,10 +67,24 @@ define([ 'common/module', 'common/service/util' ], function(commonModule) {
 		};
 	} ])
 	.factory('ErrorInterceptor', [ '$rootScope', '$q', function($rootScope, $q) {
+		function isLoginPage(response) {
+			if (!(typeof response.data == 'string'))
+				return false;
+			// 如果是下载的页面
+			if (response.config.url == 'fileUploadServer/loadText')
+				return false;
+			// 当spring security拦截后，会将默认页面返回，这个页面带有<!DOCTYPE html>，所以根据这个标记进行识别
+			if (response.data.indexOf('<!DOCTYPE html>') > -1)
+				return true;
+			else
+				return false;
+		}
+		function isExpired(response) {
+			return (typeof response.data == 'string') && response.data.match(/session.+expired/i);
+		}
 		return {
 			response : function(response) {
-				// 当spring security拦截后，会将默认页面返回，这个页面带有<!DOCTYPE html>，所以根据这个标记进行识别
-				if (typeof response.data == 'string' && (response.data.indexOf('<!DOCTYPE html>') > -1 || response.data.match(/session.+expired/i))) {
+				if (isLoginPage(response) || isExpired(response)) {
 					location.replace('login');
 				}
 				return response || $q.when(response);

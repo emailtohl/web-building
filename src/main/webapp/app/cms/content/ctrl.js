@@ -13,6 +13,9 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 		util.loadasync('lib/ztree/zTreeStyle.css');
 		$scope.getAuthentication();
 		getFileRoot();
+		service.getAvailableCharsets().success(function(data) {
+			self.availableCharsets = data;
+		});
 		
 		function getFileRoot() {
 			service.getFileRoot().success(function(data) {
@@ -35,30 +38,47 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 				suffix = path.substring(suffixIndex + 1, path.length);
 				switch (suffix) {
 				case 'jpg':
-					self.contentType = 'jpg';
+					self.contentType = 'image';
+					self.content = path;
 					break;
 				case 'png':
-					self.contentType = 'png';
+					self.contentType = 'image';
 					break;
 				case 'mp4':
-					self.contentType = 'mp4';
+					self.contentType = 'video';
 					break;
 				case 'mp3':
-					self.contentType = 'mp3';
+					self.contentType = 'audio';
+					break;
+				case 'pdf':
+					self.contentType = 'pdf';
 					break;
 				default:
-					self.contentType = 'jpg';
+					self.contentType = 'text';
 					loadText(path);
 					break;
 				}
 			}
 		}
 		
+		/**
+		 * 加载文本内容
+		 */
 		function loadText(path) {
-			service.loadText(path, self.charset).success(function(data) {
-				
+			require([ 'lib/codemirror/lib/codemirror', 'lib/codemirror/mode/htmlmixed/htmlmixed'
+				, 'lib/codemirror/mode/javascript/javascript', 'lib/codemirror/mode/xml/xml'
+				, 'lib/codemirror/mode/diff/diff', 'lib/codemirror/mode/css/css'],
+				function(CodeMirror) {
+					CodeMirror.fromTextArea(document.getElementById("cms-content-text"), {
+						lineNumbers : true,
+						mode : "htmlmixed"
+					});
+					service.loadText(path, self.charset).success(function(data) {
+						self.content = data;
+					});
 			});
 		}
+		
 	}])
 	;
 });

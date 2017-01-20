@@ -23,8 +23,16 @@ import org.apache.logging.log4j.Logger;
  */
 public class TextUtil {
 	private static final Logger logger = LogManager.getLogger();
-	Set<String> charsets = Charset.availableCharsets().keySet();
+	final Set<String> charsets = Charset.availableCharsets().keySet();
 
+	/**
+	 * 返回可用的字符集
+	 * @return
+	 */
+	public Set<String> availableCharsets() {
+		return charsets;
+	}
+	
 	/**
 	 * 以指定编码格式将文本写入文件中
 	 * @param absolutePath 要写入的文件的绝对路径
