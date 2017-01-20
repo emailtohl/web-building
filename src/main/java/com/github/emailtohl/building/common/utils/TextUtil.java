@@ -3,6 +3,7 @@ package com.github.emailtohl.building.common.utils;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -34,10 +35,13 @@ public class TextUtil {
 		Charset cset = getCharset(charset);
 		ByteBuffer buffer = cset.encode(textContext);
 		byte[] bytes = buffer.array();
-		try (OutputStream out = new BufferedOutputStream(new FileOutputStream(absolutePath))) {
+		File f = new File(absolutePath);
+		try (OutputStream out = new BufferedOutputStream(new FileOutputStream(f))) {
 			out.write(bytes);
 		} catch (IOException e) {
 			logger.error("写入：" + absolutePath + "发生错误", e);
+			if (f.exists())
+				f.delete();
 			throw new RuntimeException("写入：" + absolutePath + "发生错误");
 		}
 	}
