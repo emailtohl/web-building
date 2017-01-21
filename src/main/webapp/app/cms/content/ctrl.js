@@ -2,7 +2,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 	return cmsModule
 	.controller('ContentCtrl', ['$scope', '$http', '$state', 'cmsService', 'util', 'ztreeutil',
 	                                function($scope, $http, $state, service, util, ztreeutil) {
-		var self = this, rootName, style, zTreeObj;
+		var self = this, rootName, style, zTreeObj, cm;
 		self.charset = 'UTF-8';
 		self.contentType = 'text';
 		var setting = {
@@ -38,22 +38,46 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 				suffix = path.substring(suffixIndex + 1, path.length);
 				switch (suffix) {
 				case 'jpg':
-					self.contentType = 'image';
 					$scope.$apply(function() {
+						self.contentType = 'image';
 						self.content = path;
 					});
 					break;
 				case 'png':
-					self.contentType = 'image';
+					$scope.$apply(function() {
+						self.contentType = 'image';
+						self.content = path;
+					});
 					break;
 				case 'mp4':
-					self.contentType = 'video';
+					$scope.$apply(function() {
+						self.contentType = 'video';
+						self.content = path;
+					});
+					break;
+				case 'ogv':
+					$scope.$apply(function() {
+						self.contentType = 'video';
+						self.content = path;
+					});
+					break;
+				case 'webm':
+					$scope.$apply(function() {
+						self.contentType = 'video';
+						self.content = path;
+					});
 					break;
 				case 'mp3':
-					self.contentType = 'audio';
+					$scope.$apply(function() {
+						self.contentType = 'audio';
+						self.content = path;
+					});
 					break;
 				case 'pdf':
-					self.contentType = 'pdf';
+					$scope.$apply(function() {
+						self.contentType = 'pdf';
+						self.content = path;
+					});
 					break;
 				default:
 					self.contentType = 'text';
@@ -81,7 +105,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 						$('div.CodeMirror').remove();
 						self.content = data;
 						textarea.value = data;
-						var cm = CodeMirror.fromTextArea(textarea, {
+						cm = CodeMirror.fromTextArea(textarea, {
 							lineNumbers: true,
 						    mode: "htmlmixed",
 						});

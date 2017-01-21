@@ -24,7 +24,7 @@
 			</div>
 		</div>
 		<div class="col-xs-8">
-			<div ng-switch="ctrl.contentType" class="box">
+			<div ng-switch="ctrl.contentType" class="">
 				<div ng-switch-when="text" class="">
 					<textarea id="cms-content-text" class="form-control" rows="15" ng-model="ctrl.content"></textarea>
 				</div>
@@ -32,16 +32,12 @@
 					<img ng-src="{{ctrl.content}}"></img>
 				</div>
 				<div ng-switch-when="video" class="ng-video-container">
-					<section ng-video>
-						<video vi-screen></video>
-						<section vi-controls class="controls">
-			                <span vi-controls-play title="Play" class="glyphicon glyphicon-play"></span>
-			                <span vi-controls-pause title="Pause" class="glyphicon glyphicon-pause"></span>
-						</section>
-					</section>
+					<video ng-src="{{ctrl.content}}" width="512" height="288" controls="controls" poster="">
+						<p>你的浏览器不支持{{ctrl.content}}</p>
+					</video>
 				</div>
 				<div ng-switch-when="audio" class="">
-					<a ng-audio="ctrl.content" ng-audio-hover="audio/button-4.mp3" volume-hover="0.2" class="navbar-bran"></a>
+					<audio controls="controls" popover-title="{{ctrl.content}}" ng-src="{{ctrl.content}}" poster=""></audio>
 				</div>
 				<div ng-switch-when="pdf" class="">
 				</div>

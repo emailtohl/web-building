@@ -21,6 +21,21 @@ define([ 'common/module', 'ztree' ], function(commonModule) {
 				return -1;
 			}
 		}
+		
+		function setNodesOpen(nodes, names) {
+			var i, node, name = names.shift();
+			if (!name)
+				return;
+			for (i = 0; i < nodes.length; i++) {
+				node = nodes[i];
+				if (node.isParent && node.name == name) {
+					node.open = true;
+					// 既然isParent是true，则children属性一定存在
+					arguments.callee(node.children, names);
+					break;
+				}
+			}
+		}
 		return {
 			  /**
 			   * 将后台获取的数据（类似于'abc/bcd/eee.exe'，'abc/edf/bbb.exe'）转换成zTree识别的数据结构
@@ -83,6 +98,14 @@ define([ 'common/module', 'ztree' ], function(commonModule) {
 					filePath = filePath.slice(1);
 				}
 				return filePath;
+			},
+			
+			/**
+			 * 根据目录设置打开状态
+			 */
+			setOpen : function(treeNode, path) {
+				var names = path.split('/');
+				setNodesOpen([treeNode], names);
 			},
 			/**
 			 * 将中文目录转码

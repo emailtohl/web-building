@@ -40,11 +40,14 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 			return $('input[name="file"]').val() ? false : true;
 		}
 		
-		function getFileRoot() {
+		function getFileRoot(openPath) {
 			service.getFileRoot().success(function(data) {
 				var zNodes = data;
 				rootName = zNodes.name;
 				zNodes.open = true;
+				if (openPath) {
+					ztreeutil.setOpen(zNodes, openPath);
+				}
 				zTreeObj = $.fn.zTree.init($("#resource-tree"), setting, zNodes);
 			});
 		}
@@ -58,7 +61,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 			if (confirm('确认删除吗？')) {
 				filename = ztreeutil.getFilePath(treeNode);
 				service['delete'](filename).success(function(data) {
-					getFileRoot();
+					getFileRoot(filename);
 				});
 			}
 			return false;// 在前端不体现删除的效果，而是由后台刷新实现
@@ -75,7 +78,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 					destName = newName;
 				}
 				service.reName(srcName, destName).success(function(data) {
-					getFileRoot();
+					getFileRoot(destName);
 				});
 			}
 			return false;
@@ -107,7 +110,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 					var dirName = ztreeutil.getFilePath(treeNode);
 					dirName += '/new node' + (newCount++);
 					service.createDir(dirName).success(function(data) {
-						getFileRoot();
+						getFileRoot(dirName);
 					});
 					return false;
 				});
