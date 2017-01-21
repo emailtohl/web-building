@@ -67,12 +67,17 @@ define(['cms/module', 'common/context' ], function(cmsModule) {
 			 * 编辑文件
 			 */
 			writeText : function(path, textContext, charset) {
-				return $http({
+				return $http.post('fileUploadServer/writeText', {
+					path : path,
+					textContext : textContext,
+					charset : charset
+				});
+				/*return $http({
 					method : 'POST',
 					url  : 'fileUploadServer/writeText',
 					data : 'path=' + path + '&textContext=' + textContext + '&charset=' + charset,
 					headers : { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' }
-				});
+				});*/
 			},
 		};
 	}]);

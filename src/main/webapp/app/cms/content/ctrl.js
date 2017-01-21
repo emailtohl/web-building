@@ -5,6 +5,9 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 		var self = this, rootName, style, zTreeObj, cm;
 		self.charset = 'UTF-8';
 		self.contentType = 'text';
+		self.content = '';
+		self.path = '';
+		self.dirty = false;
 		var setting = {
 			callback : {
 				onClick : zTreeOnClick,
@@ -16,12 +19,22 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 		service.getAvailableCharsets().success(function(data) {
 			self.availableCharsets = data;
 		});
+		self.updateText = function() {
+			if (!self.dirty)
+				return;
+			service.writeText(self.path, self.content, self.charset).success(function(data) {
+				getFileRoot(self.path);
+			});
+		}
 		
-		function getFileRoot() {
+		function getFileRoot(openPath) {
 			service.getFileRoot().success(function(data) {
 				var zNodes = data;
 				rootName = zNodes.name;
 				zNodes.open = true;
+				if (openPath) {
+					ztreeutil.setOpen(zNodes, openPath);
+				}
 				zTreeObj = $.fn.zTree.init($("#content-tree"), setting, zNodes);
 			});
 		}
@@ -32,6 +45,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 				return;
 			}
 			path = ztreeutil.getFilePath(treeNode);
+			self.path = path;
 			// 根据文件后缀做判断
 			suffixIndex = path.lastIndexOf('.');
 			if (suffixIndex > -1) {
@@ -40,43 +54,37 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 				case 'jpg':
 					$scope.$apply(function() {
 						self.contentType = 'image';
-						self.content = path;
+						
 					});
 					break;
 				case 'png':
 					$scope.$apply(function() {
 						self.contentType = 'image';
-						self.content = path;
 					});
 					break;
 				case 'mp4':
 					$scope.$apply(function() {
 						self.contentType = 'video';
-						self.content = path;
 					});
 					break;
 				case 'ogv':
 					$scope.$apply(function() {
 						self.contentType = 'video';
-						self.content = path;
 					});
 					break;
 				case 'webm':
 					$scope.$apply(function() {
 						self.contentType = 'video';
-						self.content = path;
 					});
 					break;
 				case 'mp3':
 					$scope.$apply(function() {
 						self.contentType = 'audio';
-						self.content = path;
 					});
 					break;
 				case 'pdf':
 					$scope.$apply(function() {
 						self.contentType = 'pdf';
-						self.content = path;
 					});
 					break;
 				default:
@@ -109,8 +117,10 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 							lineNumbers: true,
 						    mode: "htmlmixed",
 						});
+						cm.setSize('auto','450px');
 						cm.on('change', function(_codeMirror, changeObj) {
 							self.content = _codeMirror.doc.getValue();
+							self.dirty = true;
 						});  
 					});
 			});

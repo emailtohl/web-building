@@ -25,19 +25,25 @@
 		</div>
 		<div class="col-xs-8">
 			<div ng-switch="ctrl.contentType" class="">
-				<div ng-switch-when="text" class="">
-					<textarea id="cms-content-text" class="form-control" rows="15" ng-model="ctrl.content"></textarea>
+				<div ng-switch-when="text" class="box">
+					<div class="box-body">
+						<textarea id="cms-content-text" class="form-control" rows="15" ng-model="ctrl.content"></textarea>
+					</div>
+					<div class="box-footer">
+						<a href="{{ctrl.path}}" target="_blank" class="btn btn-primary pull-left">打开</a>
+						<a href="javascript:void(0)" class="btn btn-warning pull-right" ng-click="ctrl.updateText()">修改</a>
+					</div>
 				</div>
 				<div ng-switch-when="image" class="">
-					<img ng-src="{{ctrl.content}}"></img>
+					<img ng-src="{{ctrl.path}}"></img>
 				</div>
 				<div ng-switch-when="video" class="ng-video-container">
-					<video ng-src="{{ctrl.content}}" width="512" height="288" controls="controls" poster="">
+					<video ng-src="{{ctrl.path}}" width="512" height="288" controls="controls" poster="">
 						<p>你的浏览器不支持{{ctrl.content}}</p>
 					</video>
 				</div>
 				<div ng-switch-when="audio" class="">
-					<audio controls="controls" popover-title="{{ctrl.content}}" ng-src="{{ctrl.content}}" poster=""></audio>
+					<audio ng-src="{{ctrl.path}}" controls="controls" popover-title="{{ctrl.path}}" poster=""></audio>
 				</div>
 				<div ng-switch-when="pdf" class="">
 				</div>

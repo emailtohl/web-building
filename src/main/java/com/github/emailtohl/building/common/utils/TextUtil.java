@@ -35,6 +35,7 @@ public class TextUtil {
 	
 	/**
 	 * 以指定编码格式将文本写入文件中
+	 * 注意，本方法不确保线程安全，调用者自行控制
 	 * @param absolutePath 要写入的文件的绝对路径
 	 * @param textContext 文本的内容
 	 * @param charset 编码格式

@@ -4,6 +4,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URLDecoder;
 import java.util.Set;
 
@@ -18,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -45,6 +47,9 @@ public class FileUploadServer {
 	public static final String RESOURCE_ROOT = "resource_root";
 	private File root;
 	private TextUtil textUtil = new TextUtil();
+	
+	private Object textUpdateMutex = new Object();
+	private Object fileMutex = new Object();
 	@Inject UpDownloader upDownloader;
 	
 	@PostConstruct
@@ -89,7 +94,9 @@ public class FileUploadServer {
 		File src = new File(upDownloader.getAbsolutePath(srcName));
 		File dest = new File(upDownloader.getAbsolutePath(destName));
 		if (src.exists()) {
-			src.renameTo(dest);
+			synchronized (fileMutex) {
+				src.renameTo(dest);
+			}
 		}
 	}
 	
@@ -101,7 +108,9 @@ public class FileUploadServer {
 	@ResponseBody
 	public void delete(String filename) {
 		String absolutePath = upDownloader.getAbsolutePath(filename);
-		upDownloader.deleteDir(absolutePath);
+		synchronized (fileMutex) {
+			upDownloader.deleteDir(absolutePath);
+		}
 	}
 	
 	/**
@@ -140,10 +149,39 @@ public class FileUploadServer {
 	
 	@RequestMapping(value = "writeText", method = POST, produces = "text/plain; charset=utf-8")
 	@ResponseBody
-	public void writeText(@RequestParam(value = "path", required = true) String path
-			, @RequestParam(value = "textContext", required = true) String textContext
-			, @RequestParam(value = "charset", required = false, defaultValue = "UTF-8") String charset) {
-		textUtil.writeText(upDownloader.getAbsolutePath(path), textContext, charset);
+	public void writeText(@RequestBody Form f) {
+		synchronized (textUpdateMutex) {
+			textUtil.writeText(upDownloader.getAbsolutePath(f.getPath()), f.getTextContext(), f.getCharset());
+		}
+	}
+	
+	public static class Form implements Serializable {
+		private static final long serialVersionUID = 968705461440871636L;
+		String path;
+		String textContext;
+		String charset;
+		public String getPath() {
+			return path;
+		}
+		public void setPath(String path) {
+			this.path = path;
+		}
+		public String getTextContext() {
+			return textContext;
+		}
+		public void setTextContext(String textContext) {
+			this.textContext = textContext;
+		}
+		public String getCharset() {
+			return charset;
+		}
+		public void setCharset(String charset) {
+			this.charset = charset;
+		}
+		@Override
+		public String toString() {
+			return "Form [path=" + path + ", textContext=" + textContext + ", charset=" + charset + "]";
+		}
 	}
 	
 	/**
