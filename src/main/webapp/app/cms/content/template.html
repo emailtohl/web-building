@@ -1,8 +1,8 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
   <h1>
-            内容编辑
-    <small>编辑文本文件</small>
+            内容查看
+    <small>查看文本文件</small>
   </h1>
   <ol class="breadcrumb">
     <li ui-sref="dashboard"><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -30,8 +30,8 @@
 						<textarea id="cms-content-text" class="form-control" rows="15" ng-model="ctrl.content"></textarea>
 					</div>
 					<div class="box-footer">
-						<a href="{{ctrl.path}}" target="_blank" class="btn btn-primary pull-left">打开</a>
-						<a href="javascript:void(0)" class="btn btn-warning pull-right" ng-click="ctrl.updateText()">修改</a>
+						<a href="{{ctrl.path}}" target="_blank" class="btn btn-default pull-left">打开</a>
+						<button class="btn btn-primary pull-right" ng-click="ctrl.updateText()" ng-disabled="!ctrl.dirty">修改</button>
 					</div>
 				</div>
 				<div ng-switch-when="image" class="">

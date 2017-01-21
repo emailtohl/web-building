@@ -4,7 +4,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 	                                function($scope, $http, $state, service, util, ztreeutil) {
 		var self = this, rootName, style, zTreeObj, cm;
 		self.charset = 'UTF-8';
-		self.contentType = 'text';
+		self.contentType = '';
 		self.content = '';
 		self.path = '';
 		self.dirty = false;
@@ -54,7 +54,6 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 				case 'jpg':
 					$scope.$apply(function() {
 						self.contentType = 'image';
-						
 					});
 					break;
 				case 'png':
@@ -120,7 +119,11 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 						cm.setSize('auto','450px');
 						cm.on('change', function(_codeMirror, changeObj) {
 							self.content = _codeMirror.doc.getValue();
-							self.dirty = true;
+							if (!self.dirty) {
+								$scope.$apply(function() {
+									self.dirty = true;
+								});
+							}
 						});  
 					});
 			});
