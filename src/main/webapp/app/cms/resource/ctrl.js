@@ -32,9 +32,9 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 		util.loadasync('lib/ztree/diy.css');
 		$scope.getAuthentication();
 		getFileRoot();
-		self.callbackfun = function(msg) {
+		self.postUpload = function(msg) {
 			console.log(msg);
-			getFileRoot();
+			getFileRoot(self.path);
 		};
 		self.invalidFile = function() {
 			return $('input[name="file"]').val() ? false : true;

@@ -17,7 +17,7 @@
 			<ul id="resource-tree" class="ztree"></ul>
 		</div>
 		<div class="col-xs-7">
-			<form name="f" upload upload-to="fileUploadServer/resource" when-done="ctrl.callbackfun(msg)">
+			<form name="f" upload upload-to="fileUploadServer/resource" when-done="ctrl.postUpload(msg)">
 			  <div class="form-group">
 	            <label>上传路径（编码后）</label>
 	            <input type="text" placeholder="点击左侧目录树选择路径" class="form-control" name="path" ng-model="ctrl.path" readonly="readonly" required="required">
