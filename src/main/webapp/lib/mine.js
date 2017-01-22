@@ -776,7 +776,32 @@ var mine = (function(){
 	 * 主要用于ajax回调函数中，当加载了网页片段后，可掉此方法加载<script>标签或<link>，这以文件后缀确定
 	 */
 	function loadasync(url, onload) {
-		var partition, suffix, head;
+		var partition, suffix, head, promise = new Promise();
+		function callback(e) {
+			if (onload instanceof Function)
+				onload(e);
+			promise.invokeSuccess(e);
+		}
+		function loadasync_js(url) {
+			var script = document.createElement('script');
+			script.onload = callback;
+			script.src = url;
+			var exist = head.querySelector('script[src="' + url + '"]');
+			if (exist)
+				head.removeChild(exist);
+			head.appendChild(script);
+		}
+		function loadasync_css(url) {
+			var css = document.createElement('link');
+			css.onload = callback;
+			css.href = url;
+			css.rel = "stylesheet";
+			css.type = "text/css";
+			var exist = head.querySelector('link[href="' + url + '"]');
+			if (exist)
+				head.removeChild(exist);
+			head.appendChild(css);
+		}
 		partition = url && url.search(/.\w+$/);
 		if (!partition) {
 			// 如果url是空，或者没找到“.”分割的文件，又或者“.”在第一位，都视为非法的地址，直接return
@@ -789,30 +814,7 @@ var mine = (function(){
 		} else if (suffix === 'css') {
 			loadasync_css(url)
 		}
-		function loadasync_js(url) {
-			var script = document.createElement('script');
-			if (onload) {
-				script.onload = onload;
-			}
-			script.src = url;
-			var exist = head.querySelector('script[src="' + url + '"]');
-			if (exist)
-				head.removeChild(exist);
-			head.appendChild(script);
-		}
-		function loadasync_css(url) {
-			var css = document.createElement('link');
-			if (onload) {
-				css.onload = onload;
-			}
-			css.href = url;
-			css.rel = "stylesheet";
-			css.type = "text/css";
-			var exist = head.querySelector('link[href="' + url + '"]');
-			if (exist)
-				head.removeChild(exist);
-			head.appendChild(css);
-		}
+		return promise;
 	}
 	
 	return {

@@ -45,7 +45,8 @@
 				<div ng-switch-when="audio" class="">
 					<audio ng-src="{{ctrl.path}}" controls="controls" popover-title="{{ctrl.path}}" poster=""></audio>
 				</div>
-				<div ng-switch-when="pdf" class="">
+				<div ng-switch-when="pdf" style="border:1px solid black;" class="">
+					<canvas id="pdf-area"></canvas>
 				</div>
 			</div>
 		</div>

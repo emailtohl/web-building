@@ -3,10 +3,62 @@
  * author HeLei
  */
 define([ 'common/module' ], function(commonModule) {
+	function Promise() {
+		var successFun, errorFun, self = this;
+		this.success = function(callback) {
+			if (typeof(callback) !== 'function')
+				throw new TypeError('请传入成功后的回调函数');
+			successFun = callback;
+			return self;
+		};
+		this.error = function(callback) {
+			if (typeof(callback) !== 'function')
+				throw new TypeError('请传入失败后的回调函数');
+			errorFun = callback;
+			return self;
+		};
+		this.invokeSuccess = function(data) {
+			if (successFun)
+				successFun(data);
+			return self;
+		};
+		this.invokeError = function(data) {
+			if (errorFun)
+				errorFun(data);
+			return self;
+		};
+		// 用于文件上传时的中断
+		this.abort = false;
+	}
 	return commonModule.factory('util', [ function() {
 		return {
-			loadasync : function(url) {
-				var partition, suffix, head;
+			loadasync : function(url, onload) {
+				var partition, suffix, head, promise = new Promise();
+				function callback(e) {
+					if (onload instanceof Function)
+						onload(e);
+					promise.invokeSuccess(e);
+				}
+				function loadasync_js(url) {
+					var script = document.createElement('script');
+					script.onload = callback;
+					script.src = url;
+					var exist = head.querySelector('script[src="' + url + '"]');
+					if (exist)
+						head.removeChild(exist);
+					head.appendChild(script);
+				}
+				function loadasync_css(url) {
+					var css = document.createElement('link');
+					css.onload = callback;
+					css.href = url;
+					css.rel = "stylesheet";
+					css.type = "text/css";
+					var exist = head.querySelector('link[href="' + url + '"]');
+					if (exist)
+						head.removeChild(exist);
+					head.appendChild(css);
+				}
 				partition = url && url.search(/.\w+$/);
 				if (!partition) {
 					// 如果url是空，或者没找到“.”分割的文件，又或者“.”在第一位，都视为非法的地址，直接return
@@ -19,24 +71,7 @@ define([ 'common/module' ], function(commonModule) {
 				} else if (suffix === 'css') {
 					loadasync_css(url)
 				}
-				function loadasync_js(url) {
-					var script = document.createElement('script');
-					script.src = url;
-					var exist = head.querySelector('script[src="' + url + '"]');
-					if (exist)
-						head.removeChild(exist);
-					head.appendChild(script);
-				}
-				function loadasync_css(url) {
-					var css = document.createElement('link');
-					css.href = url;
-					css.rel = "stylesheet";
-					css.type = "text/css";
-					var exist = head.querySelector('link[href="' + url + '"]');
-					if (exist)
-						head.removeChild(exist);
-					head.appendChild(css);
-				}
+				return promise;
 			},
 			/**
 			 * 将对象的名值对转成URL请求参数 可用于GET请求，也可以用于POST的requestBody，不过注意要将XMLHttpRequest对象的请求头设置为

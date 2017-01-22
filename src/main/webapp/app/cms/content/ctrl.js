@@ -90,6 +90,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 					$scope.$apply(function() {
 						self.contentType = 'pdf';
 					});
+					window.open(path);
 					break;
 				default:
 					self.contentType = 'text';

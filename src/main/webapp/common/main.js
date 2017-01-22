@@ -17,6 +17,7 @@ require.config({
 		lib : '../lib',
 		common : '../common',
 		test : '../common/test',
+		pdfjs : '../lib/pdfjs',
 		
 		// 配置baseUrl下的文件
 //		'mine' : '../lib/mine',
