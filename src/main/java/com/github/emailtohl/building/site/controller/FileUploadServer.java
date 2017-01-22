@@ -155,7 +155,8 @@ public class FileUploadServer {
 		}
 	}
 	
-	public static class Form implements Serializable {
+	@SuppressWarnings("unused")
+	private static class Form implements Serializable {
 		private static final long serialVersionUID = 968705461440871636L;
 		String path;
 		String textContext;

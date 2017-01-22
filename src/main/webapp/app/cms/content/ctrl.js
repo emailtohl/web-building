@@ -40,7 +40,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 		}
 		
 		function zTreeOnClick(event, treeId, treeNode) {
-			var path, suffixIndex, suffix;
+			var path, suffixIndex, suffix, mode;
 			if (treeNode.isParent) {// 只在文件上才有效
 				return;
 			}
@@ -57,6 +57,11 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 					});
 					break;
 				case 'png':
+					$scope.$apply(function() {
+						self.contentType = 'image';
+					});
+					break;
+				case 'gif':
 					$scope.$apply(function() {
 						self.contentType = 'image';
 					});
@@ -88,7 +93,21 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 					break;
 				default:
 					self.contentType = 'text';
-					loadText(path);
+					switch (suffix) {
+					case 'js':
+						mode = 'javascript';
+						break;
+					case 'css':
+						mode = 'css';
+						break;
+					case 'xml':
+						mode = 'xml';
+						break;
+					default:
+						mode = 'htmlmixed';
+						break
+					}
+					loadText(path, mode);
 					break;
 				}
 			}
@@ -97,7 +116,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 		/**
 		 * 加载文本内容
 		 */
-		function loadText(path) {
+		function loadText(path, mode) {
 			util.loadasync('lib/codemirror/lib/codemirror.css');
 			/**
 			 * It will automatically load the modes that the mixed HTML mode depends on (XML, JavaScript, and CSS)
@@ -114,7 +133,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 						textarea.value = data;
 						cm = CodeMirror.fromTextArea(textarea, {
 							lineNumbers: true,
-						    mode: "htmlmixed",
+						    mode : mode ? mode : 'htmlmixed',
 						});
 						cm.setSize('auto','450px');
 						cm.on('change', function(_codeMirror, changeObj) {
