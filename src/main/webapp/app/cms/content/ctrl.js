@@ -90,7 +90,8 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 					$scope.$apply(function() {
 						self.contentType = 'pdf';
 					});
-					window.open(path);
+					if (window.confirm('是否新起一页打开该PDF文档？'))
+						window.open(path);
 					break;
 				default:
 					self.contentType = 'text';
@@ -106,7 +107,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 						break;
 					default:
 						mode = 'htmlmixed';
-						break
+						break;
 					}
 					loadText(path, mode);
 					break;
