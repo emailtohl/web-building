@@ -310,6 +310,16 @@ desired effect
             <li ng-class="{active: $state.includes('cms.content')}" ><a ui-sref="cms.content" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>文件内容</a></li>
           </ul>
         </li>
+        <li class="treeview" ng-class="{active: $state.includes('encryption')}">
+          <a href="#">
+          	  <i class="fa fa-key"></i>
+	          <span>加密信息</span>
+	          <i class="fa fa-angle-left pull-right"></i>
+	      </a>
+          <ul class="treeview-menu">
+            <li ng-class="{active: $state.includes('encryption.key')}" ><a ui-sref="encryption.key" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>密钥</a></li>
+          </ul>
+        </li>
         <li class="treeview" ng-class="{active: $state.includes('user')}">
           <a href="#">
           	<i class="fa fa-users"></i>

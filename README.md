@@ -1,6 +1,6 @@
 # web-building项目
 
-**Java JavaScript 业务框架 spring springmvc springsecurity springdata JPA Hibernate search Envers angularjs1.×** AdminLTE
+**Java JavaScript 业务框架 spring springmvc springsecurity springdata JPA Hibernate search Envers angularjs1.× AdminLTE**
 
 ## 一、 说明
 此项目被称为“building”，意指“不断完善”的项目，我将日常学习或自己开发的工具、框架整合在一起。这不仅是一个总结，同时还可以在此基础上开发业务项目。
@@ -133,6 +133,9 @@ xml的DTD、scheme校验很繁琐，项目尽可能避免使用xml，在配置�
 6. 一旦使用ApplicationEventPublisher#publishEvent(ClusterEvent event)，ClusterEventMulticaster的multicastEvent(ApplicationEvent event)就会广播该消息，不仅实现ApplicationListener<ClusterEvent>的类会收到，websocket中的各节点也会收到。
 
 > 注意：端点的IP是通过InetAddress.getLocalHost().getHostAddress();获取，注意多个端点在同一网段中；此外，若端点的端口号不是8080，则需要配置config.properties文件中的local.host值。
+
+#### 4.1.7 encryption包
+该包下含有JDK标准RSA+AES实现：Crypter，不过由于密钥生成应该有客户端完成，故该类并未在项目中真正使用。不过该包中引入了自己实现RSA算法，这样就可以在底层和前端传递来的数字公钥进行交互处理了。
 
 ### 4.2 前端
 前端的lib存放第三方框架或工具，common是公共模块，基于angular1.×编写的service、util、directive等。

@@ -176,23 +176,22 @@ public class KeyGenerator {
 	 * @return
 	 */
 	private boolean test(BigInteger e, BigInteger d, BigInteger n, int mArrayLength) {
-		for(int i = 0;i < 3;i++){// 做三次检查，确保RSA的参数的正确性
-			// 随机生成的 BigInteger，它是在 0 到 (2^numBits - 1)（包括）范围内均匀分布的值。
-			BigInteger mm = new BigInteger(mArrayLength, new SecureRandom());
-			log.fine("test m = " + mm);
-			//BigInteger cc = mm.modPow(e, n);
-			BigInteger cc = powModByMontgomery(mm, e, n);
-			log.fine("test c = " + cc);
-			//BigInteger dm = cc.modPow(d, n);
-			BigInteger dm = powModByMontgomery(cc, d, n);
-			log.fine("test dm = " + dm);
-			if(mm.compareTo(dm) != 0) {
-				log.fine("Test failed");
-				return false;
-			}
-			else {
-				log.fine("Test passed " + (i+1) + " times");
-			}
+		// 做一次检查，确保RSA的参数的正确性
+		// 随机生成的 BigInteger，它是在 0 到 (2^numBits - 1)（包括）范围内均匀分布的值。
+		BigInteger mm = new BigInteger(mArrayLength, new SecureRandom());
+		log.fine("test m = " + mm);
+		//BigInteger cc = mm.modPow(e, n);
+		BigInteger cc = powModByMontgomery(mm, e, n);
+		log.fine("test c = " + cc);
+		//BigInteger dm = cc.modPow(d, n);
+		BigInteger dm = powModByMontgomery(cc, d, n);
+		log.fine("test dm = " + dm);
+		if(mm.compareTo(dm) != 0) {
+			log.fine("Test failed");
+			return false;
+		}
+		else {
+			log.fine("Test passed ");
 		}
 		return true;
 	}
