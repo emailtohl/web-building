@@ -67,7 +67,6 @@ define([ 'common/module', 'common/service/util' ], function(commonModule) {
 					 * 形参“msg”对应指令里面的“{msg : xhr.responseText}”
 					 */
 					function callback(xhr) {
-						console.log(xhr.responseText);
 						$scope.whenDone({msg : xhr.responseText});
 					}
 				});

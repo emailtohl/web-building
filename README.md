@@ -1,6 +1,6 @@
 # web-building项目
 
-**Java JavaScript 业务框架 spring springmvc springsecurity springdata JPA Hibernate search Envers angularjs1.×**
+**Java JavaScript 业务框架 spring springmvc springsecurity springdata JPA Hibernate search Envers angularjs1.×** AdminLTE
 
 ## 一、 说明
 此项目被称为“building”，意指“不断完善”的项目，我将日常学习或自己开发的工具、框架整合在一起。这不仅是一个总结，同时还可以在此基础上开发业务项目。
@@ -148,6 +148,6 @@ README仅简述了项目概况，该项目是我学习所用，如何配置和�
 ## 五、 项目状态
 目前框架搭的通用基础功能基本完善，如：基础数据访问仓库，通用工具，通用过滤器，通用组件等，前端的拦截器、分页、select2、模态框等angular指令。
 
-为验证通用技术，建立了如下几个示例业务模块：用户、授权实体建模，首页聊天室、实时数据监控、论坛全文搜索，工单流程申请，客户关系管理，内容管理等。
+为验证通用技术，建立了如下几个示例业务模块：用户、授权实体建模，首页聊天室、实时数据监控、论坛全文搜索，工单流程申请，客户关系管理，资源管理等。
 
 现项目可裁剪应用于普通项目中。

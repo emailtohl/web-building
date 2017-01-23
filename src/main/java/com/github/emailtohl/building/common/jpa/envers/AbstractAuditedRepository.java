@@ -34,9 +34,11 @@ import org.springframework.data.domain.Sort.Order;
 import com.github.emailtohl.building.common.jpa.fullTextSearch.AbstractSearchableRepository;
 /**
  * 查询Hibernate envers对实体的审计记录
- * @author HeLei
- *
+ * 
+ * 注意：调用者需根据业务情况明确事务边界，添加上@javax.transaction.Transactional
+ * 
  * @param <E> 实体类型
+ * @author HeLei
  */
 public abstract class AbstractAuditedRepository<E extends Serializable> implements AuditedRepository<E> {
 	@SuppressWarnings("unused")

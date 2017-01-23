@@ -44,6 +44,7 @@ import com.github.emailtohl.building.common.utils.BeanUtil;
  * 本方案基于JPQL，提供分页查询功能
  * 
  * 注意：不支持JPQL：嵌套、GROUP BY [HAVING ...]、排序
+ * 注意：调用者需根据业务情况明确事务边界，添加上@javax.transaction.Transactional
  * 
  * @param <E> 实体类，ID统一为Long型
  * @author HeLei

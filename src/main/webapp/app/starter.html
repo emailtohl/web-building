@@ -302,12 +302,12 @@ desired effect
         <li class="treeview" ng-class="{active: $state.includes('cms')}" ng-if="hasAuthority('resource_manager')">
           <a href="#">
           	  <i class="fa fa-file-o"></i>
-	          <span>内容管理</span>
+	          <span>资源管理</span>
 	          <i class="fa fa-angle-left pull-right"></i>
 	      </a>
           <ul class="treeview-menu">
             <li ng-class="{active: $state.includes('cms.resource')}" ><a ui-sref="cms.resource" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>文件管理</a></li>
-            <li ng-class="{active: $state.includes('cms.content')}" ><a ui-sref="cms.content" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>内容查看</a></li>
+            <li ng-class="{active: $state.includes('cms.content')}" ><a ui-sref="cms.content" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>文件内容</a></li>
           </ul>
         </li>
         <li class="treeview" ng-class="{active: $state.includes('user')}">

@@ -32,8 +32,10 @@
 
 ```xml
 <Context path="/building/icon_dir" docBase="F:\Server\apache-tomcat-9.0.0.M15\wtpwebapps\web-building-upload\icon_dir" reloadable="true" debug="0"/>
-<Context debug="0" docBase="F:\Server\apache-tomcat-9.0.0.M15\wtpwebapps\web-building-upload\resource_root" path="/building/resource_root" reloadable="true"/>
+<Context path="/building/resource_root" docBase="F:\Server\apache-tomcat-9.0.0.M15\wtpwebapps\web-building-upload\resource_root" reloadable="true" debug="0"/>
 ```
+
+> 本项目配置了两个虚拟目录，一个是管理用户头像的目录，另一个应用于资源管理模块中。
 
 ## 四、 HTTPS原理以及tomcat配置HTTPS方法
 ### 1. 什么是HTTPS

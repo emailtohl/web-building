@@ -20,6 +20,8 @@ import com.github.emailtohl.building.common.jpa.AbstractDynamicQueryRepository;
 /**
  * 提供标准查询的基类
  * 
+ * 注意：调用者需根据业务情况明确事务边界，添加上@javax.transaction.Transactional
+ * 
  * @param <E> 实体类
  * @author HeLei
  */

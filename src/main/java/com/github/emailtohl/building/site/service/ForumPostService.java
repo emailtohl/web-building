@@ -21,6 +21,7 @@ import com.github.emailtohl.building.site.dto.ForumPostDto;
  * @author HeLei
  */
 @Validated
+@Transactional
 public interface ForumPostService {
 
 	/**
@@ -29,7 +30,6 @@ public interface ForumPostService {
 	 * @param pageable
 	 * @return
 	 */
-	@Transactional
 	Pager<SearchResult<ForumPostDto>> search(String query, Pageable pageable);
 	
 	/**
@@ -37,7 +37,6 @@ public interface ForumPostService {
 	 * @param query
 	 * @return
 	 */
-	@Transactional
 	List<ForumPostDto> findAll(String query);
 	
 	/**
@@ -46,7 +45,6 @@ public interface ForumPostService {
 	 * @param pageable
 	 * @return
 	 */
-	@Transactional
 	Pager<ForumPostDto> findAllAndPaging(String query, Pageable pageable);
 	
 	/**
@@ -55,7 +53,6 @@ public interface ForumPostService {
 	 * @param pageable
 	 * @return 只返回查找到的实体类E
 	 */
-	@Transactional
 	Pager<ForumPostDto> find(String query, Pageable pageable);
 	
 	/**
@@ -87,7 +84,6 @@ public interface ForumPostService {
 	 * @return
 	 */
 	@PreAuthorize("isAuthenticated()")
-	@Transactional
 	long save(@NotNull String title, String keywords, String body);
 	
 	/**
@@ -99,7 +95,6 @@ public interface ForumPostService {
 	 * @return
 	 */
 	@PreAuthorize("isAuthenticated()")
-	@Transactional
 	long save(@NotNull String email, @NotNull String title, String keywords, String body);
 	
 	/**
@@ -107,7 +102,6 @@ public interface ForumPostService {
 	 * @param id
 	 */
 	@PreAuthorize("hasAuthority('" + FORUM_DELETE + "')")
-	@Transactional
 	void delete(long id);
 	
 	/**
@@ -115,6 +109,5 @@ public interface ForumPostService {
 	 * @param id
 	 */
 	@PreAuthorize("hasAuthority('" + FORUM_DELETE + "')")
-	@Transactional
 	void deleteByEmail(String userEmail);
 }

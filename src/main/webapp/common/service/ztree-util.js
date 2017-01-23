@@ -23,9 +23,10 @@ define([ 'common/module', 'ztree' ], function(commonModule) {
 		}
 		
 		function setNodesOpen(nodes, names) {
-			var i, node, name = decodeURIComponent(names.shift());
+			var i, node, name = names.shift();
 			if (!name)
 				return;
+			name = decodeURIComponent(name);
 			for (i = 0; i < nodes.length; i++) {
 				node = nodes[i];
 				if (node.isParent && node.name == name) {
