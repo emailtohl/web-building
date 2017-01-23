@@ -1,10 +1,12 @@
-package com.github.emailtohl.building.common.security;
+package com.github.emailtohl.building.common.encryption;
 
 import static org.junit.Assert.assertEquals;
 
 import java.security.KeyPair;
 
 import org.junit.Test;
+
+import com.github.emailtohl.building.common.encryption.Crypter;
 
 public class CrypterTest {
 

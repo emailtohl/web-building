@@ -1,8 +1,10 @@
-package com.github.emailtohl.building.common.security;
+package com.github.emailtohl.building.common.encryption;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+
+import com.github.emailtohl.building.common.encryption.Hex;
 
 public class HexTest {
 

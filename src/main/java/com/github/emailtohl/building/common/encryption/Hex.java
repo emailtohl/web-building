@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.common.security;
+package com.github.emailtohl.building.common.encryption;
 
 /**
  * Java byte数组与十六进制字符串互转

@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.common.security;
+package com.github.emailtohl.building.common.encryption;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
