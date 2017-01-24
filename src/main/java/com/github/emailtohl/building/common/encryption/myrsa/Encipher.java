@@ -3,16 +3,15 @@ package com.github.emailtohl.building.common.encryption.myrsa;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-
-import com.google.gson.Gson;
 
 /**
  * 本加密解密类主要考虑与前端JavaScript能识别的编码方式。
  * 
  * 在前端JavaScript中，可识别Unicode编码的字符，所以后端的加密解密也需基于Unicode编码进行。
+ * 
+ * 加密和解密的算法需要在前端JavaScript也实现一份。
  * 
  * @author HeLei
  * @date 2017.01.24
@@ -24,7 +23,7 @@ public class Encipher {
 	 * @param text
 	 * @return
 	 */
-	public int[] getUnicode(String text) {
+	int[] getUnicode(String text) {
 		int[] unicodes = new int[text.length()];
 		for (int i = 0; i < text.length(); i++) {
 			unicodes[i] = text.codePointAt(i);
@@ -37,7 +36,7 @@ public class Encipher {
 	 * @param unicodes
 	 * @return
 	 */
-	public String getString(int[] unicodes) {
+	String getString(int[] unicodes) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < unicodes.length; i++) {
 			sb.append((char) unicodes[i]);
@@ -50,7 +49,7 @@ public class Encipher {
 	 * @param text
 	 * @return
 	 */
-	public Code encode(String text) {
+	private Code encode(String text) {
 		Code code = new Code();
 		LinkedList<Integer> splitPoints = new LinkedList<>();
 		int splitPoint = 0;
@@ -71,7 +70,7 @@ public class Encipher {
 	 * @param code
 	 * @return
 	 */
-	public String decode(Code code) {
+	private String decode(Code code) {
 		String str = code.m.toString();
 		List<Integer> unicodes = new ArrayList<>();
 		Integer beginIndex = 0, endIndex;
@@ -99,7 +98,7 @@ public class Encipher {
 	 * @param keyPairs
 	 * @return
 	 */
-	public Code crypt(Code src, KeyPairs keyPairs) {
+	private Code crypt(Code src, KeyPairs keyPairs) {
 		Code dest = new Code();
 		BigInteger m = src.m,
 				e = keyPairs.getPublicKey(), 
@@ -150,34 +149,55 @@ public class Encipher {
 		return decode(result);
 	}
 	
-	
+	/**
+	 * 加密后的信息存放对象
+	 */
 	public class Code implements Serializable {
 		private static final long serialVersionUID = 2807424294564280181L;
 		BigInteger m, k, m1, m2, c1, c2;
 		LinkedList<Integer> splitPoints;
+		public BigInteger getM() {
+			return m;
+		}
+		public void setM(BigInteger m) {
+			this.m = m;
+		}
+		public BigInteger getK() {
+			return k;
+		}
+		public void setK(BigInteger k) {
+			this.k = k;
+		}
+		public BigInteger getM1() {
+			return m1;
+		}
+		public void setM1(BigInteger m1) {
+			this.m1 = m1;
+		}
+		public BigInteger getM2() {
+			return m2;
+		}
+		public void setM2(BigInteger m2) {
+			this.m2 = m2;
+		}
+		public BigInteger getC1() {
+			return c1;
+		}
+		public void setC1(BigInteger c1) {
+			this.c1 = c1;
+		}
+		public BigInteger getC2() {
+			return c2;
+		}
+		public void setC2(BigInteger c2) {
+			this.c2 = c2;
+		}
+		public LinkedList<Integer> getSplitPoints() {
+			return splitPoints;
+		}
+		public void setSplitPoints(LinkedList<Integer> splitPoints) {
+			this.splitPoints = splitPoints;
+		}
 	}
 	
-	public static void main(String[] args) {
-		Encipher e = new Encipher();
-		String s = "a_ 中文编码";
-		int[] uc = e.getUnicode(s);
-		System.out.println(Arrays.toString(uc));
-		System.out.println(e.getString(uc));
-		
-		Gson gson = new Gson();
-		Code code = e.encode(s);
-		System.out.println(gson.toJson(code));
-		
-		String ss = e.decode(code);
-		System.out.println(ss);
-		
-		KeyGenerator kg = new KeyGenerator();
-		KeyPairs keys = kg.generateKeys(512);
-		
-		Code c = e.crypt(s, keys);
-		System.out.println(gson.toJson(c));
-		
-		String sss = e.decrypt(c, keys);
-		System.out.println(sss);
-	}
 }
