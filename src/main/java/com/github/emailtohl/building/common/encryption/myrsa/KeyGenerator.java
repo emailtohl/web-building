@@ -1,10 +1,13 @@
 package com.github.emailtohl.building.common.encryption.myrsa;
 
+import static java.math.BigInteger.ONE;
+import static java.math.BigInteger.ZERO;
+
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 /**
  * 由于前端大多数时候使用的JavaScript，该语言没有相关安全库，所以使用自己实现的RSA算法来对接前端生成的原始值。
  * 
@@ -21,11 +24,10 @@ import java.util.logging.Logger;
  * 解密：m = c^d % n
  * 
  * @author HeLei
+ * @date 2017.01.23
  */
 public class KeyGenerator {
-	private static final BigInteger ZERO = BigInteger.valueOf(0);
-	private static final BigInteger ONE = BigInteger.valueOf(1);
-	private static Logger log = LogManager.getLogManager().getLogger(KeyGenerator.class.getName());
+	private static final Logger log = LogManager.getLogger();
 	
 	public KeyPairs generateKeys(int bitLength) {
 		BigInteger p, q, n, fn, e, d;
@@ -109,7 +111,7 @@ public class KeyGenerator {
 				if (fn.remainder(e).compareTo(ZERO) == 0) {
 					e = BigInteger.valueOf(3);
 					if (fn.remainder(e).compareTo(ZERO) == 0) {
-						log.log(Level.WARNING, "Create a RSA parameter failure, re execution");// 如果模n与上面的素数都不互素的话，创建RSA参数失败
+						log.error("Create a RSA parameter failure, re execution");// 如果模n与上面的素数都不互素的话，创建RSA参数失败
 						throw (new RuntimeException("Not selected to the correct public key ！"));// 抛出异常，重新执行
 					}
 				}
@@ -131,9 +133,9 @@ public class KeyGenerator {
 		}
 		private void generateD() {
 			BigInteger gcd = extendEuclid(fn, e);// 在调用扩展欧几里得算法时，计算出x，y值
-			log.fine("gcd = " + gcd);// 先打印查看最大公约数是否为1，保证无异常
-			log.fine("x = " + x);
-			log.fine("y = " + y);
+			log.debug("gcd = " + gcd);// 先打印查看最大公约数是否为1，保证无异常
+			log.debug("x = " + x);
+			log.debug("y = " + y);
 			/**
 			 * 调用了扩展欧几里得方法后，x,y满足： (φ(n) * x) + (e * y) = 1
 			 * 这里不能完全保证y的正负性，如果y是负数，则需转换为同余正数，例如：-3 ≡ 2 (mod 5)
@@ -142,8 +144,8 @@ public class KeyGenerator {
 				y = y.add(fn);
 			
 			d = y;
-			log.fine("d = " + d);
-			log.fine("e * d (mod φ(n)) = " + (e.multiply(d).remainder(fn)));
+			log.debug("d = " + d);
+			log.debug("e * d (mod φ(n)) = " + (e.multiply(d).remainder(fn)));
 		}
 
 		/**
@@ -179,19 +181,19 @@ public class KeyGenerator {
 		// 做一次检查，确保RSA的参数的正确性
 		// 随机生成的 BigInteger，它是在 0 到 (2^numBits - 1)（包括）范围内均匀分布的值。
 		BigInteger mm = new BigInteger(mArrayLength, new SecureRandom());
-		log.fine("test m = " + mm);
+		log.debug("test m = " + mm);
 		//BigInteger cc = mm.modPow(e, n);
 		BigInteger cc = powModByMontgomery(mm, e, n);
-		log.fine("test c = " + cc);
+		log.debug("test c = " + cc);
 		//BigInteger dm = cc.modPow(d, n);
 		BigInteger dm = powModByMontgomery(cc, d, n);
-		log.fine("test dm = " + dm);
+		log.debug("test dm = " + dm);
 		if(mm.compareTo(dm) != 0) {
-			log.fine("Test failed");
+			log.debug("Test failed");
 			return false;
 		}
 		else {
-			log.fine("Test passed ");
+			log.debug("Test passed ");
 		}
 		return true;
 	}

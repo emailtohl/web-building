@@ -1,18 +1,21 @@
 package com.github.emailtohl.building.common.encryption.myrsa;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 /**
  * 存放公钥，私钥以及模的对象
  * 
  * @author HeLei
+ * @date 2017.01.23
  */
-public class KeyPairs {
-	private transient BigInteger module;
-	private transient BigInteger publicKey;
-	private transient BigInteger privateKey;
-	private transient int moduleBitLength;
-	private transient int mArrayLength;
-	private transient int cArrayLength;
+public class KeyPairs implements Serializable {
+	private static final long serialVersionUID = -2084519818830906566L;
+	private BigInteger module;
+	private BigInteger publicKey;
+	private BigInteger privateKey;
+	private int moduleBitLength;
+	private int mArrayLength;
+	private int cArrayLength;
 	
 	public BigInteger getModule() {
 		return module;
