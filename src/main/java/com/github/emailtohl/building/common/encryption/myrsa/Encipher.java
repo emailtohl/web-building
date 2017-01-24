@@ -46,8 +46,8 @@ public class Encipher {
 	
 	/**
 	 * 将字符串文本转成一个BigInteger，并且保留当初数组中的每一个切分信息
-	 * @param text
-	 * @return
+	 * @param text 原字符串文本
+	 * @return 一个可序列化的code对象
 	 */
 	private Code encode(String text) {
 		Code code = new Code();
@@ -94,9 +94,9 @@ public class Encipher {
 	 * m是数字化的明文，使用RSA加密时，m一定要小于模n
 	 * 故先将m转成两个小于n的m1，m2，然后分别加密m1和m2成密文c1，c2
 	 * 
-	 * @param src
-	 * @param keyPairs
-	 * @return
+	 * @param src 已被数字化编码的明文
+	 * @param keyPairs 密钥对象，只使用其中的publicKey和module属性
+	 * @return 加密的可序列化的code对象
 	 */
 	private Code crypt(Code src, KeyPairs keyPairs) {
 		Code dest = new Code();
@@ -123,9 +123,9 @@ public class Encipher {
 	
 	/**
 	 * 将字符串加密成code
-	 * @param text
+	 * @param text 明文字符串
 	 * @param keyPairs 只使用其公钥和模，不需要私钥，私钥字段可为null
-	 * @return
+	 * @return 加密的可序列化的code对象
 	 */
 	public Code crypt(String text, KeyPairs keyPairs) {
 		Code code = encode(text);
@@ -136,7 +136,7 @@ public class Encipher {
 	 * 根据加密规则解密code
 	 * @param code
 	 * @param keyPairs 只使用其私钥和模，公钥可为null
-	 * @return
+	 * @return 原字符串文本
 	 */
 	public String decrypt(Code code, KeyPairs keyPairs) {
 		BigInteger c1 = code.c1, c2 = code.c2, k = code.k,
