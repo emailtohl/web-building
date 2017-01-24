@@ -109,7 +109,10 @@ public class Encipher {
 		BigInteger[] divideAndRemainder = m.divideAndRemainder(m1);
 		k = divideAndRemainder[0];
 		m2 = divideAndRemainder[1];
-		c1 = m1.modPow(e, n);
+		if (BigInteger.ZERO.equals(k))// k如果为0，说明m本身就小于n，c1是什么就无所谓了，因为乘积仍然是0
+			c1 = BigInteger.ZERO;
+		else
+			c1 = m1.modPow(e, n);
 		c2 = m2.modPow(e, n);
 		dest.splitPoints = src.splitPoints;
 		dest.k = k;
@@ -140,7 +143,10 @@ public class Encipher {
 				d = keyPairs.getPrivateKey(), 
 				n = keyPairs.getModule(),
 				m1, m2, m;
-		m1 = c1.modPow(d, n);
+		if (BigInteger.ZERO.equals(k))// k为0，m1是什么都无所谓，因为乘积仍然是0
+			m1 = BigInteger.ZERO;
+		else
+			m1 = c1.modPow(d, n);
 		m2 = c2.modPow(d, n);
 		m = k.multiply(m1).add(m2);
 		Code result = new Code();

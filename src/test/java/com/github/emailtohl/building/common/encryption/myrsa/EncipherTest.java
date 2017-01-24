@@ -31,6 +31,14 @@ public class EncipherTest {
 		String restore = e.decrypt(code2, keys);
 		
 		assertEquals(restore, plaintext);
+		
+		plaintext = "短";
+		code = e.crypt(plaintext, keys);
+		ciphertext = gson.toJson(code);
+		System.out.println(ciphertext);
+		code2 = gson.fromJson(ciphertext, Code.class);
+		restore = e.decrypt(code2, keys);
+		assertEquals(restore, plaintext);
 	}
 
 }
