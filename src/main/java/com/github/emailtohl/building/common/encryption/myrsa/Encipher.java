@@ -3,8 +3,14 @@ package com.github.emailtohl.building.common.encryption.myrsa;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.google.gson.Gson;
 
 /**
  * 为了让前后端在加解密的规则上达成一致协议，设计本类。
@@ -23,6 +29,11 @@ import java.util.List;
  * @date 2017.01.24
  */
 public class Encipher {
+	private static final Logger logger = LogManager.getLogger();
+	Base64.Encoder encoder = Base64.getEncoder();
+	Base64.Decoder decoder = Base64.getDecoder();
+	Gson gson = new Gson();
+	
 	/**
 	 * 未在本类中用到
 	 * 将明文字符串转为Unicode编码的字符数组
@@ -67,7 +78,7 @@ public class Encipher {
 			splitPoint += c.length();
 			splitPoints.add(splitPoint);
 		}
-		code.m = new BigInteger(sb.toString());
+		code.m = sb.toString();
 		code.splitPoints = splitPoints;
 		return code;
 	}
@@ -137,7 +148,7 @@ public class Encipher {
 	 */
 	private Code crypt(Code src, KeyPairs publicKey) {
 		Code dest = new Code();
-		BigInteger m = src.m,
+		BigInteger m = new BigInteger(src.m),
 				e = publicKey.getPublicKey(), 
 				n = publicKey.getModule(),
 				m1, m2, k, c1, c2;
@@ -152,9 +163,9 @@ public class Encipher {
 			c1 = m1.modPow(e, n);
 		c2 = m2.modPow(e, n);
 		dest.splitPoints = src.splitPoints;
-		dest.k = k;
-		dest.c1 = c1;
-		dest.c2 = c2;
+		dest.k = k.toString();
+		dest.c1 = c1.toString();
+		dest.c2 = c2.toString();
 		return dest;
 	}
 	
@@ -183,19 +194,19 @@ public class Encipher {
 	
 	/**
 	 * 将字符串加密成code
-	 * @param text 明文字符串
+	 * @param plaintext 明文字符串
 	 * @param publicKey 只使用其公钥和模，不需要私钥，私钥字段为null
 	 * @return 加密的可序列化的code对象
 	 */
-	public Code crypt(String text, KeyPairs publicKey) {
-		Code code = encode(text);
+	public Code encrypt(String plaintext, KeyPairs publicKey) {
+		Code code = encode(plaintext);
 		return crypt(code, publicKey);
 	}
 	
 	/* JavaScript实现
-	function crypt(text, publicKey) {
-		var code = encode(text);
-		return cryptCode(code, publicKey);
+	function encrypt(plaintext, publicKey) {
+		var code = encode(plaintext);
+		return encryptCode(code, publicKey);
 	}
 	*/
 	
@@ -206,7 +217,8 @@ public class Encipher {
 	 * @return 原字符串文本
 	 */
 	public String decrypt(Code code, KeyPairs privateKey) {
-		BigInteger c1 = code.c1, c2 = code.c2, k = code.k,
+		BigInteger c1 = new BigInteger(code.c1), c2 = new BigInteger(code.c2), 
+				k = new BigInteger(code.k),
 				d = privateKey.getPrivateKey(), 
 				n = privateKey.getModule(),
 				m1, m2, m;
@@ -217,7 +229,7 @@ public class Encipher {
 		m2 = c2.modPow(d, n);
 		m = k.multiply(m1).add(m2);
 		Code result = new Code();
-		result.m = m;
+		result.m = m.toString();
 		result.splitPoints = code.splitPoints;
 		return decode(result);
 	}
@@ -240,28 +252,70 @@ public class Encipher {
 	*/
 	
 	/**
+	 * 封装public Code encrypt(String text, KeyPairs publicKey);
+	 * 对外部使用更友好清晰
+	 * @param plaintext 明文
+	 * @param publicKey 公钥
+	 * @param module 模
+	 * @return 加密后的信息
+	 */
+	public String encrypt(String plaintext, String publicKey, String module) {
+		KeyPairs keys = new KeyPairs();
+		keys.setPublicKey(new BigInteger(publicKey));
+		keys.setModule(new BigInteger(module));
+		Code c = encrypt(plaintext, keys);
+		String json = gson.toJson(c);
+		return encoder.encodeToString(json.getBytes());
+	}
+	
+	/**
+	 * 封装String decrypt(Code code, KeyPairs privateKey);
+	 * 对外部使用更友好清晰
+	 * @param ciphertext 字符串密文
+	 * @param privateKey 私钥
+	 * @param module 模
+	 * @return 解密后的信息
+	 */
+	public String decrypt(String ciphertext, String privateKey, String module) {
+		try {
+			String json = new String(decoder.decode(ciphertext));
+			Code c = gson.fromJson(json, Code.class);
+			KeyPairs keys = new KeyPairs();
+			keys.setPrivateKey(new BigInteger(privateKey));
+			keys.setModule(new BigInteger(module));
+			return decrypt(c, keys);
+		} catch (Exception e) {
+			String msg = "解密失败，密文信息可能已损坏!";
+			logger.error(msg, e);
+			throw new IllegalArgumentException(msg, e);
+		}
+	}
+	
+	
+	/**
 	 * 加密后的信息存放对象
 	 */
 	public class Code implements Serializable {
 		private static final long serialVersionUID = 2807424294564280181L;
-		BigInteger m, k, m1, m2, c1, c2;
+		// 定义为String类型是为了防止前端JavaScript的JSON.parse函数将数字转成指数形式
+		String m, k, m1, m2, c1, c2;
 		LinkedList<Integer> splitPoints;
-		public BigInteger getM() {
+		public String getM() {
 			return m;
 		}
-		public BigInteger getK() {
+		public String getK() {
 			return k;
 		}
-		public BigInteger getM1() {
+		public String getM1() {
 			return m1;
 		}
-		public BigInteger getM2() {
+		public String getM2() {
 			return m2;
 		}
-		public BigInteger getC1() {
+		public String getC1() {
 			return c1;
 		}
-		public BigInteger getC2() {
+		public String getC2() {
 			return c2;
 		}
 		public LinkedList<Integer> getSplitPoints() {

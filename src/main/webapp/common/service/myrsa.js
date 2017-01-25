@@ -3,11 +3,11 @@
  * @author HeLei
  * @date 2017.01.24
  */
-define(['lib/cryptico/cryptico.min'], function() {
+define(['lib/cryptico/cryptico.min', 'lib/base64/base64.min'], function() {
 	return {
 		generateKeys : generateKeys,
-		crypt : crypt,
-		decrypt : decrypt
+		encrypt : encrypt64,
+		decrypt : decrypt64
 	};
 	/**
 	 * 将明文字符串转为Unicode编码的字符数组
@@ -73,7 +73,7 @@ define(['lib/cryptico/cryptico.min'], function() {
 	 * @param publicKey 密钥对象，只使用其中的publicKey和module属性
 	 * @return 加密的可序列化的code对象
 	 */
-	function cryptCode(srcCode, publicKey) {
+	function encryptCode(srcCode, publicKey) {
 		var m = new BigInteger(srcCode.m), e = new BigInteger(publicKey.publicKey), 
 		n = new BigInteger(publicKey.module), m1, m2, k, c1, c2, 
 		divideAndRemainder, destCode = {};
@@ -96,13 +96,13 @@ define(['lib/cryptico/cryptico.min'], function() {
 
 	/**
 	 * 将字符串加密成code
-	 * @param text 明文字符串
+	 * @param plaintext 明文字符串
 	 * @param keyPairs 只使用其公钥和模，不需要私钥，私钥字段可为null
 	 * @return 加密的可序列化的code对象
 	 */
-	function crypt(text, publicKey) {
-		var code = encode(text);
-		return cryptCode(code, publicKey);
+	function encrypt(plaintext, publicKey) {
+		var code = encode(plaintext);
+		return encryptCode(code, publicKey);
 	}
 
 	/**
@@ -125,4 +125,31 @@ define(['lib/cryptico/cryptico.min'], function() {
 		destCode.splitPoints = code.splitPoints;
 		return decode(destCode);
 	}
+	
+	/**
+	 * 通过RSA加密成对象后再进行Base64编码
+	 * @param plaintext 明文
+	 * @param publicKey 公钥
+	 * @param module 模
+	 * @returns 密文
+	 */
+	function encrypt64(plaintext, publicKey, module) {
+		var code = encrypt(plaintext, {publicKey : publicKey, module : module});
+		var json = JSON.stringify(code);
+		return Base64.encode(json);
+	}
+	
+	/**
+	 * 先通过Base64解码，然后再将密文解密成明文
+	 * @param ciphertext 密文
+	 * @param privateKey 私钥
+	 * @param module 模
+	 * @returns 明文
+	 */
+	function decrypt64(ciphertext, privateKey, module) {
+		var json = Base64.decode(ciphertext);
+		var code = JSON.parse(json);
+		return decrypt(code, {privateKey : privateKey, module : module});
+	}
+	
 });

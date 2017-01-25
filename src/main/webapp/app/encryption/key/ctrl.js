@@ -36,10 +36,10 @@ define(['encryption/module', 'common/service/myrsa', 'encryption/service'], func
 		
 		service.testMessage().success(function(data) {
 			console.log(data);
-			self.testMessage = myrsa.decrypt(data, self.myrsakeys);
+			self.testMessage = myrsa.decrypt(data.ciphertext, self.myrsakeys.privateKey, self.myrsakeys.module);
 			
 		});
-//		test();
+		test();
 		
 		
 		function test() {
@@ -51,7 +51,7 @@ define(['encryption/module', 'common/service/myrsa', 'encryption/service'], func
 			"白发渔樵江渚上，惯看秋月春风。\r\n" + 
 			"一壶浊酒喜相逢。\r\n" + 
 			"古今多少事，都付笑谈中。";
-			var c = myrsa.crypt(plaintext, keys);
+			var c = myrsa.encrypt(plaintext, keys);
 			var c_json = JSON.stringify(c);
 			console.log(c_json);
 			var r = myrsa.decrypt(JSON.parse(c_json), keys);
