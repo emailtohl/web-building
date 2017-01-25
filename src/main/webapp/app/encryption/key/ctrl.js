@@ -34,13 +34,12 @@ define(['encryption/module', 'common/service/myrsa', 'encryption/service'], func
 			});
 		};
 		
-		
 		service.testMessage().success(function(data) {
 			console.log(data);
 			self.testMessage = myrsa.decrypt(data, self.myrsakeys);
 			
 		});
-		test();
+//		test();
 		
 		
 		function test() {

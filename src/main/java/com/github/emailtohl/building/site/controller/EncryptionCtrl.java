@@ -1,8 +1,12 @@
 package com.github.emailtohl.building.site.controller;
 
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.LinkedList;
 
 import javax.inject.Inject;
 
@@ -61,6 +65,41 @@ public class EncryptionCtrl {
 		k.setModule(module);
 		Code c = encipher.crypt(plaintext, k);
 		logger.debug(c);
-		return gson.toJson(c);
+		_Code _c = new _Code();
+		_c.c1 = c.getC1().toString();
+		_c.c2 = c.getC2().toString();
+		_c.k = c.getK().toString();
+		_c.splitPoints = c.getSplitPoints();
+		String json = gson.toJson(_c);
+		// 由于前端接收大数字会指数化破坏大数字的结构，所以转成Base64编码
+		return json;
+	}
+	
+	@SuppressWarnings("unused")
+	private class _Code implements Serializable {
+		private static final long serialVersionUID = 7237126675835172601L;
+		String m, k, m1, m2, c1, c2;
+		LinkedList<Integer> splitPoints;
+		public String getM() {
+			return m;
+		}
+		public String getK() {
+			return k;
+		}
+		public String getM1() {
+			return m1;
+		}
+		public String getM2() {
+			return m2;
+		}
+		public String getC1() {
+			return c1;
+		}
+		public String getC2() {
+			return c2;
+		}
+		public LinkedList<Integer> getSplitPoints() {
+			return splitPoints;
+		}
 	}
 }
