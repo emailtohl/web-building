@@ -292,27 +292,27 @@ public class UserServiceTest {
 	}
 	
 	@Test(expected = AuthenticationCredentialsNotFoundException.class)
-	public void testUploadPublicKey1() {
+	public void testSetPublicKey1() {
 		securityContextManager.clearContext();
-		userService.uploadPublicKey(new BigInteger("100"), new BigInteger("200"));
+		userService.setPublicKey(new BigInteger("100"), new BigInteger("200"));
 	}
 	
 	@Test
-	public void testUploadPublicKey2() {
+	public void testSetPublicKey2() {
 		securityContextManager.setBaz();
-		userService.uploadPublicKey(new BigInteger("100"), new BigInteger("200"));
+		userService.setPublicKey(new BigInteger("100"), new BigInteger("200"));
 	}
 	
 	@Test(expected = AuthenticationCredentialsNotFoundException.class)
 	public void testDeletePublicKey1() {
 		securityContextManager.clearContext();
-		userService.deletePublicKey();
+		userService.clearPublicKey();
 	}
 	
 	@Test
 	public void testDeletePublicKey2() {
 		securityContextManager.setBaz();
-		userService.deletePublicKey();
+		userService.clearPublicKey();
 	}
 
 }

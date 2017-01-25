@@ -231,7 +231,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @param module
 	 */
 	@PreAuthorize("isAuthenticated()")
-	void uploadPublicKey(@NotNull BigInteger publicKey, @NotNull BigInteger module);
+	void setPublicKey(@NotNull BigInteger publicKey, @NotNull BigInteger module);
 	
 	/**
 	 * 删除用户的公钥
@@ -239,6 +239,6 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @param module
 	 */
 	@PreAuthorize("isAuthenticated()")
-	void deletePublicKey();
+	void clearPublicKey();
 	
 }

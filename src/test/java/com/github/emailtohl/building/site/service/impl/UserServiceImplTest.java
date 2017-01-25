@@ -262,13 +262,13 @@ public class UserServiceImplTest {
 	}
 	
 	@Test
-	public void testUploadPublicKey() {
+	public void testPublicKey() {
 		securityContextManager.setFoo();
-		userService.uploadPublicKey(new BigInteger("100"), new BigInteger("200"));
+		userService.setPublicKey(new BigInteger("100"), new BigInteger("200"));
 		User u = userService.getUserByEmail(foo.getEmail());
 		assertNotNull(u.getPublicKey());
 		assertNotNull(u.getModule());
-		userService.deletePublicKey();
+		userService.clearPublicKey();
 	}
 
 }

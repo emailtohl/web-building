@@ -169,6 +169,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
 				.antMatchers(permitUrl).permitAll()
 				.antMatchers("/user/**").fullyAuthenticated()
+				.antMatchers("/encryption/**").fullyAuthenticated()
 				.antMatchers("/secure").fullyAuthenticated()
 				.antMatchers("/forum/**").fullyAuthenticated()
 				.antMatchers(HttpMethod.OPTIONS, "/**").permitAll()

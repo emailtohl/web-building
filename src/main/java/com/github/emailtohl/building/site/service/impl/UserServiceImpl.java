@@ -312,17 +312,17 @@ public class UserServiceImpl implements UserService, Serializable {
 	}
 	
 	@Override
-	public void uploadPublicKey(BigInteger publicKey, BigInteger module) {
+	public void setPublicKey(BigInteger publicKey, BigInteger module) {
 		String email = SecurityContextUtil.getCurrentUsername();
 		User u = userRepository.findByEmail(email);
 		if (u != null) {
-			u.setPublicKey(publicKey);
-			u.setModule(module);
+			u.setPublicKey(publicKey.toString());
+			u.setModule(module.toString());
 		}
 	}
 	
 	@Override
-	public void deletePublicKey() {
+	public void clearPublicKey() {
 		String email = SecurityContextUtil.getCurrentUsername();
 		User u = userRepository.findByEmail(email);
 		if (u != null) {

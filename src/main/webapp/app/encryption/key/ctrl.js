@@ -24,11 +24,22 @@ define(['encryption/module', 'common/service/myrsa', 'encryption/service'], func
 			}
 		};
 		self.uploadPublicKey = function() {
-			
+			service.uploadPublicKey(self.myrsakeys.publicKey, self.myrsakeys.module).success(function(data) {
+				alert('公钥上传成功');
+			});
+		};
+		self.deletePublicKey = function() {
+			service.deletePublicKey().success(function(data) {
+				
+			});
 		};
 		
 		
-		
+		service.testMessage().success(function(data) {
+			console.log(data);
+			self.testMessage = myrsa.decrypt(data, self.myrsakeys);
+			
+		});
 		test();
 		
 		

@@ -1,6 +1,5 @@
 package com.github.emailtohl.building.site.entities;
 
-import java.math.BigInteger;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -100,8 +99,8 @@ public class User extends BaseEntity {
 	protected String iconSrc;
 	@Size(max = 300)
 	protected String description;
-	protected BigInteger publicKey;
-	protected BigInteger module;
+	protected String publicKey;
+	protected String module;
 //	protected Set<Authority> authorities = new HashSet<Authority>();
 	protected Set<Role> roles = new HashSet<Role>();
 	
@@ -264,16 +263,17 @@ public class User extends BaseEntity {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public BigInteger getPublicKey() {
+	public String getPublicKey() {
 		return publicKey;
 	}
-	public void setPublicKey(BigInteger publicKey) {
+	public void setPublicKey(String publicKey) {
 		this.publicKey = publicKey;
 	}
-	public BigInteger getModule() {
+	@Lob
+	public String getModule() {
 		return module;
 	}
-	public void setModule(BigInteger module) {
+	public void setModule(String module) {
 		this.module = module;
 	}
 	
