@@ -1,5 +1,6 @@
 package com.github.emailtohl.building.site.entities;
 
+import java.math.BigInteger;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -99,6 +100,8 @@ public class User extends BaseEntity {
 	protected String iconSrc;
 	@Size(max = 300)
 	protected String description;
+	protected BigInteger publicKey;
+	protected BigInteger module;
 //	protected Set<Authority> authorities = new HashSet<Authority>();
 	protected Set<Role> roles = new HashSet<Role>();
 	
@@ -261,6 +264,19 @@ public class User extends BaseEntity {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	public BigInteger getPublicKey() {
+		return publicKey;
+	}
+	public void setPublicKey(BigInteger publicKey) {
+		this.publicKey = publicKey;
+	}
+	public BigInteger getModule() {
+		return module;
+	}
+	public void setModule(BigInteger module) {
+		this.module = module;
+	}
+	
 /*	
 	// 此属性暂时为目前配置的spring security提供服务
 	@ElementCollection(targetClass = Authority.class, fetch = FetchType.EAGER)
@@ -279,7 +295,6 @@ public class User extends BaseEntity {
 		this.authorities = authorities;
 	}
 	*/
-	
 	@ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER)
 	@JoinTable(name = "t_user_role"
 	, joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") }

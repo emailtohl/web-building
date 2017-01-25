@@ -5,6 +5,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.math.BigInteger;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,6 +65,8 @@ public class ServiceStub {
 		doAnswer(answer).when(userService).changePasswordByEmail(customer.getEmail(), testPassword);
 		doAnswer(answer).when(userService).deleteUser(employeeId);
 		doAnswer(answer).when(userService).deleteUser(customerId);
+		doAnswer(answer).when(userService).uploadPublicKey(new BigInteger("100"), new BigInteger("200"));
+		doAnswer(answer).when(userService).deletePublicKey();
 		when(userService.getUser(employeeId)).thenReturn(employee);
 		when(userService.getUser(customerId)).thenReturn(customer);
 		when(userService.getUserByEmail(emailtohl.getEmail())).thenReturn(emailtohl);

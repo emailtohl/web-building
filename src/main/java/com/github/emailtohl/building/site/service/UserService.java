@@ -9,6 +9,7 @@ import static com.github.emailtohl.building.site.entities.Authority.USER_READ_SE
 import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_ALL;
 import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_SELF;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Set;
 
@@ -223,5 +224,21 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @return
 	 */
 	Authentication authenticate(String email, String password);
+	
+	/**
+	 * 上传用户的公钥
+	 * @param publicKey
+	 * @param module
+	 */
+	@PreAuthorize("isAuthenticated()")
+	void uploadPublicKey(@NotNull BigInteger publicKey, @NotNull BigInteger module);
+	
+	/**
+	 * 删除用户的公钥
+	 * @param publicKey
+	 * @param module
+	 */
+	@PreAuthorize("isAuthenticated()")
+	void deletePublicKey();
 	
 }

@@ -1,4 +1,6 @@
 package com.github.emailtohl.building.site.service.security;
+import java.math.BigInteger;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -287,6 +289,30 @@ public class UserServiceTest {
 	public void testGetRoles2() {
 		securityContextManager.setBaz();
 		userService.getRoles();
+	}
+	
+	@Test(expected = AuthenticationCredentialsNotFoundException.class)
+	public void testUploadPublicKey1() {
+		securityContextManager.clearContext();
+		userService.uploadPublicKey(new BigInteger("100"), new BigInteger("200"));
+	}
+	
+	@Test
+	public void testUploadPublicKey2() {
+		securityContextManager.setBaz();
+		userService.uploadPublicKey(new BigInteger("100"), new BigInteger("200"));
+	}
+	
+	@Test(expected = AuthenticationCredentialsNotFoundException.class)
+	public void testDeletePublicKey1() {
+		securityContextManager.clearContext();
+		userService.deletePublicKey();
+	}
+	
+	@Test
+	public void testDeletePublicKey2() {
+		securityContextManager.setBaz();
+		userService.deletePublicKey();
 	}
 
 }

@@ -12,6 +12,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
@@ -258,6 +259,16 @@ public class UserServiceImplTest {
 		assertNotNull(a);
 		// 查看认证结果
 		logger.debug(gson.toJson(a));
+	}
+	
+	@Test
+	public void testUploadPublicKey() {
+		securityContextManager.setFoo();
+		userService.uploadPublicKey(new BigInteger("100"), new BigInteger("200"));
+		User u = userService.getUserByEmail(foo.getEmail());
+		assertNotNull(u.getPublicKey());
+		assertNotNull(u.getModule());
+		userService.deletePublicKey();
 	}
 
 }

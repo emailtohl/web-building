@@ -4,9 +4,10 @@ define(['encryption/module', 'common/service/myrsa', 'encryption/service'], func
 	                                function($scope, $http, $state, service, util) {
 		var self = this;
 		self.bitLength = 1024;
+		
 		if (localStorage.myrsakeys) {
 			self.isLocalStorage = true;
-			self.myrsakeys = localStorage.myrsakeys;
+			self.myrsakeys = JSON.parse(localStorage.myrsakeys);
 		} else {
 			self.isLocalStorage = false;
 			self.myrsakeys = {};
@@ -15,7 +16,11 @@ define(['encryption/module', 'common/service/myrsa', 'encryption/service'], func
 		self.generateKeys = function() {
 			self.myrsakeys = myrsa.generateKeys(self.bitLength);
 			if (confirm('是否将密钥存入浏览本地缓存中？注意：请确保使用环境的安全！')) {
-				self.isLocalStorage = self.myrsakeys;
+				self.isLocalStorage = true;
+				localStorage.myrsakeys = JSON.stringify(self.myrsakeys);
+			} else {
+				self.isLocalStorage = false;
+				delete localStorage.myrsakeys;
 			}
 		};
 		self.uploadPublicKey = function() {
