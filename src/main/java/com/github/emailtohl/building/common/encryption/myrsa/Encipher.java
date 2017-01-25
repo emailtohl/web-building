@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -291,6 +293,59 @@ public class Encipher {
 		}
 	}
 	
+	/**
+	 * 获取编码后的字符串形式的公钥
+	 * @param keyPairs 公钥对象
+	 * @return 字符串编码的公钥
+	 */
+	public String getEncodePublicKey(KeyPairs keyPairs) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("publicKey", keyPairs.getPublicKey().toString());
+		map.put("module", keyPairs.getModule().toString());
+		String json = gson.toJson(map);
+		return encoder.encodeToString(json.getBytes());
+	}
+	
+	/**
+	 * 获取编码后的字符串形式的公钥
+	 * @param keyPairs 公钥对象
+	 * @return 字符串编码的公钥
+	 */
+	public String getEncodePrivateKey(KeyPairs keyPairs) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("privateKey", keyPairs.getPrivateKey().toString());
+		map.put("module", keyPairs.getModule().toString());
+		String json = gson.toJson(map);
+		return encoder.encodeToString(json.getBytes());
+	}
+	
+	/**
+	 * 根据编码后的公钥加密明文
+	 * @param plaintext 明文
+	 * @param encodePublicKey 编码后的字符串形式的公钥
+	 * @return 编码后的密文
+	 */
+	public String encrypt(String plaintext, String encodePublicKey) {
+		String json = new String(decoder.decode(encodePublicKey));
+		KeyPairs keyPairs = gson.fromJson(json, KeyPairs.class);
+		Code c = encrypt(plaintext, keyPairs);
+		json = gson.toJson(c);
+		return encoder.encodeToString(json.getBytes());
+	}
+	
+	/**
+	 * 根据编码后的密钥解密密文
+	 * @param ciphertext 密文
+	 * @param encodePrivateKey
+	 * @return
+	 */
+	public String decrypt(String ciphertext, String encodePrivateKey) {
+		String json = new String(decoder.decode(encodePrivateKey));
+		KeyPairs keyPairs = gson.fromJson(json, KeyPairs.class);
+		json = new String(decoder.decode(ciphertext));
+		Code c = gson.fromJson(json, Code.class);
+		return decrypt(c, keyPairs);
+	}
 	
 	/**
 	 * 加密后的信息存放对象

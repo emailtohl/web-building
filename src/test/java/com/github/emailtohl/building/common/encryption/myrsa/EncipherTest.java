@@ -14,46 +14,49 @@ public class EncipherTest {
 			"白发渔樵江渚上，惯看秋月春风。\r\n" + 
 			"一壶浊酒喜相逢。\r\n" + 
 			"古今多少事，都付笑谈中。";
+	
+	KeyPairs keys = new KeyGenerator().generateKeys(128);
+	Encipher encipher = new Encipher();
+	Gson gson = new Gson();
 
 	@Test
 	public void test1() {
-		KeyGenerator kg = new KeyGenerator();
-		Encipher e = new Encipher();
-		Gson gson = new Gson();
-		
-		KeyPairs keys = kg.generateKeys(128);
-		
-		Code code = e.encrypt(plaintext, keys);
+		Code code = encipher.encrypt(plaintext, keys);
 		String ciphertext = gson.toJson(code);
 		System.out.println(ciphertext);
 		
 		Code code2 = gson.fromJson(ciphertext, Code.class);
-		String restore = e.decrypt(code2, keys);
+		String restore = encipher.decrypt(code2, keys);
 		
 		assertEquals(restore, plaintext);
 		
 		plaintext = "短";
-		code = e.encrypt(plaintext, keys);
+		code = encipher.encrypt(plaintext, keys);
 		ciphertext = gson.toJson(code);
 		System.out.println(ciphertext);
 		code2 = gson.fromJson(ciphertext, Code.class);
-		restore = e.decrypt(code2, keys);
+		restore = encipher.decrypt(code2, keys);
 		assertEquals(restore, plaintext);
 	}
 	
 	@Test
 	public void test2() {
-		KeyGenerator kg = new KeyGenerator();
-		Encipher e = new Encipher();
-		
-		KeyPairs keys = kg.generateKeys(128);
-		
-		String ciphertext = e.encrypt(plaintext, keys.getPublicKey().toString(), keys.getModule().toString());
+		String ciphertext = encipher.encrypt(plaintext, keys.getPublicKey().toString(), keys.getModule().toString());
 		System.out.println(ciphertext);
 		
-		String recovery = e.decrypt(ciphertext, keys.getPrivateKey().toString(), keys.getModule().toString());
+		String recovery = encipher.decrypt(ciphertext, keys.getPrivateKey().toString(), keys.getModule().toString());
 		System.out.println(recovery);
 		assertEquals(recovery, plaintext);
+	}
+	
+	@Test
+	public void test3() {
+		String encodePublicKey = encipher.getEncodePublicKey(keys);
+		String encodePrivateKey = encipher.getEncodePrivateKey(keys);
+		String ciphertext = encipher.encrypt(plaintext, encodePublicKey);
+		System.out.println(ciphertext);
+		String recovery = encipher.decrypt(ciphertext, encodePrivateKey);
+		assertEquals(plaintext, recovery);
 	}
 
 }
