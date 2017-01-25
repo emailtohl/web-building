@@ -6,8 +6,10 @@
 define(['lib/cryptico/cryptico.min', 'lib/base64/base64.min'], function() {
 	return {
 		generateKeys : generateKeys,
-		encrypt : encrypt64,
-		decrypt : decrypt64
+		getEncodePublicKey : getEncodePublicKey,
+		getEncodePrivateKey : getEncodePrivateKey,
+		encrypt : encodeEncrypt,
+		decrypt : encodeDecrypt
 	};
 	/**
 	 * 将明文字符串转为Unicode编码的字符数组
@@ -22,6 +24,26 @@ define(['lib/cryptico/cryptico.min', 'lib/base64/base64.min'], function() {
 			publicKey : rsaKey.e.toString(),
 			privateKey : rsaKey.d.toString()
 		};
+	}
+	
+	/**
+	 * 获取编码后的字符串形式的公钥
+	 * @param keyPairs 密钥对
+	 * @return 编码的字符串公钥
+	 */
+	function getEncodePublicKey(keyPairs) {
+		var json = JSON.parse(keyPairs);
+		return Base64.encode(json);
+	}
+	
+	/**
+	 * 获取编码后的字符串形式的公钥
+	 * @param keyPairs 密钥对
+	 * @return 编码的字符串私钥
+	 */
+	function getEncodePrivateKey(keyPairs) {
+		var json = gson.toJson(keyPairs);
+		return Base64.encode(json);
 	}
 
 	/**
@@ -152,4 +174,31 @@ define(['lib/cryptico/cryptico.min', 'lib/base64/base64.min'], function() {
 		return decrypt(code, {privateKey : privateKey, module : module});
 	}
 	
+	/**
+	 * 根据编码后的公钥加密明文
+	 * @param plaintext 明文
+	 * @param encodePublicKey 编码后的字符串形式的公钥
+	 * @return 编码后的密文
+	 */
+	function encodeEncrypt(plaintext, encodePublicKey) {
+		var json = Base64.decode(encodePublicKey);
+		var publicKey = JSON.parse(json);
+		var code = encrypt(plaintext, publicKey);
+		json = JSON.parse(code);
+		return Base64.encode(json);
+	}
+	
+	/**
+	 * 根据编码后的密钥解密密文
+	 * @param ciphertext 密文
+	 * @param encodePrivateKey 已编码后的密钥
+	 * @return 明文
+	 */
+	function encodeDecrypt(ciphertext, encodePrivateKey) {
+		var json = Base64.decode(encodePrivateKey);
+		var keyPairs = JSON.parse(json);
+		json = Base64.decode(ciphertext);
+		var code = JSON.parse(json);
+		return decrypt(c, keyPairs);
+	}
 });

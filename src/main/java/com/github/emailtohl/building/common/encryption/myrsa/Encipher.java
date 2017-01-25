@@ -296,7 +296,7 @@ public class Encipher {
 	/**
 	 * 获取编码后的字符串形式的公钥
 	 * @param keyPairs 公钥对象
-	 * @return 字符串编码的公钥
+	 * @return 编码的字符串公钥
 	 */
 	public String getEncodePublicKey(KeyPairs keyPairs) {
 		Map<String, String> map = new HashMap<String, String>();
@@ -308,13 +308,41 @@ public class Encipher {
 	
 	/**
 	 * 获取编码后的字符串形式的公钥
+	 * @param publicKey 字符串公钥
+	 * @param module 模
+	 * @return 编码的字符串公钥
+	 */
+	public String getEncodePublicKey(String publicKey, String module) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("publicKey", publicKey);
+		map.put("module", module);
+		String json = gson.toJson(map);
+		return encoder.encodeToString(json.getBytes());
+	}
+	
+	/**
+	 * 获取编码后的字符串形式的公钥
 	 * @param keyPairs 公钥对象
-	 * @return 字符串编码的公钥
+	 * @return 编码的字符串公钥
 	 */
 	public String getEncodePrivateKey(KeyPairs keyPairs) {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("privateKey", keyPairs.getPrivateKey().toString());
 		map.put("module", keyPairs.getModule().toString());
+		String json = gson.toJson(map);
+		return encoder.encodeToString(json.getBytes());
+	}
+	
+	/**
+	 * 获取编码后的字符串形式的公钥
+	 * @param privateKey 字符串私钥
+	 * @param module 模
+	 * @return 编码的字符串私钥
+	 */
+	public String getEncodePrivateKey(String privateKey, String module) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("privateKey", privateKey);
+		map.put("module", module);
 		String json = gson.toJson(map);
 		return encoder.encodeToString(json.getBytes());
 	}
@@ -336,8 +364,8 @@ public class Encipher {
 	/**
 	 * 根据编码后的密钥解密密文
 	 * @param ciphertext 密文
-	 * @param encodePrivateKey
-	 * @return
+	 * @param encodePrivateKey 已编码后的密钥
+	 * @return 明文
 	 */
 	public String decrypt(String ciphertext, String encodePrivateKey) {
 		String json = new String(decoder.decode(encodePrivateKey));

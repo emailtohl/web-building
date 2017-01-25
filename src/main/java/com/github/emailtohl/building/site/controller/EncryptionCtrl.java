@@ -52,7 +52,8 @@ public class EncryptionCtrl {
 		User u = userService.getUserByEmail(email);
 		if (u == null)
 			return null;
-		String ciphertext = encipher.encrypt(plaintext, u.getPublicKey(), u.getModule());
+		String encodePublicKey = encipher.getEncodePublicKey(u.getPublicKey(), u.getModule());
+		String ciphertext = encipher.encrypt(plaintext, encodePublicKey);
 		logger.debug(ciphertext);
 		// 构造成json格式
 		return "{\"ciphertext\":\"" + ciphertext + "\"}";

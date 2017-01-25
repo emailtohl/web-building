@@ -15,12 +15,16 @@ define(['encryption/module', 'common/service/myrsa', 'encryption/service'], func
 		
 		self.generateKeys = function() {
 			self.myrsakeys = myrsa.generateKeys(self.bitLength);
+			self.encodePublicKey = myrsa.getEncodePublicKey(keyPairs);
+			self.encodePrivateKey = myrsa.getEncodePrivateKey(keyPairs);
 			if (confirm('是否将密钥存入浏览本地缓存中？注意：请确保使用环境的安全！')) {
 				self.isLocalStorage = true;
-				localStorage.myrsakeys = JSON.stringify(self.myrsakeys);
+				localStorage.encodePublicKey = self.encodePublicKey;
+				localStorage.encodePrivateKey = self.encodePrivateKey;
 			} else {
 				self.isLocalStorage = false;
-				delete localStorage.myrsakeys;
+				delete localStorage.encodePublicKey;
+				delete localStorage.encodePrivateKey;
 			}
 		};
 		self.uploadPublicKey = function() {
@@ -39,7 +43,7 @@ define(['encryption/module', 'common/service/myrsa', 'encryption/service'], func
 			self.testMessage = myrsa.decrypt(data.ciphertext, self.myrsakeys.privateKey, self.myrsakeys.module);
 			
 		});
-		test();
+//		test();
 		
 		
 		function test() {
