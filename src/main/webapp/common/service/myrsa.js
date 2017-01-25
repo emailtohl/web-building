@@ -50,8 +50,11 @@ define(['lib/cryptico/cryptico.min'], function() {
 	 * @return 文本字符串
 	 */
 	function decode(code) {
-		var unicodes = [], beginIndex = 0, endIndex, unicode;
-		while ((endIndex = code.splitPoints.shift())) {
+		var unicodes = [], beginIndex = 0, endIndex, unicode, copy = [], i;
+		for (i = 0; i < code.splitPoints.length; i++) {
+			copy.push(code.splitPoints[i]);
+		}
+		while ((endIndex = copy.shift())) {
 			unicode = code.m.substring(beginIndex, endIndex);
 			unicodes.push(String.fromCharCode(unicode));
 			beginIndex = endIndex;
@@ -67,12 +70,13 @@ define(['lib/cryptico/cryptico.min'], function() {
 	 * 故先将m转成两个小于n的m1，m2，然后分别加密m1和m2成密文c1，c2
 	 * 
 	 * @param src 已被数字化编码的明文
-	 * @param keyPairs 密钥对象，只使用其中的publicKey和module属性
+	 * @param publicKey 密钥对象，只使用其中的publicKey和module属性
 	 * @return 加密的可序列化的code对象
 	 */
-	function cryptCode(srcCode, keyPairs) {
-		var m = new BigInteger(srcCode.m), e = new BigInteger(keyPairs.publicKey), n = new BigInteger(
-				keyPairs.module), m1, m2, k, c1, c2, divideAndRemainder, destCode = {};
+	function cryptCode(srcCode, publicKey) {
+		var m = new BigInteger(srcCode.m), e = new BigInteger(publicKey.publicKey), 
+		n = new BigInteger(publicKey.module), m1, m2, k, c1, c2, 
+		divideAndRemainder, destCode = {};
 		// 将明文m拆分为m = k*m1 + m2，保证m1，m2一定小于n，如此可以分别对m1，m2加密
 		m1 = n.shiftRight(1);// m1一定小于n
 		divideAndRemainder = m.divideAndRemainder(m1);
@@ -96,21 +100,21 @@ define(['lib/cryptico/cryptico.min'], function() {
 	 * @param keyPairs 只使用其公钥和模，不需要私钥，私钥字段可为null
 	 * @return 加密的可序列化的code对象
 	 */
-	function crypt(text, keyPairs) {
+	function crypt(text, publicKey) {
 		var code = encode(text);
-		return cryptCode(code, keyPairs);
+		return cryptCode(code, publicKey);
 	}
 
 	/**
 	 * 根据加密规则解密code
 	 * @param code
-	 * @param keyPairs 只使用其私钥和模，公钥可为null
+	 * @param privateKey 只使用其私钥和模，公钥可为null
 	 * @return 原字符串文本
 	 */
-	function decrypt(code, keyPairs) {
-		var c1 = new BigInteger(code.c1), c2 = new BigInteger(code.c2), k = new BigInteger(
-				code.k), d = new BigInteger(keyPairs.privateKey), n = new BigInteger(
-				keyPairs.module), m1, m2, m, destCode = {};
+	function decrypt(code, privateKey) {
+		var c1 = new BigInteger(code.c1), c2 = new BigInteger(code.c2), 
+		k = new BigInteger(code.k), d = new BigInteger(privateKey.privateKey), 
+		n = new BigInteger(privateKey.module), m1, m2, m, destCode = {};
 		if (BigInteger.ZERO.equals(k))// k为0，m1是什么都无所谓，因为乘积仍然是0
 			m1 = BigInteger.ZERO;
 		else

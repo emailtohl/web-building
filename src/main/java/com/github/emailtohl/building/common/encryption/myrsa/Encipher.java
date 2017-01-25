@@ -7,18 +7,24 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * 本加密解密类主要考虑与前端JavaScript能识别的编码方式。
+ * 为了让前后端在加解密的规则上达成一致协议，设计本类。
  * 
- * 在前端JavaScript中，可识别Unicode编码的字符，所以后端的加密解密也需基于Unicode编码进行。
+ * 前端JavaScript可识别Unicode编码的字符，所以后端的加密解密也需基于Unicode编码进行。
  * 
- * 加密和解密的算法需要在前端JavaScript也实现一份。
+ * 加解密面向的数据结构是内部类Code：
+ * m是将明文Unicode编码并连接在一起的BigInteger，splitPoints则保存着连接点的信息
+ * m1,m2,k和m的关系是：m = k * m1 + m2
+ * c1,c2 则分别是RSA加密后的m1和m2
+ * 
+ * JavaScript实现依赖于库jsbn，该库为JavaScript创建了一个与Java相似API的BigInteger，
+ * 另外cryptico.js库可直接创建出RSA的密钥对，由于cryptico加解密协议是私有实现不能与后台通信，且不能加解密中文编码，故只使用其生成RSA密钥的方法
  * 
  * @author HeLei
  * @date 2017.01.24
  */
 public class Encipher {
-	
 	/**
+	 * 未在本类中用到
 	 * 将明文字符串转为Unicode编码的字符数组
 	 * @param text
 	 * @return
@@ -32,6 +38,7 @@ public class Encipher {
 	}
 	
 	/**
+	 * 未在本类中用到
 	 * 将Unicode编码的字符数组转成字符串
 	 * @param unicodes
 	 * @return
@@ -64,6 +71,20 @@ public class Encipher {
 		code.splitPoints = splitPoints;
 		return code;
 	}
+	/* JavaScript实现
+	function encode(text) {
+		var code = {}, splitPoints = [], splitPoint = 0, s = '', i, u;
+		for (i = 0; i < text.length; i++) {
+			u = new String(text.codePointAt(i));// 字符转成Unicode码
+			s += u;
+			splitPoint += u.length;
+			splitPoints.push(splitPoint);
+		}
+		code.m = s;
+		code.splitPoints = splitPoints;
+		return code;
+	}
+	*/
 	
 	/**
 	 * 将code对象解析为原始字符串
@@ -74,7 +95,9 @@ public class Encipher {
 		String str = code.m.toString();
 		List<Integer> unicodes = new ArrayList<>();
 		Integer beginIndex = 0, endIndex;
-		while ((endIndex = code.splitPoints.pollFirst()) != null) {
+		// 下面要使用改变参数的方法，故使用副本进行操作
+		LinkedList<Integer> copy = new LinkedList<Integer>(code.splitPoints);
+		while ((endIndex = copy.pollFirst()) != null) {
 			String unicode = str.substring(beginIndex, endIndex);
 			unicodes.add(Integer.valueOf(unicode));
 			beginIndex = endIndex;
@@ -86,6 +109,20 @@ public class Encipher {
 		}
 		return sb.toString();
 	}
+	/* JavaScript实现
+	function decode(code) {
+		var unicodes = [], beginIndex = 0, endIndex, unicode, copy = [], i;
+		for (i = 0; i < code.splitPoints.length; i++) {
+			copy.push(code.splitPoints[i]);
+		}
+		while ((endIndex = copy.shift())) {
+			unicode = code.m.substring(beginIndex, endIndex);
+			unicodes.push(String.fromCharCode(unicode));
+			beginIndex = endIndex;
+		}
+		return unicodes.join('');
+	}
+	*/
 	
 	/**
 	 * 将原code加密成新的code
@@ -95,14 +132,14 @@ public class Encipher {
 	 * 故先将m转成两个小于n的m1，m2，然后分别加密m1和m2成密文c1，c2
 	 * 
 	 * @param src 已被数字化编码的明文
-	 * @param keyPairs 密钥对象，只使用其中的publicKey和module属性
+	 * @param publicKey 密钥对象，只使用其中的publicKey和module属性
 	 * @return 加密的可序列化的code对象
 	 */
-	private Code crypt(Code src, KeyPairs keyPairs) {
+	private Code crypt(Code src, KeyPairs publicKey) {
 		Code dest = new Code();
 		BigInteger m = src.m,
-				e = keyPairs.getPublicKey(), 
-				n = keyPairs.getModule(),
+				e = publicKey.getPublicKey(), 
+				n = publicKey.getModule(),
 				m1, m2, k, c1, c2;
 		// 将明文m拆分为m = k*m1 + m2，保证m1，m2一定小于n，如此可以分别对m1，m2加密
 		m1 = n.shiftRight(1);// m1一定小于n
@@ -121,27 +158,57 @@ public class Encipher {
 		return dest;
 	}
 	
+	/* JavaScript实现
+	function cryptCode(srcCode, publicKey) {
+		var m = new BigInteger(srcCode.m), e = new BigInteger(publicKey.publicKey), 
+		n = new BigInteger(publicKey.module), m1, m2, k, c1, c2, 
+		divideAndRemainder, destCode = {};
+		// 将明文m拆分为m = k*m1 + m2，保证m1，m2一定小于n，如此可以分别对m1，m2加密
+		m1 = n.shiftRight(1);// m1一定小于n
+		divideAndRemainder = m.divideAndRemainder(m1);
+		k = divideAndRemainder[0];
+		m2 = divideAndRemainder[1];
+		if (BigInteger.ZERO.equals(k))// k如果为0，说明m本身就小于n，c1是什么就无所谓了，因为乘积仍然是0
+			c1 = BigInteger.ZERO;
+		else
+			c1 = m1.modPow(e, n);
+		c2 = m2.modPow(e, n);
+		destCode.splitPoints = srcCode.splitPoints;
+		destCode.k = k.toString();
+		destCode.c1 = c1.toString();
+		destCode.c2 = c2.toString();
+		return destCode;
+	}
+	*/
+	
 	/**
 	 * 将字符串加密成code
 	 * @param text 明文字符串
-	 * @param keyPairs 只使用其公钥和模，不需要私钥，私钥字段可为null
+	 * @param publicKey 只使用其公钥和模，不需要私钥，私钥字段为null
 	 * @return 加密的可序列化的code对象
 	 */
-	public Code crypt(String text, KeyPairs keyPairs) {
+	public Code crypt(String text, KeyPairs publicKey) {
 		Code code = encode(text);
-		return crypt(code, keyPairs);
+		return crypt(code, publicKey);
 	}
+	
+	/* JavaScript实现
+	function crypt(text, publicKey) {
+		var code = encode(text);
+		return cryptCode(code, publicKey);
+	}
+	*/
 	
 	/**
 	 * 根据加密规则解密code
 	 * @param code
-	 * @param keyPairs 只使用其私钥和模，公钥可为null
+	 * @param privateKey 只使用其私钥和模，公钥为null
 	 * @return 原字符串文本
 	 */
-	public String decrypt(Code code, KeyPairs keyPairs) {
+	public String decrypt(Code code, KeyPairs privateKey) {
 		BigInteger c1 = code.c1, c2 = code.c2, k = code.k,
-				d = keyPairs.getPrivateKey(), 
-				n = keyPairs.getModule(),
+				d = privateKey.getPrivateKey(), 
+				n = privateKey.getModule(),
 				m1, m2, m;
 		if (BigInteger.ZERO.equals(k))// k为0，m1是什么都无所谓，因为乘积仍然是0
 			m1 = BigInteger.ZERO;
@@ -155,6 +222,23 @@ public class Encipher {
 		return decode(result);
 	}
 	
+	/* JavaScript实现
+	function decrypt(code, privateKey) {
+		var c1 = new BigInteger(code.c1), c2 = new BigInteger(code.c2), 
+		k = new BigInteger(code.k), d = new BigInteger(privateKey.privateKey), 
+		n = new BigInteger(privateKey.module), m1, m2, m, destCode = {};
+		if (BigInteger.ZERO.equals(k))// k为0，m1是什么都无所谓，因为乘积仍然是0
+			m1 = BigInteger.ZERO;
+		else
+			m1 = c1.modPow(d, n);
+		m2 = c2.modPow(d, n);
+		m = k.multiply(m1).add(m2);
+		destCode.m = m.toString();
+		destCode.splitPoints = code.splitPoints;
+		return decode(destCode);
+	}
+	*/
+	
 	/**
 	 * 加密后的信息存放对象
 	 */
@@ -165,45 +249,30 @@ public class Encipher {
 		public BigInteger getM() {
 			return m;
 		}
-		public void setM(BigInteger m) {
-			this.m = m;
-		}
 		public BigInteger getK() {
 			return k;
-		}
-		public void setK(BigInteger k) {
-			this.k = k;
 		}
 		public BigInteger getM1() {
 			return m1;
 		}
-		public void setM1(BigInteger m1) {
-			this.m1 = m1;
-		}
 		public BigInteger getM2() {
 			return m2;
-		}
-		public void setM2(BigInteger m2) {
-			this.m2 = m2;
 		}
 		public BigInteger getC1() {
 			return c1;
 		}
-		public void setC1(BigInteger c1) {
-			this.c1 = c1;
-		}
 		public BigInteger getC2() {
 			return c2;
-		}
-		public void setC2(BigInteger c2) {
-			this.c2 = c2;
 		}
 		public LinkedList<Integer> getSplitPoints() {
 			return splitPoints;
 		}
-		public void setSplitPoints(LinkedList<Integer> splitPoints) {
-			this.splitPoints = splitPoints;
+		@Override
+		public String toString() {
+			return "Code [m=" + m + ", k=" + k + ", m1=" + m1 + ", m2=" + m2 + ", c1=" + c1 + ", c2=" + c2
+					+ ", splitPoints=" + splitPoints + "]";
 		}
 	}
+	
 	
 }
