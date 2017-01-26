@@ -27,8 +27,8 @@ define(['lib/cryptico/cryptico.min', 'lib/base64/base64.min'], function() {
 	 */
 	function encrypt(plaintext, key) {
 		var pm = encode(plaintext), cm = {};
-		cm.c = cryptico.encryptAESCBC(model.m, key);
-		cm.splitPoint = pm.splitPoint;
+		cm.c = cryptico.encryptAESCBC(pm.m, key);
+		cm.splitPoints = pm.splitPoints;
 		json = JSON.stringify(cm);
 		return Base64.encode(json);
 	}
@@ -43,7 +43,7 @@ define(['lib/cryptico/cryptico.min', 'lib/base64/base64.min'], function() {
 	function decrypt(ciphertext, key) {
 		var json = Base64.decode(ciphertext);
 		var cm = JSON.parse(json)/*密文数据模型*/, pm = {}/*明文数据模型*/;
-		pm.m = cryptico.decryptAESCBC(ccc, key);
+		pm.m = cryptico.decryptAESCBC(cm.c, key);
 		pm.splitPoints = cm.splitPoints;
 		return decode(pm);
 	}

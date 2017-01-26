@@ -23,12 +23,12 @@
 	    <form name="f">
       	  <div class="box">
       	    <div class="box-body">
-				<div class="form-group has-feedback" ng-class="{'has-success':f.privateKey.$valid,'has-error':f.privateKey.$invalid}">
+				<div class="form-group has-feedback" ng-class="{'has-success':f.aeskey.$valid,'has-error':f.aeskey.$invalid}">
 		          <label for="">密钥</label>
 		          <textarea class="form-control" name="aeskey" ng-model="ctrl.aesKey" placeholder="AES密钥" type="text" required="required"></textarea>
-				  <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':f.privateKey.$valid,'glyphicon-warning-sign':f.privateKey.$invalid}"></span>
-				  <span ng-show="f.privateKey.$invalid">
-				  	<span style="color:red;">没有私钥无法解密信息</span>
+				  <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':f.aeskey.$valid,'glyphicon-warning-sign':f.aeskey.$invalid}"></span>
+				  <span ng-show="f.aeskey.$invalid">
+				  	<span style="color:red;">没有密钥无法解密信息</span>
 				  </span>
 				</div>
       	    </div>
