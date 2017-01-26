@@ -8,7 +8,6 @@ import static com.github.emailtohl.building.site.entities.BaseEntity.VERSION_PRO
 import static com.github.emailtohl.building.site.entities.Role.ADMIN;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -312,12 +311,11 @@ public class UserServiceImpl implements UserService, Serializable {
 	}
 	
 	@Override
-	public void setPublicKey(BigInteger publicKey, BigInteger module) {
+	public void setPublicKey(String publicKey) {
 		String email = SecurityContextUtil.getCurrentUsername();
 		User u = userRepository.findByEmail(email);
 		if (u != null) {
-			u.setPublicKey(publicKey.toString());
-			u.setModule(module.toString());
+			u.setPublicKey(publicKey);
 		}
 	}
 	
@@ -327,7 +325,6 @@ public class UserServiceImpl implements UserService, Serializable {
 		User u = userRepository.findByEmail(email);
 		if (u != null) {
 			u.setPublicKey(null);
-			u.setModule(null);
 		}
 	}
 	

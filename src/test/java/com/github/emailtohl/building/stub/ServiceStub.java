@@ -1,11 +1,12 @@
 package com.github.emailtohl.building.stub;
 
-import static com.github.emailtohl.building.initdb.PersistenceData.*;
+import static com.github.emailtohl.building.initdb.PersistenceData.baz;
+import static com.github.emailtohl.building.initdb.PersistenceData.emailtohl;
+import static com.github.emailtohl.building.initdb.PersistenceData.foo;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.math.BigInteger;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,7 +66,7 @@ public class ServiceStub {
 		doAnswer(answer).when(userService).changePasswordByEmail(customer.getEmail(), testPassword);
 		doAnswer(answer).when(userService).deleteUser(employeeId);
 		doAnswer(answer).when(userService).deleteUser(customerId);
-		doAnswer(answer).when(userService).setPublicKey(new BigInteger("100"), new BigInteger("200"));
+		doAnswer(answer).when(userService).setPublicKey("eyJtb2R1bGUiOiI5MTIxMzkwMjU2NDM1ODA1MjM4NDg4MDI5NDE3MjgxMzIxNjk4NTYxMDk2NTcwNTE5NDc2OTM4NDQ4NDA1NzgxMjAyMDM4NzM1NzQwNDg0OTczODQ5NzU2MTIzNjE3MjQ1MzI1MzMzMTEzNDMwMzAwMjc4NjIyNjc2NjkwMDEzMzkxOTgxMjAyMTk2NzY5Mjg2MDc3NzMwODkwOTkxODIyMDMzNTk4NjQ1NjkwMzU1NzYxNTU3NjUwNjkwMzI1MTE2NTUzODQ3OTI0NTc5OTk1MTQwNDM0NDkyOTk3NDg0MDg1NjM5ODI2NjU4NzY1NDM4NTE3ODk0Mzg5NTc4NDg1ODYxNDMxMjY3Mzg0OTM3MDE1MzgyMjg2MzAzODYxOTU5NzcyOTA1OTQwNDUzNjMxNjA2OSIsInB1YmxpY0tleSI6IjY1NTM3In0=");
 		doAnswer(answer).when(userService).clearPublicKey();
 		when(userService.getUser(employeeId)).thenReturn(employee);
 		when(userService.getUser(customerId)).thenReturn(customer);

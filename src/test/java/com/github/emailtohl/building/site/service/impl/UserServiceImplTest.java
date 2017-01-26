@@ -12,7 +12,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
@@ -264,10 +263,9 @@ public class UserServiceImplTest {
 	@Test
 	public void testPublicKey() {
 		securityContextManager.setFoo();
-		userService.setPublicKey(new BigInteger("100"), new BigInteger("200"));
+		userService.setPublicKey("eyJtb2R1bGUiOiI5MTIxMzkwMjU2NDM1ODA1MjM4NDg4MDI5NDE3MjgxMzIxNjk4NTYxMDk2NTcwNTE5NDc2OTM4NDQ4NDA1NzgxMjAyMDM4NzM1NzQwNDg0OTczODQ5NzU2MTIzNjE3MjQ1MzI1MzMzMTEzNDMwMzAwMjc4NjIyNjc2NjkwMDEzMzkxOTgxMjAyMTk2NzY5Mjg2MDc3NzMwODkwOTkxODIyMDMzNTk4NjQ1NjkwMzU1NzYxNTU3NjUwNjkwMzI1MTE2NTUzODQ3OTI0NTc5OTk1MTQwNDM0NDkyOTk3NDg0MDg1NjM5ODI2NjU4NzY1NDM4NTE3ODk0Mzg5NTc4NDg1ODYxNDMxMjY3Mzg0OTM3MDE1MzgyMjg2MzAzODYxOTU5NzcyOTA1OTQwNDUzNjMxNjA2OSIsInB1YmxpY0tleSI6IjY1NTM3In0=");
 		User u = userService.getUserByEmail(foo.getEmail());
 		assertNotNull(u.getPublicKey());
-		assertNotNull(u.getModule());
 		userService.clearPublicKey();
 	}
 

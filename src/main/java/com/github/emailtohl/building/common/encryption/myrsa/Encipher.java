@@ -9,9 +9,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.gson.Gson;
 
 /**
@@ -31,37 +28,95 @@ import com.google.gson.Gson;
  * @date 2017.01.24
  */
 public class Encipher {
-	private static final Logger logger = LogManager.getLogger();
+	KeyGenerator kg = new KeyGenerator();
 	Base64.Encoder encoder = Base64.getEncoder();
 	Base64.Decoder decoder = Base64.getDecoder();
 	Gson gson = new Gson();
 	
 	/**
-	 * 未在本类中用到
-	 * 将明文字符串转为Unicode编码的字符数组
-	 * @param text
-	 * @return
+	 * 根据bit长度创建密钥对，为了便于序列化传输，先将密钥对象转成json格式，然后再编码为Unicode
+	 * @param bitLength 密钥的长度
+	 * @return 密钥对数组，keys[0]是公钥，keys[1]是私钥
 	 */
-	int[] getUnicode(String text) {
-		int[] unicodes = new int[text.length()];
-		for (int i = 0; i < text.length(); i++) {
-			unicodes[i] = text.codePointAt(i);
-		}
-		return unicodes;
+	public String[] getKeyPairs(int bitLength) {
+		KeyPairs keys = kg.generateKeys(bitLength);
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("publicKey", keys.getPublicKey().toString());
+		map.put("module", keys.getModule().toString());
+		String publicKey = gson.toJson(map);
+		publicKey = encoder.encodeToString(publicKey.getBytes());
+		map.remove("publicKey");
+		map.put("privateKey", keys.getPrivateKey().toString());
+		String privateKey = gson.toJson(map);
+		privateKey = encoder.encodeToString(privateKey.getBytes());
+		return new String[] {publicKey, privateKey};
 	}
 	
 	/**
-	 * 未在本类中用到
-	 * 将Unicode编码的字符数组转成字符串
-	 * @param unicodes
-	 * @return
+	 * RSA加密，算法如下：
+	 * 1. 先将明文的每一个字符进行Unicode编码，然后拼接在一起并记录下拼接的节点，就形成了明文的数据模型（model）。
+	 * 2. 明文数据模型中的m属性即为待加密的对象，在RSA中由于m一定要小于模n，故还需对m进行预处理。
+	 * 3. 将m拆分为m = k*m1 + m2，这样就可以保证m1，m2一定小于n，分别对m1，m2加密。
+	 * 4. 将加密结果存储于新的数据模型中，先序列化为json，再转码为Unicode编码。
+	 * 
+	 * @param plaintext 明文
+	 * @param publicKey 公钥
+	 * @return 密文
 	 */
-	String getString(int[] unicodes) {
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < unicodes.length; i++) {
-			sb.append((char) unicodes[i]);
-		}
-		return sb.toString();
+	public String encrypt(String plaintext, String publicKey) {
+		Model pm = encode(plaintext);// 明文数据模型
+		Model cm = new Model();// 密文数据模型
+		String json = new String(decoder.decode(publicKey));
+		KeyPairs key = gson.fromJson(json, KeyPairs.class);
+		BigInteger m = new BigInteger(pm.m),
+				e = key.getPublicKey(), 
+				n = key.getModule(),
+				m1, m2, k, c1, c2;
+		// 将明文m拆分为m = k*m1 + m2，保证m1，m2一定小于n，如此可以分别对m1，m2加密
+		m1 = n.shiftRight(1);// m1一定小于n
+		BigInteger[] divideAndRemainder = m.divideAndRemainder(m1);
+		k = divideAndRemainder[0];
+		m2 = divideAndRemainder[1];
+		if (BigInteger.ZERO.equals(k))// k如果为0，说明m本身就小于n，c1是什么就无所谓了，因为乘积仍然是0
+			c1 = BigInteger.ZERO;
+		else
+			c1 = m1.modPow(e, n);
+		c2 = m2.modPow(e, n);
+		cm.splitPoints = pm.splitPoints;
+		cm.k = k.toString();
+		cm.c1 = c1.toString();
+		cm.c2 = c2.toString();
+		json = gson.toJson(cm);
+		return encoder.encodeToString(json.getBytes());
+	}
+	
+	/**
+	 * RSA解密，与加密操作反向
+	 * 
+	 * @param ciphertext 密文
+	 * @param privateKey 私钥
+	 * @return 明文
+	 */
+	public String decrypt(String ciphertext, String privateKey) {
+		String json = new String(decoder.decode(ciphertext));
+		Model cm = gson.fromJson(json, Model.class);// 密文数据模型
+		Model pm = new Model();// 明文数据模型
+		json = new String(decoder.decode(privateKey));
+		KeyPairs key = gson.fromJson(json, KeyPairs.class);
+		BigInteger c1 = new BigInteger(cm.c1), c2 = new BigInteger(cm.c2), 
+				k = new BigInteger(cm.k),
+				d = key.getPrivateKey(), 
+				n = key.getModule(),
+				m1, m2, m;
+		if (BigInteger.ZERO.equals(k))// k为0，m1是什么都无所谓，因为乘积仍然是0
+			m1 = BigInteger.ZERO;
+		else
+			m1 = c1.modPow(d, n);
+		m2 = c2.modPow(d, n);
+		m = k.multiply(m1).add(m2);
+		pm.m = m.toString();
+		pm.splitPoints = cm.splitPoints;
+		return decode(pm);// 最后将明文的数据模型转成明文
 	}
 	
 	/**
@@ -69,9 +124,9 @@ public class Encipher {
 	 * @param text 原字符串文本
 	 * @return 一个可序列化的code对象
 	 */
-	private Code encode(String text) {
-		Code code = new Code();
-		LinkedList<Integer> splitPoints = new LinkedList<>();
+	private Model encode(String text) {
+		Model code = new Model();
+		LinkedList<Integer> splitPoints = new LinkedList<Integer>();
 		int splitPoint = 0;
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < text.length(); i++) {
@@ -101,17 +156,16 @@ public class Encipher {
 	
 	/**
 	 * 将code对象解析为原始字符串
-	 * @param code
+	 * @param model
 	 * @return
 	 */
-	private String decode(Code code) {
-		String str = code.m.toString();
-		List<Integer> unicodes = new ArrayList<>();
+	private String decode(Model model) {
+		List<Integer> unicodes = new ArrayList<Integer>();
 		Integer beginIndex = 0, endIndex;
 		// 下面要使用改变参数的方法，故使用副本进行操作
-		LinkedList<Integer> copy = new LinkedList<Integer>(code.splitPoints);
+		LinkedList<Integer> copy = new LinkedList<Integer>(model.splitPoints);
 		while ((endIndex = copy.pollFirst()) != null) {
-			String unicode = str.substring(beginIndex, endIndex);
+			String unicode = model.m.substring(beginIndex, endIndex);
 			unicodes.add(Integer.valueOf(unicode));
 			beginIndex = endIndex;
 		}
@@ -138,247 +192,10 @@ public class Encipher {
 	*/
 	
 	/**
-	 * 将原code加密成新的code
-	 * 
-	 * 算法思路如下：
-	 * m是数字化的明文，使用RSA加密时，m一定要小于模n
-	 * 故先将m转成两个小于n的m1，m2，然后分别加密m1和m2成密文c1，c2
-	 * 
-	 * @param src 已被数字化编码的明文
-	 * @param publicKey 密钥对象，只使用其中的publicKey和module属性
-	 * @return 加密的可序列化的code对象
-	 */
-	private Code crypt(Code src, KeyPairs publicKey) {
-		Code dest = new Code();
-		BigInteger m = new BigInteger(src.m),
-				e = publicKey.getPublicKey(), 
-				n = publicKey.getModule(),
-				m1, m2, k, c1, c2;
-		// 将明文m拆分为m = k*m1 + m2，保证m1，m2一定小于n，如此可以分别对m1，m2加密
-		m1 = n.shiftRight(1);// m1一定小于n
-		BigInteger[] divideAndRemainder = m.divideAndRemainder(m1);
-		k = divideAndRemainder[0];
-		m2 = divideAndRemainder[1];
-		if (BigInteger.ZERO.equals(k))// k如果为0，说明m本身就小于n，c1是什么就无所谓了，因为乘积仍然是0
-			c1 = BigInteger.ZERO;
-		else
-			c1 = m1.modPow(e, n);
-		c2 = m2.modPow(e, n);
-		dest.splitPoints = src.splitPoints;
-		dest.k = k.toString();
-		dest.c1 = c1.toString();
-		dest.c2 = c2.toString();
-		return dest;
-	}
-	
-	/* JavaScript实现
-	function cryptCode(srcCode, publicKey) {
-		var m = new BigInteger(srcCode.m), e = new BigInteger(publicKey.publicKey), 
-		n = new BigInteger(publicKey.module), m1, m2, k, c1, c2, 
-		divideAndRemainder, destCode = {};
-		// 将明文m拆分为m = k*m1 + m2，保证m1，m2一定小于n，如此可以分别对m1，m2加密
-		m1 = n.shiftRight(1);// m1一定小于n
-		divideAndRemainder = m.divideAndRemainder(m1);
-		k = divideAndRemainder[0];
-		m2 = divideAndRemainder[1];
-		if (BigInteger.ZERO.equals(k))// k如果为0，说明m本身就小于n，c1是什么就无所谓了，因为乘积仍然是0
-			c1 = BigInteger.ZERO;
-		else
-			c1 = m1.modPow(e, n);
-		c2 = m2.modPow(e, n);
-		destCode.splitPoints = srcCode.splitPoints;
-		destCode.k = k.toString();
-		destCode.c1 = c1.toString();
-		destCode.c2 = c2.toString();
-		return destCode;
-	}
-	*/
-	
-	/**
-	 * 将字符串加密成code
-	 * @param plaintext 明文字符串
-	 * @param publicKey 只使用其公钥和模，不需要私钥，私钥字段为null
-	 * @return 加密的可序列化的code对象
-	 */
-	public Code encrypt(String plaintext, KeyPairs publicKey) {
-		Code code = encode(plaintext);
-		return crypt(code, publicKey);
-	}
-	
-	/* JavaScript实现
-	function encrypt(plaintext, publicKey) {
-		var code = encode(plaintext);
-		return encryptCode(code, publicKey);
-	}
-	*/
-	
-	/**
-	 * 根据加密规则解密code
-	 * @param code
-	 * @param privateKey 只使用其私钥和模，公钥为null
-	 * @return 原字符串文本
-	 */
-	public String decrypt(Code code, KeyPairs privateKey) {
-		BigInteger c1 = new BigInteger(code.c1), c2 = new BigInteger(code.c2), 
-				k = new BigInteger(code.k),
-				d = privateKey.getPrivateKey(), 
-				n = privateKey.getModule(),
-				m1, m2, m;
-		if (BigInteger.ZERO.equals(k))// k为0，m1是什么都无所谓，因为乘积仍然是0
-			m1 = BigInteger.ZERO;
-		else
-			m1 = c1.modPow(d, n);
-		m2 = c2.modPow(d, n);
-		m = k.multiply(m1).add(m2);
-		Code result = new Code();
-		result.m = m.toString();
-		result.splitPoints = code.splitPoints;
-		return decode(result);
-	}
-	
-	/* JavaScript实现
-	function decrypt(code, privateKey) {
-		var c1 = new BigInteger(code.c1), c2 = new BigInteger(code.c2), 
-		k = new BigInteger(code.k), d = new BigInteger(privateKey.privateKey), 
-		n = new BigInteger(privateKey.module), m1, m2, m, destCode = {};
-		if (BigInteger.ZERO.equals(k))// k为0，m1是什么都无所谓，因为乘积仍然是0
-			m1 = BigInteger.ZERO;
-		else
-			m1 = c1.modPow(d, n);
-		m2 = c2.modPow(d, n);
-		m = k.multiply(m1).add(m2);
-		destCode.m = m.toString();
-		destCode.splitPoints = code.splitPoints;
-		return decode(destCode);
-	}
-	*/
-	
-	/**
-	 * 封装public Code encrypt(String text, KeyPairs publicKey);
-	 * 对外部使用更友好清晰
-	 * @param plaintext 明文
-	 * @param publicKey 公钥
-	 * @param module 模
-	 * @return 加密后的信息
-	 */
-	public String encrypt(String plaintext, String publicKey, String module) {
-		KeyPairs keys = new KeyPairs();
-		keys.setPublicKey(new BigInteger(publicKey));
-		keys.setModule(new BigInteger(module));
-		Code c = encrypt(plaintext, keys);
-		String json = gson.toJson(c);
-		return encoder.encodeToString(json.getBytes());
-	}
-	
-	/**
-	 * 封装String decrypt(Code code, KeyPairs privateKey);
-	 * 对外部使用更友好清晰
-	 * @param ciphertext 字符串密文
-	 * @param privateKey 私钥
-	 * @param module 模
-	 * @return 解密后的信息
-	 */
-	public String decrypt(String ciphertext, String privateKey, String module) {
-		try {
-			String json = new String(decoder.decode(ciphertext));
-			Code c = gson.fromJson(json, Code.class);
-			KeyPairs keys = new KeyPairs();
-			keys.setPrivateKey(new BigInteger(privateKey));
-			keys.setModule(new BigInteger(module));
-			return decrypt(c, keys);
-		} catch (Exception e) {
-			String msg = "解密失败，密文信息可能已损坏!";
-			logger.error(msg, e);
-			throw new IllegalArgumentException(msg, e);
-		}
-	}
-	
-	/**
-	 * 获取编码后的字符串形式的公钥
-	 * @param keyPairs 公钥对象
-	 * @return 编码的字符串公钥
-	 */
-	public String getEncodePublicKey(KeyPairs keyPairs) {
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("publicKey", keyPairs.getPublicKey().toString());
-		map.put("module", keyPairs.getModule().toString());
-		String json = gson.toJson(map);
-		return encoder.encodeToString(json.getBytes());
-	}
-	
-	/**
-	 * 获取编码后的字符串形式的公钥
-	 * @param publicKey 字符串公钥
-	 * @param module 模
-	 * @return 编码的字符串公钥
-	 */
-	public String getEncodePublicKey(String publicKey, String module) {
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("publicKey", publicKey);
-		map.put("module", module);
-		String json = gson.toJson(map);
-		return encoder.encodeToString(json.getBytes());
-	}
-	
-	/**
-	 * 获取编码后的字符串形式的公钥
-	 * @param keyPairs 公钥对象
-	 * @return 编码的字符串公钥
-	 */
-	public String getEncodePrivateKey(KeyPairs keyPairs) {
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("privateKey", keyPairs.getPrivateKey().toString());
-		map.put("module", keyPairs.getModule().toString());
-		String json = gson.toJson(map);
-		return encoder.encodeToString(json.getBytes());
-	}
-	
-	/**
-	 * 获取编码后的字符串形式的公钥
-	 * @param privateKey 字符串私钥
-	 * @param module 模
-	 * @return 编码的字符串私钥
-	 */
-	public String getEncodePrivateKey(String privateKey, String module) {
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("privateKey", privateKey);
-		map.put("module", module);
-		String json = gson.toJson(map);
-		return encoder.encodeToString(json.getBytes());
-	}
-	
-	/**
-	 * 根据编码后的公钥加密明文
-	 * @param plaintext 明文
-	 * @param encodePublicKey 编码后的字符串形式的公钥
-	 * @return 编码后的密文
-	 */
-	public String encrypt(String plaintext, String encodePublicKey) {
-		String json = new String(decoder.decode(encodePublicKey));
-		KeyPairs keyPairs = gson.fromJson(json, KeyPairs.class);
-		Code c = encrypt(plaintext, keyPairs);
-		json = gson.toJson(c);
-		return encoder.encodeToString(json.getBytes());
-	}
-	
-	/**
-	 * 根据编码后的密钥解密密文
-	 * @param ciphertext 密文
-	 * @param encodePrivateKey 已编码后的密钥
-	 * @return 明文
-	 */
-	public String decrypt(String ciphertext, String encodePrivateKey) {
-		String json = new String(decoder.decode(encodePrivateKey));
-		KeyPairs keyPairs = gson.fromJson(json, KeyPairs.class);
-		json = new String(decoder.decode(ciphertext));
-		Code c = gson.fromJson(json, Code.class);
-		return decrypt(c, keyPairs);
-	}
-	
-	/**
 	 * 加密后的信息存放对象
 	 */
-	public class Code implements Serializable {
+	@SuppressWarnings("unused")
+	private class Model implements Serializable {
 		private static final long serialVersionUID = 2807424294564280181L;
 		// 定义为String类型是为了防止前端JavaScript的JSON.parse函数将数字转成指数形式
 		String m, k, m1, m2, c1, c2;
@@ -403,11 +220,6 @@ public class Encipher {
 		}
 		public LinkedList<Integer> getSplitPoints() {
 			return splitPoints;
-		}
-		@Override
-		public String toString() {
-			return "Code [m=" + m + ", k=" + k + ", m1=" + m1 + ", m2=" + m2 + ", c1=" + c1 + ", c2=" + c2
-					+ ", splitPoints=" + splitPoints + "]";
 		}
 	}
 	

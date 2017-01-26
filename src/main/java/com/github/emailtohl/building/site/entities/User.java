@@ -100,7 +100,6 @@ public class User extends BaseEntity {
 	@Size(max = 300)
 	protected String description;
 	protected String publicKey;
-	protected String module;
 //	protected Set<Authority> authorities = new HashSet<Authority>();
 	protected Set<Role> roles = new HashSet<Role>();
 	
@@ -263,18 +262,12 @@ public class User extends BaseEntity {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	@Lob
 	public String getPublicKey() {
 		return publicKey;
 	}
 	public void setPublicKey(String publicKey) {
 		this.publicKey = publicKey;
-	}
-	@Lob
-	public String getModule() {
-		return module;
-	}
-	public void setModule(String module) {
-		this.module = module;
 	}
 	
 /*	

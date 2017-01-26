@@ -8,12 +8,10 @@ import javax.inject.Inject;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.emailtohl.building.common.encryption.myrsa.Encipher;
-import com.github.emailtohl.building.common.encryption.myrsa.KeyPairs;
 import com.github.emailtohl.building.common.utils.SecurityContextUtil;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
@@ -28,8 +26,8 @@ public class EncryptionCtrl {
 	Encipher encipher = new Encipher();
 	
 	@RequestMapping(value = "publicKey", method = POST)
-	public void uploadPublicKey(@RequestBody KeyPairs keyPairs) {
-		userService.setPublicKey(keyPairs.getPublicKey(), keyPairs.getModule());
+	public void uploadPublicKey(String publicKey) {
+		userService.setPublicKey(publicKey);
 	}
 	
 	@RequestMapping(value = "publicKey", method = DELETE)
@@ -52,8 +50,7 @@ public class EncryptionCtrl {
 		User u = userService.getUserByEmail(email);
 		if (u == null)
 			return null;
-		String encodePublicKey = encipher.getEncodePublicKey(u.getPublicKey(), u.getModule());
-		String ciphertext = encipher.encrypt(plaintext, encodePublicKey);
+		String ciphertext = encipher.encrypt(plaintext, u.getPublicKey());
 		logger.debug(ciphertext);
 		// 构造成json格式
 		return "{\"ciphertext\":\"" + ciphertext + "\"}";
