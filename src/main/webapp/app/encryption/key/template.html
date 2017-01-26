@@ -25,7 +25,7 @@
       	    <div class="box-body">
 				<div class="form-group has-feedback" ng-class="{'has-success':f.privateKey.$valid,'has-error':f.privateKey.$invalid}">
 		          <label for="">私钥</label>
-		          <input class="form-control" name="privateKey" ng-model="ctrl.myrsakeys.privateKey" placeholder="私钥" type="text" required="required">
+		          <input class="form-control" name="privateKey" ng-model="ctrl.privateKey" placeholder="私钥" type="text" required="required">
 				  <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':f.privateKey.$valid,'glyphicon-warning-sign':f.privateKey.$invalid}"></span>
 				  <span ng-show="f.privateKey.$invalid">
 				  	<span style="color:red;">没有私钥无法解密信息</span>
@@ -33,18 +33,10 @@
 				</div>
 				<div class="form-group has-feedback" ng-class="{'has-success':f.publicKey.$valid,'has-warning':f.publicKey.$invalid}">
 		          <label for="">公钥</label>
-		          <input class="form-control" name="publicKey" ng-model="ctrl.myrsakeys.publicKey" placeholder="公钥" type="text" required="required">
+		          <input class="form-control" name="publicKey" ng-model="ctrl.publicKey" placeholder="公钥" type="text" required="required">
 				  <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':f.publicKey.$valid,'glyphicon-warning-sign':f.publicKey.$invalid}"></span>
 				  <span ng-show="f.publicKey.$invalid">
 				  	<span style="color:red;">如未上传公钥，服务器不能加密消息</span>
-				  </span>
-				</div>
-				<div class="form-group has-feedback" ng-class="{'has-success':f.module.$valid,'has-error':f.module.$invalid}">
-		          <label for="">模是RSA加密和解密都需要的值</label>
-		          <input class="form-control" name="module" ng-model="ctrl.myrsakeys.module" placeholder="模" type="text" required="required">
-				  <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':f.module.$valid,'glyphicon-warning-sign':f.module.$invalid}"></span>
-				  <span ng-show="f.module.$invalid">
-				  	<span style="color:red;">没有模，则无法加密和解密</span>
 				  </span>
 				</div>
       	    </div>
@@ -62,7 +54,7 @@
       	    	<div class="col-md-4">
 	      	    	<div class="form-group">
 	      	    		将公钥提交到服务器上
-				    	<input type="submit" class="form-control btn btn-default" ng-disabled="!ctrl.myrsakeys.module || !ctrl.myrsakeys.publicKey" ng-click="ctrl.uploadPublicKey()">
+				    	<input type="submit" class="form-control btn btn-default" ng-disabled="!ctrl.publicKey" ng-click="ctrl.uploadPublicKey()">
 	      	    	</div>
       	    	</div>
       	    </div>

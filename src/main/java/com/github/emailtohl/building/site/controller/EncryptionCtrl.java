@@ -48,7 +48,7 @@ public class EncryptionCtrl {
 		if (email == null)
 			return null;
 		User u = userService.getUserByEmail(email);
-		if (u == null)
+		if (u == null || u.getPublicKey() == null)
 			return null;
 		String ciphertext = encipher.encrypt(plaintext, u.getPublicKey());
 		logger.debug(ciphertext);

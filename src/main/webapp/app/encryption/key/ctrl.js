@@ -5,30 +5,30 @@ define(['encryption/module', 'common/service/myrsa', 'encryption/service'], func
 		var self = this;
 		self.bitLength = 1024;
 		
-		if (localStorage.myrsakeys) {
+		if (localStorage.privateKey) {
 			self.isLocalStorage = true;
-			self.myrsakeys = JSON.parse(localStorage.myrsakeys);
+			self.privateKey = localStorage.privateKey;
+			self.publicKey = localStorage.publicKey;
 		} else {
 			self.isLocalStorage = false;
-			self.myrsakeys = {};
 		}
 		
 		self.generateKeys = function() {
-			self.myrsakeys = myrsa.generateKeys(self.bitLength);
-			self.encodePublicKey = myrsa.getEncodePublicKey(keyPairs);
-			self.encodePrivateKey = myrsa.getEncodePrivateKey(keyPairs);
+			var keys = myrsa.getKeyPairs(self.bitLength);
+			self.publicKey = keys[0];
+			self.privateKey = keys[1];
 			if (confirm('是否将密钥存入浏览本地缓存中？注意：请确保使用环境的安全！')) {
 				self.isLocalStorage = true;
-				localStorage.encodePublicKey = self.encodePublicKey;
-				localStorage.encodePrivateKey = self.encodePrivateKey;
+				localStorage.publicKey = self.publicKey;
+				localStorage.privateKey = self.privateKey;
 			} else {
 				self.isLocalStorage = false;
-				delete localStorage.encodePublicKey;
-				delete localStorage.encodePrivateKey;
+				delete localStorage.publicKey;
+				delete localStorage.privateKey;
 			}
 		};
 		self.uploadPublicKey = function() {
-			service.uploadPublicKey(self.myrsakeys.publicKey, self.myrsakeys.module).success(function(data) {
+			service.uploadPublicKey(self.publicKey).success(function(data) {
 				alert('公钥上传成功');
 			});
 		};
@@ -40,28 +40,31 @@ define(['encryption/module', 'common/service/myrsa', 'encryption/service'], func
 		
 		service.testMessage().success(function(data) {
 			console.log(data);
-			self.testMessage = myrsa.decrypt(data.ciphertext, self.myrsakeys.privateKey, self.myrsakeys.module);
+			if (self.privateKey) {
+				self.testMessage = myrsa.decrypt(data.ciphertext, self.privateKey);
+			} else {
+				self.testMessage = data.ciphertext;
+			}
 			
 		});
-//		test();
 		
 		
+		test();
 		function test() {
-			var keys = myrsa.generateKeys(512);
-			console.log(keys);
 			var plaintext = "滚滚长江东逝水，浪花淘尽英雄。\r\n" + 
 			"是非成败转头空。\r\n" + 
 			"青山依旧在，几度夕阳红。\r\n" + 
 			"白发渔樵江渚上，惯看秋月春风。\r\n" + 
 			"一壶浊酒喜相逢。\r\n" + 
 			"古今多少事，都付笑谈中。";
-			var c = myrsa.encrypt(plaintext, keys);
-			var c_json = JSON.stringify(c);
-			console.log(c_json);
-			var r = myrsa.decrypt(JSON.parse(c_json), keys);
+			var keys = myrsa.getKeyPairs(512);
+			var publicKey = keys[0];
+			var privateKey = keys[1];
+			var c = myrsa.encrypt(plaintext, publicKey);
+			console.log(c);
+			var r = myrsa.decrypt(c, privateKey);
 			console.log(r);
 		}
-		
 	}])
 	;
 });
