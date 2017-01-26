@@ -1,5 +1,6 @@
 define(['encryption/module',
-        'encryption/key/ctrl',
+        'encryption/rsa/ctrl',
+        'encryption/aes/ctrl',
         ], function(encryptionModule) {
 	return encryptionModule.config(function($stateProvider) {
 		$stateProvider
@@ -8,10 +9,15 @@ define(['encryption/module',
 			url : '/encryption',
 			template : '<div ui-view></div>'
 		})
-		.state('encryption.key', {
-			url : '/key',
-			templateUrl : 'app/encryption/key/template.html',
-			controller : 'KeyCtrl as ctrl'
+		.state('encryption.rsa', {
+			url : '/rsa',
+			templateUrl : 'app/encryption/rsa/template.html',
+			controller : 'RsaCtrl as ctrl'
+		})
+		.state('encryption.aes', {
+			url : '/aes',
+			templateUrl : 'app/encryption/aes/template.html',
+			controller : 'AesCtrl as ctrl'
 		})
 		;
 	});

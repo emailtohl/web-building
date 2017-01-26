@@ -1,6 +1,6 @@
 define(['encryption/module', 'common/service/myrsa', 'encryption/service'], function(encryptionModule, myrsa) {
 	return encryptionModule
-	.controller('KeyCtrl', ['$scope', '$http', '$state', 'encryptionService', 'util',
+	.controller('RsaCtrl', ['$scope', '$http', '$state', 'encryptionService', 'util',
 	                                function($scope, $http, $state, service, util) {
 		var self = this;
 		self.bitLength = 1024;
@@ -45,7 +45,6 @@ define(['encryption/module', 'common/service/myrsa', 'encryption/service'], func
 			} else {
 				self.testMessage = data.ciphertext;
 			}
-			
 		});
 		
 		

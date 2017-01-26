@@ -1,12 +1,12 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
   <h1>
-            密钥
-    <small>生成密钥</small>
+    AES密钥
+    <small>AES密钥</small>
   </h1>
   <ol class="breadcrumb">
     <li ui-sref="dashboard"><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-    <li class="active">Key Pairs</li>
+    <li class="active">AES Key</li>
   </ol>
 </section>
 
@@ -24,37 +24,30 @@
       	  <div class="box">
       	    <div class="box-body">
 				<div class="form-group has-feedback" ng-class="{'has-success':f.privateKey.$valid,'has-error':f.privateKey.$invalid}">
-		          <label for="">私钥</label>
-		          <input class="form-control" name="privateKey" ng-model="ctrl.privateKey" placeholder="私钥" type="text" required="required">
+		          <label for="">密钥</label>
+		          <textarea class="form-control" name="aeskey" ng-model="ctrl.aeskey" placeholder="私钥" type="text" required="required"></textarea>
 				  <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':f.privateKey.$valid,'glyphicon-warning-sign':f.privateKey.$invalid}"></span>
 				  <span ng-show="f.privateKey.$invalid">
 				  	<span style="color:red;">没有私钥无法解密信息</span>
-				  </span>
-				</div>
-				<div class="form-group has-feedback" ng-class="{'has-success':f.publicKey.$valid,'has-warning':f.publicKey.$invalid}">
-		          <label for="">公钥</label>
-		          <input class="form-control" name="publicKey" ng-model="ctrl.publicKey" placeholder="公钥" type="text" required="required">
-				  <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':f.publicKey.$valid,'glyphicon-warning-sign':f.publicKey.$invalid}"></span>
-				  <span ng-show="f.publicKey.$invalid">
-				  	<span style="color:red;">如未上传公钥，服务器不能加密消息</span>
 				  </span>
 				</div>
       	    </div>
       	    <div class="box-footer">
       	    	<div class="col-md-8">
 	      	    	<div class="form-group col-md-6">
-	      	    		RSA加密bit长，越长越安全，但是性能要求高
-				    	<input type="text" class="form-control" ng-model="ctrl.bitLength">
+	      	    		<label for="">密钥长度</label>
+	      	    		<select class="form-control" ng-model="ctrl.bitLength" ng-options="obj.value as obj.name for obj in ctrl.bitEnum">
+	      	    		</select>
 	      	    	</div>
 	      	    	<div class="form-group col-md-6">
-	      	    		计算RSA密钥对
-				    	<button type="button" class="form-control btn btn-primary" ng-click="ctrl.generateKeys()" ng-disabled="!ctrl.bitLength">计算</button>
+	      	    		本地计算AES密钥对
+				    	<button type="button" class="form-control btn btn-primary" ng-click="ctrl.generateKeys()">计算</button>
 	      	    	</div>
       	    	</div>
       	    	<div class="col-md-4">
 	      	    	<div class="form-group">
 	      	    		将公钥提交到服务器上
-				    	<input type="submit" class="form-control btn btn-default" ng-disabled="!ctrl.publicKey" ng-click="ctrl.uploadPublicKey()">
+				    	<input type="submit" class="form-control btn btn-default" ng-disabled="!ctrl.publicKey" ng-click="ctrl.uploadAesKey()">
 	      	    	</div>
       	    	</div>
       	    </div>

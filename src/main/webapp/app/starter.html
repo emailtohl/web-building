@@ -313,11 +313,12 @@ desired effect
         <li class="treeview" ng-class="{active: $state.includes('encryption')}" >
           <a href="#">
           	  <i class="fa fa-key"></i>
-	          <span>加密信息</span>
+	          <span>密钥管理</span>
 	          <i class="fa fa-angle-left pull-right"></i>
 	      </a>
           <ul class="treeview-menu">
-            <li ng-class="{active: $state.includes('encryption.key')}" ><a ui-sref="encryption.key" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>密钥</a></li>
+            <li ng-class="{active: $state.includes('encryption.rsa')}" ><a ui-sref="encryption.rsa" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>RSA密钥</a></li>
+            <li ng-class="{active: $state.includes('encryption.aes')}" ><a ui-sref="encryption.aes" style="margin-left: 35px;"><i class="fa fa-circle-o"></i>AES密钥</a></li>
           </ul>
         </li>
         <li class="treeview" ng-class="{active: $state.includes('user')}">
