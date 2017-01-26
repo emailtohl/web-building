@@ -25,7 +25,7 @@
       	    <div class="box-body">
 				<div class="form-group has-feedback" ng-class="{'has-success':f.privateKey.$valid,'has-error':f.privateKey.$invalid}">
 		          <label for="">密钥</label>
-		          <textarea class="form-control" name="aeskey" ng-model="ctrl.aeskey" placeholder="私钥" type="text" required="required"></textarea>
+		          <textarea class="form-control" name="aeskey" ng-model="ctrl.aesKey" placeholder="AES密钥" type="text" required="required"></textarea>
 				  <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':f.privateKey.$valid,'glyphicon-warning-sign':f.privateKey.$invalid}"></span>
 				  <span ng-show="f.privateKey.$invalid">
 				  	<span style="color:red;">没有私钥无法解密信息</span>
@@ -33,22 +33,20 @@
 				</div>
       	    </div>
       	    <div class="box-footer">
-      	    	<div class="col-md-8">
-	      	    	<div class="form-group col-md-6">
-	      	    		<label for="">密钥长度</label>
-	      	    		<select class="form-control" ng-model="ctrl.bitLength" ng-options="obj.value as obj.name for obj in ctrl.bitEnum">
-	      	    		</select>
-	      	    	</div>
-	      	    	<div class="form-group col-md-6">
-	      	    		本地计算AES密钥对
-				    	<button type="button" class="form-control btn btn-primary" ng-click="ctrl.generateKeys()">计算</button>
-	      	    	</div>
+      	    <!-- 
+      	    	<div class="form-group col-md-6">
+      	    		<label for="">密钥长度</label>
+      	    		<select class="form-control" ng-model="ctrl.bitLength" ng-options="obj.value as obj.name for obj in ctrl.bitEnum">
+      	    		</select>
       	    	</div>
-      	    	<div class="col-md-4">
-	      	    	<div class="form-group">
-	      	    		将公钥提交到服务器上
-				    	<input type="submit" class="form-control btn btn-default" ng-disabled="!ctrl.publicKey" ng-click="ctrl.uploadAesKey()">
-	      	    	</div>
+      	    	 -->
+      	    	<div class="form-group col-md-6">
+      	    		创建密钥  <span class="label label-warning" ng-show="ctrl.isLocalStorage">已存储密钥</span>
+			    	<button type="button" class="form-control btn btn-primary" ng-click="ctrl.getKey()" ng-disabled="ctrl.isLocalStorage">计算</button>
+      	    	</div>
+      	    	<div class="form-group col-md-6">
+      	    		清除本地存储密钥
+			    	<button type="button" class="form-control btn btn-danger"  ng-click="ctrl.cleanLocalStorage()" ng-disabled="!ctrl.isLocalStorage">清除</button>
       	    	</div>
       	    </div>
 		  </div>

@@ -25,7 +25,7 @@
       	    <div class="box-body">
 				<div class="form-group has-feedback" ng-class="{'has-success':f.privateKey.$valid,'has-error':f.privateKey.$invalid}">
 		          <label for="">私钥</label>
-		          <textarea class="form-control" name="privateKey" ng-model="ctrl.privateKey" placeholder="私钥" type="text" required="required" style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+		          <textarea class="form-control" name="privateKey" ng-model="ctrl.privateKey" placeholder="私钥" type="text" required="required" style="width: 100%; height: 250px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
 				  <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':f.privateKey.$valid,'glyphicon-warning-sign':f.privateKey.$invalid}"></span>
 				  <span ng-show="f.privateKey.$invalid">
 				  	<span style="color:red;">没有私钥无法解密信息</span>
@@ -33,7 +33,7 @@
 				</div>
 				<div class="form-group has-feedback" ng-class="{'has-success':f.publicKey.$valid,'has-warning':f.publicKey.$invalid}">
 		          <label for="">公钥</label>
-		          <textarea class="form-control" name="publicKey" ng-model="ctrl.publicKey" placeholder="公钥" type="text" required="required" style="width: 100%; height: 150px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+		          <textarea class="form-control" name="publicKey" ng-model="ctrl.publicKey" placeholder="公钥" type="text" required="required" style="width: 100%; height: 250px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
 				  <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':f.publicKey.$valid,'glyphicon-warning-sign':f.publicKey.$invalid}"></span>
 				  <span ng-show="f.publicKey.$invalid">
 				  	<span style="color:red;">如未上传公钥，服务器不能加密消息</span>
@@ -42,19 +42,27 @@
       	    </div>
       	    <div class="box-footer">
       	    	<div class="col-md-8">
-	      	    	<div class="form-group col-md-6">
-	      	    		RSA加密bit长，越长越安全，但是性能要求高
+	      	    	<div class="form-group col-md-4">
+	      	    		密钥长度
 				    	<input type="text" class="form-control" ng-model="ctrl.bitLength">
 	      	    	</div>
-	      	    	<div class="form-group col-md-6">
-	      	    		本地计算RSA密钥对
-				    	<button type="button" class="form-control btn btn-primary" ng-click="ctrl.generateKeys()" ng-disabled="!ctrl.bitLength">计算</button>
+	      	    	<div class="form-group col-md-4">
+	      	    		生成密钥  <span class="label label-warning" ng-show="ctrl.isLocalStorage">已存储密钥</span>
+				    	<button type="button" class="form-control btn btn-primary" ng-click="ctrl.generateKeys()" ng-disabled="ctrl.isLocalStorage || !ctrl.bitLength">计算</button>
+	      	    	</div>
+	      	    	<div class="form-group col-md-4">
+	      	    		清除本地存储密钥
+				    	<button type="button" class="form-control btn btn-danger" ng-click="ctrl.cleanLocalStorage()" ng-disabled="!ctrl.isLocalStorage">清除</button>
 	      	    	</div>
       	    	</div>
       	    	<div class="col-md-4">
-	      	    	<div class="form-group">
-	      	    		将公钥提交到服务器上
-				    	<input type="submit" class="form-control btn btn-default" ng-disabled="!ctrl.publicKey" ng-click="ctrl.uploadPublicKey()">
+	      	    	<div class="form-group col-md-6">
+	      	    		提交公钥
+				    	<button type="button" class="form-control btn btn-success" ng-disabled="!ctrl.publicKey" ng-click="ctrl.uploadPublicKey()">上传</button>
+	      	    	</div>
+	      	    	<div class="form-group col-md-6">
+	      	    		删除公钥
+				    	<button type="button" class="form-control btn btn-warning" ng-click="ctrl.deletePublicKey()">删除</button>
 	      	    	</div>
       	    	</div>
       	    </div>

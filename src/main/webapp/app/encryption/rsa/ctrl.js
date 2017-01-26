@@ -32,6 +32,11 @@ define(['encryption/module', 'common/service/myrsa', 'encryption/service'], func
 				alert('公钥上传成功');
 			});
 		};
+		self.cleanLocalStorage = function() {
+			delete localStorage.publicKey;
+			delete localStorage.privateKey;
+			self.isLocalStorage = false;
+		};
 		self.deletePublicKey = function() {
 			service.deletePublicKey().success(function(data) {
 				

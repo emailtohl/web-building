@@ -97,34 +97,34 @@ define(['lib/cryptico/cryptico.min', 'lib/base64/base64.min'], function() {
 	 * 将字符串文本转成一个BigInteger，并且保留当初数组中的每一个切分信息
 	 * 
 	 * @param text 原字符串文本
-	 * @return 一个可序列化的code对象
+	 * @return 一个可序列化的model对象
 	 */
 	function encode(text) {
-		var code = {}, splitPoints = [], splitPoint = 0, s = '', i, u;
+		var model = {}, splitPoints = [], splitPoint = 0, s = '', i, u;
 		for (i = 0; i < text.length; i++) {
 			u = new String(text.codePointAt(i));// 字符转成Unicode码
 			s += u;
 			splitPoint += u.length;
 			splitPoints.push(splitPoint);
 		}
-		code.m = s;
-		code.splitPoints = splitPoints;
-		return code;
+		model.m = s;
+		model.splitPoints = splitPoints;
+		return model;
 	}
 
 	/**
-	 * 将code对象解析为原始字符串
+	 * 将model对象解析为原始字符串
 	 * 
-	 * @param code 编码的对象
+	 * @param model 编码的对象
 	 * @return 文本字符串
 	 */
-	function decode(code) {
+	function decode(model) {
 		var unicodes = [], beginIndex = 0, endIndex, unicode, copy = [], i;
-		for (i = 0; i < code.splitPoints.length; i++) {
-			copy.push(code.splitPoints[i]);
+		for (i = 0; i < model.splitPoints.length; i++) {
+			copy.push(model.splitPoints[i]);
 		}
 		while ((endIndex = copy.shift())) {
-			unicode = code.m.substring(beginIndex, endIndex);
+			unicode = model.m.substring(beginIndex, endIndex);
 			unicodes.push(String.fromCharCode(unicode));
 			beginIndex = endIndex;
 		}
