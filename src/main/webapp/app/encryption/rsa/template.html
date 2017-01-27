@@ -70,7 +70,13 @@
 	    </form>
 	  </div>
 	  
-	  <div>
-	  	<textarea class="textarea" name="body" ng-model="ctrl.testMessage" placeholder="解密消息" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+	  <div class="box">
+	  	<div class="box-body">
+		  	<textarea class="textarea" name="body" ng-model="ctrl.testMessage" placeholder="解密消息" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+	  	</div>
+	  	<div class="box-footer">
+	  		<button class="btn btn-success" ng-click="ctrl.submitEncryption()">提交加密消息</button>
+	  	</div>
+	  	
 	  </div>
 </section>

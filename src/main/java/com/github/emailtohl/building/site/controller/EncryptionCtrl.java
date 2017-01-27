@@ -5,14 +5,17 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.emailtohl.building.common.encryption.myrsa.Encipher;
 import com.github.emailtohl.building.common.utils.SecurityContextUtil;
+import com.github.emailtohl.building.filter.PostSecurityLoggingFilter;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
 import com.google.gson.Gson;
@@ -33,6 +36,22 @@ public class EncryptionCtrl {
 	@RequestMapping(value = "publicKey", method = DELETE)
 	public void deletePublicKey() {
 		userService.clearPublicKey();
+	}
+	
+	@RequestMapping(value = "serverPublicKey", method = GET)
+	public String serverPublicKey(HttpSession session) {
+		String serverPublicKey = (String) session.getAttribute(PostSecurityLoggingFilter.PUBLIC_KEY_PROPERTY_NAME);
+		serverPublicKey = serverPublicKey == null ? "" : serverPublicKey;
+		return "{\"serverPublicKey\":\"" + serverPublicKey + "\"}";
+	}
+	
+	@RequestMapping(value = "secret", method = POST)
+	public void secret(HttpSession session, String ciphertext) {
+		String privateKey = (String) session.getAttribute(PostSecurityLoggingFilter.PRIVATE_KEY_PROPERTY_NAME);
+		if (StringUtils.isEmpty(privateKey))
+			return;
+		String recover = encipher.decrypt(ciphertext, privateKey);
+		logger.info(recover);
 	}
 	
 	@RequestMapping(value = "testMessage", method = GET)

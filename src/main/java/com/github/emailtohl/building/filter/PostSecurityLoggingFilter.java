@@ -28,6 +28,8 @@ import com.github.emailtohl.building.common.encryption.myrsa.Encipher;
 //@WebFilter("/*")
 public class PostSecurityLoggingFilter implements Filter {
 	public static final Logger logger = LogManager.getLogger(PostSecurityLoggingFilter.class);
+	public static final String PUBLIC_KEY_PROPERTY_NAME = "publicKey";
+	public static final String PRIVATE_KEY_PROPERTY_NAME = "privateKey";
 	Encipher encipher = new Encipher();
 	private String publicKey;
 	private String privateKey;
@@ -51,10 +53,11 @@ public class PostSecurityLoggingFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		// 考虑到集群化部署，将系统计算的RSA公钥和私钥保存在session上，公钥发给前端私钥用于后端解密
+		// 另外，放在Spring Security之后是为了不影响Spring Security对HttpSession的操作
 		HttpSession session = ((HttpServletRequest) request).getSession();
-		if (session.getAttribute("publicKey") == null) {
-			session.setAttribute("publicKey", publicKey);
-			session.setAttribute("privateKey", privateKey);
+		if (session.getAttribute(PUBLIC_KEY_PROPERTY_NAME) == null) {
+			session.setAttribute(PUBLIC_KEY_PROPERTY_NAME, publicKey);
+			session.setAttribute(PRIVATE_KEY_PROPERTY_NAME, privateKey);
 		}
 		
 		SecurityContext context = SecurityContextHolder.getContext();

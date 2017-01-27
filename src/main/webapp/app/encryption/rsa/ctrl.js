@@ -42,7 +42,18 @@ define(['encryption/module', 'common/service/myrsa', 'encryption/service'], func
 				
 			});
 		};
+		self.submitEncryption = function() {
+			if (self.testMessage && self.serverPublicKey) {
+				var ciphertext = myrsa.encrypt(self.testMessage, self.serverPublicKey);
+				service.secret(ciphertext).success(function(data) {
+					alert('提交成功');
+				});
+			}
+		}
 		
+		service.getServerPublicKey().success(function(data) {
+			self.serverPublicKey = data.serverPublicKey;
+		});
 		service.testMessage().success(function(data) {
 			console.log(data);
 			if (self.privateKey) {
