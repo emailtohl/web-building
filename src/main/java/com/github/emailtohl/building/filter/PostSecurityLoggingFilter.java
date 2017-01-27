@@ -9,6 +9,8 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,12 +20,17 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 
+import com.github.emailtohl.building.common.encryption.myrsa.Encipher;
+
 /**
  * Servlet Filter implementation class PostSecurityLoggingFilter
  */
 //@WebFilter("/*")
 public class PostSecurityLoggingFilter implements Filter {
 	public static final Logger logger = LogManager.getLogger(PostSecurityLoggingFilter.class);
+	Encipher encipher = new Encipher();
+	private String publicKey;
+	private String privateKey;
 	/**
 	 * Default constructor.
 	 */
@@ -43,6 +50,13 @@ public class PostSecurityLoggingFilter implements Filter {
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
+		// 考虑到集群化部署，将系统计算的RSA公钥和私钥保存在session上，公钥发给前端私钥用于后端解密
+		HttpSession session = ((HttpServletRequest) request).getSession();
+		if (session.getAttribute("publicKey") == null) {
+			session.setAttribute("publicKey", publicKey);
+			session.setAttribute("privateKey", privateKey);
+		}
+		
 		SecurityContext context = SecurityContextHolder.getContext();
 		if (context != null) {
 			Authentication authentication = context.getAuthentication();
@@ -74,7 +88,9 @@ public class PostSecurityLoggingFilter implements Filter {
 	 * @see Filter#init(FilterConfig)
 	 */
 	public void init(FilterConfig fConfig) throws ServletException {
-		// TODO Auto-generated method stub
+		String[] keyPairs = encipher.getKeyPairs(1024);
+		publicKey = keyPairs[0];
+		privateKey = keyPairs[1];
 	}
 
 }
