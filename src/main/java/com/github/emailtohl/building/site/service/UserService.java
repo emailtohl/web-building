@@ -25,6 +25,7 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.validation.annotation.Validated;
 
@@ -221,8 +222,9 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @param email
 	 * @param password
 	 * @return
+	 * @throws AuthenticationException 认证失败抛出异常
 	 */
-	Authentication authenticate(String email, String password);
+	Authentication authenticate(String email, String password) throws AuthenticationException;
 	
 	/**
 	 * 上传用户的公钥

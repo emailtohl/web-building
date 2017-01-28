@@ -51,7 +51,7 @@ public class EncryptionCtrl {
 		if (StringUtils.isEmpty(privateKey))
 			return;
 		String recover = encipher.decrypt(ciphertext, privateKey);
-		logger.info(recover);
+		logger.info("\n" + recover);
 	}
 	
 	@RequestMapping(value = "testMessage", method = GET)

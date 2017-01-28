@@ -28,6 +28,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -291,41 +292,6 @@ public class UserServiceImpl implements UserService, Serializable {
 	public List<Role> getRoles() {
 		return roleRepository.findAll();
 	}
-
-	Encipher encipher = new Encipher();
-	@Override
-	public Authentication authenticate(String email, String password) {
-		User u = userRepository.findByEmail(email);
-		if (u == null) {
-			logger.warn("Authentication failed for non-existent user {}.", email);
-			return null;
-		}
-		
-		String userPassword = password.toString();
-		HttpSession httpSession = UserPasswordEncryptionFilter.CONCURRENT_SESSION.get();
-		if (httpSession != null) {
-			String privateKey = (String) httpSession.getAttribute(UserPasswordEncryptionFilter.PRIVATE_KEY_PROPERTY_NAME);
-			try {
-				userPassword = encipher.decrypt(userPassword, privateKey);
-			} catch (Exception e) {
-				logger.info("前端使用的加密密码不正确", e);
-			}
-		}
-		
-		if (!BCrypt.checkpw(userPassword, u.getPassword())) {
-			logger.warn("Authentication failed for user {}.", email);
-			return null;
-		}
-		logger.debug("User {} successfully authenticated.", email);
-		AuthenticationImpl a = u.getAuthentication();
-		a.setAuthenticated(true);
-		a.eraseCredentials();
-		Details d = new Details();
-		d.setSessionId(ThreadContext.get(PreSecurityLoggingFilter.SESSION_ID_PROPERTY_NAME));
-		d.setRemoteAddress(ThreadContext.get(PreSecurityLoggingFilter.REMOTE_ADDRESS_PROPERTY_NAME));
-		a.setDetails(d);
-		return a;
-	}
 	
 	@Override
 	public void setPublicKey(String publicKey) {
@@ -343,6 +309,41 @@ public class UserServiceImpl implements UserService, Serializable {
 		if (u != null) {
 			u.setPublicKey(null);
 		}
+	}
+
+	Encipher encipher = new Encipher();
+	@Override
+	public Authentication authenticate(String email, String password) throws AuthenticationException {
+		User u = userRepository.findByEmail(email);
+		if (u == null) {
+			logger.warn("Authentication failed for non-existent user {}.", email);
+			throw new UsernameNotFoundException("没有此用户");
+		}
+		
+		String userPassword = password.toString();
+		HttpSession httpSession = UserPasswordEncryptionFilter.CONCURRENT_SESSION.get();
+		if (httpSession != null) {
+			String privateKey = (String) httpSession.getAttribute(UserPasswordEncryptionFilter.PRIVATE_KEY_PROPERTY_NAME);
+			try {
+				userPassword = encipher.decrypt(userPassword, privateKey);
+			} catch (Exception e) {
+				logger.info("前端使用的加密密码不正确", e);
+			}
+		}
+		
+		if (!BCrypt.checkpw(userPassword, u.getPassword())) {
+			logger.warn("Authentication failed for user {}.", email);
+			throw new BadCredentialsException("密码错误");
+		}
+		logger.debug("User {} successfully authenticated.", email);
+		AuthenticationImpl a = u.getAuthentication();
+		a.setAuthenticated(true);
+		a.eraseCredentials();
+		Details d = new Details();
+		d.setSessionId(ThreadContext.get(PreSecurityLoggingFilter.SESSION_ID_PROPERTY_NAME));
+		d.setRemoteAddress(ThreadContext.get(PreSecurityLoggingFilter.REMOTE_ADDRESS_PROPERTY_NAME));
+		a.setDetails(d);
+		return a;
 	}
 	
 	public class Details implements Serializable {
@@ -433,7 +434,7 @@ public class UserServiceImpl implements UserService, Serializable {
 	/**
 	 * 实现UserDetailsService
 	 */
-	private transient Pattern p = Pattern.compile("username=(" + Constant.PATTERN_EMAIL.substring(1, Constant.PATTERN_EMAIL.length() - 1) + ')');
+	private transient Pattern p = Pattern.compile(Constant.PATTERN_EMAIL);
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Matcher m = p.matcher(username);
