@@ -18,6 +18,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 import com.github.emailtohl.building.config.MvcConfiguration;
 import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.filter.PreSecurityLoggingFilter;
+import com.github.emailtohl.building.filter.UserPasswordEncryptionFilter;
 import com.github.emailtohl.building.listener.SessionListener;
 /**
  * 初始化容器时最先启动的类，它将完成如下工作：
@@ -72,6 +73,10 @@ public class ContainerBootstrap implements WebApplicationInitializer {
 		registration.addMappingForUrlPatterns(null, false, "/*");
 		registration = container.addFilter("loggingFilter", new PreSecurityLoggingFilter());
 		registration.addMappingForUrlPatterns(null, false, "/*");
+		
+		// 自定义RSA解密用户密码
+		registration = container.addFilter("userPasswordEncryptionFilter", new UserPasswordEncryptionFilter());
+		registration.addMappingForUrlPatterns(null, false, "/login");
 	}
 
 }

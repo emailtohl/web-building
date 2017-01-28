@@ -9,8 +9,6 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,19 +18,12 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 
-import com.github.emailtohl.building.common.encryption.myrsa.Encipher;
-
 /**
  * Servlet Filter implementation class PostSecurityLoggingFilter
  */
 //@WebFilter("/*")
 public class PostSecurityLoggingFilter implements Filter {
 	public static final Logger logger = LogManager.getLogger(PostSecurityLoggingFilter.class);
-	public static final String PUBLIC_KEY_PROPERTY_NAME = "publicKey";
-	public static final String PRIVATE_KEY_PROPERTY_NAME = "privateKey";
-	Encipher encipher = new Encipher();
-	private String publicKey;
-	private String privateKey;
 	/**
 	 * Default constructor.
 	 */
@@ -52,14 +43,6 @@ public class PostSecurityLoggingFilter implements Filter {
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		// 考虑到集群化部署，将系统计算的RSA公钥和私钥保存在session上，公钥发给前端私钥用于后端解密
-		// 另外，放在Spring Security之后是为了不影响Spring Security对HttpSession的操作
-		HttpSession session = ((HttpServletRequest) request).getSession();
-		if (session.getAttribute(PUBLIC_KEY_PROPERTY_NAME) == null) {
-			session.setAttribute(PUBLIC_KEY_PROPERTY_NAME, publicKey);
-			session.setAttribute(PRIVATE_KEY_PROPERTY_NAME, privateKey);
-		}
-		
 		SecurityContext context = SecurityContextHolder.getContext();
 		if (context != null) {
 			Authentication authentication = context.getAuthentication();
@@ -90,10 +73,6 @@ public class PostSecurityLoggingFilter implements Filter {
 	/**
 	 * @see Filter#init(FilterConfig)
 	 */
-	public void init(FilterConfig fConfig) throws ServletException {
-		String[] keyPairs = encipher.getKeyPairs(1024);
-		publicKey = keyPairs[0];
-		privateKey = keyPairs[1];
-	}
+	public void init(FilterConfig fConfig) throws ServletException {}
 
 }

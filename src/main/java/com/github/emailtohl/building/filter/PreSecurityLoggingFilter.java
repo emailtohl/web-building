@@ -22,7 +22,12 @@ import org.springframework.web.util.WebUtils;
 //@WebFilter("/*")
 @SuppressWarnings("unused")
 public class PreSecurityLoggingFilter implements Filter {
-
+	public static final String ID_PROPERTY_NAME = "id";
+	public static final String REQUEST_ID_PROPERTY_NAME = "Request-Id";
+	public static final String SESSION_ID_PROPERTY_NAME = "sessionId";
+	public static final String REMOTE_ADDRESS_PROPERTY_NAME = "remoteAddress";
+	public static final String USER_PRINCIPAL_PROPERTY_NAME = "userPrincipal";
+	
 	/**
 	 * Default constructor.
 	 */
@@ -43,17 +48,20 @@ public class PreSecurityLoggingFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		String id = UUID.randomUUID().toString();
-		ThreadContext.put("id", id);
+		ThreadContext.put(ID_PROPERTY_NAME, id);
 		try {
 			HttpServletRequest req = (HttpServletRequest) request;
-			((HttpServletResponse) response).setHeader("Request-Id", id);
-			ThreadContext.put("remoteAddress", req.getRemoteAddr());
-			ThreadContext.put("sessionId", req.getRequestedSessionId());
-			ThreadContext.put("userPrincipal", req.getUserPrincipal() == null ? "" : req.getUserPrincipal().toString());
+			((HttpServletResponse) response).setHeader(REQUEST_ID_PROPERTY_NAME, id);
+			ThreadContext.put(REMOTE_ADDRESS_PROPERTY_NAME, req.getRemoteAddr());
+			ThreadContext.put(SESSION_ID_PROPERTY_NAME, req.getRequestedSessionId());
+			ThreadContext.put(USER_PRINCIPAL_PROPERTY_NAME, req.getUserPrincipal() == null ? "" : req.getUserPrincipal().toString());
 			chain.doFilter(request, response);
 		} finally {
-			ThreadContext.remove("id");
-			ThreadContext.remove("username");
+			ThreadContext.remove(ID_PROPERTY_NAME);
+			ThreadContext.remove(REQUEST_ID_PROPERTY_NAME);
+			ThreadContext.remove(REMOTE_ADDRESS_PROPERTY_NAME);
+			ThreadContext.remove(SESSION_ID_PROPERTY_NAME);
+			ThreadContext.remove(USER_PRINCIPAL_PROPERTY_NAME);
 		}
 	}
 

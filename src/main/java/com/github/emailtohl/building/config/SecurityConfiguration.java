@@ -1,6 +1,22 @@
 package com.github.emailtohl.building.config;
 
-import static com.github.emailtohl.building.site.entities.Authority.*;
+import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_DELETE;
+import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_READ_HISTORY;
+import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_TRANSIT;
+import static com.github.emailtohl.building.site.entities.Authority.AUDIT_ROLE;
+import static com.github.emailtohl.building.site.entities.Authority.AUDIT_USER;
+import static com.github.emailtohl.building.site.entities.Authority.FORUM_DELETE;
+import static com.github.emailtohl.building.site.entities.Authority.RESOURCE_MANAGER;
+import static com.github.emailtohl.building.site.entities.Authority.USER_CREATE_SPECIAL;
+import static com.github.emailtohl.building.site.entities.Authority.USER_CUSTOMER;
+import static com.github.emailtohl.building.site.entities.Authority.USER_DELETE;
+import static com.github.emailtohl.building.site.entities.Authority.USER_DISABLE;
+import static com.github.emailtohl.building.site.entities.Authority.USER_GRANT_ROLES;
+import static com.github.emailtohl.building.site.entities.Authority.USER_READ_ALL;
+import static com.github.emailtohl.building.site.entities.Authority.USER_READ_SELF;
+import static com.github.emailtohl.building.site.entities.Authority.USER_ROLE_AUTHORITY_ALLOCATION;
+import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_ALL;
+import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_SELF;
 
 import java.io.IOException;
 
@@ -15,8 +31,11 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.AdviceMode;
 import org.springframework.context.annotation.Bean;
@@ -47,6 +66,8 @@ import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
+import com.github.emailtohl.building.common.encryption.myrsa.Encipher;
+import com.github.emailtohl.building.filter.UserPasswordEncryptionFilter;
 import com.github.emailtohl.building.message.event.LoginEvent;
 import com.github.emailtohl.building.message.event.LogoutEvent;
 import com.github.emailtohl.building.site.controller.UserCtrl;
@@ -117,14 +138,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		*/
 		
 //		自定义的AuthenticationProvider和UserDetailsService
-//		builder.authenticationProvider(authenticationProvider)
-//				.userDetailsService(userDetailsService);
+		builder.authenticationProvider(authenticationProvider)
+				.userDetailsService(userDetailsService);
 		
 		/* 基于数据库的配置 */
-		builder.jdbcAuthentication().dataSource(dataSource)
-				.usersByUsernameQuery("SELECT t.email as username, t.password, t.enabled FROM t_user AS t WHERE t.email = ?")
-				.authoritiesByUsernameQuery("SELECT u.email AS username, a.name AS authority FROM t_user u INNER JOIN t_user_role ur ON u.id = ur.user_id INNER JOIN t_role_authority ra ON ur.role_id = ra.role_id INNER JOIN t_authority a ON ra.authority_id = a.id WHERE u.email = ?")
-				.passwordEncoder(new BCryptPasswordEncoder());
+//		builder.jdbcAuthentication().dataSource(dataSource)
+//				.usersByUsernameQuery("SELECT t.email as username, t.password, t.enabled FROM t_user AS t WHERE t.email = ?")
+//				.authoritiesByUsernameQuery("SELECT u.email AS username, a.name AS authority FROM t_user u INNER JOIN t_user_role ur ON u.id = ur.user_id INNER JOIN t_role_authority ra ON ur.role_id = ra.role_id INNER JOIN t_authority a ON ra.authority_id = a.id WHERE u.email = ?")
+//				.passwordEncoder(new BCryptPasswordEncoderProxy());
 	}
 	/**
 	 * 告诉Spring Security需要忽略的路径
@@ -199,7 +220,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.and()
 //			.addFilterBefore(new CORSFilter(), ChannelProcessingFilter.class)
 			.formLogin()
-				.loginPage("/login").failureUrl("/login?error")
+				.loginPage("/login").loginProcessingUrl("/login").failureUrl("/login?error")
 				.successHandler((request, response, authentication) -> {
 					publisher.publishEvent(new LoginEvent(authentication.getName()));
 					response.sendRedirect(request.getContextPath());
@@ -327,6 +348,30 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		public void destroy() {
 		}
 		
+	}
+	
+	/**
+	 * 在BCryptPasswordEncoder上生成代理，用于解密用户密码
+	 * @author HeLei
+	 */
+	class BCryptPasswordEncoderProxy extends BCryptPasswordEncoder {
+		private final transient Logger logger = LogManager.getLogger();
+		Encipher encipher = new Encipher();
+		
+		@Override
+		public boolean matches(CharSequence rawPassword, String encodedPassword) {
+			String userPassword = rawPassword.toString();
+			HttpSession httpSession = UserPasswordEncryptionFilter.CONCURRENT_SESSION.get();
+			if (httpSession != null) {
+				String privateKey = (String) httpSession.getAttribute(UserPasswordEncryptionFilter.PRIVATE_KEY_PROPERTY_NAME);
+				try {
+					userPassword = encipher.decrypt(userPassword, privateKey);
+				} catch (Exception e) {
+					logger.info("前端使用的加密密码不正确", e);
+				}
+			}
+			return super.matches(userPassword, encodedPassword);
+		}
 	}
 	
 	/**

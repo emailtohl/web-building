@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 
 import org.apache.logging.log4j.LogManager;
@@ -36,9 +37,12 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import com.github.emailtohl.building.common.Constant;
+import com.github.emailtohl.building.common.encryption.myrsa.Encipher;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.BeanUtil;
 import com.github.emailtohl.building.common.utils.SecurityContextUtil;
+import com.github.emailtohl.building.filter.PreSecurityLoggingFilter;
+import com.github.emailtohl.building.filter.UserPasswordEncryptionFilter;
 import com.github.emailtohl.building.site.dao.DepartmentRepository;
 import com.github.emailtohl.building.site.dao.RoleRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
@@ -288,6 +292,7 @@ public class UserServiceImpl implements UserService, Serializable {
 		return roleRepository.findAll();
 	}
 
+	Encipher encipher = new Encipher();
 	@Override
 	public Authentication authenticate(String email, String password) {
 		User u = userRepository.findByEmail(email);
@@ -295,7 +300,19 @@ public class UserServiceImpl implements UserService, Serializable {
 			logger.warn("Authentication failed for non-existent user {}.", email);
 			return null;
 		}
-		if (!BCrypt.checkpw(password, u.getPassword())) {
+		
+		String userPassword = password.toString();
+		HttpSession httpSession = UserPasswordEncryptionFilter.CONCURRENT_SESSION.get();
+		if (httpSession != null) {
+			String privateKey = (String) httpSession.getAttribute(UserPasswordEncryptionFilter.PRIVATE_KEY_PROPERTY_NAME);
+			try {
+				userPassword = encipher.decrypt(userPassword, privateKey);
+			} catch (Exception e) {
+				logger.info("前端使用的加密密码不正确", e);
+			}
+		}
+		
+		if (!BCrypt.checkpw(userPassword, u.getPassword())) {
 			logger.warn("Authentication failed for user {}.", email);
 			return null;
 		}
@@ -304,8 +321,8 @@ public class UserServiceImpl implements UserService, Serializable {
 		a.setAuthenticated(true);
 		a.eraseCredentials();
 		Details d = new Details();
-		d.setSessionId(ThreadContext.get("sessionId"));
-		d.setRemoteAddress(ThreadContext.get("remoteAddress"));
+		d.setSessionId(ThreadContext.get(PreSecurityLoggingFilter.SESSION_ID_PROPERTY_NAME));
+		d.setRemoteAddress(ThreadContext.get(PreSecurityLoggingFilter.REMOTE_ADDRESS_PROPERTY_NAME));
 		a.setDetails(d);
 		return a;
 	}
@@ -421,10 +438,13 @@ public class UserServiceImpl implements UserService, Serializable {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Matcher m = p.matcher(username);
 		if (!m.find()) {
-			return null;
+			throw new UsernameNotFoundException("请使用正确邮箱");
 		}
 		String email = m.group(1);
 		User u = userRepository.findByEmail(email);
+		if (u == null) {
+			throw new UsernameNotFoundException("没有此用户");
+		}
 		return u.getUserDetails();
 	}
 

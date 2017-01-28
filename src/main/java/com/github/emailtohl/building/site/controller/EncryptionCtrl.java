@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.github.emailtohl.building.common.encryption.myrsa.Encipher;
 import com.github.emailtohl.building.common.utils.SecurityContextUtil;
-import com.github.emailtohl.building.filter.PostSecurityLoggingFilter;
+import com.github.emailtohl.building.filter.UserPasswordEncryptionFilter;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
 import com.google.gson.Gson;
@@ -40,14 +40,14 @@ public class EncryptionCtrl {
 	
 	@RequestMapping(value = "serverPublicKey", method = GET)
 	public String serverPublicKey(HttpSession session) {
-		String serverPublicKey = (String) session.getAttribute(PostSecurityLoggingFilter.PUBLIC_KEY_PROPERTY_NAME);
+		String serverPublicKey = (String) session.getAttribute(UserPasswordEncryptionFilter.PUBLIC_KEY_PROPERTY_NAME);
 		serverPublicKey = serverPublicKey == null ? "" : serverPublicKey;
 		return "{\"serverPublicKey\":\"" + serverPublicKey + "\"}";
 	}
 	
 	@RequestMapping(value = "secret", method = POST)
 	public void secret(HttpSession session, String ciphertext) {
-		String privateKey = (String) session.getAttribute(PostSecurityLoggingFilter.PRIVATE_KEY_PROPERTY_NAME);
+		String privateKey = (String) session.getAttribute(UserPasswordEncryptionFilter.PRIVATE_KEY_PROPERTY_NAME);
 		if (StringUtils.isEmpty(privateKey))
 			return;
 		String recover = encipher.decrypt(ciphertext, privateKey);
