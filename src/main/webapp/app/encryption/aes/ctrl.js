@@ -33,20 +33,22 @@ define(['encryption/module', 'common/service/myaes', 'encryption/service'], func
 			
 		});
 		
-		test();
-		function test() {
-			var plaintext = "滚滚长江东逝水，浪花淘尽英雄。\r\n" + 
-			"是非成败转头空。\r\n" + 
-			"青山依旧在，几度夕阳红。\r\n" + 
-			"白发渔樵江渚上，惯看秋月春风。\r\n" + 
-			"一壶浊酒喜相逢。\r\n" + 
-			"古今多少事，都付笑谈中。";
-			var k = myaes.getKey();
-			var c = myaes.encrypt(plaintext, k);
-			console.log(c);
-			var r = myaes.decrypt(c, k);
-			console.log(r);
-		}
+		self.plaintextChange = function() {
+			self.ciphertext = myaes.encrypt(self.plaintext, self.aesKey.split(','));
+		};
+		
+		self.ciphertextChange = function() {
+			self.plaintext = myaes.decrypt(self.ciphertext, self.aesKey.split(','));
+		};
+		
+		self.plaintext = "滚滚长江东逝水，浪花淘尽英雄。\r\n" + 
+		"是非成败转头空。\r\n" + 
+		"青山依旧在，几度夕阳红。\r\n" + 
+		"白发渔樵江渚上，惯看秋月春风。\r\n" + 
+		"一壶浊酒喜相逢。\r\n" + 
+		"古今多少事，都付笑谈中。";
+		
+		self.ciphertext = myaes.encrypt(self.plaintext, self.aesKey.split(','));
 		
 	}])
 	;
