@@ -135,7 +135,7 @@ xml的DTD、scheme校验很繁琐，项目尽可能避免使用xml，在配置�
 > 注意：端点的IP是通过InetAddress.getLocalHost().getHostAddress();获取，注意多个端点在同一网段中；此外，若端点的端口号不是8080，则需要配置config.properties文件中的local.host值。
 
 #### 4.1.7 encryption包
-该包下含有JDK标准RSA+AES实现：Crypter，不过由于密钥生成应该有客户端完成，故该类并未在项目中真正使用。不过该包中引入了自己实现RSA算法，这样就可以在底层和前端传递来的数字公钥进行交互处理了，现在主要应用保护用户的登录登录密码，可在普通的HTTP协议下保证登录安全。
+该包下含有JDK标准RSA+AES实现：Crypter，不过由于密钥生成应该有客户端完成，故该类并未在项目中真正使用。不过该包中引入了自己实现RSA算法，这样就可以在底层和前端传递来的数字公钥进行交互处理了，现在主要应用加密用户的登录密码，可在普通的HTTP协议下保证登录安全。
 
 ### 4.2 前端
 前端的lib存放第三方框架或工具，common是公共模块，基于angular1.×编写的service、util、directive等。

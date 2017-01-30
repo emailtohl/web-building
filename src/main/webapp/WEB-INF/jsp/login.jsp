@@ -124,8 +124,8 @@
 <script src="lib/bootstrap/js/bootstrap.min.js"></script>
 <!-- iCheck -->
 <script src="lib/iCheck/icheck.min.js"></script>
-<script src="lib/base64/base64.min.js"></script>
-<script src="lib/cryptico/cryptico.min.js"></script>
+<!-- 我的RSA加密，保护用户登录密码 -->
+<script src="lib/cryptico-with-base64-myrsa-myaes.min.js"></script>
 <script>
   $(function () {
 	$('input').iCheck({
@@ -175,49 +175,12 @@
 	 $('form').on('submit', function(e) {
 		 var publicKey = $('#publicKey').text();
 		 var password = $('input[name="password"]').val();
-		 var encryptPassword = encrypt(password, publicKey);
+		 var encryptPassword = myrsa.encrypt(password, publicKey);
 		 if (encryptPassword)
 		 	$('input[name="password"]').val(encryptPassword);
 		 
 		 return true;
 	 });
-	
-	function encrypt(plaintext, publicKey) {
-		var pm = encode(plaintext)/*明文数据模型*/, cm = {}/*密文数据模型*/;
-		var json = Base64.decode(publicKey);
-		var key = JSON.parse(json);
-		var m = new BigInteger(pm.m), e = new BigInteger(key.publicKey), 
-		n = new BigInteger(key.module), m1, m2, k, c1, c2, divideAndRemainder;
-		// 将明文m拆分为m = k*m1 + m2，保证m1，m2一定小于n，如此可以分别对m1，m2加密
-		m1 = n.shiftRight(1);// m1一定小于n
-		divideAndRemainder = m.divideAndRemainder(m1);
-		k = divideAndRemainder[0];
-		m2 = divideAndRemainder[1];
-		if (BigInteger.ZERO.equals(k))// k如果为0，说明m本身就小于n，c1是什么就无所谓了，因为乘积仍然是0
-			c1 = BigInteger.ZERO;
-		else
-			c1 = m1.modPow(e, n);
-		c2 = m2.modPow(e, n);
-		cm.splitPoints = pm.splitPoints;
-		cm.k = k.toString();
-		cm.c1 = c1.toString();
-		cm.c2 = c2.toString();
-		json = JSON.stringify(cm);
-		return Base64.encode(json);
-	} 
-	
-	function encode(text) {
-		var model = {}, splitPoints = [], splitPoint = 0, s = '', i, u;
-		for (i = 0; i < text.length; i++) {
-			u = new String(text.codePointAt(i));
-			s += u;
-			splitPoint += u.length;
-			splitPoints.push(splitPoint);
-		}
-		model.m = s;
-		model.splitPoints = splitPoints;
-		return model;
-	}
 	 
   });
   
