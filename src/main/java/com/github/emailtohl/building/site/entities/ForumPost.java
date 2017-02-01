@@ -7,6 +7,8 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.search.annotations.Store;
+
 /**
  * 论坛帖子对象
  * 
@@ -34,7 +36,7 @@ public class ForumPost extends BaseEntity {
 		this.user = user;
 	}
 
-	@org.hibernate.search.annotations.Field
+	@org.hibernate.search.annotations.Field(store = Store.YES)
 	public String getTitle() {
 		return this.title;
 	}
@@ -43,7 +45,7 @@ public class ForumPost extends BaseEntity {
 		this.title = title;
 	}
 
-	@org.hibernate.search.annotations.Field
+	@org.hibernate.search.annotations.Field(store = Store.YES)
 	@Lob
 	public String getBody() {
 		return this.body;
