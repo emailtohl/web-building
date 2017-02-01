@@ -8,7 +8,11 @@
 	<persistence-unit name="building-unit" transaction-type="RESOURCE_LOCAL">
 		<!-- 描述信息.(可选) -->
 		<description></description>
-
+		
+		<!-- 查找JNDI的数据源
+		<jta-data-source></jta-data-source>
+		 -->
+		
 		<!-- javax.persistence.PersistenceProvider接口的一个实现类(可选)
 		<provider></provider>
 		 -->
@@ -56,6 +60,9 @@
 			<property name="hibernate.show_sql" value="true"/>
 			<property name="hibernate.format_sql" value="true"/>
 			<!-- <property name="hibernate.use_sql_comments" value="true"/> -->
+			
+			<property name="hibernate.search.default.directory_provider" value="filesystem"/>
+			<property name="hibernate.search.default.indexBase" value="../indexes"/>
 		</properties>
 	</persistence-unit>
 </persistence>

@@ -15,7 +15,7 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import com.github.emailtohl.building.config.MvcConfiguration;
+import com.github.emailtohl.building.config.WebConfiguration;
 import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.filter.PreSecurityLoggingFilter;
 import com.github.emailtohl.building.filter.UserPasswordEncryptionFilter;
@@ -51,7 +51,7 @@ public class ContainerBootstrap implements WebApplicationInitializer {
 		 */
 		AnnotationConfigWebApplicationContext springServletContext = new AnnotationConfigWebApplicationContext();
 		/* 载入配置 */
-		springServletContext.register(MvcConfiguration.class);
+		springServletContext.register(WebConfiguration.class);
 		ServletRegistration.Dynamic dispatcher = container.addServlet("springDispatcher",
 				new DispatcherServlet(springServletContext));
 		dispatcher.setLoadOnStartup(1);

@@ -38,7 +38,7 @@ import com.github.emailtohl.building.common.utils.UpDownloader;
 @EnableSpringDataWebSupport
 @ComponentScan(basePackages = "com.github.emailtohl.building.site.controller", useDefaultFilters = false, includeFilters = @ComponentScan.Filter(Controller.class))
 @Import({ WebsocketConfiguration.class })
-public class MvcConfiguration extends WebMvcConfigurerAdapter {
+public class WebConfiguration extends WebMvcConfigurerAdapter {
 
 	/**
 	 * RootContextConfiguration中定义的LocalValidatorFactoryBean继承了SpringValidatorAdapter
@@ -78,7 +78,7 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
 	
 	@Bean
 	public UpDownloader uploader() {
-		WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();    
+		WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();
         ServletContext servletContext = webApplicationContext.getServletContext(); 
         File basePath;
 		if (uploadBase == null || uploadBase.isEmpty()) {
@@ -92,4 +92,5 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
 		}
 		return new UpDownloader(basePath);
 	}
+	
 }

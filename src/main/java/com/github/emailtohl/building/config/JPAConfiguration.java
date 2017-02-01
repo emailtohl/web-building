@@ -11,6 +11,7 @@ import javax.inject.Named;
 import javax.sql.DataSource;
 
 import org.hibernate.dialect.PostgreSQL9Dialect;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -45,6 +46,9 @@ public class JPAConfiguration {
 	@Inject
 	@Named("dataSource")
 	DataSource dataSource;
+	
+	@Value("${indexBase}")
+	String indexBase;
 	
 	/**
 	 * 以Hibernate作为JPA的实现类
@@ -139,7 +143,10 @@ public class JPAConfiguration {
 		builder.setProperty("hibernate.dialect", PostgreSQL9Dialect.class.getCanonicalName());
 		builder.setProperty("hibernate.hbm2ddl.auto", "update");
 		builder.setProperty("hibernate.search.default.directory_provider", "filesystem");
-		builder.setProperty("hibernate.search.default.indexBase", "../searchIndexes");
+		if (indexBase == null || indexBase.isEmpty()) {
+			indexBase = "../indexBase";
+		}
+		builder.setProperty("hibernate.search.default.indexBase", indexBase);
 		return builder;
 	}
 	
