@@ -62,7 +62,7 @@
 			<!-- <property name="hibernate.use_sql_comments" value="true"/> -->
 			
 			<property name="hibernate.search.default.directory_provider" value="filesystem"/>
-			<property name="hibernate.search.default.indexBase" value="../indexes"/>
+			<property name="hibernate.search.default.indexBase" value="../web-building-indexBase"/>
 		</properties>
 	</persistence-unit>
 </persistence>

@@ -155,9 +155,8 @@ public class JPAConfiguration {
 		} else {
 			path = new File(indexBase);
 		}
-		if (!path.exists()) {
+		if (!path.exists())
 			path.mkdir();
-		}
 		builder.setProperty("hibernate.search.default.indexBase", path.getAbsolutePath());
 		return builder;
 	}

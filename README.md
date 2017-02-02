@@ -9,8 +9,8 @@
 #### Java
  - 容器：spring、spring mvc、Websocket、spring Publish-Subscribe（消息订阅）
  - 安全：spring security（XSS、CSRF、Session固定、应用层安全校验）
- - 数据访问层：JPA Hibernate、spring data
- - 其他：Hibernate校验、Hibernate Envers（审计）、Hibernate Search（全文搜索）等
+ - 数据访问层：JPA Hibernate、spring data、lucene（全文搜索）
+ - 其他：Hibernate校验、Hibernate Envers（审计）、Hibernate Search等
  
 #### JavaScript
 - bootstrap + adminLTE
