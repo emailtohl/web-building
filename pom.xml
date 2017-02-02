@@ -403,7 +403,12 @@
 			<artifactId>lucene-queries</artifactId>
 			<version>${lucene.version}</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queryparser</artifactId>
+			<version>${lucene.version}</version>
+		</dependency>
+		
 		<dependency>
 			<!-- http://poi.apache.org/ -->
 			<groupId>org.apache.poi</groupId>
