@@ -8,6 +8,8 @@ import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
+
 @Entity
 @Table(name = "t_company")
 public class Company extends BaseEntity {

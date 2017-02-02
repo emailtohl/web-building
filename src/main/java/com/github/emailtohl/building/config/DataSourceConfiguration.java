@@ -1,5 +1,8 @@
 package com.github.emailtohl.building.config;
-import static com.github.emailtohl.building.config.RootContextConfiguration.*;
+import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_DEVELPMENT;
+import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_PRODUCTION;
+import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_QA;
+
 import javax.inject.Inject;
 import javax.sql.DataSource;
 
@@ -41,7 +44,7 @@ public class DataSourceConfiguration {
 	String username;
 	@Value("${local.password}")
 	String password;
-
+	
 	/**
 	 * 静态配置方法，该方法将在最早执行，这样才能读取properties配置
 	 * @return

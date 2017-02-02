@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.site.entities;
+package com.github.emailtohl.building.common.jpa.entity;
 
 import java.util.Date;
 

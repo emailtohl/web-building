@@ -48,6 +48,7 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.github.emailtohl.building.common.Constant;
+import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
 
 /**
  * Entity 用户

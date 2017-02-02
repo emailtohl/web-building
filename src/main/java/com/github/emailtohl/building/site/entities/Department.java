@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
+
 @Entity
 @Table(name = "t_Department")
 public class Department extends BaseEntity {

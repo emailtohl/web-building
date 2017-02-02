@@ -15,6 +15,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
+
 /**
  * 申请表实体
  * @author HeLei

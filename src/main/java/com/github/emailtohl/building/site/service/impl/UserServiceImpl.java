@@ -1,10 +1,10 @@
 package com.github.emailtohl.building.site.service.impl;
 
+import static com.github.emailtohl.building.common.jpa.entity.BaseEntity.CREATE_DATE_PROPERTY_NAME;
+import static com.github.emailtohl.building.common.jpa.entity.BaseEntity.ID_PROPERTY_NAME;
+import static com.github.emailtohl.building.common.jpa.entity.BaseEntity.MODIFY_DATE_PROPERTY_NAME;
+import static com.github.emailtohl.building.common.jpa.entity.BaseEntity.VERSION_PROPERTY_NAME;
 import static com.github.emailtohl.building.site.entities.Authority.USER_ROLE_AUTHORITY_ALLOCATION;
-import static com.github.emailtohl.building.site.entities.BaseEntity.CREATE_DATE_PROPERTY_NAME;
-import static com.github.emailtohl.building.site.entities.BaseEntity.ID_PROPERTY_NAME;
-import static com.github.emailtohl.building.site.entities.BaseEntity.MODIFY_DATE_PROPERTY_NAME;
-import static com.github.emailtohl.building.site.entities.BaseEntity.VERSION_PROPERTY_NAME;
 import static com.github.emailtohl.building.site.entities.Role.ADMIN;
 
 import java.io.Serializable;
@@ -40,6 +40,7 @@ import org.springframework.stereotype.Service;
 import com.github.emailtohl.building.common.Constant;
 import com.github.emailtohl.building.common.encryption.myrsa.Encipher;
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
 import com.github.emailtohl.building.common.utils.BeanUtil;
 import com.github.emailtohl.building.common.utils.SecurityContextUtil;
 import com.github.emailtohl.building.filter.PreSecurityLoggingFilter;
@@ -47,7 +48,6 @@ import com.github.emailtohl.building.filter.UserPasswordEncryptionFilter;
 import com.github.emailtohl.building.site.dao.DepartmentRepository;
 import com.github.emailtohl.building.site.dao.RoleRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
-import com.github.emailtohl.building.site.entities.BaseEntity;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.Department;
 import com.github.emailtohl.building.site.entities.Employee;

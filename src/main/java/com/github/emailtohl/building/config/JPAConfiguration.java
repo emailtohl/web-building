@@ -3,11 +3,13 @@ import static com.github.emailtohl.building.config.RootContextConfiguration.PROF
 import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_PRODUCTION;
 import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_QA;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
 import org.hibernate.dialect.PostgreSQL9Dialect;
@@ -49,6 +51,9 @@ public class JPAConfiguration {
 	
 	@Value("${indexBase}")
 	String indexBase;
+	
+	@Inject
+	ServletContext servletContext;
 	
 	/**
 	 * 以Hibernate作为JPA的实现类
@@ -143,10 +148,17 @@ public class JPAConfiguration {
 		builder.setProperty("hibernate.dialect", PostgreSQL9Dialect.class.getCanonicalName());
 		builder.setProperty("hibernate.hbm2ddl.auto", "update");
 		builder.setProperty("hibernate.search.default.directory_provider", "filesystem");
+		File path;
 		if (indexBase == null || indexBase.isEmpty()) {
-			indexBase = "../indexBase";
+			File p = new File(servletContext.getRealPath("")).getParentFile();
+			path = new File(p, "web-building-indexBase");
+		} else {
+			path = new File(indexBase);
 		}
-		builder.setProperty("hibernate.search.default.indexBase", indexBase);
+		if (!path.exists()) {
+			path.mkdir();
+		}
+		builder.setProperty("hibernate.search.default.indexBase", path.getAbsolutePath());
 		return builder;
 	}
 	

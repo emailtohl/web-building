@@ -13,6 +13,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
+
 /**
  * 角色类
  * @author HeLei

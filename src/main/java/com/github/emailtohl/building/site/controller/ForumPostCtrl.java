@@ -23,8 +23,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
 import com.github.emailtohl.building.site.dto.ForumPostDto;
-import com.github.emailtohl.building.site.entities.BaseEntity;
 import com.github.emailtohl.building.site.service.ForumPostService;
 
 /**

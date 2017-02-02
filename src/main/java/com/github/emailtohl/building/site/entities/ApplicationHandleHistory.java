@@ -7,6 +7,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
 import com.github.emailtohl.building.site.entities.ApplicationForm.Status;
 
 /**

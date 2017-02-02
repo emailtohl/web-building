@@ -1,9 +1,9 @@
 package com.github.emailtohl.building.site.service.impl;
 
-import static com.github.emailtohl.building.site.entities.BaseEntity.CREATE_DATE_PROPERTY_NAME;
-import static com.github.emailtohl.building.site.entities.BaseEntity.ID_PROPERTY_NAME;
-import static com.github.emailtohl.building.site.entities.BaseEntity.MODIFY_DATE_PROPERTY_NAME;
-import static com.github.emailtohl.building.site.entities.BaseEntity.VERSION_PROPERTY_NAME;
+import static com.github.emailtohl.building.common.jpa.entity.BaseEntity.CREATE_DATE_PROPERTY_NAME;
+import static com.github.emailtohl.building.common.jpa.entity.BaseEntity.ID_PROPERTY_NAME;
+import static com.github.emailtohl.building.common.jpa.entity.BaseEntity.MODIFY_DATE_PROPERTY_NAME;
+import static com.github.emailtohl.building.common.jpa.entity.BaseEntity.VERSION_PROPERTY_NAME;
 
 import java.util.List;
 import java.util.Set;

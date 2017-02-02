@@ -9,6 +9,8 @@ import javax.persistence.Table;
 
 import org.hibernate.search.annotations.Store;
 
+import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
+
 /**
  * 论坛帖子对象
  * 

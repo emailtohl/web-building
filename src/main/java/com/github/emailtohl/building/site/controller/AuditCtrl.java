@@ -1,6 +1,6 @@
 package com.github.emailtohl.building.site.controller;
 
-import static com.github.emailtohl.building.site.entities.BaseEntity.ID_PROPERTY_NAME;
+import static com.github.emailtohl.building.common.jpa.entity.BaseEntity.ID_PROPERTY_NAME;
 
 import javax.inject.Inject;
 

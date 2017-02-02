@@ -17,12 +17,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
 import com.github.emailtohl.building.common.jpa.envers.Tuple;
 import com.github.emailtohl.building.site.dao.audit.RoleAudit;
 import com.github.emailtohl.building.site.dao.audit.UserAudit;
 import com.github.emailtohl.building.site.dto.RoleDto;
 import com.github.emailtohl.building.site.dto.UserDto;
-import com.github.emailtohl.building.site.entities.BaseEntity;
 import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.AuditedService;
