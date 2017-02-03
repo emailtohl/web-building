@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.site.service.impl;
+package com.github.emailtohl.building.common.lucene;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,8 +8,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
-
-import javax.annotation.PostConstruct;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -25,6 +23,7 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
@@ -32,22 +31,18 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-
-import com.github.emailtohl.building.site.service.FileSearchService;
 
 /**
- * 对文件系统建立索引，查询文本内容
+ * lucene的数据源获取有很多开源框架，如Solr提取数据库和XML；Nutch、Heritrix、Grub获取web站点；
+ * Aperture支持web站点，文件系统、邮箱等；Tika提供数据过滤。
+ * 
+ * 本工具只是适应本项目中轻量级的对文件系统建立索引，查询文本内容，更多应用还需借助成熟的开源框架。
  * 
  * @author HeLei
  */
-@Service
-public class FileSearchServiceImpl implements FileSearchService, ApplicationListener<ContextRefreshedEvent> {
+public class FileSearch {
 	private static final Logger logger = LogManager.getLogger();
 	private static final Set<String> TEXT_SUFFIX = new HashSet<String>(
 			Arrays.asList("txt", "html", "xml", "js", "java", "css", "properties"));
@@ -56,29 +51,26 @@ public class FileSearchServiceImpl implements FileSearchService, ApplicationList
 	public static final String FILE_CONTENT = "fileContent";
 	public static final String FILE_PATH = "filePath";
 	public static final String FILE_SIZE = "fileSize";
-	private final Analyzer analyzer = new StandardAnalyzer();
-	
-	@Value(value = "${indexBase}")
-	private String indexBase;
-	@Value(value = "${uploadBase}")
-	private String uploadBase;
+	/** 分词器 */
+	private Analyzer analyzer = new StandardAnalyzer();
+	/** 索引库 */
+	private Directory indexBase;
 
-	@PostConstruct
-	public void init(String indexBase) {
-		if (StringUtils.isEmpty(indexBase))
-			this.indexBase = "../web-building-indexBase/cms";
-		else
-			this.indexBase = indexBase;
+	/**
+	 * 可接受文件系统的索引目录，也可以接受内存形式的索引目录
+	 * @param indexBase 索引目录
+	 */
+	public FileSearch(Directory indexBase) {
+		this.indexBase = indexBase;
 	}
 	
-	@Override
-	public void onApplicationEvent(ContextRefreshedEvent event) {
-		index(this.uploadBase);
-	}
-	
-	public static void main(String[] args) throws IOException {
-		File directory = new File("./test").getCanonicalFile();
-		System.out.println(directory);
+	/**
+	 * 只接受文件系统的索引目录
+	 * @param indexBaseFSDirectory 文件系统的索引目录
+	 * @throws IOException
+	 */
+	public FileSearch(String indexBaseFSDirectory) throws IOException {
+		this.indexBase = FSDirectory.open(Paths.get(indexBaseFSDirectory));
 	}
 	
 	/**
@@ -86,33 +78,16 @@ public class FileSearchServiceImpl implements FileSearchService, ApplicationList
 	 * @param filePath
 	 */
 	public void index(String filePath) {
-		IndexWriter indexWriter = null;
-		try {
-			// 打开索引库
-			FSDirectory dir = FSDirectory.open(Paths.get(indexBase));
-			// 创建索引的写入配置表
-			IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
-			// 创建索引的Writer
-			indexWriter = new IndexWriter(dir, iwc);
+		IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
+		// 每一次都会进行创建新的索引,第二次删掉原来的创建新的索引
+		indexWriterConfig.setOpenMode(OpenMode.CREATE_OR_APPEND);
+		// 创建索引的Writer
+		try (IndexWriter indexWriter = new IndexWriter(indexBase, indexWriterConfig)) {
 			// 采集原始文档
 			addFileToDocument(new File(filePath), indexWriter);
 			indexWriter.commit();
 		} catch (IOException e) {
-			logger.error("创建索引失败！", e);
-			try {
-				indexWriter.rollback();
-			} catch (IOException e1) {
-				logger.error("回滚失败", e1);
-			}
-			throw new IllegalStateException("创建索引失败！", e);
-		} finally {
-			if (indexWriter != null && indexWriter.isOpen()) {
-				try {
-					indexWriter.close();
-				} catch (IOException e) {
-					logger.error("indexWriter关闭失败", e);
-				}
-			}
+			logger.error("打开索引库失败", e);
 		}
 	}
 	
@@ -123,18 +98,11 @@ public class FileSearchServiceImpl implements FileSearchService, ApplicationList
 	 */
 	public Set<String> queryPath(String queryString) {
 		Set<String> paths = new TreeSet<String>();
-		IndexWriter indexWriter = null;
-		try {
-			// 打开索引库
-			FSDirectory dir = FSDirectory.open(Paths.get(indexBase));
-			// 创建索引的写入配置表
-			IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
-			// 创建索引的Writer
-			indexWriter = new IndexWriter(dir, iwc);
+		IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
+		try (IndexWriter indexWriter = new IndexWriter(indexBase, indexWriterConfig)) {
 			String[] fields = { FILE_NAME, FILE_CONTENT, FILE_PATH, FILE_SIZE };
 			QueryParser qp = new MultiFieldQueryParser(fields, analyzer);
 			Query q = qp.parse(queryString);
-
 			// IndexReader ir = DirectoryReader.open(dir);
 			IndexReader ir = DirectoryReader.open(indexWriter, true);
 			IndexSearcher is = new IndexSearcher(ir);
@@ -146,24 +114,11 @@ public class FileSearchServiceImpl implements FileSearchService, ApplicationList
 				logger.debug(doc);
 				paths.add(doc.getField(FILE_PATH).stringValue());
 			}
+			ir.close();
 		} catch (IOException e) {
-			logger.error("查询索引失败！", e);
-			try {
-				indexWriter.rollback();
-			} catch (IOException e1) {
-				logger.error("indexWriter回滚失败！", e1);
-			}
-			throw new IllegalStateException("查询索引失败！", e);
+			logger.error("打开索引库失败", e);
 		} catch (ParseException e) {
-			logger.error("查询语句解析失败！", e);
-		} finally {
-			if (indexWriter != null && indexWriter.isOpen()) {
-				try {
-					indexWriter.close();
-				} catch (IOException e) {
-					logger.error("indexWriter关闭失败", e);
-				}
-			}
+			logger.error("查询语句解析失败", e);
 		}
 		return paths;
 	}
