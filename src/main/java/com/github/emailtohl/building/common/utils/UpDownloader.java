@@ -191,16 +191,20 @@ public class UpDownloader {
 			}
 			if (!f.delete()) {
 				try {
-					logger.info("文件夹： {} 未被删除！", f.getCanonicalPath());
+					logger.info("文件夹： {} 未被删除！尝试退出虚拟机时再删除它", f.getCanonicalPath());
+					f.deleteOnExit();
 				} catch (IOException e) {
 					logger.catching(e);
 				}
 			}
 		} else {
-			try {
-				logger.info("文件： {} 未被删除！", f.getCanonicalPath());
-			} catch (IOException e) {
-				logger.catching(e);
+			if (!f.delete()) {
+				try {
+					logger.info("文件： {} 未被删除！尝试退出虚拟机时再删除它", f.getCanonicalPath());
+					f.deleteOnExit();
+				} catch (IOException e) {
+					logger.catching(e);
+				}
 			}
 		}
 	}
