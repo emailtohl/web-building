@@ -200,7 +200,7 @@ public class FileSearch {
 	/**
 	 * 根据查询语句获取文件的路径
 	 * @param query
-	 * @return
+	 * @return 返回的路径是相对于index时的路径，若index时是绝对路径，则返回的也是绝对路径
 	 */
 	public Set<String> queryForFilePath(String queryString) {
 		Set<String> paths = new TreeSet<String>();

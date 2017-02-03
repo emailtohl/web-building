@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URLDecoder;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -78,21 +77,6 @@ public class FileUploadServer {
 	}
 	
 	/**
-	 * 查询文本内容
-	 * @param queryString 内容的字符串
-	 * @return 路径集合
-	 */
-	@RequestMapping(value = "query", method = RequestMethod.GET)
-	@ResponseBody
-	public Set<String> query(@RequestParam(required = false, name = "queryString", defaultValue = "") String queryString) {
-		if (queryString.isEmpty()) {
-			return new HashSet<String>();
-		} else {
-			return fileSearch.queryForFilePath(queryString);
-		}
-	}
-	
-	/**
 	 * 获取资源管理的根目录的数据结构
 	 * @return
 	 */
@@ -100,6 +84,24 @@ public class FileUploadServer {
 	@ResponseBody
 	public ZtreeNode getRoot() {
 		return ZtreeNode.newInstance(root);
+	}
+
+	/**
+	 * 查询文本内容
+	 * @param param 内容的字符串
+	 * @return 路径集合
+	 */
+	@RequestMapping(value = "query", method = RequestMethod.GET)
+	@ResponseBody
+	public ZtreeNode query(@RequestParam(required = false, name = "param", defaultValue = "") String param) {
+		ZtreeNode node = ZtreeNode.newInstance(root);
+		if (!param.isEmpty()) {
+			fileSearch.queryForFilePath(param).forEach(s -> {
+				String relativelyPath = s.substring(s.indexOf(RESOURCE_ROOT));
+				node.setOpen(relativelyPath);
+			});
+		}
+		return node;
 	}
 	
 	/**

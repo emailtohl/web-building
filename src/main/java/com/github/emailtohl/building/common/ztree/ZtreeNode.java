@@ -14,6 +14,8 @@ import java.util.regex.Pattern;
  */
 public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 	private static final long serialVersionUID = -1932148922352477076L;
+//	private transient static final Pattern p = Pattern.compile(File.separator);
+	private transient static final Pattern SEPARATOR = Pattern.compile("[\\\\/]");
 	private transient static volatile long serial = 0;
 	
 	public ZtreeNode() {
@@ -152,15 +154,13 @@ public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 		this.open = open;
 	}
 	
-//	private Pattern p = Pattern.compile(File.separator);
-	private Pattern p = Pattern.compile("[\\\\/]");
 	/**
 	 * 根据路径匹配，打开对应的目录
 	 * @param path
 	 */
 	public void setOpen(String path) {
 		LinkedList<String> queue = new LinkedList<String>();
-		for (String name : path.split(p.pattern())) {
+		for (String name : path.split(SEPARATOR.pattern())) {
 			queue.add(name);
 		}
 		Set<ZtreeNode> nodes = new TreeSet<ZtreeNode>();
@@ -171,12 +171,18 @@ public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 	private void setOpen(Set<ZtreeNode> nodes, LinkedList<String> queue) {
 		String name = queue.poll();
 		for (ZtreeNode node : nodes) {
-			if (!node.isParent || name == null || !name.equals(node.name))
-				continue;
-			node.open = true;
-			// 根据定义node.isParent == true，那么node.children != null，不过保险起见还是做判断
-			if (node.children != null) {
-				setOpen(node.children, queue);
+			if (node.isParent) {
+				if (name != null && name.equals(node.name)) {
+					node.open = true;
+					// 根据定义node.isParent == true，那么node.children != null，不过保险起见还是做判断
+					if (node.children != null) {
+						setOpen(node.children, queue);
+					}
+				}
+			} else {
+				if (name != null && name.equals(node.name)) {
+					node.checked = true;
+				}
 			}
 		}
 	}
@@ -267,7 +273,8 @@ public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 
 	@Override
 	public String toString() {
-		return "Node [id=" + id + ", name=" + name + ", children=" + children + "]";
+		return "ZtreeNode [id=" + id + ", name=" + name + ", open=" + open + ", checked=" + checked + ", children="
+				+ children + "]";
 	}
 
 	@Override
