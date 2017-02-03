@@ -49,7 +49,20 @@ public class ZtreeNodeTest {
 		long rootid = nn.getId();
 		long pid = nn.getChildren().iterator().next().getPid();
 		assertEquals(rootid, pid);
-		
 	}
 
+	@Test
+	public void testSetOpen() {
+		ZtreeNode n = ZtreeNode.newInstance(test_root);
+		String path = sub2_2.getPath();
+		n.setOpen(path);
+		assertTrue(n.isOpen());
+		for (ZtreeNode sub : n.getChildren()) {
+			if ("sub2".equals(sub.getName())) {
+				assertTrue(sub.isOpen());
+			} else {
+				assertFalse(sub.isOpen());
+			}
+		}
+	}
 }
