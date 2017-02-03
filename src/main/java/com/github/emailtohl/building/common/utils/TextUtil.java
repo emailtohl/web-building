@@ -19,6 +19,8 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * 以指定编码格式读写文件的工具
+ * 注：Apache的commons-io组件中的FileUtils能提供更强大的文件操作功能
+ * 
  * @author HeLei
  */
 public class TextUtil {

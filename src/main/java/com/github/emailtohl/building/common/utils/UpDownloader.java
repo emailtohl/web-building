@@ -14,11 +14,15 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * 文件上传下载器
  * @author HeLei
  */
 public class UpDownloader {
+	private static final Logger logger = LogManager.getLogger();
 	private File basePath;
 
 	/**
@@ -185,9 +189,19 @@ public class UpDownloader {
 			for (File ff : f.listFiles()) {
 				deleteDir(ff.getAbsolutePath());
 			}
-			f.delete();
+			if (!f.delete()) {
+				try {
+					logger.info("文件夹： {} 未被删除！", f.getCanonicalPath());
+				} catch (IOException e) {
+					logger.catching(e);
+				}
+			}
 		} else {
-			f.delete();
+			try {
+				logger.info("文件： {} 未被删除！", f.getCanonicalPath());
+			} catch (IOException e) {
+				logger.catching(e);
+			}
 		}
 	}
 	
