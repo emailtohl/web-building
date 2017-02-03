@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.site.service.impl;
+package com.github.emailtohl.building.common.lucene;
 
 import static org.junit.Assert.assertFalse;
 
@@ -21,19 +21,26 @@ public class FileSearchTest {
 		// 创建一个内存目录
 		directory = new RAMDirectory();
 		fs = new FileSearch(directory);
-		fs.index(new File("src/main/resources").getAbsolutePath());
+		fs.index(new File("src/main/resources").getPath());
 	}
 	
 	@After
 	public void tearDown() throws Exception {
+		fs.deleteAllIndex();
 		directory.close();
 	}
 	
 	@Test
 	public void test() {
-		Set<String> result = fs.queryPath("mail");
+		Set<String> result = fs.queryForFilePath("mail");
 		result.forEach(s -> System.out.println(s));
 		assertFalse(result.isEmpty());
+		for (File f : new File("src/main/resources").listFiles()) {
+			if (f.isFile()) {
+				fs.updateIndex(f.getPath());
+				fs.deleteIndex(f.getPath());
+			}
+		}
 	}
 
 }
