@@ -109,7 +109,6 @@ public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 	/** 节点的子节点数据集合， 在前端，如果是文件而非目录，该字段应该为null，所以此处不初始化 */
 	private Set<ZtreeNode> children;
 
-
 	public long getPid() {
 		return pid;
 	}
@@ -150,7 +149,7 @@ public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 	public void setOpen(boolean open) {
 		this.open = open;
 	}
-
+	
 	public boolean isChecked() {
 		return checked;
 	}

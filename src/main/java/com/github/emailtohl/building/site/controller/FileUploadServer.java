@@ -1,15 +1,18 @@
 package com.github.emailtohl.building.site.controller;
 
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URLDecoder;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 import javax.validation.Valid;
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.github.emailtohl.building.common.lucene.FileSearch;
 import com.github.emailtohl.building.common.utils.ServletUtil;
 import com.github.emailtohl.building.common.utils.TextUtil;
 import com.github.emailtohl.building.common.utils.UpDownloader;
@@ -47,16 +51,44 @@ public class FileUploadServer {
 	public static final String RESOURCE_ROOT = "resource_root";
 	private File root;
 	private TextUtil textUtil = new TextUtil();
+	private FileSearch fileSearch;
 	
 	private Object textUpdateMutex = new Object();
 	private Object fileMutex = new Object();
-	@Inject UpDownloader upDownloader;
+	@Inject
+	UpDownloader upDownloader;
+	@Inject
+	@Named("indexBase")
+	File indexBase;
 	
 	@PostConstruct
-	public void createIconDir() {
-		root = new File(upDownloader.getAbsolutePath(RESOURCE_ROOT));
+	public void createIconDir() throws IOException {
+		String resourceRoot = upDownloader.getAbsolutePath(RESOURCE_ROOT);
+		root = new File(resourceRoot);
 		if (!root.exists()) {
 			root.mkdir();
+		}
+		File resourceIndexBase = new File(indexBase, "resource");
+		if (!resourceIndexBase.exists()) {
+			resourceIndexBase.mkdir();
+		}
+		fileSearch = new FileSearch(resourceIndexBase.getAbsolutePath());
+		fileSearch.deleteAllIndex();
+		fileSearch.index(resourceRoot);
+	}
+	
+	/**
+	 * 查询文本内容
+	 * @param queryString 内容的字符串
+	 * @return 路径集合
+	 */
+	@RequestMapping(value = "query", method = RequestMethod.GET)
+	@ResponseBody
+	public Set<String> query(@RequestParam(required = false, name = "queryString", defaultValue = "") String queryString) {
+		if (queryString.isEmpty()) {
+			return new HashSet<String>();
+		} else {
+			return fileSearch.queryForFilePath(queryString);
 		}
 	}
 	
@@ -96,6 +128,8 @@ public class FileUploadServer {
 		if (src.exists()) {
 			synchronized (fileMutex) {
 				src.renameTo(dest);
+				fileSearch.deleteIndex(srcName);
+				fileSearch.updateIndex(destName);
 			}
 		}
 	}
@@ -110,6 +144,7 @@ public class FileUploadServer {
 		String absolutePath = upDownloader.getAbsolutePath(filename);
 		synchronized (fileMutex) {
 			upDownloader.deleteDir(absolutePath);
+			fileSearch.deleteIndex(filename);
 		}
 	}
 	
@@ -131,6 +166,7 @@ public class FileUploadServer {
 			fullname = dir + '/' + filename;
 		}
 		upDownloader.upload(fullname, file);
+		fileSearch.addIndex(path);
 		return filename + ": 上传成功!";
 	}
 	
@@ -152,6 +188,7 @@ public class FileUploadServer {
 	public void writeText(@RequestBody Form f) {
 		synchronized (textUpdateMutex) {
 			textUtil.writeText(upDownloader.getAbsolutePath(f.getPath()), f.getTextContext(), f.getCharset());
+			fileSearch.updateIndex(f.getPath());
 		}
 	}
 	

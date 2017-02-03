@@ -44,7 +44,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 		entityManagerFactoryRef = "entityManagerFactory")
 @Import({ DataSourceConfiguration.class })
 public class JPAConfiguration {
-
 	@Inject
 	@Named("dataSource")
 	DataSource dataSource;
@@ -102,7 +101,8 @@ public class JPAConfiguration {
 		Map<String, Object> properties = new HashMap<String, Object>();
 		properties.put("javax.persistence.schema-generation.database.action", "none");
 		properties.put("hibernate.search.default.directory_provider", "filesystem");
-		properties.put("hibernate.search.default.indexBase", "../searchIndexes");
+		File path = indexBase();
+		properties.put("hibernate.search.default.indexBase", path.getAbsolutePath());
 		return properties;
 	}
 	
@@ -148,6 +148,13 @@ public class JPAConfiguration {
 		builder.setProperty("hibernate.dialect", PostgreSQL9Dialect.class.getCanonicalName());
 		builder.setProperty("hibernate.hbm2ddl.auto", "update");
 		builder.setProperty("hibernate.search.default.directory_provider", "filesystem");
+		File path = indexBase();
+		builder.setProperty("hibernate.search.default.indexBase", path.getAbsolutePath());
+		return builder;
+	}
+	
+	@Bean
+	public File indexBase() {
 		File path;
 		if (indexBase == null || indexBase.isEmpty()) {
 			File p = new File(servletContext.getRealPath("")).getParentFile();
@@ -157,8 +164,7 @@ public class JPAConfiguration {
 		}
 		if (!path.exists())
 			path.mkdir();
-		builder.setProperty("hibernate.search.default.indexBase", path.getAbsolutePath());
-		return builder;
+		return path;
 	}
 	
 }

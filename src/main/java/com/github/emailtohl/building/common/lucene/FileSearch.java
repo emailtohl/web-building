@@ -134,6 +134,23 @@ public class FileSearch {
 	}
 	
 	/**
+	 * 添加文件的索引
+	 * @param file
+	 */
+	public void addIndex(String file) {
+		IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
+		// 创建索引的Writer
+		try (IndexWriter indexWriter = new IndexWriter(indexBase, indexWriterConfig)) {
+			File f = new File(file);
+			Document doc = getDocument(f);
+			indexWriter.addDocument(doc);
+			indexWriter.commit();
+		} catch (IOException e) {
+			logger.error("添加索引失败", e);
+		}
+	}
+	
+	/**
 	 * 更新文件的索引
 	 * @param file
 	 */

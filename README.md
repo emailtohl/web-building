@@ -1,6 +1,6 @@
 # web-building项目
 
-**Java JavaScript 业务框架 spring springmvc springsecurity springdata JPA Hibernate search Envers angularjs1.× AdminLTE**
+**Java JavaScript 业务框架 spring springmvc springsecurity springdata JPA Hibernate search Envers Lucene angularjs1.× AdminLTE**
 
 ## 一、 说明
 此项目被称为“building”，意指“不断完善”的项目，我将日常学习或自己开发的工具、框架整合在一起。这不仅是一个总结，同时还可以在此基础上开发业务项目。
