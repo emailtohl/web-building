@@ -130,8 +130,8 @@ public class FileUploadServer {
 		if (src.exists()) {
 			synchronized (fileMutex) {
 				src.renameTo(dest);
-				fileSearch.deleteIndex(srcName);
-				fileSearch.updateIndex(destName);
+				fileSearch.deleteIndex(upDownloader.getAbsolutePath(srcName));
+				fileSearch.updateIndex(upDownloader.getAbsolutePath(destName));
 			}
 		}
 	}
@@ -146,7 +146,7 @@ public class FileUploadServer {
 		String absolutePath = upDownloader.getAbsolutePath(filename);
 		synchronized (fileMutex) {
 			upDownloader.deleteDir(absolutePath);
-			fileSearch.deleteIndex(filename);
+			fileSearch.deleteIndex(absolutePath);
 		}
 	}
 	
@@ -162,13 +162,13 @@ public class FileUploadServer {
 	public String uploadFile(@RequestPart("path") String path, @RequestPart("file") Part file) throws IOException {
 		String dir = URLDecoder.decode(path, "UTF-8");
 		String fullname, filename = file.getSubmittedFileName();
-		if (dir.endsWith("/")) {
+		if (dir.endsWith(File.separator)) {
 			fullname = dir + filename;
 		} else {
-			fullname = dir + '/' + filename;
+			fullname = dir + File.separator + filename;
 		}
 		upDownloader.upload(fullname, file);
-		fileSearch.addIndex(path);
+		fileSearch.addIndex(upDownloader.getAbsolutePath(fullname));
 		return filename + ": 上传成功!";
 	}
 	
@@ -190,7 +190,7 @@ public class FileUploadServer {
 	public void writeText(@RequestBody Form f) {
 		synchronized (textUpdateMutex) {
 			textUtil.writeText(upDownloader.getAbsolutePath(f.getPath()), f.getTextContext(), f.getCharset());
-			fileSearch.updateIndex(f.getPath());
+			fileSearch.updateIndex(upDownloader.getAbsolutePath(f.getPath()));
 		}
 	}
 	
