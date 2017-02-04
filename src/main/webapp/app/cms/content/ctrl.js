@@ -12,6 +12,12 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 			callback : {
 				onClick : zTreeOnClick,
 			},
+			view: {
+				fontCss: function(treeId, treeNode) {
+					// 被搜索到的节点设置为红色
+					return treeNode.selected ? {color:"red"} : {};
+				}
+			}
 		};
 		util.loadasync('lib/ztree/zTreeStyle.css');
 		$scope.getAuthentication();

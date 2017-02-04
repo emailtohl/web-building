@@ -9,8 +9,8 @@
 #### Java
  - 容器：spring、spring mvc、Websocket、spring Publish-Subscribe（消息订阅）
  - 安全：spring security（XSS、CSRF、Session固定、应用层安全校验）
- - 数据访问层：JPA Hibernate、spring data、lucene（全文搜索）
- - 其他：Hibernate校验、Hibernate Envers（审计）、Hibernate Search等
+ - 数据访问层：JPA Hibernate、spring data、lucene（搜索引擎）
+ - 其他：Hibernate校验、Hibernate Envers（审计）、Hibernate Search（全文搜索）等
  
 #### JavaScript
 - bootstrap + adminLTE
@@ -136,6 +136,9 @@ xml的DTD、scheme校验很繁琐，项目尽可能避免使用xml，在配置�
 
 #### 4.1.7 encryption包
 该包下含有JDK标准RSA+AES实现：Crypter，不过由于密钥生成应该有客户端完成，故该类并未在项目中真正使用。不过该包中引入了自己实现RSA算法，这样就可以在底层和前端传递来的数字公钥进行交互处理了，现在主要应用加密用户的登录密码，可在普通的HTTP协议下保证登录安全。
+
+#### 4.1.8 lucene包
+该包是对lucene简单的封装，可支持本CMS模块对文件系统的索引和检索，由于lucene较为底层，数据源的获取、分词、检索、过滤、分析等等各个方面都需要优良算法的程序支持，高级封装可参考相应的开源软件，如Solr可提取数据库和XML信息；Nutch、Heritrix、Grub获取web站点；Aperture可支持web站点，文件系统、邮箱；Tika能提供数据过滤等等。
 
 ### 4.2 前端
 前端的lib存放第三方框架或工具，common是公共模块，基于angular1.×编写的service、util、directive等。

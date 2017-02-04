@@ -5,17 +5,15 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Pattern;
 
 /**
  * 前端zTree的数据模型
  * 
  * @author HeLei
  */
-public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
+public class ZtreeNode implements Serializable, Comparable<ZtreeNode>{
 	private static final long serialVersionUID = -1932148922352477076L;
-//	private transient static final Pattern p = Pattern.compile(File.separator);
-	private transient static final Pattern SEPARATOR = Pattern.compile("[\\\\/]");
+	private transient static final String SEPARATOR_PATTERN = "[\\\\/]";
 	private transient static volatile long serial = 0;
 	
 	public ZtreeNode() {
@@ -74,7 +72,6 @@ public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 	private String name;
 	
 	/** 记录 treeNode 节点是否为父节点 */
-	@SuppressWarnings("unused")
 	private boolean isParent = true;
 	
 	/** 判断 treeNode 节点是否被隐藏 */
@@ -112,6 +109,9 @@ public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 	
 	/** 节点的子节点数据集合， 在前端，如果是文件而非目录，该字段应该为null，所以此处不初始化 */
 	private Set<ZtreeNode> children;
+	
+	/** 自定义属性，用于标识查询结果 */
+	private boolean selected;
 
 	public long getPid() {
 		return pid;
@@ -160,7 +160,7 @@ public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 	 */
 	public void setOpen(String path) {
 		LinkedList<String> queue = new LinkedList<String>();
-		for (String name : path.split(SEPARATOR.pattern())) {
+		for (String name : path.split(SEPARATOR_PATTERN)) {
 			queue.add(name);
 		}
 		Set<ZtreeNode> nodes = new TreeSet<ZtreeNode>();
@@ -181,7 +181,7 @@ public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 				}
 			} else {
 				if (name != null && name.equals(node.name)) {
-					node.checked = true;
+					node.selected = true;
 				}
 			}
 		}
@@ -270,11 +270,19 @@ public class ZtreeNode implements Serializable , Comparable<ZtreeNode>{
 	public long getId() {
 		return id;
 	}
+	
+	public boolean isSelected() {
+		return selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
 
 	@Override
 	public String toString() {
-		return "ZtreeNode [id=" + id + ", name=" + name + ", open=" + open + ", checked=" + checked + ", children="
-				+ children + "]";
+		return "ZtreeNode [id=" + id + ", name=" + name + ", open=" + open + ", children=" + children + ", selected="
+				+ selected + "]";
 	}
 
 	@Override

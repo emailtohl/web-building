@@ -191,8 +191,7 @@ public class UpDownloader {
 			}
 			if (!f.delete()) {
 				try {
-					logger.info("文件夹： {} 未被删除！尝试退出虚拟机时再删除它", f.getCanonicalPath());
-					f.deleteOnExit();
+					logger.info("文件夹： {} 未被删除！", f.getCanonicalPath());
 				} catch (IOException e) {
 					logger.catching(e);
 				}
@@ -200,8 +199,7 @@ public class UpDownloader {
 		} else {
 			if (!f.delete()) {
 				try {
-					logger.info("文件： {} 未被删除！尝试退出虚拟机时再删除它", f.getCanonicalPath());
-					f.deleteOnExit();
+					logger.info("文件： {} 未被删除！", f.getCanonicalPath());
 				} catch (IOException e) {
 					logger.catching(e);
 				}
