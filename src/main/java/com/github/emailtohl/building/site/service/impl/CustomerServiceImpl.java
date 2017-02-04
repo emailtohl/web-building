@@ -18,6 +18,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.dao.CustomerRepository;
@@ -33,18 +34,10 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public Pager<Customer> query(String name, String title, String affiliation, Pageable pageable) {
-		Page<Customer> page = customRepository.query(isEmpty(name) ? name : name.trim() + '%', 
-				isEmpty(title) ? title : title.trim() + '%', 
-				isEmpty(affiliation) ? affiliation : affiliation.trim() + '%', 
+		Page<Customer> page = customRepository.query(StringUtils.hasText(name) ? name.trim() + '%' : name, 
+				StringUtils.hasText(title) ? title.trim() + '%' : title, 
+				StringUtils.hasText(affiliation) ? affiliation.trim() + '%' : affiliation, 
 				pageable);
-		/*
-		List<Customer> ls = new ArrayList<>();
-		page.getContent().forEach((p持久化 -> {
-			Customer t = new Customer();// 瞬时
-			BeanUtils.copyProperties(p, t, "password", "icon", "roles");
-			ls.add(t);
-		}));
-		*/
 		List<Customer> ls = page.getContent().parallelStream().map((p/*持久化*/ -> {
 			Customer t = new Customer();// 瞬时
 			BeanUtils.copyProperties(p, t, "password", "icon", "roles");
@@ -68,10 +61,6 @@ public class CustomerServiceImpl implements CustomerService {
 	public void update(Long id, Customer customer) {
 		Customer c = customRepository.getCustomer(id);
 		BeanUtils.copyProperties(customer, c, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, VERSION_PROPERTY_NAME, "email", "username", "roles", "password", "enabled");
-	}
-	
-	private boolean isEmpty(String s) {
-		return s == null || s.isEmpty();
 	}
 
 	@Override

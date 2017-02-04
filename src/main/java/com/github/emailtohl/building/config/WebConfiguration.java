@@ -3,7 +3,7 @@ package com.github.emailtohl.building.config;
 import java.io.File;
 
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
+import javax.inject.Named;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -12,9 +12,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
-import org.springframework.web.context.ContextLoader;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.RequestToViewNameTranslator;
 import org.springframework.web.servlet.ViewResolver;
@@ -43,8 +42,15 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
 	/**
 	 * RootContextConfiguration中定义的LocalValidatorFactoryBean继承了SpringValidatorAdapter
 	 */
-	@Inject SpringValidatorAdapter validator;
-	@Value("${uploadBase}") String uploadBase;
+	@Inject
+	SpringValidatorAdapter validator;
+	
+	@Value("${uploadBase}")
+	String uploadBase;
+	
+	@Inject
+	@Named("contextRoot")
+	File contextRoot;
 	
 	@Bean
 	public ViewResolver viewResolver() {
@@ -78,19 +84,16 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
 	
 	@Bean
 	public UpDownloader uploader() {
-		WebApplicationContext webApplicationContext = ContextLoader.getCurrentWebApplicationContext();
-        ServletContext servletContext = webApplicationContext.getServletContext(); 
         File basePath;
-		if (uploadBase == null || uploadBase.isEmpty()) {
-			File p = new File(servletContext.getRealPath("")).getParentFile();
-			basePath = new File(p, "web-building-upload");
-		} else {
+		if (StringUtils.hasText(uploadBase)) {
 			basePath = new File(uploadBase);
+		} else {
+			File p = contextRoot.getParentFile();
+			basePath = new File(p, "web-building-upload");
 		}
 		if (!basePath.exists()) {
 			basePath.mkdir();
 		}
 		return new UpDownloader(basePath);
 	}
-	
 }

@@ -1,5 +1,6 @@
 package com.github.emailtohl.building.config;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
@@ -73,6 +74,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 import org.springframework.web.client.RestTemplate;
 
+import com.github.emailtohl.building.common.lucene.FileSearch;
 import com.google.gson.Gson;
 /**
  * spring容器的配置类，它依赖数据源配置类和安全配置类
@@ -113,6 +115,10 @@ public class RootContextConfiguration
 	@Inject
 	@Named("jpaTransactionManager")
 	PlatformTransactionManager jpaTransactionManager;
+	
+	@Inject
+	@Named("indexBase")
+	File indexBase;
 	
 	// ------------------关于数据源事务的配置------------------------------------
 	@Bean
@@ -260,6 +266,22 @@ public class RootContextConfiguration
 		messageSource.setBasenames("/WEB-INF/i18n/titles", "/WEB-INF/i18n/messages", "/WEB-INF/i18n/errors",
 				"/WEB-INF/i18n/validation");
 		return messageSource;
+	}
+	
+	/**
+	 * 文件系统搜索组件
+	 * @return
+	 * @throws IOException
+	 */
+	@Bean
+	public FileSearch fileSearch() throws IOException {
+		File indexDir = new File(indexBase, "the-index-of-FileSearch");
+		if (!indexDir.exists()) {
+			indexDir.mkdir();
+		}
+		FileSearch fileSearch = new FileSearch(indexDir.getAbsolutePath());
+		fileSearch.deleteAllIndex();// 使用前注意初始化索引
+		return fileSearch;
 	}
 	
 	@Bean

@@ -3,7 +3,10 @@ import static com.github.emailtohl.building.config.RootContextConfiguration.PROF
 import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_PRODUCTION;
 import static com.github.emailtohl.building.config.RootContextConfiguration.PROFILE_QA;
 
+import java.io.File;
+
 import javax.inject.Inject;
+import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
 import org.apache.logging.log4j.LogManager;
@@ -107,4 +110,28 @@ public class DataSourceConfiguration {
 		return lookup.getDataSource("jdbc/building");
 	}
 
+	/**
+	 * 未在容器中，则返回项目的所在目录
+	 * @return
+	 */
+	@Profile(PROFILE_DEVELPMENT)
+	@Bean(name = "contextRoot")
+	public File projectContextRoot() {
+		File f = new File(getClass().getResource("/").getFile());
+		logger.debug("测试环境中的上下文根目录是：{}", f.getAbsolutePath());
+		return f;
+	}
+	
+	/**
+	 * 在容器中可以返回容器的上下文根目录
+	 * @param servletContext
+	 * @return
+	 */
+	@Profile({ PROFILE_PRODUCTION, PROFILE_QA })
+	@Bean(name = "contextRoot")
+	public File webContextRoot(ServletContext servletContext) {
+		File f = new File(servletContext.getRealPath(""));
+		logger.debug("生产环境中的上下文根目录是：{}", f.getAbsolutePath());
+		return f;
+	}
 }

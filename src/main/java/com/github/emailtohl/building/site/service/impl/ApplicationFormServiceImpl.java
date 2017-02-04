@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.Criterion;
 import com.github.emailtohl.building.site.dao.ApplicationFormRepository;
@@ -55,7 +56,7 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 	
 	@Override
 	public Page<ApplicationForm> findByNameLike(String name, Pageable pageable) {
-		if (isEmpty(name)) {
+		if (!StringUtils.hasText(name)) {
 			return applicationFormRepository.findAll(pageable);
 		}
 		String fuzzy = name.trim() + '%';
@@ -69,7 +70,7 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 
 	@Override
 	public Page<ApplicationForm> findByNameAndStatus(String name, Status status, Pageable pageable) {
-		if (isEmpty(name)) {
+		if (!StringUtils.hasText(name)) {
 			if (status == null) {
 				return applicationFormRepository.findAll(pageable);
 			} else {
@@ -150,13 +151,13 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 	public Page<ApplicationHandleHistory> history(String applicantEmail, String handlerEmail, String name, Status status, Date start, Date end, Pageable pageable) {
 		Page<ApplicationHandleHistory> page;
 		Set<Criterion> set = new HashSet<>();
-		if (!isEmpty(applicantEmail)) {
+		if (StringUtils.hasText(applicantEmail)) {
 			set.add(new Criterion("applicationForm.applicant.email", Criterion.Operator.LIKE, applicantEmail.trim() + '%'));
 		}
-		if (!isEmpty(handlerEmail)) {
+		if (StringUtils.hasText(handlerEmail)) {
 			set.add(new Criterion("handler.email", Criterion.Operator.LIKE, handlerEmail.trim() + '%'));
 		}
-		if (!isEmpty(name)) {
+		if (StringUtils.hasText(name)) {
 			set.add(new Criterion("applicationForm.name", Criterion.Operator.LIKE, name.trim() + '%'));
 		}
 		if (status != null) {
@@ -175,10 +176,6 @@ public class ApplicationFormServiceImpl implements ApplicationFormService {
 	@Override
 	public List<ApplicationHandleHistory> findByApplicationFormIdWhenException(long id) {
 		return applicationHandleHistoryRepository.findByApplicationFormIdWhenException(id);
-	}
-	
-	private boolean isEmpty(String s) {
-		return s == null || s.isEmpty();
 	}
 
 	@Override

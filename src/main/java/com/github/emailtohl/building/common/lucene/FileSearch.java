@@ -2,6 +2,7 @@ package com.github.emailtohl.building.common.lucene;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -10,6 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
+import javax.activation.FileTypeMap;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -49,6 +52,7 @@ public class FileSearch {
 	private static final Logger logger = LogManager.getLogger();
 	private static final Set<String> TEXT_SUFFIX = new HashSet<String>(
 			Arrays.asList("txt", "html", "xml", "js", "java", "css", "properties"));
+	private static final FileTypeMap fileTypeMap = FileTypeMap.getDefaultFileTypeMap();
 	private static final long TEN_MBYTES = 10_485_760L;// 10兆
 	public static final String FILE_NAME = "fileName";
 	public static final String FILE_CONTENT = "fileContent";
@@ -223,6 +227,16 @@ public class FileSearch {
 		if (i > -1 && name.length() > i) {
 			String suffix = name.substring(i + 1, name.length());
 			flag = TEXT_SUFFIX.contains(suffix);
+		}
+		String fileType;
+		if (!flag) {
+			fileType = fileTypeMap.getContentType(f.getAbsolutePath());
+			flag = fileType.contains("text");
+		}
+		if (!flag) {
+			fileType = URLConnection.guessContentTypeFromName(f.getAbsolutePath());
+			if (fileType != null)
+				flag = fileType.contains("text");
 		}
 		return flag;
 	}

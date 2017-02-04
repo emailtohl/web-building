@@ -11,6 +11,7 @@ import javax.persistence.criteria.Root;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import com.github.emailtohl.building.common.jpa.fullTextSearch.AbstractSearchableRepository;
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.Criterion;
@@ -28,13 +29,13 @@ public class CustomerRepositoryImpl extends AbstractSearchableRepository<Custome
 	@Override
 	public Page<Customer> query(String name, String title, String affiliation, Pageable pageable) {
 		Set<Criterion> set = new HashSet<>();
-		if (!isEmpty(name)) {
+		if (StringUtils.hasText(name)) {
 			set.add(new Criterion("name", Operator.LIKE, name));
 		}
-		if (!isEmpty(title)) {
+		if (StringUtils.hasText(title)) {
 			set.add(new Criterion("title", Operator.LIKE, title));
 		}
-		if (!isEmpty(affiliation)) {
+		if (StringUtils.hasText(affiliation)) {
 			set.add(new Criterion("affiliation", Operator.LIKE, affiliation));
 		}
 		Page<Customer> p = search(set, pageable);
@@ -64,9 +65,4 @@ public class CustomerRepositoryImpl extends AbstractSearchableRepository<Custome
 		Root<Customer> r = q.from(entityClass);
 		return entityManager.createQuery(q.select(r)).getResultList();
 	}
-	
-	private boolean isEmpty(String s) {
-		return s == null || s.isEmpty();
-	}
-	
 }

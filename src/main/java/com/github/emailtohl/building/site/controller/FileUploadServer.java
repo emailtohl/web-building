@@ -11,7 +11,6 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 import javax.validation.Valid;
@@ -50,29 +49,21 @@ public class FileUploadServer {
 	public static final String RESOURCE_ROOT = "resource_root";
 	private File root;
 	private TextUtil textUtil = new TextUtil();
-	private FileSearch fileSearch;
 	
 	private Object textUpdateMutex = new Object();
 	private Object fileMutex = new Object();
 	@Inject
 	UpDownloader upDownloader;
 	@Inject
-	@Named("indexBase")
-	File indexBase;
+	FileSearch fileSearch;
 	
 	@PostConstruct
-	public void createIconDir() throws IOException {
+	public void createIconDir() {
 		String resourceRoot = upDownloader.getAbsolutePath(RESOURCE_ROOT);
 		root = new File(resourceRoot);
 		if (!root.exists()) {
 			root.mkdir();
 		}
-		File resourceIndexBase = new File(indexBase, "resource");
-		if (!resourceIndexBase.exists()) {
-			resourceIndexBase.mkdir();
-		}
-		fileSearch = new FileSearch(resourceIndexBase.getAbsolutePath());
-		fileSearch.deleteAllIndex();
 		fileSearch.index(resourceRoot);
 	}
 	

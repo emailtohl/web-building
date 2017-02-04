@@ -9,7 +9,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
 import org.hibernate.dialect.PostgreSQL9Dialect;
@@ -29,6 +28,7 @@ import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.util.StringUtils;
 
 /**
  * JPA的配置
@@ -52,7 +52,8 @@ public class JPAConfiguration {
 	String indexBase;
 	
 	@Inject
-	ServletContext servletContext;
+	@Named("contextRoot")
+	File contextRoot;
 	
 	/**
 	 * 以Hibernate作为JPA的实现类
@@ -77,7 +78,11 @@ public class JPAConfiguration {
 	public LocalEntityManagerFactoryBean LocalEntityManagerFactory() {
 		LocalEntityManagerFactoryBean emfb = new LocalEntityManagerFactoryBean();
 		emfb.setPersistenceUnitName("building-unit");
-		emfb.setJpaPropertyMap(getJpaPropertyMap());
+		Map<String, Object> properties = new HashMap<String, Object>();
+		properties.put("hibernate.search.default.directory_provider", "filesystem");
+		File path = indexBase();
+		properties.put("hibernate.search.default.indexBase", path.getAbsolutePath());
+		emfb.setJpaPropertyMap(properties);
 		return emfb;
 	}
 	
@@ -93,17 +98,12 @@ public class JPAConfiguration {
 		emfb.setJpaVendorAdapter(jpaVendorAdapter());
 		// 实际上hibernate可以扫描类路径下有JPA注解的实体类，但是JPA规范并没有此功能，所以最好还是告诉它实际所在位置
 		emfb.setPackagesToScan("com.github.emailtohl.building.site.entities");
-		emfb.setJpaPropertyMap(getJpaPropertyMap());
-		return emfb;
-	}
-	
-	private Map<String, Object> getJpaPropertyMap() {
 		Map<String, Object> properties = new HashMap<String, Object>();
-		properties.put("javax.persistence.schema-generation.database.action", "none");
 		properties.put("hibernate.search.default.directory_provider", "filesystem");
 		File path = indexBase();
 		properties.put("hibernate.search.default.indexBase", path.getAbsolutePath());
-		return properties;
+		emfb.setJpaPropertyMap(properties);
+		return emfb;
 	}
 	
 	/**
@@ -156,11 +156,11 @@ public class JPAConfiguration {
 	@Bean
 	public File indexBase() {
 		File path;
-		if (indexBase == null || indexBase.isEmpty()) {
-			File p = new File(servletContext.getRealPath("")).getParentFile();
-			path = new File(p, "web-building-indexBase");
-		} else {
+		if (StringUtils.hasText(indexBase)) {
 			path = new File(indexBase);
+		} else {
+			File p = contextRoot.getParentFile();
+			path = new File(p, "web-building-indexBase");
 		}
 		if (!path.exists())
 			path.mkdir();
