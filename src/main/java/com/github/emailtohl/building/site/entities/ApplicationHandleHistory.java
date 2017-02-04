@@ -9,10 +9,10 @@ import javax.persistence.Table;
 
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
 import com.github.emailtohl.building.site.entities.ApplicationForm.Status;
-
 /**
  * 申请表的历史处理记录
  * @author HeLei
+ * @date 2017.02.04
  */
 @org.hibernate.annotations.BatchSize(size = 10)// 因n+1查询问题，盲猜优化，一次性加载size个代理
 @Entity

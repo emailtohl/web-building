@@ -30,6 +30,7 @@ import javax.servlet.http.Part;
 /**
  * 本类使用HttpServletRequest和HttpServletResponse，与业务结合较紧，根据实际需要进行调整
  * @author HeLei
+ * @date 2017.02.04
  */
 @Deprecated
 public final class ServletUtil {

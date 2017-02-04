@@ -39,6 +39,7 @@ import com.github.emailtohl.building.common.jpa.fullTextSearch.AbstractSearchabl
  * 
  * @param <E> 实体类型
  * @author HeLei
+ * @date 2017.02.04
  */
 public abstract class AbstractAuditedRepository<E extends Serializable> implements AuditedRepository<E> {
 	@SuppressWarnings("unused")

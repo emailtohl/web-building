@@ -26,6 +26,7 @@ import com.github.emailtohl.building.site.service.ApplicationFormService;
 /**
  * 申请表业务流程实现类
  * @author HeLei
+ * @date 2017.02.04
  */
 @Service
 public class ApplicationFormServiceImpl implements ApplicationFormService {

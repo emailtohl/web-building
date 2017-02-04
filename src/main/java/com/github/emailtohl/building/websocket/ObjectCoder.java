@@ -16,10 +16,8 @@ import javax.websocket.Decoder;
 import javax.websocket.EncodeException;
 import javax.websocket.Encoder;
 import javax.websocket.EndpointConfig;
-
 /**
  * 为websocket提供序列化支持，可在@ServerEndpoint的参数encoders和decoders中声明继承了本类的类
- * 
  * @author HeLei
  * @date 2016.06.11
  *

@@ -9,7 +9,7 @@ import com.github.emailtohl.building.common.Constant;
  * 为满足Hibernate Search，论坛实体中含有User实体，而User实体中有些信息是不能被暴露在接口中
  * 故用ForumPostDto作为数据传输对象
  * @author HeLei
- *
+ * @date 2017.02.04
  */
 public class ForumPostDto implements Serializable {
 	private static final long serialVersionUID = 981676092735989648L;

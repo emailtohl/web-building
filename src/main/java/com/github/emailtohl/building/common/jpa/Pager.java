@@ -8,6 +8,7 @@ import java.util.List;
  * 封装分页查询功能，提供查询结果以及附属信息，如最大页数、当前页数等
  * 
  * @author HeLei
+ * @date 2017.02.04
  *************************************************
  */
 public class Pager<T> implements Serializable {

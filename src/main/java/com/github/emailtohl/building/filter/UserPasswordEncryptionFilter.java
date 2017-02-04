@@ -12,12 +12,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import com.github.emailtohl.building.common.encryption.myrsa.Encipher;
-
 /**
  * 考虑到集群环境部署，RSA的公钥和私钥没有直接放入ServletContext供整个应用使用？而是存放在了Session中。
  * 过滤器初始化时生成RSA的公钥和私钥，然后公钥交个各个客户端用于加密用户密码，私钥在服务端用于解密
  * 
  * Servlet Filter implementation class UserPasswordFilter
+ * 
+ * @author HeLei
+ * @date 2017.02.04
  */
 //@WebFilter("/login")
 public class UserPasswordEncryptionFilter implements Filter {

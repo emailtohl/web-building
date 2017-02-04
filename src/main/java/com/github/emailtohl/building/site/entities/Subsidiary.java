@@ -3,10 +3,10 @@ package com.github.emailtohl.building.site.entities;
 import java.io.Serializable;
 
 import javax.persistence.Embeddable;
-
 /**
  * User的附属属性进行统一管理
  * @author HeLei
+ * @date 2017.02.04
  */
 @Embeddable
 public class Subsidiary implements Serializable {

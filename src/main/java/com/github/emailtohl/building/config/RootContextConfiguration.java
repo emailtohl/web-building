@@ -79,6 +79,7 @@ import com.google.gson.Gson;
 /**
  * spring容器的配置类，它依赖数据源配置类和安全配置类
  * @author HeLei
+ * @date 2017.02.04
  */
 @Configuration
 //启用注解式事务管理，配置类通常要实现TransactionManagementConfigurer接口，确定使用哪个事务管理器

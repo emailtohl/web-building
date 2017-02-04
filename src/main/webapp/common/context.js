@@ -1,6 +1,7 @@
 /**
  * 功能模块中定义了各类基础工具、指令、过滤器
- * author HeLei
+ * @author HeLei
+ * @date 2017.02.04
  */
 define([ 'common/module',
          'common/service/util',

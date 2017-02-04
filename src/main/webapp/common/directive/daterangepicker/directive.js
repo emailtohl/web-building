@@ -12,7 +12,8 @@
             ll : 'YYYY年MMMD日',
             lll : 'YYYY年MMMD日Ah点mm分',
             llll : 'YYYY年MMMD日ddddAh点mm分'
- * author HeLei
+ * @author HeLei
+ * @date 2017.02.04
  */
 
 define([ 'common/module', 'common/service/util', 'datetimepicker-zh' ], function(commonModule) {

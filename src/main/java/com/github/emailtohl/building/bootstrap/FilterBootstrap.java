@@ -15,6 +15,7 @@ import com.github.emailtohl.building.filter.PostSecurityLoggingFilter;
 /**
  * 根据先后顺序注册过滤器
  * @author HeLei
+ * @date 2017.02.04
  */
 @Order(3)
 public class FilterBootstrap implements WebApplicationInitializer {

@@ -2,12 +2,11 @@ package com.github.emailtohl.building.site.entities;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
 /**
  * 系统的用户一般分为外部客户和内部职员
  * 这是为客户建立的实体类
- * 
  * @author HeLei
+ * @date 2017.02.04
  */
 @org.hibernate.envers.Audited
 @Entity

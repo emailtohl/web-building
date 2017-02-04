@@ -21,6 +21,7 @@ import com.github.emailtohl.building.websocket.Configurator;
 /**
  * websocket，模拟群集的服务端点
  * @author HeLei
+ * @date 2017.02.04
  */
 @ServerEndpoint(value = "/chat/clusterNodeSocket/{nodeId}", encoders = ChatMessageCoder.class, decoders = ChatMessageCoder.class, configurator = Configurator.class)
 public class ClusterNodeEndpoint {

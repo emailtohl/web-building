@@ -49,11 +49,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.github.emailtohl.building.common.Constant;
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
-
 /**
- * Entity 用户
+ * 用户实体类
  * javax校验的注解在field上，JPA约束的注解写在JavaBean属性上
  * @author HeLei
+ * @date 2017.02.04
  */
 @org.hibernate.envers.Audited
 @Entity

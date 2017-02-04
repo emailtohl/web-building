@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 /**
  * 测试Spring AOP功能
  * @author HeLei
+ * @date 2017.02.04
  */
 @Aspect
 @Component

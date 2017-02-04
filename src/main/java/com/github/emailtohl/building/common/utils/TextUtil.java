@@ -22,6 +22,7 @@ import org.apache.logging.log4j.Logger;
  * 注：Apache的commons-io组件中的FileUtils能提供更强大的文件操作功能
  * 
  * @author HeLei
+ * @date 2017.02.04
  */
 public class TextUtil {
 	private static final Logger logger = LogManager.getLogger();

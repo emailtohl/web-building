@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 /**
  * 基于Spring Security上下文，判断用户授权的工具
  * @author HeLei
+ * @date 2017.02.04
  */
 public final class SecurityContextUtil {
 	

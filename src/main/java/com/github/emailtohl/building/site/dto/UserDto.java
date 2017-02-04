@@ -11,11 +11,10 @@ import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.Department;
 import com.github.emailtohl.building.site.entities.Employee;
 import com.github.emailtohl.building.site.entities.User;
-
 /**
  * User的数据传输对象，与User实体对象不同，数据传输对象专门传递信息，也可以接收前端的表单信息
- * 
  * @author HeLei
+ * @date 2017.02.04
  */
 public class UserDto extends User {
 	private static final long serialVersionUID = -889260420992096961L;

@@ -13,6 +13,7 @@ package com.github.emailtohl.building.common.encryption;
  * 根据以上原理，我们就可以将byte[] 数组转换为16进制字符串了，当然也可以将16进制字符串转换为byte[]数组了。
  * 
  * @author HeLei
+ * @date 2017.02.04
  */
 public class Hex {
 	/**

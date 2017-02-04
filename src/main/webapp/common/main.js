@@ -1,6 +1,7 @@
 /**
  * main.js这个文件做的事情就是：由requirejs异步载入所有文件
- * author HeLei
+ * @author HeLei
+ * @date 2017.02.04
  */
 require.config({
 	/**

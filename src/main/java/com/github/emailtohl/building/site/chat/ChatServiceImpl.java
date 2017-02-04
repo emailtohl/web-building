@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 /**
  * 聊天程序接口的实现类，受spring管理
  * @author HeLei
+ * @date 2017.02.04
  */
 @Service
 public class ChatServiceImpl implements ChatService {

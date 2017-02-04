@@ -54,10 +54,10 @@ import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
 import com.google.gson.Gson;
-
 /**
  * 用户管理的控制器
  * @author HeLei
+ * @date 2017.02.04
  */
 @Controller
 @RequestMapping("user")

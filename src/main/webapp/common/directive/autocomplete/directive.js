@@ -1,6 +1,7 @@
 /**
  * 自动补全指令
- * author HeLei
+ * @author HeLei
+ * @date 2017.02.04
  */
 define([ 'common/module', 'jqueryui' ], function(common) {
 	common.directive('autocomplete', [ function() {

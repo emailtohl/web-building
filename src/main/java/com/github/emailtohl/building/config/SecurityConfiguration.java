@@ -75,6 +75,7 @@ import com.github.emailtohl.building.site.service.UserPermissionEvaluator;
 /**
  * spring security 的编程风格的配置，它不仅被RootContextConfiguration导入，并且也依赖于RootContextConfiguration中的Bean
  * @author HeLei
+ * @date 2017.02.04
  */
 @Configuration
 // 启动安全过滤器

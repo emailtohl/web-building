@@ -36,10 +36,9 @@ import com.github.emailtohl.building.exception.VerifyFailure;
 import com.github.emailtohl.building.site.dto.UserDto;
 /**
  * 文件上传控制器
- * 
  * 本类涉及很多文件路径，为避免参数中的路径和实际路径冲突，所以请求统一为POST
- * 
  * @author HeLei
+ * @date 2017.02.04
  */
 @SuppressWarnings("deprecation")
 @Controller

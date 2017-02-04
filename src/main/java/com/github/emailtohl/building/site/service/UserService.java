@@ -35,11 +35,10 @@ import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.Employee;
 import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
-
 /**
  * 用户管理的服务
- * 
  * @author HeLei
+ * @date 2017.02.04
  */
 @Transactional
 @Validated

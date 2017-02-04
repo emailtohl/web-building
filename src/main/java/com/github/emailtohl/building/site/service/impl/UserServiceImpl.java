@@ -55,11 +55,11 @@ import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.entities.User.AuthenticationImpl;
 import com.github.emailtohl.building.site.service.UserService;
-
 /**
  * 管理用户的相关服务，实现类中只提供功能
  * 安全，校验等功能在切面中完成
  * @author HeLei
+ * @date 2017.02.04
  */
 @Service
 public class UserServiceImpl implements UserService, Serializable {

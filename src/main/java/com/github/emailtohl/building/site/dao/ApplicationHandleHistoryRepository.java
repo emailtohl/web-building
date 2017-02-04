@@ -10,10 +10,10 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.github.emailtohl.building.site.entities.ApplicationForm.Status;
 import com.github.emailtohl.building.site.entities.ApplicationHandleHistory;
-
 /**
  * 查询申请表的历史记录
  * @author HeLei
+ * @date 2017.02.04
  */
 public interface ApplicationHandleHistoryRepository
 		extends JpaRepository<ApplicationHandleHistory, Long>, ApplicationHandleHistoryRepositoryCustomization {

@@ -13,10 +13,10 @@ import org.springframework.validation.annotation.Validated;
 
 import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.Role;
-
 /**
  * 角色管理的服务层
  * @author HeLei
+ * @date 2017.02.04
  */
 @PreAuthorize("hasAuthority('" + USER_ROLE_AUTHORITY_ALLOCATION + "')")
 @Transactional

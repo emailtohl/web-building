@@ -14,7 +14,11 @@ import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.stereotype.Service;
 
 import com.github.emailtohl.building.message.event.ClusterEvent;
-
+/**
+ * 对集群事件感兴趣的监听器
+ * @author HeLei
+ * @date 2017.02.04
+ */
 @Profile({ PROFILE_PRODUCTION, PROFILE_QA })
 @Service
 public class ClusterInterestedParty implements ApplicationListener<ClusterEvent> {
@@ -26,6 +30,6 @@ public class ClusterInterestedParty implements ApplicationListener<ClusterEvent>
 	@Override
 	public void onApplicationEvent(ClusterEvent event) {
 		log.debug("Cluster event for context {} received in context {}.", event.getSource(),
-				this.servletContext.getContextPath());
+				servletContext.getContextPath());
 	}
 }

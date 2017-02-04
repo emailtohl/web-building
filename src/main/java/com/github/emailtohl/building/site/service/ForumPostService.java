@@ -19,6 +19,7 @@ import com.github.emailtohl.building.site.dto.ForumPostDto;
 /**
  * 论坛接口
  * @author HeLei
+ * @date 2017.02.04
  */
 @Validated
 @Transactional

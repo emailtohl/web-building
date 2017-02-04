@@ -14,12 +14,12 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-
 /**
  * 注释掉@WebListener后，通过编程方式注册本监听，如此可保证Spring容器初始化在前
  * 配置一个监听HttpSession变化的Listener，并且纳入Spring管理下
  * 如此可通过Spring容器获取到本监听器，并获取session管理下的对象
  * @author HeLei
+ * @date 2017.02.04
  */
 //@WebListener
 public class SessionListener implements HttpSessionListener, HttpSessionIdListener, ServletContextListener {

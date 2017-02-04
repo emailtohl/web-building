@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  * （5）当有ClusterEvent发生时，就会触发ClusterEventMulticaster的multicastEvent，这时就通过websocket将消息发送到各个节点上。
  * 
  * @author HeLei
+ * @date 2017.02.04
  */
 @WebServlet("/ping")
 public class PingServlet extends HttpServlet {

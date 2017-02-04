@@ -26,11 +26,10 @@ import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
 import com.github.emailtohl.building.site.dto.ForumPostDto;
 import com.github.emailtohl.building.site.service.ForumPostService;
-
 /**
  * 论坛控制器
- * 
  * @author HeLei
+ * @date 2017.02.04
  */
 @RestController
 @RequestMapping("forum")

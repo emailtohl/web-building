@@ -8,6 +8,7 @@ import org.springframework.security.web.context.AbstractSecurityWebApplicationIn
 /**
  * 向容器注册Spring Security’s filters
  * @author HeLei
+ * @date 2017.02.04
  */
 @Order(2)
 public class SecurityBootstrap extends AbstractSecurityWebApplicationInitializer {

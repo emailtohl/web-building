@@ -17,11 +17,11 @@ import com.github.emailtohl.building.site.dto.RoleDto;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.AuditedService;
-
 /**
  * 查阅Hibernate Envers产生的审计记录
  * 
  * @author HeLei
+ * @date 2017.02.04
  */
 @RestController
 @RequestMapping("audit")

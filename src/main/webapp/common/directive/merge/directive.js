@@ -1,6 +1,7 @@
 /**
  * 封装codemirror，可以执行文本对比
- * author HeLei
+ * @author HeLei
+ * @date 2017.02.04
  */
 define([ 'common/module', 'codemirror/lib/codemirror', 'codemirror/mode/htmlmixed/htmlmixed', 'codemirror/addon/merge/merge', 'common/service/util' ], function(commonModule, CodeMirror) {
 	var CodeMirrorClosure = CodeMirror;

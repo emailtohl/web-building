@@ -19,7 +19,11 @@ import com.github.emailtohl.building.filter.UserPasswordEncryptionFilter;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.UserService;
 import com.google.gson.Gson;
-
+/**
+ * 密钥管理相关的控制器
+ * @author HeLei
+ * @date 2017.02.04
+ */
 @RestController
 @RequestMapping("encryption")
 public class EncryptionCtrl {

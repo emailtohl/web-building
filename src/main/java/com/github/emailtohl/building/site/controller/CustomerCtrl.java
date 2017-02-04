@@ -25,10 +25,10 @@ import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.service.CustomerService;
-
 /**
  * 用户管理的控制器
  * @author HeLei
+ * @date 2017.02.04
  */
 @RestController
 @RequestMapping("customer")

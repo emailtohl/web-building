@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * 文件上传下载器
  * @author HeLei
+ * @date 2017.02.04
  */
 public class UpDownloader {
 	private static final Logger logger = LogManager.getLogger();

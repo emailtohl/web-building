@@ -25,12 +25,16 @@ import org.springframework.core.ResolvableType;
 import org.springframework.stereotype.Service;
 
 import com.github.emailtohl.building.message.event.ClusterEvent;
-
+/**
+ * 通过继承Spring的事件广播器成为该广播器的装饰器，将集群事件通知给各个websocket端点
+ * @author HeLei
+ * @date 2017.02.04
+ */
 @Profile({ PROFILE_PRODUCTION, PROFILE_QA })
 // applicationEventMulticaster这个名字是有意义的，spring会识别它并将其用作消息广播的Bean
 @Service("applicationEventMulticaster")
 public class ClusterEventMulticaster extends SimpleApplicationEventMulticaster {
-	private static final Logger log = LogManager.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 
 	private final Set<ClusterMessagingEndpoint> endpoints = new HashSet<>();
 
@@ -44,9 +48,9 @@ public class ClusterEventMulticaster extends SimpleApplicationEventMulticaster {
 		} finally {
 			try {
 				if (event instanceof ClusterEvent && !((ClusterEvent) event).isRebroadcasted())
-					this.publishClusteredEvent((ClusterEvent) event);
+					publishClusteredEvent((ClusterEvent) event);
 			} catch (Exception e) {
-				log.error("Failed to broadcast distributable event to cluster.", e);
+				logger.error("Failed to broadcast distributable event to cluster.", e);
 			}
 		}
 	}
@@ -58,56 +62,54 @@ public class ClusterEventMulticaster extends SimpleApplicationEventMulticaster {
 		} finally {
 			try {
 				if (event instanceof ClusterEvent && !((ClusterEvent) event).isRebroadcasted())
-					this.publishClusteredEvent((ClusterEvent) event);
+					publishClusteredEvent((ClusterEvent) event);
 			} catch (Exception e) {
-				log.error("Failed to broadcast distributable event to cluster.", e);
+				logger.error("Failed to broadcast distributable event to cluster.", e);
 			}
 		}
 	}
 
 	protected void publishClusteredEvent(ClusterEvent event) {
-		synchronized (this.endpoints) {
-			for (ClusterMessagingEndpoint endpoint : this.endpoints)
+		synchronized (endpoints) {
+			for (ClusterMessagingEndpoint endpoint : endpoints)
 				endpoint.send(event);
 		}
 	}
 
 	protected void registerEndpoint(ClusterMessagingEndpoint endpoint) {
-		if (!this.endpoints.contains(endpoint)) {
-			synchronized (this.endpoints) {
-				this.endpoints.add(endpoint);
-			}
+		synchronized (endpoints) {
+			endpoints.add(endpoint);
 		}
 	}
 
 	protected void deregisterEndpoint(ClusterMessagingEndpoint endpoint) {
-		synchronized (this.endpoints) {
-			this.endpoints.remove(endpoint);
+		synchronized (endpoints) {
+			endpoints.remove(endpoint);
 		}
 	}
 
 	protected void registerNode(String endpoint) {
-		log.info("Connecting to cluster node {}.", endpoint);
+		logger.info("Connecting to cluster node {}.", endpoint);
 		WebSocketContainer container = ContainerProvider.getWebSocketContainer();
 		try {
-			ClusterMessagingEndpoint bean = this.context.getAutowireCapableBeanFactory()
+			ClusterMessagingEndpoint bean = context.getAutowireCapableBeanFactory()
 					.createBean(ClusterMessagingEndpoint.class);
 			container.connectToServer(bean, new URI(endpoint));
-			log.info("Connected to cluster node {}.", endpoint);
+			logger.info("Connected to cluster node {}.", endpoint);
 		} catch (DeploymentException | IOException | URISyntaxException e) {
-			log.error("Failed to connect to cluster node {}.", endpoint, e);
+			logger.error("Failed to connect to cluster node {}.", endpoint, e);
 		}
 	}
 
 	protected final void handleReceivedClusteredEvent(ClusterEvent event) {
 		event.setRebroadcasted();
-		this.multicastEvent(event);
+		multicastEvent(event);
 	}
 
 	@PreDestroy
 	public void shutdown() {
-		synchronized (this.endpoints) {
-			for (ClusterMessagingEndpoint endpoint : this.endpoints)
+		synchronized (endpoints) {
+			for (ClusterMessagingEndpoint endpoint : endpoints)
 				endpoint.close();
 		}
 	}

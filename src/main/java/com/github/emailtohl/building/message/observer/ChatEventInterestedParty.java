@@ -10,7 +10,11 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import com.github.emailtohl.building.message.event.ChatEvent;
-
+/**
+ * 对聊天事件感兴趣的监听器
+ * @author HeLei
+ * @date 2017.02.04
+ */
 @Profile({ PROFILE_PRODUCTION, PROFILE_QA })
 @Service
 public class ChatEventInterestedParty implements ApplicationListener<ChatEvent> {

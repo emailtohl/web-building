@@ -2,6 +2,7 @@ package com.github.emailtohl.building.common;
 /**
  * 常量定义
  * @author HeLei
+ * @date 2017.02.04
  */
 public interface Constant {
 	/**

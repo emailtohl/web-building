@@ -42,6 +42,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * 未归类的方法
  * @author HeLei
+ * @date 2017.02.04
  */
 public final class BeanUtil {
 	private static final Logger logger = LogManager.getLogger();

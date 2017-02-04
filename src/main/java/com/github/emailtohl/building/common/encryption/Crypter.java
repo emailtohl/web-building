@@ -31,6 +31,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * 用于文件加密解密的工具，加解密文件用的是AES算法，AES的密钥用RSA算法加密
  * @author HeLei
+ * @date 2017.02.04
  */
 public class Crypter {
 	private static final Logger logger = LogManager.getLogger();

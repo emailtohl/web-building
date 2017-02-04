@@ -26,7 +26,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.web.socket.server.standard.SpringConfigurator;
 
 import com.github.emailtohl.building.message.event.ClusterEvent;
-
+/**
+ * 负责集群间的websocket通信端，服务端和客户端处理逻辑相似，估共用本类
+ * @author HeLei
+ * @date 2017.02.04
+ */
 @ServerEndpoint(value = "/services/messaging/{securityCode}", 
 	encoders = { ClusterMessagingEndpoint.Codec.class }, 
 	decoders = { ClusterMessagingEndpoint.Codec.class }, 
@@ -34,7 +38,7 @@ import com.github.emailtohl.building.message.event.ClusterEvent;
 @ClientEndpoint(encoders = { ClusterMessagingEndpoint.Codec.class }, 
 	decoders = { ClusterMessagingEndpoint.Codec.class })
 public class ClusterMessagingEndpoint {
-	private static final Logger log = LogManager.getLogger();
+	private static final Logger logger = LogManager.getLogger();
 
 	private Session session;
 
@@ -46,40 +50,40 @@ public class ClusterMessagingEndpoint {
 		Map<String, String> parameters = session.getPathParameters();
 		if (parameters.containsKey("securityCode") && !ClusterManager.SECURITY_CODE.equals(parameters.get("securityCode"))) {
 			try {
-				log.error("Received connection with illegal code {}.", parameters.get("securityCode"));
+				logger.error("Received connection with illegal code {}.", parameters.get("securityCode"));
 				session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY, "Illegal Code"));
 			} catch (IOException e) {
-				log.warn("Failed to close illegal connection.", e);
+				logger.warn("Failed to close illegal connection.", e);
 			}
 		} else {
-			log.info("Successful connection onOpen.");
+			logger.info("Successful connection onOpen.");
 			this.session = session;
-			this.multicaster.registerEndpoint(this);
+			multicaster.registerEndpoint(this);
 		}
 	}
 
 	@OnMessage
 	public void receive(ClusterEvent message) {
-		this.multicaster.handleReceivedClusteredEvent(message);
+		multicaster.handleReceivedClusteredEvent(message);
 	}
 
 	public void send(ClusterEvent message) {
 		try {
-			this.session.getBasicRemote().sendObject(message);
+			session.getBasicRemote().sendObject(message);
 		} catch (IOException | EncodeException e) {
-			log.error("Failed to send message to adjacent node.", e);
+			logger.error("Failed to send message to adjacent node.", e);
 		}
 	}
 
 	@OnClose
 	public void close() {
-		log.info("Cluster node connection closed.");
-		this.multicaster.deregisterEndpoint(this);
-		if (this.session.isOpen()) {
+		logger.info("Cluster node connection closed.");
+		multicaster.deregisterEndpoint(this);
+		if (session.isOpen()) {
 			try {
-				this.session.close();
+				session.close();
 			} catch (IOException e) {
-				log.warn("Error while closing cluster node connection.", e);
+				logger.warn("Error while closing cluster node connection.", e);
 			}
 		}
 	}

@@ -15,7 +15,11 @@ import com.github.emailtohl.building.message.event.ClusterEvent;
 import com.github.emailtohl.building.message.event.LoginEvent;
 import com.github.emailtohl.building.message.event.LogoutEvent;
 import com.github.emailtohl.building.message.subject.ClusterManager;
-
+/**
+ * 集群消息相关的控制器
+ * @author HeLei
+ * @date 2017.02.04
+ */
 @Controller
 @RequestMapping("cluster")
 public class ClusterCtrl {

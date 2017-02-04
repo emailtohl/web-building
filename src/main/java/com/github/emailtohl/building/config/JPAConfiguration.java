@@ -33,7 +33,7 @@ import org.springframework.util.StringUtils;
 /**
  * JPA的配置
  * @author HeLei
- *
+ * @date 2017.02.04
  */
 @Configuration
 // 这是SpringData的注解，启动后，它将扫描指定包中继承了Repository（实际业务代码中的接口是间接继承它）的接口，并为其提供代理

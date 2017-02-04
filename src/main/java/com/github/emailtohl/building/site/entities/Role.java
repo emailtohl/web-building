@@ -14,10 +14,10 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
-
 /**
- * 角色类
+ * 角色实体类
  * @author HeLei
+ * @date 2017.02.04
  */
 @org.hibernate.envers.Audited
 @Entity

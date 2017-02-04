@@ -24,6 +24,7 @@ import com.github.emailtohl.building.common.jpa.AbstractDynamicQueryRepository;
  * 
  * @param <E> 实体类
  * @author HeLei
+ * @date 2017.02.04
  */
 public abstract class AbstractCriterionQueryRepository<E extends Serializable> extends AbstractDynamicQueryRepository<E>
 		implements CriterionQueryRepository<E> {

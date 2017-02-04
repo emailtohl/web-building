@@ -37,6 +37,7 @@ import com.google.gson.Gson;
 /**
  * 认证控制器，管理用户注册，更改密码，授权等功能
  * @author HeLei
+ * @date 2017.02.04
  */
 @CrossOrigin(maxAge = 3600)// 支持跨站（CORS）访问登录页面
 @Controller

@@ -6,7 +6,8 @@
  * 4. 在ajax请求的头信息中添加CSRF的token
  * 5. 前端的页码是从第1页开始，而后端为了跟Spring data统一，页码从第0页开始，发送请求前和发送请求后进行统一转换
  * 
- * author HeLei
+ * @author HeLei
+ * @date 2017.02.04
  */
 define([ 'common/module', 'common/service/util' ], function(commonModule) {
 	return commonModule

@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
  * 第二个参数targetDomainObject就是users，第三个参数permission就是'delete'
  * 
  * @author HeLei
+ * @date 2017.02.04
  */
 public class UserPermissionEvaluator implements PermissionEvaluator {
 	private static final Logger logger = LogManager.getLogger();

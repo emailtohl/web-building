@@ -26,10 +26,10 @@ import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.AuditedService;
-
 /**
  * 查询被审计的实体的历史记录
  * @author HeLei
+ * @date 2017.02.04
  */
 @Service
 public class AuditedServiceImpl implements AuditedService {

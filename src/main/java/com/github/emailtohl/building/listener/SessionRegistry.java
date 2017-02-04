@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 /**
  * 本类可以将容器中的session复制一份，事实上只是它们的引用
  * @author HeLei
+ * @date 2017.02.04
  */
 @Component
 public class SessionRegistry {

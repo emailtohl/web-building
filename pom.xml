@@ -4,11 +4,14 @@
 
 	<groupId>com.github.emailtohl.web</groupId>
 	<artifactId>web-building</artifactId>
-	<version>1.2-SNAPSHOT</version>
+	<version>2.0-RELEASE</version>
 	<packaging>war</packaging>
 
 	<name>web-building</name>
 	<url>http://maven.apache.org</url>
+	<description>2.0版本，新增CMS内容管理模块，支持文本索引查询。
+前端支持RSA加密，后端解密用户密码，可在HTTP普通协议上保障登录安全。
+基线时间：2017.02.04</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

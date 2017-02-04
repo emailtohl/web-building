@@ -16,11 +16,10 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
-
 /**
  * 申请表实体
  * @author HeLei
- *
+ * @date 2017.02.04
  */
 @Entity
 @Table(name = "t_application_form")

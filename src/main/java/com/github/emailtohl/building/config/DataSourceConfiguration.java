@@ -24,6 +24,7 @@ import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 /**
  * 数据源配置
  * @author HeLei
+ * @date 2017.02.04
  */
 @Configuration
 @PropertySource({ "classpath:database.properties", "classpath:config.properties" })

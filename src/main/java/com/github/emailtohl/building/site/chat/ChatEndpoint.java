@@ -27,6 +27,7 @@ import com.google.gson.Gson;
 /**
  * websocket，聊天程序的服务端
  * @author HeLei
+ * @date 2017.02.04
  */
 @ServerEndpoint(value = "/chat/{username}", configurator = Configurator.class)
 public class ChatEndpoint {

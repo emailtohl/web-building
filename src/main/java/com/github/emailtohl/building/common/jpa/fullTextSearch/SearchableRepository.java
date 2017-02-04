@@ -10,6 +10,7 @@ import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.CriterionQuery
 /**
  * 全文搜索的接口
  * @author HeLei
+ * @date 2017.02.04
  *
  * @param <E extends Serializable>
  */

@@ -10,11 +10,10 @@ import javax.persistence.Table;
 import org.hibernate.search.annotations.Store;
 
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
-
 /**
  * 论坛帖子对象
- * 
  * @author HeLei
+ * @date 2017.02.04
  */
 @org.hibernate.search.annotations.Indexed
 @org.hibernate.search.annotations.Analyzer(impl = org.apache.lucene.analysis.standard.StandardAnalyzer.class)

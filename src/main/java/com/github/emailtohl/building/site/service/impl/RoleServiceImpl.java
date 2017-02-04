@@ -20,7 +20,8 @@ import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.service.RoleService;
 /**
  * 角色管理服务的实现
- * @author helei
+ * @author HeLei
+ * @date 2017.02.04
  */
 @Service
 public class RoleServiceImpl implements RoleService {

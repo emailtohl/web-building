@@ -7,6 +7,7 @@ import com.github.emailtohl.building.site.entities.Company;
 /**
  * 公司的缓存
  * @author HeLei
+ * @date 2017.02.04
  */
 public interface CompanyRepository extends JpaRepository<Company, Long> {
 	String CACHE_NAME = "companyCache";

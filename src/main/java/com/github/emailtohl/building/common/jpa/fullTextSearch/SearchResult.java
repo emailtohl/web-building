@@ -7,6 +7,7 @@ import org.apache.lucene.document.Document;
 /**
  * 存储全文搜索的结果
  * @author HeLei
+ * @date 2017.02.04
  *
  * @param <E extends Serializable>
  */

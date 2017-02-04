@@ -15,9 +15,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.ThreadContext;
 import org.springframework.web.util.WebUtils;
-
 /**
+ * 在spring security过滤器之前执行
  * Servlet Filter implementation class PreSecurityLoggingFilter
+ * @author HeLei
+ * @date 2017.02.04
  */
 //@WebFilter("/*")
 @SuppressWarnings("unused")

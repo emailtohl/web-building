@@ -24,10 +24,10 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
 import com.github.emailtohl.building.common.utils.UpDownloader;
-
 /**
  * spring mvc的配置
  * @author HeLei
+ * @date 2017.02.04
  */
 @Configuration
 @EnableWebMvc

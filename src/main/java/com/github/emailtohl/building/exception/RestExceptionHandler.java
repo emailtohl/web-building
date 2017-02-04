@@ -17,11 +17,11 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import javax.persistence.OptimisticLockException;
-
 /**
  * RestFul不应该返回错误页面，此控制器将返回RestFul风格的错误信息
  * 
  * @author HeLei
+ * @date 2017.02.04
  */
 @ControllerAdvice
 public class RestExceptionHandler {

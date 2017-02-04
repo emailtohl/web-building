@@ -29,6 +29,7 @@ import com.github.emailtohl.building.site.chat.ChatMessage.Type;
  * websocket，模拟群集的客户端点
  * 它同时也是一个servlet，首先接收前端传来的消息，然后将消息推送给后台服务端
  * @author HeLei
+ * @date 2017.02.04
  */
 @WebServlet(initParams = {
 		@WebInitParam(name = "nodeId", value = "clientNode", description = "websocket终端") }, description = "利用websocket组建群集", urlPatterns = {

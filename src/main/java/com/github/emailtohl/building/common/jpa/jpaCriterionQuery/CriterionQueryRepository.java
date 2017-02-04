@@ -12,6 +12,7 @@ import com.github.emailtohl.building.common.jpa.DynamicQueryRepository;
  * 让该接口继承DynamicQueryRepository，即获得动态查询的能力，也获得本接口提供的功能
  * @param <E> 实体类
  * @author HeLei
+ * @date 2017.02.04
  */
 public interface CriterionQueryRepository<E extends Serializable> extends DynamicQueryRepository<E> {
 	/**

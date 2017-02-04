@@ -10,6 +10,7 @@ import java.util.TreeSet;
  * 前端zTree的数据模型
  * 
  * @author HeLei
+ * @date 2017.02.04
  */
 public class ZtreeNode implements Serializable, Comparable<ZtreeNode>{
 	private static final long serialVersionUID = -1932148922352477076L;

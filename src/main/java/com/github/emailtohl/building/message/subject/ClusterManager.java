@@ -29,12 +29,16 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
-
+/**
+ * 集群管理器，当Spring容器初始化完成后，将自己的websocket服务地址发布到广播地址，其他端收到消息后，将发起websocket连接
+ * @author HeLei
+ * @date 2017.02.04
+ */
 @Profile({ PROFILE_PRODUCTION, PROFILE_QA })
 @Service
 public class ClusterManager implements ApplicationListener<ContextRefreshedEvent> {
-	private static final Logger log = LogManager.getLogger();
-	public static final String SECURITY_CODE = "a83teo83hou9883hha9";
+	private static final Logger logger = LogManager.getLogger();
+	public static final String SECURITY_CODE = "abcdefg0123456789";
 	public static final String RESPONSE_OK = "ok";
 	
 	private static final String HOST;
@@ -67,15 +71,15 @@ public class ClusterManager implements ApplicationListener<ContextRefreshedEvent
 		String localPort = env.getProperty("local.host");
 		if (!StringUtils.hasText(localPort))
 			localPort = "8080";
-		this.pingUrl = "http://" + HOST + ":" + localPort + this.servletContext.getContextPath() + "/ping";
-		this.messagingUrl = "ws://" + HOST + ":" + localPort + this.servletContext.getContextPath()
+		pingUrl = "http://" + HOST + ":" + localPort + servletContext.getContextPath() + "/ping";
+		messagingUrl = "ws://" + HOST + ":" + localPort + servletContext.getContextPath()
 				+ "/services/messaging/" + SECURITY_CODE;
 		
-		synchronized (this.mutex) {
-			this.socket = new MulticastSocket(PORT);
-			this.socket.joinGroup(GROUP);
-			this.listener = new Thread(this::listen, "cluster-listener");
-			this.listener.start();
+		synchronized (mutex) {
+			socket = new MulticastSocket(PORT);
+			socket.joinGroup(GROUP);
+			listener = new Thread(this::listen, "cluster-listener");
+			listener.start();
 		}
 	}
 
@@ -84,17 +88,17 @@ public class ClusterManager implements ApplicationListener<ContextRefreshedEvent
 		DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 		while (true) {
 			try {
-				this.socket.receive(packet);
+				socket.receive(packet);
 				String url = new String(buffer, 0, packet.getLength());
 				if (url.length() == 0)
-					log.warn("Received blank multicast packet.");
-				else if (url.equals(this.messagingUrl))
-					log.info("Ignoring our own multicast packet.");
+					logger.warn("Received blank multicast packet.");
+				else if (url.equals(messagingUrl))
+					logger.info("Ignoring our own multicast packet.");
 				else
-					this.multicaster.registerNode(url);
+					multicaster.registerNode(url);
 			} catch (IOException e) {
-				if (!this.destroyed)
-					log.error(e);
+				if (!destroyed)
+					logger.error(e);
 				return;
 			}
 		}
@@ -102,25 +106,25 @@ public class ClusterManager implements ApplicationListener<ContextRefreshedEvent
 
 	@PreDestroy
 	public void shutDownMulticastConnection() throws IOException {
-		this.destroyed = true;
+		destroyed = true;
 		try {
-			this.listener.interrupt();
-			this.socket.leaveGroup(GROUP);
+			listener.interrupt();
+			socket.leaveGroup(GROUP);
 		} finally {
-			this.socket.close();
+			socket.close();
 		}
 	}
 
 	@Async
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
-		if (this.initialized)
+		if (initialized)
 			return;
-		this.initialized = true;
+		initialized = true;
 
 		try {
-			URL url = new URL(this.pingUrl);
-			log.info("Attempting to connect to self at {}.", url);
+			URL url = new URL(pingUrl);
+			logger.info("Attempting to connect to self at {}.", url);
 			int tries = 0;
 			while (true) {
 				tries++;
@@ -129,25 +133,25 @@ public class ClusterManager implements ApplicationListener<ContextRefreshedEvent
 				try (InputStream stream = connection.getInputStream()) {
 					String response = StreamUtils.copyToString(stream, StandardCharsets.UTF_8);
 					if (response != null && response.equals(RESPONSE_OK)) {
-						log.info("Broadcasting multicast announcement packet.");
-						DatagramPacket packet = new DatagramPacket(this.messagingUrl.getBytes(),
-								this.messagingUrl.length(), GROUP, PORT);
-						synchronized (this.mutex) {
-							this.socket.send(packet);
+						logger.info("Broadcasting multicast announcement packet.");
+						DatagramPacket packet = new DatagramPacket(messagingUrl.getBytes(),
+								messagingUrl.length(), GROUP, PORT);
+						synchronized (mutex) {
+							socket.send(packet);
 						}
 						return;
 					} else
-						log.warn("Incorrect response: {}", response);
+						logger.warn("Incorrect response: {}", response);
 				} catch (Exception e) {
 					if (tries > 120) {
-						log.fatal("Could not connect to self within 60 seconds.", e);
+						logger.fatal("Could not connect to self within 60 seconds.", e);
 						return;
 					}
 					Thread.sleep(400L);
 				}
 			}
 		} catch (Exception e) {
-			log.fatal("Could not connect to self.", e);
+			logger.fatal("Could not connect to self.", e);
 		}
 	}
 }

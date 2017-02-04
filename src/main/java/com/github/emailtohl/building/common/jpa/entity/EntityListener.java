@@ -17,6 +17,7 @@ import org.apache.logging.log4j.Logger;
  * 创建日期、修改日期处理
  * 
  * @author HeLei
+ * @date 2017.02.04
  */
 public class EntityListener {
 	private static final Logger log = LogManager.getLogger();

@@ -5,6 +5,7 @@ import org.hibernate.envers.RevisionType;
 /**
  * 对AuditQuery接口查出来的Object[]进行封装的对象
  * @author HeLei
+ * @date 2017.02.04
  *
  * @param <E> 实体类型
  */

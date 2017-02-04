@@ -20,11 +20,10 @@ import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.ForumPost;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.ForumPostService;
-
 /**
  * 论坛Service实现
- * 
  * @author HeLei
+ * @date 2017.02.04
  */
 @Service
 public class ForumPostServiceImpl implements ForumPostService {

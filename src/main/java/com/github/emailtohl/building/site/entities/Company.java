@@ -9,7 +9,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
-
+/**
+ * 公司实体
+ * @author HeLei
+ * @date 2017.02.04
+ */
 @Entity
 @Table(name = "t_company")
 public class Company extends BaseEntity {

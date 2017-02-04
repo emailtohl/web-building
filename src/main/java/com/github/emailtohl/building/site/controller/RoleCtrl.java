@@ -30,10 +30,10 @@ import com.github.emailtohl.building.site.dto.RoleDto;
 import com.github.emailtohl.building.site.entities.Authority;
 import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.service.RoleService;
-
 /**
  * 角色管理的控制器
  * @author HeLei
+ * @date 2017.02.04
  */
 @RestController
 public class RoleCtrl {

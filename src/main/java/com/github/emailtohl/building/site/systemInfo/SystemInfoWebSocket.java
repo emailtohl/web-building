@@ -22,10 +22,10 @@ import com.github.emailtohl.building.site.service.impl.SystemInfo;
 import com.github.emailtohl.building.site.service.impl.SystemInfo.Observe;
 import com.github.emailtohl.building.websocket.Configurator;
 import com.google.gson.Gson;
-
 /**
  * 系统信息监听程序，将系统信息主动推送到前台
  * @author HeLei
+ * @date 2017.02.04
  */
 @ServerEndpoint(value = "/systemInfo", configurator = Configurator.class)
 public class SystemInfoWebSocket implements Observe {

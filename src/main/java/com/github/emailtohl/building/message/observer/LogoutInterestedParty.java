@@ -14,7 +14,11 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.github.emailtohl.building.message.event.LogoutEvent;
-
+/**
+ * 对登出感兴趣的监听器
+ * @author HeLei
+ * @date 2017.02.04
+ */
 @Profile({ PROFILE_PRODUCTION, PROFILE_QA })
 @Service
 public class LogoutInterestedParty implements ApplicationListener<LogoutEvent> {

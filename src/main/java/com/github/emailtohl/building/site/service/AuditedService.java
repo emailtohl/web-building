@@ -10,10 +10,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.dto.RoleDto;
 import com.github.emailtohl.building.site.dto.UserDto;
-
 /**
  * 查询被审计的实体的历史记录
  * @author HeLei
+ * @date 2017.02.04
  */
 @Transactional
 public interface AuditedService {

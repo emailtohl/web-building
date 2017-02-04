@@ -13,11 +13,10 @@ import javax.persistence.criteria.Root;
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.AbstractCriterionQueryRepository;
 import com.github.emailtohl.building.site.dao.ApplicationHandleHistoryRepositoryCustomization;
 import com.github.emailtohl.building.site.entities.ApplicationHandleHistory;
-
 /**
  * 只需继承AbstractCriterionQueryRepository即可获得动态查询能力
- * 
  * @author HeLei
+ * @date 2017.02.04
  */
 public class ApplicationHandleHistoryRepositoryImpl extends AbstractCriterionQueryRepository<ApplicationHandleHistory>
 		implements ApplicationHandleHistoryRepositoryCustomization {

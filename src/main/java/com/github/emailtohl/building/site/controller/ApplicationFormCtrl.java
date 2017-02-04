@@ -47,7 +47,11 @@ import com.github.emailtohl.building.site.entities.ApplicationForm;
 import com.github.emailtohl.building.site.entities.ApplicationForm.Status;
 import com.github.emailtohl.building.site.entities.ApplicationHandleHistory;
 import com.github.emailtohl.building.site.service.ApplicationFormService;
-
+/**
+ * 工单申请模块的控制器
+ * @author HeLei
+ * @date 2017.02.04
+ */
 @Controller
 @RequestMapping("applicationForm")
 public class ApplicationFormCtrl {

@@ -18,10 +18,10 @@ import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.Criterion;
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.Criterion.Operator;
 import com.github.emailtohl.building.site.dao.CustomerRepository;
 import com.github.emailtohl.building.site.entities.Customer;
-
 /**
  * 客户管理数据访问接口实现类
  * @author HeLei
+ * @date 2017.02.04
  */
 @Repository
 public class CustomerRepositoryImpl extends AbstractSearchableRepository<Customer> implements CustomerRepository {

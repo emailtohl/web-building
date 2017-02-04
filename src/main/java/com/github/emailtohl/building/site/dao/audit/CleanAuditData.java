@@ -7,10 +7,10 @@ import javax.inject.Inject;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-
 /**
  * 用于清理Hibernate Envers产生审计记录
  * @author HeLei
+ * @date 2017.02.04
  */
 @Component
 public class CleanAuditData {

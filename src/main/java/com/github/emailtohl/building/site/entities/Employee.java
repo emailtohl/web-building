@@ -10,8 +10,8 @@ import javax.validation.constraints.Min;
 /**
  * 系统的用户一般分为外部客户和内部职员
  * 这是为内部职员建立的实体类
- * 
  * @author HeLei
+ * @date 2017.02.04
  */
 @org.hibernate.envers.Audited
 @Entity
