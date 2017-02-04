@@ -27,13 +27,11 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 		});
 		
 		self.query = function() {
-			if (self.queryParam) {
-				service.query(self.queryParam).success(function(data) {
-					var zNodes = data;
-					rootName = zNodes.name;
-					zTreeObj = $.fn.zTree.init($("#content-tree"), setting, zNodes);
-				});
-			}
+			service.query(self.queryParam).success(function(data) {
+				var zNodes = data;
+				rootName = zNodes.name;
+				zTreeObj = $.fn.zTree.init($("#content-tree"), setting, zNodes);
+			});
 		}
 		
 		self.updateText = function() {
