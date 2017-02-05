@@ -19,6 +19,7 @@ import com.github.emailtohl.building.stub.ServiceStub;
 /**
  * 测试spring security的配置
  * @author HeLei
+ * @date 2017.02.04
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SpringConfigForTest.class)

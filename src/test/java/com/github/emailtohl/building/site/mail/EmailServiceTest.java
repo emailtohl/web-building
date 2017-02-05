@@ -4,7 +4,11 @@ import javax.mail.MessagingException;
 
 import com.github.emailtohl.building.bootspring.Spring;
 import com.github.emailtohl.building.site.mail.EmailService;
-
+/**
+ * 业务类测试
+ * @author HeLei
+ * @date 2017.02.04
+ */
 public class EmailServiceTest {
 
 //	@Test

@@ -1,6 +1,5 @@
 package com.github.emailtohl.building.site.controller;
 
-
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -27,7 +26,11 @@ import com.github.emailtohl.building.site.dto.ForumPostDto;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.service.ForumPostService;
 import com.google.gson.Gson;
-
+/**
+ * 业务类测试
+ * @author HeLei
+ * @date 2017.02.04
+ */
 public class ForumPostControllerTest {
 	MockMvc mockMvc;
 	MockHttpServletRequest request = new MockHttpServletRequest();

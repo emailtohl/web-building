@@ -26,7 +26,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.stubbing.Answer;
-
+/**
+ * 文件上传下载工具的测试
+ * @author HeLei
+ * @date 2017.02.04
+ */
 public class UpDownloaderTest {
 	private static final Logger logger = LogManager.getLogger();
 	String basePath = System.getProperty("user.home") + "/test";

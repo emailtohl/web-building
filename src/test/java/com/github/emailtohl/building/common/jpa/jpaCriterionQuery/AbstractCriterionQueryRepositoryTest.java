@@ -29,7 +29,11 @@ import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.entities.Employee;
 import com.github.emailtohl.building.site.entities.User;
-
+/**
+ * 封装标准查询的组件测试
+ * @author HeLei
+ * @date 2017.02.04
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SpringConfigForTest.class)
 @ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)

@@ -8,12 +8,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-
 /**
  * 依赖于AuthenticationManager
  * 为测试环境提供已认证的用户
- * 
  * @author HeLei
+ * @date 2017.02.04
  */
 public class SecurityContextManager {
 	private static final Logger logger = LogManager.getLogger();

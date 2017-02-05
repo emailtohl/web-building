@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -36,9 +37,15 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
+import org.apache.lucene.search.SortField.Type;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 /**
  * lucene的数据源获取有很多开源框架，如Solr提取数据库和XML；Nutch、Heritrix、Grub获取web站点；
@@ -59,7 +66,7 @@ public class FileSearch {
 	public static final String FILE_CONTENT = "fileContent";
 	public static final String FILE_PATH = "filePath";
 	public static final String FILE_SIZE = "fileSize";
-	public static final int TOP_HITS = 100;
+	public static final int TOP_HITS = 1000;
 	/** 分词器 */
 	private Analyzer analyzer = new StandardAnalyzer();
 	/** 索引库 */
@@ -136,6 +143,70 @@ public class FileSearch {
 			}
 		}
 		return list;
+	}
+	
+	/**
+	 * 分页查询出Lucene原始的Document对象
+	 * @param queryString 查询语句
+	 * @param pageable Spring-data的分页对象
+	 * @return Spring-data的页面对象
+	 */
+	public Page<Document> query(String queryString, Pageable pageable) {
+		List<Document> list = new ArrayList<Document>();
+		int count = 0;
+		IndexReader indexReader = null;
+		try {
+			String[] fields = { FILE_NAME, FILE_CONTENT, FILE_PATH, FILE_SIZE };
+			QueryParser queryParser = new MultiFieldQueryParser(fields, analyzer);
+			Query query = queryParser.parse(queryString);
+			indexReader = DirectoryReader.open(indexBase);
+			IndexSearcher indexSearcher = new IndexSearcher(indexReader);
+			count = indexSearcher.count(query);
+			Sort sort = getSort(pageable);
+			TopDocs docs = indexSearcher.search(query, TOP_HITS, sort);
+			logger.debug(docs.totalHits);
+			int offset = pageable.getOffset();
+			int end = offset + pageable.getPageSize();
+			
+			for (int i = offset; i < end && i < count && i < TOP_HITS; i++) {
+				ScoreDoc sd = docs.scoreDocs[i];
+				logger.debug(sd.score);
+				Document doc = indexSearcher.doc(sd.doc);
+				logger.debug(doc);
+				list.add(doc);
+			}
+		} catch (IOException e) {
+			logger.error("打开索引库失败", e);
+		} catch (ParseException e) {
+			logger.error("查询语句解析失败", e);
+		} finally {
+			if (indexReader != null) {
+				try {
+					indexReader.close();
+				} catch (IOException e) {
+					logger.error("IndexReader关闭失败", e);
+				}
+			}
+		}
+		return new PageImpl<Document>(list, pageable, count);
+	}
+	
+	private Sort getSort(Pageable pageable) {
+		Sort sort = new Sort();
+		List<SortField> ls = new ArrayList<SortField>();
+		org.springframework.data.domain.Sort s = pageable.getSort();
+		if (s != null) {
+			for (Iterator<org.springframework.data.domain.Sort.Order> i = s.iterator(); i.hasNext();) {
+				org.springframework.data.domain.Sort.Order o = i.next();
+				SortField sortField = new SortField(o.getProperty(), Type.SCORE);// 以相关度进行排序
+				ls.add(sortField);
+			}
+		}
+		if (ls.size() > 0) {
+			SortField[] sortFields = new SortField[ls.size()];
+			sort.setSort(ls.toArray(sortFields));
+		}
+		return sort;
 	}
 	
 	/**
@@ -216,6 +287,14 @@ public class FileSearch {
 		return paths;
 	}
 	
+	public Analyzer getAnalyzer() {
+		return analyzer;
+	}
+
+	public void setAnalyzer(Analyzer analyzer) {
+		this.analyzer = analyzer;
+	}
+
 	/**
 	 * 根据后缀判断该文件是否可读
 	 * @param f

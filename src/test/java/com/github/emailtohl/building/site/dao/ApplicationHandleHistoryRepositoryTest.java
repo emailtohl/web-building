@@ -31,7 +31,11 @@ import com.github.emailtohl.building.site.entities.ApplicationForm.Status;
 import com.github.emailtohl.building.site.entities.ApplicationHandleHistory;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.Employee;
-
+/**
+ * 业务类测试
+ * @author HeLei
+ * @date 2017.02.04
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SpringConfigForTest.class)
 @ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)

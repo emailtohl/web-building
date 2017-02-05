@@ -44,7 +44,11 @@ import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.Subsidiary;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.entities.User.Gender;
-
+/**
+ * 动态查询测试
+ * @author HeLei
+ * @date 2017.02.04
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SpringConfigForTest.class)
 @ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)

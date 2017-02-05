@@ -8,10 +8,10 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-
 /**
  * 试验性代码的测试
  * @author HeLei
+ * @date 2017.02.04
  */
 public class RepositoryTest {
 	static EntityManagerFactory entityManagerFactory;

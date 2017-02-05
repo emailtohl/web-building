@@ -29,7 +29,11 @@ import com.github.emailtohl.building.site.dto.RoleDto;
 import com.github.emailtohl.building.site.service.RoleService;
 import com.github.emailtohl.building.stub.SecurityContextManager;
 import com.google.gson.Gson;
-
+/**
+ * 业务类测试
+ * @author HeLei
+ * @date 2017.02.04
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SpringConfigForTest.class)
 @ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)

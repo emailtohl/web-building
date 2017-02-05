@@ -19,7 +19,11 @@ import com.github.emailtohl.building.site.dao.DepartmentRepository;
 import com.github.emailtohl.building.site.dao.ForumPostRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.dao.audit.CleanAuditData;
-
+/**
+ * 清除测试数据
+ * @author HeLei
+ * @date 2017.02.04
+ */
 public class CleanTestData {
 	
 	public static void main(String[] args) {

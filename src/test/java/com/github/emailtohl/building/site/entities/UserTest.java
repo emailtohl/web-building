@@ -21,7 +21,11 @@ import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.initdb.PersistenceData;
 import com.github.emailtohl.building.site.dao.UserRepository;
-
+/**
+ * 业务类测试
+ * @author HeLei
+ * @date 2017.02.04
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SpringConfigForTest.class)
 @ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)

@@ -5,7 +5,11 @@ import static com.github.emailtohl.building.initdb.PersistenceData.*;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-
+/**
+ * 创建数据库表和测试数据
+ * @author HeLei
+ * @date 2017.02.04
+ */
 public class CreateTable1 {
 
 	public void init() {

@@ -5,7 +5,11 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import com.github.emailtohl.building.common.encryption.Hex;
-
+/**
+ * 16进制编码测试
+ * @author HeLei
+ * @date 2017.02.04
+ */
 public class HexTest {
 
 	@Test

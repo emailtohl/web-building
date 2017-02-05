@@ -8,6 +8,7 @@ import com.github.emailtohl.building.config.RootContextConfiguration;
  * 加载main环境下的spring配置
  * 
  * @author HeLei
+ * @date 2017.02.04
  */
 public class Spring {
 	private static AnnotationConfigApplicationContext context;

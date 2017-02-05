@@ -7,7 +7,11 @@ import java.security.KeyPair;
 import org.junit.Test;
 
 import com.github.emailtohl.building.common.encryption.Crypter;
-
+/**
+ * 对封装java加密的测试
+ * @author HeLei
+ * @date 2017.02.04
+ */
 public class CrypterTest {
 
 	@Test

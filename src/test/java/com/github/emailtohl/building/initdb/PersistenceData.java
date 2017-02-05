@@ -24,6 +24,7 @@ import com.github.emailtohl.building.site.entities.User.Gender;
 /**
  * 初始化数据库使用的测试数据
  * @author HeLei
+ * @date 2017.02.04
  */
 public class PersistenceData {
 	static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

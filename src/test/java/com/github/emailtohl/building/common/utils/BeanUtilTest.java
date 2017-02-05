@@ -57,7 +57,11 @@ import com.github.emailtohl.building.common.jpa.relationEntities.Relation2;
 import com.github.emailtohl.building.site.entities.Subsidiary;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.entities.User.Gender;
-
+/**
+ * JavaBean工具的测试
+ * @author HeLei
+ * @date 2017.02.04
+ */
 public class BeanUtilTest {
 	private static final Logger logger = LogManager.getLogger();
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

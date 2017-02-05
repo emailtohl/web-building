@@ -25,7 +25,11 @@ import com.github.emailtohl.building.common.jpa.AbstractJpaRepository;
 import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
-
+/**
+ * JPA标准查询的测试
+ * @author HeLei
+ * @date 2017.02.04
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SpringConfigForTest.class)
 @ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)

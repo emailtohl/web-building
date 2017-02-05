@@ -35,7 +35,11 @@ import com.github.emailtohl.building.site.dao.audit.CleanAuditData;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
-
+/**
+ * Hibernate envers组件使用测试
+ * @author HeLei
+ * @date 2017.02.04
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SpringConfigForTest.class)
 @ActiveProfiles(RootContextConfiguration.PROFILE_DEVELPMENT)

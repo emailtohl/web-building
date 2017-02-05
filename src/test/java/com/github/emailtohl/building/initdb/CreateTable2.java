@@ -10,7 +10,11 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.stereotype.Service;
 
 import com.github.emailtohl.building.bootspring.Spring;
-
+/**
+ * 创建数据库表和测试数据
+ * @author HeLei
+ * @date 2017.02.04
+ */
 @Service
 @Transactional
 public class CreateTable2 {

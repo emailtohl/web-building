@@ -41,6 +41,7 @@ import com.github.emailtohl.building.stub.SecurityContextManager;
 /**
  * 客户管理服务的测试
  * @author HeLei
+ * @date 2017.02.04
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SpringConfigForTest.class)

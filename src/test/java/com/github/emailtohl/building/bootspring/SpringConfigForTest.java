@@ -18,6 +18,7 @@ import com.github.emailtohl.building.stub.ServiceStub;
  * 建立此配置类的原因是为了不让RootContextConfiguration引用src/test/java目录下的类
  * 否则在生产环境中启动时会发生编译异常
  * @author HeLei
+ * @date 2017.02.04
  */
 @Profile(PROFILE_DEVELPMENT)
 @Configuration

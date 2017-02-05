@@ -16,7 +16,11 @@ import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.Version;
-
+/**
+ * 业务类测试
+ * @author HeLei
+ * @date 2017.02.04
+ */
 public class FreemarkerIntroduction {
 	
 	public static void main(String[] args) throws IOException, TemplateException {

@@ -33,12 +33,11 @@ import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.dto.ForumPostDto;
 import com.github.emailtohl.building.site.service.ForumPostService;
 import com.github.emailtohl.building.stub.SecurityContextManager;
-
 /**
  * 全文搜索测试
  * 先存储论坛帖子，然后再通过索引查询
- * 
  * @author HeLei
+ * @date 2017.02.04
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = SpringConfigForTest.class)

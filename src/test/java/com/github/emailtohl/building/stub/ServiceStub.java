@@ -31,10 +31,10 @@ import com.github.emailtohl.building.site.entities.Role;
 import com.github.emailtohl.building.site.entities.User;
 import com.github.emailtohl.building.site.service.ApplicationFormService;
 import com.github.emailtohl.building.site.service.UserService;
-
 /**
  * 为项目测试提供统一的桩支持
  * @author HeLei
+ * @date 2017.02.04
  */
 public class ServiceStub {
 	private static final Logger logger = LogManager.getLogger();

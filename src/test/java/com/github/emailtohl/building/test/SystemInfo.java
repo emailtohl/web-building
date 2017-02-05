@@ -6,9 +6,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Properties;
 import java.util.Set;
-
 /**
+ * 系统信息收集的测试
  * @author HeLei
+ * @date 2017.02.04
  */
 public class SystemInfo {
 

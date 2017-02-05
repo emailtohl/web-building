@@ -6,7 +6,11 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.github.emailtohl.building.common.jpa.AbstractJpaRepository;
-
+/**
+ * JPA基类测试
+ * @author HeLei
+ * @date 2017.02.04
+ */
 public class AbstractJpaRepositoryTest {
 
 	@Test
