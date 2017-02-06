@@ -1,6 +1,7 @@
 package com.github.emailtohl.building.common.lucene;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -58,15 +59,16 @@ import org.springframework.data.domain.Pageable;
  */
 public class FileSearch {
 	private static final Logger logger = LogManager.getLogger();
-	private static final Set<String> TEXT_SUFFIX = new HashSet<String>(
-			Arrays.asList("txt", "html", "xml", "js", "java", "css", "properties"));
-	private static final FileTypeMap fileTypeMap = FileTypeMap.getDefaultFileTypeMap();
 	private static final long TEN_MBYTES = 10_485_760L;// 10兆
 	public static final String FILE_NAME = "fileName";
 	public static final String FILE_CONTENT = "fileContent";
 	public static final String FILE_PATH = "filePath";
 	public static final String FILE_SIZE = "fileSize";
 	public static final int TOP_HITS = 1000;
+	/** 是否索引过，如果已经索引了，则不能再设置分词器 */
+	private volatile boolean isIndexed = false;
+	private FileFilter textFileFilter = new TextFilesFilter();
+	
 	/** 分词器 */
 	private Analyzer analyzer = new StandardAnalyzer();
 	/** 索引库 */
@@ -92,8 +94,10 @@ public class FileSearch {
 	/**
 	 * 为需要查询的目录创建索引
 	 * @param searchDir 需要查询的目录
+	 * @return 被索引的Document数
 	 */
-	public void index(String searchDir) {
+	public synchronized int index(String searchDir) {
+		int numIndexed = 0;
 		IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
 		// 每一次都会进行创建新的索引,第二次删掉原来的创建新的索引
 		indexWriterConfig.setOpenMode(OpenMode.CREATE_OR_APPEND);
@@ -102,9 +106,12 @@ public class FileSearch {
 			// 采集原始文档
 			appendDocument(new File(searchDir), indexWriter);
 			indexWriter.commit();
+			numIndexed = indexWriter.numDocs();
+			isIndexed = true;
 		} catch (IOException e) {
 			logger.error("创建索引失败", e);
 		}
+		return numIndexed;
 	}
 	
 	/**
@@ -118,6 +125,7 @@ public class FileSearch {
 		try {
 			String[] fields = { FILE_NAME, FILE_CONTENT, FILE_PATH, FILE_SIZE };
 			QueryParser queryParser = new MultiFieldQueryParser(fields, analyzer);
+//			Query q = new TermQuery(new Term(FILE_CONTENT, queryString));
 			Query query = queryParser.parse(queryString);
 			indexReader = DirectoryReader.open(indexBase);
 			IndexSearcher indexSearcher = new IndexSearcher(indexReader);
@@ -230,7 +238,7 @@ public class FileSearch {
 	 * 更新文件的索引
 	 * @param file
 	 */
-	public void updateIndex(String file) {
+	public synchronized void updateIndex(String file) {
 		IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
 		// 创建索引的Writer
 		try (IndexWriter indexWriter = new IndexWriter(indexBase, indexWriterConfig)) {
@@ -247,7 +255,7 @@ public class FileSearch {
 	 * 删除文件的索引
 	 * @param file
 	 */
-	public void deleteIndex(String file) {
+	public synchronized void deleteIndex(String file) {
 		IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
 		// 创建索引的Writer
 		try (IndexWriter indexWriter = new IndexWriter(indexBase, indexWriterConfig)) {
@@ -262,7 +270,7 @@ public class FileSearch {
 	/**
 	 * 删除全部索引
 	 */
-	public void deleteAllIndex() {
+	public synchronized void deleteAllIndex() {
 		IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
 		// 创建索引的Writer
 		try (IndexWriter indexWriter = new IndexWriter(indexBase, indexWriterConfig)) {
@@ -291,36 +299,14 @@ public class FileSearch {
 		return analyzer;
 	}
 
-	public void setAnalyzer(Analyzer analyzer) {
+	public synchronized void setAnalyzer(Analyzer analyzer) {
+		synchronized (this) {
+			if (isIndexed)
+				throw new IllegalStateException("已经被索引过，不能再设置分词器!");
+		}
 		this.analyzer = analyzer;
 	}
 
-	/**
-	 * 根据后缀判断该文件是否可读
-	 * @param f
-	 * @return
-	 */
-	private boolean isText(File f) {
-		boolean flag = false;
-		String name = f.getName();
-		int i = name.lastIndexOf(".");
-		if (i > -1 && name.length() > i) {
-			String suffix = name.substring(i + 1, name.length());
-			flag = TEXT_SUFFIX.contains(suffix);
-		}
-		String fileType;
-		if (!flag) {
-			fileType = fileTypeMap.getContentType(f.getAbsolutePath());
-			flag = fileType.contains("text");
-		}
-		if (!flag) {
-			fileType = URLConnection.guessContentTypeFromName(f.getAbsolutePath());
-			if (fileType != null)
-				flag = fileType.contains("text");
-		}
-		return flag;
-	}
-	
 	/**
 	 * 将文本文件读为lucene的Document并添加进IndexWriter
 	 * @param file
@@ -328,7 +314,7 @@ public class FileSearch {
 	 * @throws IOException
 	 */
 	private void appendDocument(File file, IndexWriter indexWriter) throws IOException {
-		if (file.isFile() && isText(file)) {
+		if (file.isFile() && file.canRead() && textFileFilter.accept(file)) {
 			long size = FileUtils.sizeOf(file);
 			if (size < TEN_MBYTES) {// 处理不大于10M的文件
 				indexWriter.addDocument(getDocument(file));
@@ -359,5 +345,38 @@ public class FileSearch {
 		doc.add(fContent);
 		doc.add(fPath);
 		return doc;
+	}
+	
+	/**
+	 * 过滤出文本文件
+	 * @author HeLei
+	 * @date 2017.02.04
+	 */
+	class TextFilesFilter implements FileFilter {
+		private final FileTypeMap fileTypeMap = FileTypeMap.getDefaultFileTypeMap();
+		private final Set<String> TEXT_SUFFIX = new HashSet<String>(
+				Arrays.asList("txt", "html", "xml", "js", "java", "css", "properties"));
+		@Override
+		public boolean accept(File f) {
+			boolean flag = false;
+			String name = f.getName();
+			int i = name.lastIndexOf(".");
+			if (i > -1 && name.length() > i) {
+				String suffix = name.substring(i + 1, name.length());
+				flag = TEXT_SUFFIX.contains(suffix);
+			}
+			String fileType;
+			if (!flag) {
+				fileType = fileTypeMap.getContentType(f.getAbsolutePath());
+				flag = fileType.contains("text");
+			}
+			if (!flag) {
+				fileType = URLConnection.guessContentTypeFromName(f.getAbsolutePath());
+				if (fileType != null)
+					flag = fileType.contains("text");
+			}
+			return flag;
+		
+		}
 	}
 }

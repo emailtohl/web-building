@@ -276,7 +276,7 @@ public class RootContextConfiguration
 	 */
 	@Bean
 	public FileSearch fileSearch() throws IOException {
-		File indexDir = new File(indexBase, "the-index-of-FileSearch");
+		File indexDir = new File(indexBase, FileSearch.class.getName());
 		if (!indexDir.exists()) {
 			indexDir.mkdir();
 		}

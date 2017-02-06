@@ -36,7 +36,8 @@ public class FileSearchTest {
 		// 创建一个内存目录
 		directory = new RAMDirectory();
 		fs = new FileSearch(directory);
-		fs.index(new File(PATH).getPath());
+		int numIndexed = fs.index(new File(PATH).getPath());
+		logger.debug(numIndexed);
 	}
 	
 	@After
