@@ -132,6 +132,19 @@ public class UpDownloader {
 	public String getAbsolutePath(String relativePath) {
 		return new File(basePath, relativePath).getAbsolutePath();
 	}
+	
+	/**
+	 * 从绝对路径中获取相对路径
+	 * @param absolutePath
+	 * @return
+	 */
+	public String getRelativePath(String absolutePath) {
+		String path = basePath.getAbsolutePath();
+		int i = absolutePath.indexOf(path);
+		i = i + path.length() + 1;
+		path = absolutePath.substring(i);
+		return path;
+	}
 
 	/**
 	 * 供Servlet环境下载

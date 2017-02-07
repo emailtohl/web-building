@@ -52,10 +52,10 @@ public class EncryptionCtrl {
 	@RequestMapping(value = "secret", method = POST)
 	public void secret(HttpSession session, String ciphertext) {
 		String privateKey = (String) session.getAttribute(UserPasswordEncryptionFilter.PRIVATE_KEY_PROPERTY_NAME);
-		if (StringUtils.isEmpty(privateKey))
-			return;
-		String recover = encipher.decrypt(ciphertext, privateKey);
-		logger.info("\n" + recover);
+		if (StringUtils.hasText(privateKey)) {
+			String recover = encipher.decrypt(ciphertext, privateKey);
+			logger.info("\n" + recover);
+		}
 	}
 	
 	@RequestMapping(value = "testMessage", method = GET)

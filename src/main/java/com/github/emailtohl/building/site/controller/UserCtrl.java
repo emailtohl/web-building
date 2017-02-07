@@ -324,7 +324,7 @@ public class UserCtrl {
 	@RequestMapping(value = "icon", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void uploadIcon(@RequestParam("id") long id, @RequestPart("icon") Part icon) throws IOException {
-		String dir = ICON_DIR + '/' + LocalDate.now().toString();
+		String dir = ICON_DIR + File.separator + LocalDate.now().toString();
 		File fdir = new File(upDownloader.getAbsolutePath(dir));
 		if (!fdir.exists()) {
 			fdir.mkdir();
@@ -337,7 +337,7 @@ public class UserCtrl {
 			logger.fatal("UTF-8编码，不可能出现的异常", e);
 		}
 		*/
-		iconName = dir + '/' + id + '_' + icon.getSubmittedFileName();
+		iconName = dir + File.separator + id + '_' + icon.getSubmittedFileName();
 
 		User u = userService.getUser(id);
 		// 删除原有的图片，且同步数据库中的信息

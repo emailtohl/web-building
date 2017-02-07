@@ -10,7 +10,13 @@ define(['forum/module', 'forum/add/service', 'ckeditor'], function(forumModule) 
 		
 		// Replace the <textarea id="editor1"> with a CKEditor
 		// instance, using default configuration.
-		var editor = CKEDITOR.replace('editor1');
+		CKEDITOR.editorConfig = function( config ) {
+		    config.language = 'zh';
+		    config.uiColor = '#AADC6E';
+		};
+		var editor = CKEDITOR.replace('editor1', {
+			filebrowserImageUploadUrl : 'forum/image'
+		});
 		editor.on('change', function(event) {
 			self.forumPost.body = this.getData();// 内容
 			$scope.$apply();

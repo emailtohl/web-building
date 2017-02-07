@@ -92,6 +92,12 @@ public class UpDownloaderTest {
 	}
 
 	@Test
+	public void testGetRelativePath() {
+		String path = upDownloader.getRelativePath(absolutePath);
+		System.out.println(path);
+	}
+
+	@Test
 	public void testDownloadStringHttpServletResponse() throws FileNotFoundException, IOException {
 		upDownloader.upload(testFile, bin);
 		upDownloader.download(testFile, response);

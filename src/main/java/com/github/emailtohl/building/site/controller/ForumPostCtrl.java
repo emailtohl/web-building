@@ -2,7 +2,13 @@ package com.github.emailtohl.building.site.controller;
 
 import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDate;
+
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.servlet.http.Part;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
@@ -19,11 +25,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
+import com.github.emailtohl.building.common.utils.UpDownloader;
 import com.github.emailtohl.building.site.dto.ForumPostDto;
 import com.github.emailtohl.building.site.service.ForumPostService;
 /**
@@ -35,13 +43,18 @@ import com.github.emailtohl.building.site.service.ForumPostService;
 @RequestMapping("forum")
 public class ForumPostCtrl {
 	private static final Logger logger = LogManager.getLogger();
-	
-	ForumPostService forumPostService;
-	
+	public static final String IMAGE_DIR = "image_dir";
 	@Inject
-	public ForumPostCtrl(ForumPostService forumPostService) {
-		super();
-		this.forumPostService = forumPostService;
+	ForumPostService forumPostService;
+	@Inject
+	UpDownloader upDownloader;
+	
+	@PostConstruct
+	public void createIconDir() {
+		File f = new File(upDownloader.getAbsolutePath(IMAGE_DIR));
+		if (!f.exists()) {
+			f.mkdir();
+		}
 	}
 	
 	@RequestMapping(value = "", method = RequestMethod.POST)
@@ -77,4 +90,35 @@ public class ForumPostCtrl {
 	public void delete(@PathVariable("id") @Min(1L) long id) {
 		this.forumPostService.delete(id);
 	}
+	
+	/**
+	 * 上传图片
+	 * @param image
+	 * @return 上传文件的相对路径
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "image", method = RequestMethod.POST)
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public String uploadImage(@RequestParam("CKEditor") String CKEditor, @RequestPart("upload") Part image) throws IOException {
+		LocalDate date = LocalDate.now();
+		String dir = IMAGE_DIR + File.separator + date.getYear() + File.separator + date.getDayOfYear();
+		File fdir = new File(upDownloader.getAbsolutePath(dir));
+		if (!fdir.exists()) {
+			fdir.mkdirs();
+		}
+		String imageName = null;
+		imageName = dir + File.separator + '_' + image.getSubmittedFileName();
+		String path = upDownloader.upload(imageName, image);
+		path = upDownloader.getRelativePath(path);
+		return path;
+	}
+
+	public void setForumPostService(ForumPostService forumPostService) {
+		this.forumPostService = forumPostService;
+	}
+
+	public void setUpDownloader(UpDownloader upDownloader) {
+		this.upDownloader = upDownloader;
+	}
+	
 }
