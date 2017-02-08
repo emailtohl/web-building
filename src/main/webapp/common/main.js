@@ -35,6 +35,7 @@ require.config({
 		'bootstrap-wysihtml5' : '../lib/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min',
 		'chartjs' : '../lib/chartjs/Chart.min',
 		'ckeditor' : '../lib/ckeditor/ckeditor',
+		'ckeditorConfig' : '../lib/ckeditor/config',
 		'colorpicker' : '../lib/colorpicker/bootstrap-colorpicker.min',
 		'jquery-datatables' : '../lib/datatables/jquery.dataTables.min',
 		'datatables' : '../lib/datatables/dataTables.bootstrap.min',
@@ -117,6 +118,10 @@ require.config({
 		'ckeditor' : {
 			deps : [ 'jquery' ],
 			exports : 'ckeditor'
+		},
+		'ckeditorConfig' : {
+			deps : [ 'ckeditor' ],
+			exports : 'ckeditorConfig'
 		},
 		'colorpicker' : {
 			deps : [ 'bootstrap' ],

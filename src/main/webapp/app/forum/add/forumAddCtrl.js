@@ -1,4 +1,4 @@
-define(['forum/module', 'forum/add/service', 'ckeditor'], function(forumModule) {
+define(['forum/module', 'forum/add/service', 'ckeditor', 'ckeditorConfig'], function(forumModule) {
 	return forumModule
 	.controller('ForumAddCtrl', [ '$scope', '$http', '$state', 'forumAddService', 'util'
 	                         , function($scope, $http, $state, forumAddService, util) {
@@ -24,7 +24,7 @@ define(['forum/module', 'forum/add/service', 'ckeditor'], function(forumModule) 
 				var url = null;
 				// 只有登录了，才有CSRF TOKEN，不然上传文件会报错，如果没登录则屏蔽上传文件功能
 				if ($scope.isAuthenticated()) {
-					url = 'forum/image?Type=Image';
+					url = 'forum/image?type=image';
 					var token = util.getCookie('XSRF-TOKEN');
 					if (token) {
 						url += '&_csrf=' + token;
@@ -33,7 +33,7 @@ define(['forum/module', 'forum/add/service', 'ckeditor'], function(forumModule) 
 				return url;
 			}
 			var editor = CKEDITOR.replace('editor1', {
-				filebrowserImageUploadUrl : getUrlWithCsrfParam()
+				filebrowserImageUploadUrl : getUrlWithCsrfParam(),
 			});
 			editor.on('change', function(event) {
 				self.forumPost.body = this.getData();// 内容

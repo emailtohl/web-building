@@ -32,6 +32,7 @@
 
 ```xml
 <Context path="/building/icon_dir" docBase="F:\Server\apache-tomcat-9.0.0.M15\wtpwebapps\web-building-upload\icon_dir" reloadable="true" debug="0"/>
+<Context path="/building/image_dir" docBase="F:\Server\apache-tomcat-9.0.0.M15\wtpwebapps\web-building-upload\image_dir" reloadable="true" debug="0"/>
 <Context path="/building/resource_root" docBase="F:\Server\apache-tomcat-9.0.0.M15\wtpwebapps\web-building-upload\resource_root" reloadable="true" debug="0"/>
 ```
 

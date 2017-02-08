@@ -4,6 +4,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 
 import javax.annotation.PostConstruct;
@@ -27,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -101,10 +101,9 @@ public class ForumPostCtrl {
 	 * @return 上传文件的相对路径
 	 * @throws IOException
 	 */
-	@RequestMapping(value = "image", method = RequestMethod.POST, produces = "text/html; charset=utf-8")
+	@RequestMapping(value = "image", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@ResponseBody
-	public String uploadImage(@RequestParam("CKEditorFuncNum") String CKEditorFuncNum/* 回调显示图片的位置 */, 
+	public void uploadImage(@RequestParam("CKEditorFuncNum") String CKEditorFuncNum/* 回调显示图片的位置 */, 
 			@RequestPart("upload") Part image
 			, HttpServletResponse response) throws IOException {
 		LocalDate date = LocalDate.now();
@@ -113,6 +112,7 @@ public class ForumPostCtrl {
 		if (!fdir.exists()) {
 			fdir.mkdirs();
 		}
+		String html;
 		String path = null;
 		short count = 1;
 		do {
@@ -123,15 +123,22 @@ public class ForumPostCtrl {
 				logger.debug("文件重名，重命名后再保存", e);
 				count++;
 			}
-		} while (path == null && count < 20);
-		path = upDownloader.getRelativePath(path);
-		path = path.replaceAll(Constant.PATTERN_SEPARATOR, "/");
-		
-		String html = "<script type=\"text/javascript\">window.parent.CKEDITOR.tools.callFunction(" + CKEditorFuncNum + ",'" + path + "','');</script>";
+		} while (path == null && count < 5);
+		if (path == null) {
+			// 第三个参数为空表示没有错误，不为空则会弹出一个对话框显示　error　message　的内容
+			html = "<script type=\"text/javascript\">window.parent.CKEDITOR.tools.callFunction(" + CKEditorFuncNum + ",'','上传的文件名冲突');</script>";
+		} else {
+			path = upDownloader.getRelativePath(path);
+			path = path.replaceAll(Constant.PATTERN_SEPARATOR, "/");
+			html = "<script type=\"text/javascript\">window.parent.CKEDITOR.tools.callFunction(" + CKEditorFuncNum + ",'" + path + "','');</script>";
+		}
 		response.addHeader("X-Frame-OPTIONS", "SAMEORIGIN");
-		return html;
+		response.setContentType("text/html; charset=utf-8");  
+        PrintWriter out = response.getWriter();
+        out.println(html);
+        out.close();
 	}
-
+	
 	public void setForumPostService(ForumPostService forumPostService) {
 		this.forumPostService = forumPostService;
 	}
