@@ -19,6 +19,11 @@ define([ 'angular', 'uirouter', 'angular-animate', 'angular-cookies', 'common/co
 			};
 			// 获取当前用户的认证信息，页面可以直接通过{{authentication.username}}获取用户名
 			$rootScope.getAuthentication = function(callback) {
+				var promise = {
+					then : function(fun) {
+						this.fun = fun;
+					}
+				};
 				$http.get('authentication').success(function(data) {
 					console.log('authentication:')
 					console.log(data);
@@ -26,7 +31,12 @@ define([ 'angular', 'uirouter', 'angular-animate', 'angular-cookies', 'common/co
 					if (callback) {
 						callback(data);
 					}
+					if (promise.fun instanceof Function) {
+						promise.fun(data);
+					}
+					
 				});
+				return promise;
 			};
 			// 判断是否有此权限
 			$rootScope.hasAuthority = function(authority) {

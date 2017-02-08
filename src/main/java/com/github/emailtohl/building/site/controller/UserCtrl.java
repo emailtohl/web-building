@@ -324,19 +324,13 @@ public class UserCtrl {
 	@RequestMapping(value = "icon", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void uploadIcon(@RequestParam("id") long id, @RequestPart("icon") Part icon) throws IOException {
-		String dir = ICON_DIR + File.separator + LocalDate.now().toString();
+		LocalDate date = LocalDate.now();
+		String dir = ICON_DIR + File.separator + date.getYear() + File.separator + date.getDayOfYear();
 		File fdir = new File(upDownloader.getAbsolutePath(dir));
 		if (!fdir.exists()) {
-			fdir.mkdir();
+			fdir.mkdirs();
 		}
 		String iconName = null;
-		/*
-		try {
-			iconName = dir + '/' + id + '_' + URLEncoder.encode(icon.getSubmittedFileName(), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			logger.fatal("UTF-8编码，不可能出现的异常", e);
-		}
-		*/
 		iconName = dir + File.separator + id + '_' + icon.getSubmittedFileName();
 
 		User u = userService.getUser(id);

@@ -8,6 +8,7 @@ import java.time.LocalDate;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -97,20 +99,25 @@ public class ForumPostCtrl {
 	 * @return 上传文件的相对路径
 	 * @throws IOException
 	 */
-	@RequestMapping(value = "image", method = RequestMethod.POST)
+	@RequestMapping(value = "image", method = RequestMethod.POST, produces = "text/html; charset=utf-8")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public String uploadImage(@RequestParam("CKEditor") String CKEditor, @RequestPart("upload") Part image) throws IOException {
+	@ResponseBody
+	public String uploadImage(@RequestParam("CKEditorFuncNum") String CKEditorFuncNum/* 回调显示图片的位置 */, 
+			@RequestPart("upload") Part image
+			, HttpServletResponse response) throws IOException {
 		LocalDate date = LocalDate.now();
 		String dir = IMAGE_DIR + File.separator + date.getYear() + File.separator + date.getDayOfYear();
 		File fdir = new File(upDownloader.getAbsolutePath(dir));
 		if (!fdir.exists()) {
 			fdir.mkdirs();
 		}
-		String imageName = null;
-		imageName = dir + File.separator + '_' + image.getSubmittedFileName();
+		String imageName = dir + File.separator + image.getSubmittedFileName();
 		String path = upDownloader.upload(imageName, image);
 		path = upDownloader.getRelativePath(path);
-		return path;
+		
+		String html = "<script type=\"text/javascript\">window.parent.CKEDITOR.tools.callFunction(" + CKEditorFuncNum + ",'" + path + "','');</script>";
+		response.addHeader("X-Frame-OPTIONS", "SAMEORIGIN");
+		return html;
 	}
 
 	public void setForumPostService(ForumPostService forumPostService) {
