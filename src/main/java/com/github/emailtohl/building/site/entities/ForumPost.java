@@ -46,7 +46,7 @@ public class ForumPost extends BaseEntity {
 		this.title = title;
 	}
 
-	@org.hibernate.search.annotations.Field(store = Store.YES)
+	@org.hibernate.search.annotations.Field(store = Store.NO)
 	@Lob
 	public String getBody() {
 		return this.body;

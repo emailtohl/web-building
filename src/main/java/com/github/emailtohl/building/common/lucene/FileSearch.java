@@ -336,7 +336,7 @@ public class FileSearch {
 		String content = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
 		// TextField既被索引又被分词，但是没有词向量
 		Field fName = new TextField(FILE_NAME, file.getName(), Store.YES);
-		Field fContent = new TextField(FILE_CONTENT, content, Store.YES);
+		Field fContent = new TextField(FILE_CONTENT, content, Store.NO);
 		// StringField被索引不被分词，整个值被看作为一个单独的token而被索引
 		Field fPath = new StringField(FILE_PATH, file.getPath(), Store.YES);
 		// 创建文档对象
