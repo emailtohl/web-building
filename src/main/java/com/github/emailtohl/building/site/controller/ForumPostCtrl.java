@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.github.emailtohl.building.common.Constant;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
 import com.github.emailtohl.building.common.utils.UpDownloader;
@@ -93,6 +94,7 @@ public class ForumPostCtrl {
 		this.forumPostService.delete(id);
 	}
 	
+	private static volatile int IMAGE_ID = 0;
 	/**
 	 * 上传图片
 	 * @param image
@@ -111,9 +113,19 @@ public class ForumPostCtrl {
 		if (!fdir.exists()) {
 			fdir.mkdirs();
 		}
-		String imageName = dir + File.separator + image.getSubmittedFileName();
-		String path = upDownloader.upload(imageName, image);
+		String path = null;
+		short count = 1;
+		do {
+			try {
+				String imageName = dir + File.separator + (++IMAGE_ID) + "_" + image.getSubmittedFileName();
+				path = upDownloader.upload(imageName, image);
+			} catch (IllegalArgumentException e) {
+				logger.debug("文件重名，重命名后再保存", e);
+				count++;
+			}
+		} while (path == null && count < 20);
 		path = upDownloader.getRelativePath(path);
+		path = path.replaceAll(Constant.PATTERN_SEPARATOR, "/");
 		
 		String html = "<script type=\"text/javascript\">window.parent.CKEDITOR.tools.callFunction(" + CKEditorFuncNum + ",'" + path + "','');</script>";
 		response.addHeader("X-Frame-OPTIONS", "SAMEORIGIN");
