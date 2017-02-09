@@ -16,7 +16,6 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.servlet.ServletContext;
 import javax.servlet.http.Part;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -64,18 +63,19 @@ import com.google.gson.Gson;
 public class UserCtrl {
 	private static final Logger logger = LogManager.getLogger();
 	public static final String ICON_DIR = "icon_dir";
-	ServletContext servletContext;
+	private UpDownloader upDownloader;
+	@Inject File resourcePath;
 	@Inject UserService userService;
 	@Inject Gson gson;
-	@Inject UpDownloader upDownloader;
 	@Inject LoginCtrl loginCtrl;
 	
 	@PostConstruct
 	public void createIconDir() {
-		File f = new File(upDownloader.getAbsolutePath(ICON_DIR));
+		File f = new File(resourcePath, ICON_DIR);
 		if (!f.exists()) {
 			f.mkdir();
 		}
+		upDownloader = new UpDownloader(f);
 	}
 	
 	/**
@@ -330,8 +330,7 @@ public class UserCtrl {
 		if (!fdir.exists()) {
 			fdir.mkdirs();
 		}
-		String iconName = null;
-		iconName = dir + File.separator + id + '_' + icon.getSubmittedFileName();
+		String iconName = dir + File.separator + id + '_' + icon.getSubmittedFileName();
 
 		User u = userService.getUser(id);
 		// 删除原有的图片，且同步数据库中的信息
@@ -342,9 +341,10 @@ public class UserCtrl {
 			}
 		}
 		
-		upDownloader.upload(iconName, icon);
-		userService.updateIconSrc(id, iconName);
-		loginCtrl.updateIconSrcMap(u.getEmail(), iconName);// 同时更新用户头像的缓存信息
+		String absolutePath = upDownloader.upload(iconName, icon);
+		String url = UpDownloader.getRelativeRootURL(absolutePath, resourcePath.getAbsolutePath());
+		userService.updateIconSrc(id, url);
+		loginCtrl.updateIconSrcMap(u.getEmail(), url);// 同时更新用户头像的缓存信息
 		
 		// 再保存一份到数据库中
 		byte[] b = new byte[(int) icon.getSize()];// 保证图片尺寸不会太大

@@ -45,25 +45,23 @@ import com.github.emailtohl.building.site.dto.UserDto;
 @RequestMapping("fileUploadServer")
 public class FileUploadServer {
 	private static final Logger logger = LogManager.getLogger();
-	public static final String RESOURCE_ROOT = "resource_root";
-	private File root;
+	public static final String CMS_DIR = "cms_dir";
+	private File cmsRoot;
 	private TextUtil textUtil = new TextUtil();
 	
 	private Object textUpdateMutex = new Object();
 	private Object fileMutex = new Object();
-	@Inject
-	UpDownloader upDownloader;
-	@Inject
-	FileSearch fileSearch;
+	private UpDownloader upDownloader;
+	@Inject File resourcePath;
+	@Inject FileSearch fileSearch;
 	
 	@PostConstruct
 	public void createIconDir() {
-		String resourceRoot = upDownloader.getAbsolutePath(RESOURCE_ROOT);
-		root = new File(resourceRoot);
-		if (!root.exists()) {
-			root.mkdir();
+		File f = new File(resourcePath, CMS_DIR);
+		if (!f.exists()) {
+			f.mkdir();
 		}
-		fileSearch.index(resourceRoot);
+		upDownloader = new UpDownloader(f);
 	}
 	
 	/**
@@ -73,7 +71,7 @@ public class FileUploadServer {
 	@RequestMapping(value = "root", method = RequestMethod.GET)
 	@ResponseBody
 	public ZtreeNode getRoot() {
-		return ZtreeNode.newInstance(root);
+		return ZtreeNode.newInstance(cmsRoot);
 	}
 
 	/**
@@ -84,10 +82,10 @@ public class FileUploadServer {
 	@RequestMapping(value = "query", method = RequestMethod.GET)
 	@ResponseBody
 	public ZtreeNode query(@RequestParam(required = false, name = "param", defaultValue = "") String param) {
-		ZtreeNode node = ZtreeNode.newInstance(root);
+		ZtreeNode node = ZtreeNode.newInstance(cmsRoot);
 		if (!param.isEmpty()) {
 			fileSearch.queryForFilePath(param).forEach(s -> {
-				String relativelyPath = s.substring(s.indexOf(RESOURCE_ROOT));
+				String relativelyPath = s.substring(s.indexOf(CMS_DIR));
 				node.setOpen(relativelyPath);
 			});
 		}
@@ -135,7 +133,7 @@ public class FileUploadServer {
 	public void delete(String filename) {
 		String absolutePath = upDownloader.getAbsolutePath(filename);
 		synchronized (fileMutex) {
-			upDownloader.deleteDir(absolutePath);
+			UpDownloader.deleteDir(absolutePath);
 			fileSearch.deleteIndex(absolutePath);
 		}
 	}

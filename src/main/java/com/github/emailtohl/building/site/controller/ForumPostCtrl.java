@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.github.emailtohl.building.common.Constant;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
 import com.github.emailtohl.building.common.utils.UpDownloader;
@@ -47,17 +46,17 @@ import com.github.emailtohl.building.site.service.ForumPostService;
 public class ForumPostCtrl {
 	private static final Logger logger = LogManager.getLogger();
 	public static final String IMAGE_DIR = "image_dir";
-	@Inject
-	ForumPostService forumPostService;
-	@Inject
-	UpDownloader upDownloader;
+	private UpDownloader upDownloader;
+	@Inject ForumPostService forumPostService;
+	@Inject File resourcePath;
 	
 	@PostConstruct
 	public void createIconDir() {
-		File f = new File(upDownloader.getAbsolutePath(IMAGE_DIR));
+		File f = new File(resourcePath, IMAGE_DIR);
 		if (!f.exists()) {
 			f.mkdir();
 		}
+		upDownloader = new UpDownloader(f);
 	}
 	
 	@RequestMapping(value = "", method = RequestMethod.POST)
@@ -113,24 +112,23 @@ public class ForumPostCtrl {
 			fdir.mkdirs();
 		}
 		String html;
-		String path = null;
+		String absolutePath = null;
 		short count = 1;
 		do {
 			try {
 				String imageName = dir + File.separator + (++IMAGE_ID) + "_" + image.getSubmittedFileName();
-				path = upDownloader.upload(imageName, image);
+				absolutePath = upDownloader.upload(imageName, image);
 			} catch (IllegalArgumentException e) {
 				logger.debug("文件重名，重命名后再保存", e);
 				count++;
 			}
-		} while (path == null && count < 5);
-		if (path == null) {
+		} while (absolutePath == null && count < 5);
+		if (absolutePath == null) {
 			// 第三个参数为空表示没有错误，不为空则会弹出一个对话框显示　error　message　的内容
 			html = "<script type=\"text/javascript\">window.parent.CKEDITOR.tools.callFunction(" + CKEditorFuncNum + ",'','上传的文件名冲突');</script>";
 		} else {
-			path = upDownloader.getRelativePath(path);
-			path = path.replaceAll(Constant.PATTERN_SEPARATOR, "/");
-			html = "<script type=\"text/javascript\">window.parent.CKEDITOR.tools.callFunction(" + CKEditorFuncNum + ",'" + path + "','');</script>";
+			String url = absolutePath = UpDownloader.getRelativeRootURL(absolutePath, resourcePath.getAbsolutePath());
+			html = "<script type=\"text/javascript\">window.parent.CKEDITOR.tools.callFunction(" + CKEditorFuncNum + ",'" + url + "','');</script>";
 		}
 		response.addHeader("X-Frame-OPTIONS", "SAMEORIGIN");
 		response.setContentType("text/html; charset=utf-8");  

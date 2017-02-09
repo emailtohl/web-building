@@ -31,12 +31,10 @@
 在server.xml的<host>标签下，添加如下如下配置
 
 ```xml
-<Context path="/building/icon_dir" docBase="F:\Server\apache-tomcat-9.0.0.M15\wtpwebapps\web-building-upload\icon_dir" reloadable="true" debug="0"/>
-<Context path="/building/image_dir" docBase="F:\Server\apache-tomcat-9.0.0.M15\wtpwebapps\web-building-upload\image_dir" reloadable="true" debug="0"/>
-<Context path="/building/resource_root" docBase="F:\Server\apache-tomcat-9.0.0.M15\wtpwebapps\web-building-upload\resource_root" reloadable="true" debug="0"/>
+<Context debug="0" docBase="D:\program\apache-tomcat-9.0.0.M17\wtpwebapps\web-building-data\resource" path="/building/resource" reloadable="true"/>
 ```
 
-> 本项目配置了两个虚拟目录，一个是管理用户头像的目录，另一个应用于资源管理模块中。
+> 本项目配置资源的虚拟目录，可供用户访问，初次启动容器时，容器可能会报错，原因是找不到路径，但程序会自动创建路径，再次启动即可。关于路径的配置可见src/main/resources/config.properties下的dataPath
 
 ## 四、 HTTPS原理以及tomcat配置HTTPS方法
 ### 1. 什么是HTTPS

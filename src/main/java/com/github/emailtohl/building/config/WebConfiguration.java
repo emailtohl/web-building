@@ -1,18 +1,13 @@
 package com.github.emailtohl.building.config;
 
-import java.io.File;
-
 import javax.inject.Inject;
-import javax.inject.Named;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.RequestToViewNameTranslator;
@@ -22,8 +17,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
-
-import com.github.emailtohl.building.common.utils.UpDownloader;
 /**
  * spring mvc的配置
  * @author HeLei
@@ -38,19 +31,11 @@ import com.github.emailtohl.building.common.utils.UpDownloader;
 @ComponentScan(basePackages = "com.github.emailtohl.building.site.controller", useDefaultFilters = false, includeFilters = @ComponentScan.Filter(Controller.class))
 @Import({ WebsocketConfiguration.class })
 public class WebConfiguration extends WebMvcConfigurerAdapter {
-
 	/**
 	 * RootContextConfiguration中定义的LocalValidatorFactoryBean继承了SpringValidatorAdapter
 	 */
 	@Inject
 	SpringValidatorAdapter validator;
-	
-	@Value("${uploadBase}")
-	String uploadBase;
-	
-	@Inject
-	@Named("contextRoot")
-	File contextRoot;
 	
 	@Bean
 	public ViewResolver viewResolver() {
@@ -80,20 +65,5 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
 	@Override
 	public org.springframework.validation.Validator getValidator() {
 		return this.validator;
-	}
-	
-	@Bean
-	public UpDownloader uploader() {
-        File basePath;
-		if (StringUtils.hasText(uploadBase)) {
-			basePath = new File(uploadBase);
-		} else {
-			File p = contextRoot.getParentFile();
-			basePath = new File(p, "web-building-upload");
-		}
-		if (!basePath.exists()) {
-			basePath.mkdir();
-		}
-		return new UpDownloader(basePath);
 	}
 }

@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.github.emailtohl.building.common.Constant;
+
 /**
  * 前端zTree的数据模型
  * 
@@ -14,7 +16,6 @@ import java.util.TreeSet;
  */
 public class ZtreeNode implements Serializable, Comparable<ZtreeNode>{
 	private static final long serialVersionUID = -1932148922352477076L;
-	private transient static final String SEPARATOR_PATTERN = "[\\\\/]";
 	private transient static volatile long serial = 0;
 	
 	public ZtreeNode() {
@@ -161,7 +162,7 @@ public class ZtreeNode implements Serializable, Comparable<ZtreeNode>{
 	 */
 	public void setOpen(String path) {
 		LinkedList<String> queue = new LinkedList<String>();
-		for (String name : path.split(SEPARATOR_PATTERN)) {
+		for (String name : path.split(Constant.PATTERN_SEPARATOR)) {
 			queue.add(name);
 		}
 		Set<ZtreeNode> nodes = new TreeSet<ZtreeNode>();

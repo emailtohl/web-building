@@ -61,7 +61,7 @@ public class UpDownloaderTest {
 	public void tearDown() throws Exception {
 		File f = new File(basePath);
 		if (f.exists())
-			upDownloader.deleteDir(basePath);
+			UpDownloader.deleteDir(basePath);
 	}
 
 	@Test
@@ -92,8 +92,8 @@ public class UpDownloaderTest {
 	}
 
 	@Test
-	public void testGetRelativePath() {
-		String path = upDownloader.getRelativePath(absolutePath);
+	public void testGetRelativeRootURL() {
+		String path = UpDownloader.getRelativeRootURL(absolutePath, basePath);
 		System.out.println(path);
 	}
 

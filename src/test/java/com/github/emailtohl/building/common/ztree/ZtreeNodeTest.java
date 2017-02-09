@@ -38,7 +38,7 @@ public class ZtreeNodeTest {
 
 	@After
 	public void tearDown() throws Exception {
-		new UpDownloader("test_root").deleteDir(test_root.getAbsolutePath());
+		UpDownloader.deleteDir(test_root.getAbsolutePath());
 	}
 
 	@Test

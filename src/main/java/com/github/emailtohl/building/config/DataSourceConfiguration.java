@@ -21,6 +21,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
+import org.springframework.util.StringUtils;
 /**
  * 数据源配置
  * @author HeLei
@@ -33,7 +34,8 @@ public class DataSourceConfiguration {
 	/**
 	 * 将@PropertySource中引入的属性封装到Environment
 	 */
-	@Inject Environment env;
+	@Inject
+	Environment env;
 
 	/**
 	 * 若要使用@Value直接将值注入Bean中，除了在@Value中使用SpEl表达式外，
@@ -112,8 +114,9 @@ public class DataSourceConfiguration {
 	}
 
 	/**
+	 * 项目目录
 	 * 未在容器中，则返回项目的所在目录
-	 * @return
+	 * @return web-building\target\test-classes
 	 */
 	@Profile(PROFILE_DEVELPMENT)
 	@Bean(name = "contextRoot")
@@ -124,6 +127,7 @@ public class DataSourceConfiguration {
 	}
 	
 	/**
+	 * 项目目录
 	 * 在容器中可以返回容器的上下文根目录
 	 * @param servletContext 被注入进来的容器上下文
 	 * @return
@@ -134,5 +138,56 @@ public class DataSourceConfiguration {
 		File f = new File(servletContext.getRealPath(""));
 		logger.debug("生产环境中的上下文根目录是：{}", f.getAbsolutePath());
 		return f;
+	}
+	
+	/**
+	 * 项目中存放数据的目录，如果是开发环境，就存放在target目录下
+	 * @return
+	 */
+	@Profile(PROFILE_DEVELPMENT)
+	@Bean(name = "dataPath")
+	public File projectDataPath() {
+		// 这个projectContextRoot的路径是：web-building\target\test-classes
+		File projectContextRoot = projectContextRoot();
+		File dataPath = new File(projectContextRoot.getParentFile(), "web-building-data");
+		if (!dataPath.exists())
+			dataPath.mkdir();
+		return dataPath;
+	}
+	
+	/**
+	 * 项目中存放数据的目录，如果是在生产环境下，如果配置了dataPath，则以配置为准，否则就存放在web部署的目录下
+	 * @param servletContext 被注入进来的容器上下文
+	 * @return
+	 */
+	@Profile({ PROFILE_PRODUCTION, PROFILE_QA })
+	@Bean(name = "dataPath")
+	public File webDataPath(ServletContext servletContext) {
+		String dataPathStr = env.getProperty("dataPath");
+		File dataPath;
+		if (StringUtils.hasText(dataPathStr)) {
+			dataPath = new File(dataPathStr);
+		} else {
+			File webContextRoot = webContextRoot(servletContext);
+			dataPath = new File(webContextRoot.getParentFile(), "web-building-data");
+			if (!dataPath.exists())
+				dataPath.mkdir();
+		}
+		return dataPath;
+	}
+	
+	/**
+	 * web项目中可访问的资源目录
+	 * @param servletContext 被注入进来的容器上下文
+	 * @return
+	 */
+	@Profile({ PROFILE_PRODUCTION, PROFILE_QA })
+	@Bean(name = "resourcePath")
+	public File resourcePath(ServletContext servletContext) {
+		File webDataPath = webDataPath(servletContext);
+		File resourcePath = new File(webDataPath, "resource");
+		if (!resourcePath.exists())
+			resourcePath.mkdir();
+		return resourcePath;
 	}
 }

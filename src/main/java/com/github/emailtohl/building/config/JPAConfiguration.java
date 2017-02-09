@@ -12,7 +12,6 @@ import javax.inject.Named;
 import javax.sql.DataSource;
 
 import org.hibernate.dialect.PostgreSQL9Dialect;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -28,7 +27,6 @@ import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.util.StringUtils;
 
 /**
  * JPA的配置
@@ -48,12 +46,9 @@ public class JPAConfiguration {
 	@Named("dataSource")
 	DataSource dataSource;
 	
-	@Value("${indexBase}")
-	String indexBase;
-	
 	@Inject
-	@Named("contextRoot")
-	File contextRoot;
+	@Named("dataPath")
+	File dataPath;
 	
 	/**
 	 * 以Hibernate作为JPA的实现类
@@ -80,8 +75,7 @@ public class JPAConfiguration {
 		emfb.setPersistenceUnitName("building-unit");
 		Map<String, Object> properties = new HashMap<String, Object>();
 		properties.put("hibernate.search.default.directory_provider", "filesystem");
-		File path = indexBase();
-		properties.put("hibernate.search.default.indexBase", path.getAbsolutePath());
+		properties.put("hibernate.search.default.indexBase", indexBase().getAbsolutePath());
 		emfb.setJpaPropertyMap(properties);
 		return emfb;
 	}
@@ -100,8 +94,7 @@ public class JPAConfiguration {
 		emfb.setPackagesToScan("com.github.emailtohl.building.site.entities");
 		Map<String, Object> properties = new HashMap<String, Object>();
 		properties.put("hibernate.search.default.directory_provider", "filesystem");
-		File path = indexBase();
-		properties.put("hibernate.search.default.indexBase", path.getAbsolutePath());
+		properties.put("hibernate.search.default.indexBase", indexBase().getAbsolutePath());
 		emfb.setJpaPropertyMap(properties);
 		return emfb;
 	}
@@ -148,23 +141,16 @@ public class JPAConfiguration {
 		builder.setProperty("hibernate.dialect", PostgreSQL9Dialect.class.getCanonicalName());
 		builder.setProperty("hibernate.hbm2ddl.auto", "update");
 		builder.setProperty("hibernate.search.default.directory_provider", "filesystem");
-		File path = indexBase();
-		builder.setProperty("hibernate.search.default.indexBase", path.getAbsolutePath());
+		builder.setProperty("hibernate.search.default.indexBase", indexBase().getAbsolutePath());
 		return builder;
 	}
 	
 	@Bean
 	public File indexBase() {
-		File path;
-		if (StringUtils.hasText(indexBase)) {
-			path = new File(indexBase);
-		} else {
-			File p = contextRoot.getParentFile();
-			path = new File(p, "web-building-indexBase");
-		}
-		if (!path.exists())
-			path.mkdir();
-		return path;
+		File indexBase = new File(dataPath, "indexBase");
+		if (!indexBase.exists())
+			indexBase.mkdir();
+		return indexBase;
 	}
 	
 }
