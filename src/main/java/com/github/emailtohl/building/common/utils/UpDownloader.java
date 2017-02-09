@@ -185,16 +185,16 @@ public class UpDownloader {
 	
 	/**
 	 * 获取本系统分隔符风格的路径
-	 * @param relativePath
+	 * @param path
 	 * @return
 	 */
-	private String getSystemSeparator(String relativePath) {
+	public static String getSystemSeparator(String path) {
 		String replacement;
 		if (File.separator.equals("\\"))
 			replacement = "\\\\";
 		else
 			replacement = "/";
-		return relativePath.replaceAll(PATTERN_SEPARATOR, replacement);
+		return path.replaceAll(PATTERN_SEPARATOR, replacement);
 	}
 	
 	/**

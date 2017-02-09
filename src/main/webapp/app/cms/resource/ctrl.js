@@ -18,7 +18,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 			},
 			view : {
 				selectedMulti: false,
-				addHoverDom : addHoverDom,
+				addHoverDom : addHoverDom,// 添加一个hover的按钮，处理新增逻辑
 			},
 			/*
 			check : {
@@ -32,6 +32,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 		util.loadasync('lib/ztree/diy.css');
 		$scope.getAuthentication();
 		getFileRoot();
+		// 上传结束后的逻辑
 		self.postUpload = function(msg) {
 			console.log(msg);
 			getFileRoot(self.path);

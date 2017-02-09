@@ -1,5 +1,6 @@
 package com.github.emailtohl.building.site.controller;
 
+import static com.github.emailtohl.building.common.Constant.PATTERN_SEPARATOR;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -8,6 +9,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URLDecoder;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -47,6 +50,7 @@ public class FileUploadServer {
 	private static final Logger logger = LogManager.getLogger();
 	public static final String CMS_DIR = "cms_dir";
 	private File cmsRoot;
+	private Pattern startAtCmsRoot;
 	private TextUtil textUtil = new TextUtil();
 	
 	private Object textUpdateMutex = new Object();
@@ -62,6 +66,8 @@ public class FileUploadServer {
 			cmsRoot.mkdir();
 		}
 		upDownloader = new UpDownloader(cmsRoot);
+		startAtCmsRoot = Pattern.compile("(^" + PATTERN_SEPARATOR + cmsRoot.getName() + PATTERN_SEPARATOR + "?)|(^cms_dir" + PATTERN_SEPARATOR + "?)");
+		logger.debug(startAtCmsRoot.matcher(cmsRoot.getName()));
 	}
 	
 	/**
@@ -99,7 +105,8 @@ public class FileUploadServer {
 	@RequestMapping(value = "createDir", method = POST, produces = "text/plain; charset=utf-8")
 	@ResponseBody
 	public void createDir(String dirName) {
-		File f = new File(upDownloader.getAbsolutePath(dirName));
+		String relativePath = getRelativePath(dirName);
+		File f = new File(upDownloader.getAbsolutePath(relativePath));
 		if (!f.exists()) {
 			f.mkdirs();
 		}
@@ -113,13 +120,15 @@ public class FileUploadServer {
 	@RequestMapping(value = "reName", method = POST, produces = "text/plain; charset=utf-8")
 	@ResponseBody
 	public void reName(String srcName, String destName) {
-		File src = new File(upDownloader.getAbsolutePath(srcName));
-		File dest = new File(upDownloader.getAbsolutePath(destName));
+		String srcap = upDownloader.getAbsolutePath(getRelativePath(srcName));
+		String destap = upDownloader.getAbsolutePath(getRelativePath(destName));
+		File src = new File(srcap);
+		File dest = new File(destap);
 		if (src.exists()) {
 			synchronized (fileMutex) {
 				src.renameTo(dest);
-				fileSearch.deleteIndex(upDownloader.getAbsolutePath(srcName));
-				fileSearch.updateIndex(upDownloader.getAbsolutePath(destName));
+				fileSearch.deleteIndex(srcap);
+				fileSearch.updateIndex(destap);
 			}
 		}
 	}
@@ -131,7 +140,7 @@ public class FileUploadServer {
 	@RequestMapping(value = "delete", method = POST, produces = "text/plain; charset=utf-8")
 	@ResponseBody
 	public void delete(String filename) {
-		String absolutePath = upDownloader.getAbsolutePath(filename);
+		String absolutePath = upDownloader.getAbsolutePath(getRelativePath(filename));
 		synchronized (fileMutex) {
 			UpDownloader.deleteDir(absolutePath);
 			fileSearch.deleteIndex(absolutePath);
@@ -155,8 +164,9 @@ public class FileUploadServer {
 		} else {
 			fullname = dir + File.separator + filename;
 		}
-		upDownloader.upload(fullname, file);
-		fileSearch.addIndex(upDownloader.getAbsolutePath(fullname));
+		fullname = getRelativePath(fullname);
+		String absolutePath = upDownloader.upload(fullname, file);
+		fileSearch.addIndex(absolutePath);
 		return filename + ": 上传成功!";
 	}
 	
@@ -170,17 +180,44 @@ public class FileUploadServer {
 	@ResponseBody
 	public String loadText(@RequestParam(value = "path", required = true) String path
 			, @RequestParam(value = "charset", required = false, defaultValue = "UTF-8") String charset) {
-		return textUtil.getText(upDownloader.getAbsolutePath(path), charset);
+		String absolutePath = upDownloader.getAbsolutePath(getRelativePath(path));
+		return textUtil.getText(absolutePath, charset);
 	}
 	
 	@RequestMapping(value = "writeText", method = POST, produces = "text/plain; charset=utf-8")
 	@ResponseBody
 	public void writeText(@RequestBody Form f) {
 		synchronized (textUpdateMutex) {
-			textUtil.writeText(upDownloader.getAbsolutePath(f.getPath()), f.getTextContext(), f.getCharset());
-			fileSearch.updateIndex(upDownloader.getAbsolutePath(f.getPath()));
+			String absolutePath = upDownloader.getAbsolutePath(getRelativePath(f.getPath()));
+			textUtil.writeText(absolutePath, f.getTextContext(), f.getCharset());
+			fileSearch.updateIndex(absolutePath);
 		}
 	}
+	
+	/**
+	 * 相对于cmsRoot的路径
+	 * @param path
+	 * @return
+	 */
+	private String getRelativePath(String path) {
+		Matcher m = startAtCmsRoot.matcher(path);
+		String relativePath;
+		if (m.find()) {
+			relativePath = m.replaceFirst("");
+		} else {
+			relativePath = path;
+		}
+		return UpDownloader.getSystemSeparator(relativePath);
+	}
+	/*
+	public static void main(String[] args) {
+		String dir = "cms_dir/new node1";
+		Pattern startAtCmsRoot = Pattern.compile("(^" + PATTERN_SEPARATOR + "cms_dir" + PATTERN_SEPARATOR + "?)|(^cms_dir" + PATTERN_SEPARATOR + "?)");
+		Matcher m = startAtCmsRoot.matcher(dir);
+		System.out.println(m.find());
+		System.out.println(m.replaceFirst(""));
+		
+	}*/
 	
 	@SuppressWarnings("unused")
 	private static class Form implements Serializable {

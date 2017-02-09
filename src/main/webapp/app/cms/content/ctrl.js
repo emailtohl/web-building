@@ -2,7 +2,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 	return cmsModule
 	.controller('ContentCtrl', ['$scope', '$http', '$state', 'cmsService', 'util', 'ztreeutil',
 	                                function($scope, $http, $state, service, util, ztreeutil) {
-		var self = this, rootName, style, zTreeObj, cm;
+		var self = this, hideRoot = 'resource'/*这个路径在rootName上一级，用于前端访问所用*/, rootName, style, zTreeObj, cm;
 		self.charset = 'UTF-8';
 		self.contentType = '';
 		self.content = '';
@@ -60,13 +60,18 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 				return;
 			}
 			path = ztreeutil.getFilePath(treeNode);
-			self.path = path;
+			self.path = hideRoot + '/' + path;
 			// 根据文件后缀做判断
 			suffixIndex = path.lastIndexOf('.');
 			if (suffixIndex > -1) {
 				suffix = path.substring(suffixIndex + 1, path.length);
 				switch (suffix) {
 				case 'jpg':
+					$scope.$apply(function() {
+						self.contentType = 'image';
+					});
+					break;
+				case 'bmp':
 					$scope.$apply(function() {
 						self.contentType = 'image';
 					});
@@ -106,7 +111,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 						self.contentType = 'pdf';
 					});
 					if (window.confirm('是否新起一页打开该PDF文档？'))
-						window.open(path);
+						window.open(self.path);
 					break;
 				default:
 					self.contentType = 'text';
