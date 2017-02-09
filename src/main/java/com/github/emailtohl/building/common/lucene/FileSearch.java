@@ -24,6 +24,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Store;
+import org.apache.lucene.document.LongField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
@@ -61,6 +62,7 @@ public class FileSearch {
 	private static final Logger logger = LogManager.getLogger();
 	private static final long TEN_MBYTES = 10_485_760L;// 10兆
 	public static final String FILE_NAME = "fileName";
+	public static final String FILE_TIME = "fileTime";
 	public static final String FILE_CONTENT = "fileContent";
 	public static final String FILE_PATH = "filePath";
 	public static final String FILE_SIZE = "fileSize";
@@ -336,14 +338,17 @@ public class FileSearch {
 		String content = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
 		// TextField既被索引又被分词，但是没有词向量
 		Field fName = new TextField(FILE_NAME, file.getName(), Store.YES);
+		fName.setBoost(1.2F);
 		Field fContent = new TextField(FILE_CONTENT, content, Store.NO);
 		// StringField被索引不被分词，整个值被看作为一个单独的token而被索引
 		Field fPath = new StringField(FILE_PATH, file.getPath(), Store.YES);
+		Field fTime = new LongField(FILE_TIME, System.currentTimeMillis(), Store.YES);
 		// 创建文档对象
 		Document doc = new Document();
 		doc.add(fName);
 		doc.add(fContent);
 		doc.add(fPath);
+		doc.add(fTime);
 		return doc;
 	}
 	

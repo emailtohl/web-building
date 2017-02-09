@@ -96,9 +96,9 @@ public class ForumPostCtrl {
 	
 	private static volatile int IMAGE_ID = 0;
 	/**
-	 * 上传图片
+	 * 上传图片,针对前端CKEditor接口编写的控制器方法
 	 * @param image
-	 * @return 上传文件的相对路径
+	 * @return 返回一个CKEditor识别的回调函数
 	 * @throws IOException
 	 */
 	@RequestMapping(value = "image", method = RequestMethod.POST)

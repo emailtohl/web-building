@@ -125,7 +125,7 @@ public class DataSourceConfiguration {
 	
 	/**
 	 * 在容器中可以返回容器的上下文根目录
-	 * @param servletContext
+	 * @param servletContext 被注入进来的容器上下文
 	 * @return
 	 */
 	@Profile({ PROFILE_PRODUCTION, PROFILE_QA })
