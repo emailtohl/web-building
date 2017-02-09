@@ -57,11 +57,11 @@ public class FileUploadServer {
 	
 	@PostConstruct
 	public void createIconDir() {
-		File f = new File(resourcePath, CMS_DIR);
-		if (!f.exists()) {
-			f.mkdir();
+		cmsRoot = new File(resourcePath, CMS_DIR);
+		if (!cmsRoot.exists()) {
+			cmsRoot.mkdir();
 		}
-		upDownloader = new UpDownloader(f);
+		upDownloader = new UpDownloader(cmsRoot);
 	}
 	
 	/**

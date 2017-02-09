@@ -56,7 +56,7 @@ public class UpDownloader {
 	 * @throws IOException 保存文件时出现异常
 	 */
 	public String upload(String relativePath, Part part) throws IOException {
-		File f = new File(basePath, relativePath.replaceAll(PATTERN_SEPARATOR, File.separator));
+		File f = new File(basePath, getSystemSeparator(relativePath));
 		if (f.exists()) {
 			throw new IllegalArgumentException("上传文件重名，该文件已经上传");
 		}
@@ -73,7 +73,7 @@ public class UpDownloader {
 	 * @throws IOException 保存文件时出现异常
 	 */
 	public String upload(String relativePath, byte[] bin) throws IOException {
-		File f = new File(basePath, relativePath.replaceAll(PATTERN_SEPARATOR, File.separator));
+		File f = new File(basePath, getSystemSeparator(relativePath));
 		if (f.exists()) {
 			throw new IllegalArgumentException("上传文件重名，该文件已经上传");
 		}
@@ -91,7 +91,7 @@ public class UpDownloader {
 	 * @throws IOException 保存文件时出现异常
 	 */
 	public String upload(String relativePath, InputStream in) throws IOException {
-		File f = new File(basePath, relativePath.replaceAll(PATTERN_SEPARATOR, File.separator));
+		File f = new File(basePath, getSystemSeparator(relativePath));
 		if (f.exists()) {
 			throw new IllegalArgumentException("上传文件重名，该文件已经上传");
 		}
@@ -117,7 +117,7 @@ public class UpDownloader {
 	 * @throws FileNotFoundException 
 	 */
 	public byte[] getFile(String relativePath) throws FileNotFoundException, IOException {
-		File f = new File(basePath, relativePath.replaceAll(PATTERN_SEPARATOR, File.separator));
+		File f = new File(basePath, getSystemSeparator(relativePath));
 		byte[] bin;
 		try (InputStream in = new BufferedInputStream(new FileInputStream(f))) {
 			bin = new byte[in.available()];
@@ -132,10 +132,9 @@ public class UpDownloader {
 	 * @return
 	 */
 	public String getAbsolutePath(String relativePath) {
-		String path = relativePath.replaceAll(PATTERN_SEPARATOR, File.separator);
-		return new File(basePath, path).getAbsolutePath();
+		return new File(basePath, getSystemSeparator(relativePath)).getAbsolutePath();
 	}
-
+	
 	/**
 	 * 供Servlet环境下载
 	 * @param relativePath 文件相对路径，分隔符的格式可以是URL(Unix)中的“/”，也可以是Windows的“\”
@@ -144,7 +143,7 @@ public class UpDownloader {
 	 * @throws IOException
 	 */
 	public void download(String relativePath, HttpServletResponse response) throws FileNotFoundException, IOException {
-		File f = new File(basePath, relativePath.replaceAll(PATTERN_SEPARATOR, File.separator));
+		File f = new File(basePath, getSystemSeparator(relativePath));
 		try (InputStream fis = new BufferedInputStream(new FileInputStream(f))) {
 			// 设置响应头Content-Disposition，将强制浏览器询问客户是保存还是下载文件，而不是在浏览器中在线打开该文件
 			response.setHeader("Content-Disposition", "attachment;filename=" + f.getName());
@@ -171,7 +170,7 @@ public class UpDownloader {
 	 * @throws IOException
 	 */
 	public void download(String relativePath, OutputStream out) throws FileNotFoundException, IOException {
-		File f = new File(basePath, relativePath.replaceAll(PATTERN_SEPARATOR, File.separator));
+		File f = new File(basePath, getSystemSeparator(relativePath));
 		try (InputStream fis = new BufferedInputStream(new FileInputStream(f))) {
 			int b;
 			byte[] buffer = new byte[1024];
@@ -182,6 +181,20 @@ public class UpDownloader {
 				out.write(buffer, 0, b);
 			}
 		}
+	}
+	
+	/**
+	 * 获取本系统分隔符风格的路径
+	 * @param relativePath
+	 * @return
+	 */
+	private String getSystemSeparator(String relativePath) {
+		String replacement;
+		if (File.separator.equals("\\"))
+			replacement = "\\\\";
+		else
+			replacement = "/";
+		return relativePath.replaceAll(PATTERN_SEPARATOR, replacement);
 	}
 	
 	/**
