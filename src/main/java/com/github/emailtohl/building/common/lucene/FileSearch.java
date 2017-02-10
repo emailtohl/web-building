@@ -264,7 +264,7 @@ public class FileSearch {
 	 */
 	public synchronized void deleteIndex(String file) {
 		File f = new File(file);
-		if (f.isFile() && f.canRead() && textFileFilter.accept(f)) {
+		if (textFileFilter.accept(f)) {
 			IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
 			// 创建索引的Writer
 			try (IndexWriter indexWriter = new IndexWriter(indexBase, indexWriterConfig)) {
@@ -362,13 +362,13 @@ public class FileSearch {
 	 * @date 2017.02.04
 	 */
 	class TextFilesFilter implements FileFilter {
-		private static final long TEN_MBYTES = 10_485_760L;// 10兆
+		private static final long MAX_BYTES = 10_485_760L;// 10兆
 		private final FileTypeMap fileTypeMap = FileTypeMap.getDefaultFileTypeMap();
 		private final Set<String> TEXT_SUFFIX = new HashSet<String>(
 				Arrays.asList("txt", "html", "xml", "js", "java", "css", "properties"));
 		@Override
 		public boolean accept(File f) {
-			if (f.isDirectory() || !f.canRead() || f.length() > TEN_MBYTES)
+			if (f.isDirectory() || !f.canRead() || f.length() > MAX_BYTES)
 				return false;
 			boolean flag = false;
 			String name = f.getName();
