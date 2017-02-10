@@ -4,6 +4,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.time.LocalDate;
 
@@ -16,6 +17,7 @@ import javax.validation.constraints.Min;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
@@ -34,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
 import com.github.emailtohl.building.common.utils.UpDownloader;
+import com.github.emailtohl.building.filter.PreSecurityLoggingFilter;
 import com.github.emailtohl.building.site.dto.ForumPostDto;
 import com.github.emailtohl.building.site.service.ForumPostService;
 /**
@@ -93,7 +96,6 @@ public class ForumPostCtrl {
 		this.forumPostService.delete(id);
 	}
 	
-	private static volatile int IMAGE_ID = 0;
 	/**
 	 * 上传图片,针对前端CKEditor接口编写的控制器方法
 	 * @param image
@@ -105,24 +107,16 @@ public class ForumPostCtrl {
 	public void uploadImage(@RequestParam("CKEditorFuncNum") String CKEditorFuncNum/* 回调显示图片的位置 */, 
 			@RequestPart("upload") Part image
 			, HttpServletResponse response) throws IOException {
-		LocalDate date = LocalDate.now();
-		String dir = IMAGE_DIR + File.separator + date.getYear() + File.separator + date.getDayOfYear();
-		File fdir = new File(upDownloader.getAbsolutePath(dir));
-		if (!fdir.exists()) {
-			fdir.mkdirs();
+		// 先确定存储的相对路径
+		String dir = getDir();
+		String absolutePath = null;
+		try (InputStream in = image.getInputStream()) {
+			String imageName = dir + File.separator + getFilename(image);
+			absolutePath = upDownloader.upload(imageName, in);
+		} catch (Exception e) {
+			logger.warn("上传失败，可能是文件名后缀不对，或是IO异常", e);
 		}
 		String html;
-		String absolutePath = null;
-		short count = 1;
-		do {
-			try {
-				String imageName = dir + File.separator + (++IMAGE_ID) + "_" + image.getSubmittedFileName();
-				absolutePath = upDownloader.upload(imageName, image);
-			} catch (IllegalArgumentException e) {
-				logger.debug("文件重名，重命名后再保存", e);
-				count++;
-			}
-		} while (absolutePath == null && count < 5);
 		if (absolutePath == null) {
 			// 第三个参数为空表示没有错误，不为空则会弹出一个对话框显示　error　message　的内容
 			html = "<script type=\"text/javascript\">window.parent.CKEDITOR.tools.callFunction(" + CKEditorFuncNum + ",'','上传的文件名冲突');</script>";
@@ -135,6 +129,27 @@ public class ForumPostCtrl {
         PrintWriter out = response.getWriter();
         out.println(html);
         out.close();
+	}
+	
+	private String getDir() {
+		LocalDate date = LocalDate.now();
+		String dir = date.getYear() + File.separator + date.getDayOfYear();
+		File fdir = new File(upDownloader.getAbsolutePath(dir));
+		if (!fdir.exists()) {
+			fdir.mkdirs();
+		}
+		return dir;
+	}
+	
+	/**
+	 * 由于是论坛上显示的名字供机器识别，再加上部署集群需要唯一性防冲突，故使用UUID
+	 * @return
+	 */
+	private String getFilename(Part image) {
+		String filename = image.getSubmittedFileName();
+		int i = filename.lastIndexOf(".");
+		String suffix = filename.substring(i);
+		return ThreadContext.get(PreSecurityLoggingFilter.ID_PROPERTY_NAME) + suffix;
 	}
 	
 	public void setForumPostService(ForumPostService forumPostService) {
