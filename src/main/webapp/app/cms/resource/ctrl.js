@@ -55,7 +55,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 		
 		function zTreeBeforeRemove(treeId, treeNode) {
 			var filename;
-			if (treeNode.name == rootName) {
+			if (treeNode.name == rootName && treeNode.getParentNode() == null) {
 				alert('根目录不能删除!');
 				return false;
 			}

@@ -53,6 +53,8 @@ import org.springframework.data.domain.Pageable;
  * lucene的数据源获取有很多开源框架，如Solr提取数据库和XML；Nutch、Heritrix、Grub获取web站点；
  * Aperture支持web站点，文件系统、邮箱等；Tika提供数据过滤。
  * 
+ * 注意：对于文本文件，目前只支持UTF-8格式
+ * 
  * 本工具只是适应本项目中轻量级的对文件系统建立索引，查询文本内容，更多应用还需借助成熟的开源框架。
  * 
  * @author HeLei
@@ -60,7 +62,6 @@ import org.springframework.data.domain.Pageable;
  */
 public class FileSearch {
 	private static final Logger logger = LogManager.getLogger();
-	private static final long TEN_MBYTES = 10_485_760L;// 10兆
 	public static final String FILE_NAME = "fileName";
 	public static final String FILE_TIME = "fileTime";
 	public static final String FILE_CONTENT = "fileContent";
@@ -125,7 +126,7 @@ public class FileSearch {
 		List<Document> list = new ArrayList<Document>();
 		IndexReader indexReader = null;
 		try {
-			String[] fields = { FILE_NAME, FILE_CONTENT, FILE_PATH, FILE_SIZE };
+			String[] fields = { FILE_NAME, FILE_TIME, FILE_CONTENT, FILE_PATH, FILE_SIZE };
 			QueryParser queryParser = new MultiFieldQueryParser(fields, analyzer);
 //			Query q = new TermQuery(new Term(FILE_CONTENT, queryString));
 			Query query = queryParser.parse(queryString);
@@ -166,7 +167,7 @@ public class FileSearch {
 		int count = 0;
 		IndexReader indexReader = null;
 		try {
-			String[] fields = { FILE_NAME, FILE_CONTENT, FILE_PATH, FILE_SIZE };
+			String[] fields = { FILE_NAME, FILE_TIME, FILE_CONTENT, FILE_PATH, FILE_SIZE };
 			QueryParser queryParser = new MultiFieldQueryParser(fields, analyzer);
 			Query query = queryParser.parse(queryString);
 			indexReader = DirectoryReader.open(indexBase);
@@ -224,15 +225,17 @@ public class FileSearch {
 	 * @param file
 	 */
 	public void addIndex(String file) {
-		IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
-		// 创建索引的Writer
-		try (IndexWriter indexWriter = new IndexWriter(indexBase, indexWriterConfig)) {
-			File f = new File(file);
-			Document doc = getDocument(f);
-			indexWriter.addDocument(doc);
-			indexWriter.commit();
-		} catch (IOException e) {
-			logger.error("添加索引失败", e);
+		File f = new File(file);
+		if (textFileFilter.accept(f)) {
+			IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
+			// 创建索引的Writer
+			try (IndexWriter indexWriter = new IndexWriter(indexBase, indexWriterConfig)) {
+				Document doc = getDocument(f);
+				indexWriter.addDocument(doc);
+				indexWriter.commit();
+			} catch (IOException e) {
+				logger.error("添加索引失败", e);
+			}
 		}
 	}
 	
@@ -241,15 +244,17 @@ public class FileSearch {
 	 * @param file
 	 */
 	public synchronized void updateIndex(String file) {
-		IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
-		// 创建索引的Writer
-		try (IndexWriter indexWriter = new IndexWriter(indexBase, indexWriterConfig)) {
-			File f = new File(file);
-			Document doc = getDocument(f);
-			indexWriter.updateDocument(new Term(FILE_PATH, f.getPath()), doc);
-			indexWriter.commit();
-		} catch (IOException e) {
-			logger.error("更新索引失败", e);
+		File f = new File(file);
+		if (textFileFilter.accept(f)) {
+			IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
+			// 创建索引的Writer
+			try (IndexWriter indexWriter = new IndexWriter(indexBase, indexWriterConfig)) {
+					Document doc = getDocument(f);
+					indexWriter.updateDocument(new Term(FILE_PATH, f.getPath()), doc);
+					indexWriter.commit();
+			} catch (IOException e) {
+				logger.error("更新索引失败", e);
+			}
 		}
 	}
 	
@@ -258,14 +263,16 @@ public class FileSearch {
 	 * @param file
 	 */
 	public synchronized void deleteIndex(String file) {
-		IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
-		// 创建索引的Writer
-		try (IndexWriter indexWriter = new IndexWriter(indexBase, indexWriterConfig)) {
-			File f = new File(file);
-			indexWriter.deleteDocuments(new Term(FILE_PATH, f.getPath()));
-			indexWriter.commit();
-		} catch (IOException e) {
-			logger.error("更新索引失败", e);
+		File f = new File(file);
+		if (f.isFile() && f.canRead() && textFileFilter.accept(f)) {
+			IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
+			// 创建索引的Writer
+			try (IndexWriter indexWriter = new IndexWriter(indexBase, indexWriterConfig)) {
+					indexWriter.deleteDocuments(new Term(FILE_PATH, f.getPath()));
+					indexWriter.commit();
+			} catch (IOException e) {
+				logger.error("更新索引失败", e);
+			}
 		}
 	}
 	
@@ -316,11 +323,8 @@ public class FileSearch {
 	 * @throws IOException
 	 */
 	private void appendDocument(File file, IndexWriter indexWriter) throws IOException {
-		if (file.isFile() && file.canRead() && textFileFilter.accept(file)) {
-			long size = FileUtils.sizeOf(file);
-			if (size < TEN_MBYTES) {// 处理不大于10M的文件
-				indexWriter.addDocument(getDocument(file));
-			}
+		if (textFileFilter.accept(file)) {
+			indexWriter.addDocument(getDocument(file));
 		} else if (file.isDirectory()) {
 			for (File sub : file.listFiles()) {
 				appendDocument(sub, indexWriter);
@@ -358,11 +362,14 @@ public class FileSearch {
 	 * @date 2017.02.04
 	 */
 	class TextFilesFilter implements FileFilter {
+		private static final long TEN_MBYTES = 10_485_760L;// 10兆
 		private final FileTypeMap fileTypeMap = FileTypeMap.getDefaultFileTypeMap();
 		private final Set<String> TEXT_SUFFIX = new HashSet<String>(
 				Arrays.asList("txt", "html", "xml", "js", "java", "css", "properties"));
 		@Override
 		public boolean accept(File f) {
+			if (f.isDirectory() || !f.canRead() || f.length() > TEN_MBYTES)
+				return false;
 			boolean flag = false;
 			String name = f.getName();
 			int i = name.lastIndexOf(".");
@@ -381,7 +388,6 @@ public class FileSearch {
 					flag = fileType.contains("text");
 			}
 			return flag;
-		
 		}
 	}
 }
