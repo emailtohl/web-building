@@ -56,7 +56,7 @@ public class ForumPost extends BaseEntity {
 		this.body = body;
 	}
 
-	@org.hibernate.search.annotations.Field(boost = @org.hibernate.search.annotations.Boost(1.5F))// 关键字加权因子
+	@org.hibernate.search.annotations.Field(boost = @org.hibernate.search.annotations.Boost(1.5F), store = Store.YES)// 关键字加权因子
 	public String getKeywords() {
 		return this.keywords;
 	}

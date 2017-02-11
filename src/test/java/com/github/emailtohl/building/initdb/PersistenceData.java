@@ -9,11 +9,14 @@ import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
+import com.github.emailtohl.building.site.entities.Article;
 import com.github.emailtohl.building.site.entities.Authority;
+import com.github.emailtohl.building.site.entities.Comment;
 import com.github.emailtohl.building.site.entities.Company;
 import com.github.emailtohl.building.site.entities.Customer;
 import com.github.emailtohl.building.site.entities.Department;
@@ -64,6 +67,9 @@ public class PersistenceData {
 	public final static Company company = new Company();
 	public final static Department product = new Department(), qa = new Department();
 
+	public final static Article article = new Article();
+	public final static Comment comment = new Comment();
+	
 	static {
 		user_role_authority_allocation.getRoles().add(admin);
 		user_create_ordinary.getRoles().addAll(Arrays.asList(admin, manager, employee, user));
@@ -267,5 +273,19 @@ public class PersistenceData {
 		
 		product.setEmployees(new HashSet<Employee>(Arrays.asList(foo)));
 		qa.setEmployees(new HashSet<Employee>(Arrays.asList(bar)));
+		
+		
+		article.setTitle("世界，您好！");
+		article.setBody("这是第一篇文章。编辑或删除它，然后开始写作吧！");
+		article.setKeywords("世界 您好 文章");
+		article.setType("未分类");
+		article.setAuthor(foo);
+		
+		comment.setCritics(bar.getName());
+		comment.setContent("嗨，这是一条评论。评论者头像来自Gravatar。");
+		comment.setIcon(bar.getIconSrc());
+		comment.setDate(new Date());
+		article.getComments().add(comment);
+		
 	}
 }
