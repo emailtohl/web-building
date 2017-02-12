@@ -39,7 +39,7 @@ import com.github.emailtohl.building.common.jpa.relationEntities.Relation1;
 import com.github.emailtohl.building.common.jpa.relationEntities.Relation2;
 import com.github.emailtohl.building.common.jpa.relationEntities.TestRelationRepository;
 import com.github.emailtohl.building.config.RootContextConfiguration;
-import com.github.emailtohl.building.site.dao.RoleRepository;
+import com.github.emailtohl.building.site.dao.role.RoleRepository;
 import com.github.emailtohl.building.site.entities.role.Role;
 import com.github.emailtohl.building.site.entities.user.Subsidiary;
 import com.github.emailtohl.building.site.entities.user.User;

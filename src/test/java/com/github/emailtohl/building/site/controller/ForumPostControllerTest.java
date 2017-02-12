@@ -24,7 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.github.emailtohl.building.site.dto.ForumPostDto;
 import com.github.emailtohl.building.site.dto.UserDto;
-import com.github.emailtohl.building.site.service.ForumPostService;
+import com.github.emailtohl.building.site.service.conference.ForumPostService;
 import com.google.gson.Gson;
 /**
  * 业务类测试

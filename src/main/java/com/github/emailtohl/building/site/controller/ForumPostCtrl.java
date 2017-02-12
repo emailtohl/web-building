@@ -38,7 +38,7 @@ import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
 import com.github.emailtohl.building.common.utils.UpDownloader;
 import com.github.emailtohl.building.filter.PreSecurityLoggingFilter;
 import com.github.emailtohl.building.site.dto.ForumPostDto;
-import com.github.emailtohl.building.site.service.ForumPostService;
+import com.github.emailtohl.building.site.service.conference.ForumPostService;
 /**
  * 论坛控制器
  * @author HeLei

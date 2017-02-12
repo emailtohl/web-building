@@ -13,12 +13,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 import com.github.emailtohl.building.bootspring.Spring;
-import com.github.emailtohl.building.site.dao.ApplicationFormRepository;
-import com.github.emailtohl.building.site.dao.CompanyRepository;
-import com.github.emailtohl.building.site.dao.DepartmentRepository;
-import com.github.emailtohl.building.site.dao.ForumPostRepository;
-import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.dao.audit.CleanAuditData;
+import com.github.emailtohl.building.site.dao.conference.ForumPostRepository;
+import com.github.emailtohl.building.site.dao.flow.ApplicationFormRepository;
+import com.github.emailtohl.building.site.dao.organization.CompanyRepository;
+import com.github.emailtohl.building.site.dao.organization.DepartmentRepository;
+import com.github.emailtohl.building.site.dao.user.UserRepository;
 /**
  * 清除测试数据
  * @author HeLei

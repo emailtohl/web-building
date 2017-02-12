@@ -29,7 +29,7 @@ import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.user.Customer;
-import com.github.emailtohl.building.site.service.CustomerService;
+import com.github.emailtohl.building.site.service.user.CustomerService;
 import com.github.emailtohl.building.stub.SecurityContextManager;
 import com.google.gson.Gson;
 /**

@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
-import com.github.emailtohl.building.site.service.UserService;
+import com.github.emailtohl.building.site.service.user.UserService;
 import com.github.emailtohl.building.stub.SecurityContextManager;
 import com.github.emailtohl.building.stub.ServiceStub;
 /**

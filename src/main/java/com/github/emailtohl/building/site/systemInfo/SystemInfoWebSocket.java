@@ -18,8 +18,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import com.github.emailtohl.building.site.service.impl.SystemInfo;
-import com.github.emailtohl.building.site.service.impl.SystemInfo.Observe;
+import com.github.emailtohl.building.site.service.SystemInfo;
+import com.github.emailtohl.building.site.service.SystemInfo.Observe;
 import com.github.emailtohl.building.websocket.Configurator;
 import com.google.gson.Gson;
 /**

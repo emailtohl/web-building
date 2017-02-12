@@ -16,7 +16,7 @@ import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.dto.RoleDto;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.user.User;
-import com.github.emailtohl.building.site.service.AuditedService;
+import com.github.emailtohl.building.site.service.audited.AuditedService;
 /**
  * 查阅Hibernate Envers产生的审计记录
  * 

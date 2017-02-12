@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.dto.RoleDto;
-import com.github.emailtohl.building.site.service.RoleService;
+import com.github.emailtohl.building.site.service.role.RoleService;
 import com.github.emailtohl.building.stub.SecurityContextManager;
 import com.google.gson.Gson;
 /**

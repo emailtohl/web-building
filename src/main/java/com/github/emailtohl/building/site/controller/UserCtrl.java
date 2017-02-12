@@ -51,7 +51,7 @@ import com.github.emailtohl.building.site.entities.role.Role;
 import com.github.emailtohl.building.site.entities.user.Customer;
 import com.github.emailtohl.building.site.entities.user.Employee;
 import com.github.emailtohl.building.site.entities.user.User;
-import com.github.emailtohl.building.site.service.UserService;
+import com.github.emailtohl.building.site.service.user.UserService;
 import com.google.gson.Gson;
 /**
  * 用户管理的控制器

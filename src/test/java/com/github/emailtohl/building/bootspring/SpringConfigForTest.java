@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 
 import com.github.emailtohl.building.config.RootContextConfiguration;
-import com.github.emailtohl.building.site.service.UserService;
+import com.github.emailtohl.building.site.service.user.UserService;
 import com.github.emailtohl.building.stub.SecurityContextManager;
 import com.github.emailtohl.building.stub.ServiceStub;
 /**

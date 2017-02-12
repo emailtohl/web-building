@@ -29,7 +29,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.github.emailtohl.building.site.dto.RoleDto;
 import com.github.emailtohl.building.site.entities.role.Authority;
 import com.github.emailtohl.building.site.entities.role.Role;
-import com.github.emailtohl.building.site.service.RoleService;
+import com.github.emailtohl.building.site.service.role.RoleService;
 /**
  * 角色管理的控制器
  * @author HeLei

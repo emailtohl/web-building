@@ -29,8 +29,8 @@ import com.github.emailtohl.building.site.entities.role.Role;
 import com.github.emailtohl.building.site.entities.user.Customer;
 import com.github.emailtohl.building.site.entities.user.Employee;
 import com.github.emailtohl.building.site.entities.user.User;
-import com.github.emailtohl.building.site.service.ApplicationFormService;
-import com.github.emailtohl.building.site.service.UserService;
+import com.github.emailtohl.building.site.service.flow.ApplicationFormService;
+import com.github.emailtohl.building.site.service.user.UserService;
 /**
  * 为项目测试提供统一的桩支持
  * @author HeLei

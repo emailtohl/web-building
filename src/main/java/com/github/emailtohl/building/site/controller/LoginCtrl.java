@@ -32,7 +32,7 @@ import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.user.Customer;
 import com.github.emailtohl.building.site.entities.user.User;
 import com.github.emailtohl.building.site.mail.EmailService;
-import com.github.emailtohl.building.site.service.UserService;
+import com.github.emailtohl.building.site.service.user.UserService;
 import com.google.gson.Gson;
 /**
  * 认证控制器，管理用户注册，更改密码，授权等功能

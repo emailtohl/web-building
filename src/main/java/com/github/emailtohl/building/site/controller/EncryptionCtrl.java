@@ -17,7 +17,7 @@ import com.github.emailtohl.building.common.encryption.myrsa.Encipher;
 import com.github.emailtohl.building.common.utils.SecurityContextUtil;
 import com.github.emailtohl.building.filter.UserPasswordEncryptionFilter;
 import com.github.emailtohl.building.site.entities.user.User;
-import com.github.emailtohl.building.site.service.UserService;
+import com.github.emailtohl.building.site.service.user.UserService;
 import com.google.gson.Gson;
 /**
  * 密钥管理相关的控制器

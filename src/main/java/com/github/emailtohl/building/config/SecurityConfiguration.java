@@ -71,7 +71,7 @@ import com.github.emailtohl.building.filter.UserPasswordEncryptionFilter;
 import com.github.emailtohl.building.message.event.LoginEvent;
 import com.github.emailtohl.building.message.event.LogoutEvent;
 import com.github.emailtohl.building.site.controller.UserCtrl;
-import com.github.emailtohl.building.site.service.UserPermissionEvaluator;
+import com.github.emailtohl.building.site.service.user.UserPermissionEvaluator;
 /**
  * spring security 的编程风格的配置，它不仅被RootContextConfiguration导入，并且也依赖于RootContextConfiguration中的Bean
  * @author HeLei

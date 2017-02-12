@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
-import com.github.emailtohl.building.site.service.AuditedService;
+import com.github.emailtohl.building.site.service.audited.AuditedService;
 import com.github.emailtohl.building.stub.SecurityContextManager;
 import com.google.gson.Gson;
 /**

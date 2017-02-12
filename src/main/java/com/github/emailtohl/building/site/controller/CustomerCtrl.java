@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.user.Customer;
-import com.github.emailtohl.building.site.service.CustomerService;
+import com.github.emailtohl.building.site.service.user.CustomerService;
 /**
  * 用户管理的控制器
  * @author HeLei

@@ -46,7 +46,7 @@ import com.github.emailtohl.building.site.dto.ApplicationFormDto;
 import com.github.emailtohl.building.site.entities.flow.ApplicationForm;
 import com.github.emailtohl.building.site.entities.flow.ApplicationHandleHistory;
 import com.github.emailtohl.building.site.entities.flow.ApplicationForm.Status;
-import com.github.emailtohl.building.site.service.ApplicationFormService;
+import com.github.emailtohl.building.site.service.flow.ApplicationFormService;
 /**
  * 工单申请模块的控制器
  * @author HeLei
