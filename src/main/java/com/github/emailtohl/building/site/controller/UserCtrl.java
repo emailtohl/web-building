@@ -47,10 +47,10 @@ import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
 import com.github.emailtohl.building.common.utils.UpDownloader;
 import com.github.emailtohl.building.exception.ResourceNotFoundException;
 import com.github.emailtohl.building.site.dto.UserDto;
-import com.github.emailtohl.building.site.entities.Customer;
-import com.github.emailtohl.building.site.entities.Employee;
-import com.github.emailtohl.building.site.entities.Role;
-import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.entities.role.Role;
+import com.github.emailtohl.building.site.entities.user.Customer;
+import com.github.emailtohl.building.site.entities.user.Employee;
+import com.github.emailtohl.building.site.entities.user.User;
 import com.github.emailtohl.building.site.service.UserService;
 import com.google.gson.Gson;
 /**

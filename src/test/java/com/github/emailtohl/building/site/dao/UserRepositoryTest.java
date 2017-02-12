@@ -31,8 +31,8 @@ import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.BeanUtil;
 import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.initdb.PersistenceData;
-import com.github.emailtohl.building.site.entities.Subsidiary;
-import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.entities.user.Subsidiary;
+import com.github.emailtohl.building.site.entities.user.User;
 /**
  * 业务类测试
  * @author HeLei

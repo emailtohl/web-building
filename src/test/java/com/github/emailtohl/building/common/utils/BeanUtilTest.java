@@ -54,9 +54,9 @@ import org.junit.Test;
 
 import com.github.emailtohl.building.common.jpa.relationEntities.Relation1;
 import com.github.emailtohl.building.common.jpa.relationEntities.Relation2;
-import com.github.emailtohl.building.site.entities.Subsidiary;
-import com.github.emailtohl.building.site.entities.User;
-import com.github.emailtohl.building.site.entities.User.Gender;
+import com.github.emailtohl.building.site.entities.user.Subsidiary;
+import com.github.emailtohl.building.site.entities.user.User;
+import com.github.emailtohl.building.site.entities.user.User.Gender;
 /**
  * JavaBean工具的测试
  * @author HeLei
@@ -94,7 +94,7 @@ public class BeanUtilTest {
 		Matcher m = p.matcher(t.toString());
 		if (m.find())
 			logger.debug(m.group(1));
-		assertEquals("com.github.emailtohl.building.site.entities.Role", m.group(1));
+		assertEquals("com.github.emailtohl.building.site.entities.role.Role", m.group(1));
 		
 		f = map.get("email");
 		t = f.getGenericType();

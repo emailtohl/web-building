@@ -26,11 +26,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.initdb.PersistenceData;
-import com.github.emailtohl.building.site.entities.ApplicationForm;
-import com.github.emailtohl.building.site.entities.ApplicationForm.Status;
-import com.github.emailtohl.building.site.entities.ApplicationHandleHistory;
-import com.github.emailtohl.building.site.entities.Customer;
-import com.github.emailtohl.building.site.entities.Employee;
+import com.github.emailtohl.building.site.entities.flow.ApplicationForm;
+import com.github.emailtohl.building.site.entities.flow.ApplicationHandleHistory;
+import com.github.emailtohl.building.site.entities.flow.ApplicationForm.Status;
+import com.github.emailtohl.building.site.entities.user.Customer;
+import com.github.emailtohl.building.site.entities.user.Employee;
 /**
  * 业务类测试
  * @author HeLei

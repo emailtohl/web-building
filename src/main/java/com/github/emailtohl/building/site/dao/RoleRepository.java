@@ -2,7 +2,7 @@ package com.github.emailtohl.building.site.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.github.emailtohl.building.site.entities.Role;
+import com.github.emailtohl.building.site.entities.role.Role;
 /**
  * 角色访问接口
  * @author HeLei

@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.site.entities;
+package com.github.emailtohl.building.site.entities.cms;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +17,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.search.annotations.Store;
 
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
+import com.github.emailtohl.building.site.entities.user.User;
 
 /**
  * 文章实体

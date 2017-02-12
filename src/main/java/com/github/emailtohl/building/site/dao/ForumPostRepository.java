@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.github.emailtohl.building.common.jpa.fullTextSearch.SearchableRepository;
-import com.github.emailtohl.building.site.entities.ForumPost;
+import com.github.emailtohl.building.site.entities.conference.ForumPost;
 /**
  * 论坛帖子搜索接口
  * @author HeLei

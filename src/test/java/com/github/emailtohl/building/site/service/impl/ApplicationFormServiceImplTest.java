@@ -33,9 +33,9 @@ import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.dao.ApplicationFormRepository;
 import com.github.emailtohl.building.site.dao.ApplicationHandleHistoryRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
-import com.github.emailtohl.building.site.entities.ApplicationForm;
-import com.github.emailtohl.building.site.entities.ApplicationForm.Status;
-import com.github.emailtohl.building.site.entities.ApplicationHandleHistory;
+import com.github.emailtohl.building.site.entities.flow.ApplicationForm;
+import com.github.emailtohl.building.site.entities.flow.ApplicationHandleHistory;
+import com.github.emailtohl.building.site.entities.flow.ApplicationForm.Status;
 import com.github.emailtohl.building.site.service.ApplicationFormService;
 import com.github.emailtohl.building.stub.SecurityContextManager;
 /**

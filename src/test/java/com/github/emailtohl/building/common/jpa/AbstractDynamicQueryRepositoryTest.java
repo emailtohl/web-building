@@ -1,8 +1,8 @@
 package com.github.emailtohl.building.common.jpa;
 
-import static com.github.emailtohl.building.site.entities.Role.ADMIN;
-import static com.github.emailtohl.building.site.entities.Role.EMPLOYEE;
-import static com.github.emailtohl.building.site.entities.Role.USER;
+import static com.github.emailtohl.building.site.entities.role.Role.ADMIN;
+import static com.github.emailtohl.building.site.entities.role.Role.EMPLOYEE;
+import static com.github.emailtohl.building.site.entities.role.Role.USER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -40,10 +40,10 @@ import com.github.emailtohl.building.common.jpa.relationEntities.Relation2;
 import com.github.emailtohl.building.common.jpa.relationEntities.TestRelationRepository;
 import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.dao.RoleRepository;
-import com.github.emailtohl.building.site.entities.Role;
-import com.github.emailtohl.building.site.entities.Subsidiary;
-import com.github.emailtohl.building.site.entities.User;
-import com.github.emailtohl.building.site.entities.User.Gender;
+import com.github.emailtohl.building.site.entities.role.Role;
+import com.github.emailtohl.building.site.entities.user.Subsidiary;
+import com.github.emailtohl.building.site.entities.user.User;
+import com.github.emailtohl.building.site.entities.user.User.Gender;
 /**
  * 动态查询测试
  * @author HeLei

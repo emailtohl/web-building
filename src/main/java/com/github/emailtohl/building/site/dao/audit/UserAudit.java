@@ -1,7 +1,7 @@
 package com.github.emailtohl.building.site.dao.audit;
 
 import com.github.emailtohl.building.common.jpa.envers.AuditedRepository;
-import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.entities.user.User;
 /**
  * User的历史信息
  * @author HeLei

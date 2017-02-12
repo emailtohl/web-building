@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.site.entities;
+package com.github.emailtohl.building.site.entities.flow;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
+import com.github.emailtohl.building.site.entities.user.User;
 /**
  * 申请表实体
  * @author HeLei

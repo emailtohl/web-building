@@ -27,8 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.github.emailtohl.building.site.dto.RoleDto;
-import com.github.emailtohl.building.site.entities.Authority;
-import com.github.emailtohl.building.site.entities.Role;
+import com.github.emailtohl.building.site.entities.role.Authority;
+import com.github.emailtohl.building.site.entities.role.Role;
 import com.github.emailtohl.building.site.service.RoleService;
 /**
  * 角色管理的控制器

@@ -1,8 +1,8 @@
 package com.github.emailtohl.building.site.service;
 
-import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_DELETE;
-import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_READ_HISTORY;
-import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_TRANSIT;
+import static com.github.emailtohl.building.site.entities.role.Authority.APPLICATION_FORM_DELETE;
+import static com.github.emailtohl.building.site.entities.role.Authority.APPLICATION_FORM_READ_HISTORY;
+import static com.github.emailtohl.building.site.entities.role.Authority.APPLICATION_FORM_TRANSIT;
 
 import java.util.Date;
 import java.util.List;
@@ -18,9 +18,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 
-import com.github.emailtohl.building.site.entities.ApplicationForm;
-import com.github.emailtohl.building.site.entities.ApplicationForm.Status;
-import com.github.emailtohl.building.site.entities.ApplicationHandleHistory;
+import com.github.emailtohl.building.site.entities.flow.ApplicationForm;
+import com.github.emailtohl.building.site.entities.flow.ApplicationHandleHistory;
+import com.github.emailtohl.building.site.entities.flow.ApplicationForm.Status;
 /**
  * 流程处理服务
  * @author HeLei

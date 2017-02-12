@@ -43,9 +43,9 @@ import com.github.emailtohl.building.common.Constant;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
 import com.github.emailtohl.building.site.dto.ApplicationFormDto;
-import com.github.emailtohl.building.site.entities.ApplicationForm;
-import com.github.emailtohl.building.site.entities.ApplicationForm.Status;
-import com.github.emailtohl.building.site.entities.ApplicationHandleHistory;
+import com.github.emailtohl.building.site.entities.flow.ApplicationForm;
+import com.github.emailtohl.building.site.entities.flow.ApplicationHandleHistory;
+import com.github.emailtohl.building.site.entities.flow.ApplicationForm.Status;
 import com.github.emailtohl.building.site.service.ApplicationFormService;
 /**
  * 工单申请模块的控制器

@@ -1,6 +1,6 @@
 package com.github.emailtohl.building.site.service;
 
-import static com.github.emailtohl.building.site.entities.Authority.*;
+import static com.github.emailtohl.building.site.entities.role.Authority.*;
 
 import javax.transaction.Transactional;
 

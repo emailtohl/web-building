@@ -1,7 +1,8 @@
-package com.github.emailtohl.building.site.entities;
+package com.github.emailtohl.building.site.entities.cms;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -20,6 +21,7 @@ public class Comment implements Comparable<Comment> {
 	private Date date;
 	private String critics = "匿名";
 	private String icon = "";
+	private boolean isApproved = true;
 	
 	public String getContent() {
 		return content;
@@ -52,6 +54,15 @@ public class Comment implements Comparable<Comment> {
 
 	public void setIcon(String icon) {
 		this.icon = icon;
+	}
+
+	@Column(name = "is_approved")
+	public boolean isApproved() {
+		return isApproved;
+	}
+
+	public void setApproved(boolean isApproved) {
+		this.isApproved = isApproved;
 	}
 
 	@Override

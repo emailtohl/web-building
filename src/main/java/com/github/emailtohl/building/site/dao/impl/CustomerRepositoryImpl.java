@@ -17,7 +17,7 @@ import com.github.emailtohl.building.common.jpa.fullTextSearch.AbstractSearchabl
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.Criterion;
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.Criterion.Operator;
 import com.github.emailtohl.building.site.dao.CustomerRepository;
-import com.github.emailtohl.building.site.entities.Customer;
+import com.github.emailtohl.building.site.entities.user.Customer;
 /**
  * 客户管理数据访问接口实现类
  * @author HeLei

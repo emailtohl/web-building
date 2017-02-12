@@ -18,10 +18,10 @@ import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.Criterion;
 import com.github.emailtohl.building.site.dao.ApplicationFormRepository;
 import com.github.emailtohl.building.site.dao.ApplicationHandleHistoryRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
-import com.github.emailtohl.building.site.entities.ApplicationForm;
-import com.github.emailtohl.building.site.entities.ApplicationForm.Status;
-import com.github.emailtohl.building.site.entities.ApplicationHandleHistory;
-import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.entities.flow.ApplicationForm;
+import com.github.emailtohl.building.site.entities.flow.ApplicationHandleHistory;
+import com.github.emailtohl.building.site.entities.flow.ApplicationForm.Status;
+import com.github.emailtohl.building.site.entities.user.User;
 import com.github.emailtohl.building.site.service.ApplicationFormService;
 /**
  * 申请表业务流程实现类

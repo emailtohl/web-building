@@ -12,7 +12,7 @@ import javax.persistence.criteria.Root;
 
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.AbstractCriterionQueryRepository;
 import com.github.emailtohl.building.site.dao.ApplicationHandleHistoryRepositoryCustomization;
-import com.github.emailtohl.building.site.entities.ApplicationHandleHistory;
+import com.github.emailtohl.building.site.entities.flow.ApplicationHandleHistory;
 /**
  * 只需继承AbstractCriterionQueryRepository即可获得动态查询能力
  * @author HeLei

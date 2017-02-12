@@ -21,7 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.dao.CustomerRepository;
-import com.github.emailtohl.building.site.entities.Customer;
+import com.github.emailtohl.building.site.entities.user.Customer;
 /**
  * 业务类测试
  * @author HeLei

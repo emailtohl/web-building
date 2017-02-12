@@ -1,6 +1,6 @@
 package com.github.emailtohl.building.site.service;
 
-import static com.github.emailtohl.building.site.entities.Authority.USER_ROLE_AUTHORITY_ALLOCATION;
+import static com.github.emailtohl.building.site.entities.role.Authority.USER_ROLE_AUTHORITY_ALLOCATION;
 
 import java.util.List;
 import java.util.Set;
@@ -11,8 +11,8 @@ import javax.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 
-import com.github.emailtohl.building.site.entities.Authority;
-import com.github.emailtohl.building.site.entities.Role;
+import com.github.emailtohl.building.site.entities.role.Authority;
+import com.github.emailtohl.building.site.entities.role.Role;
 /**
  * 角色管理的服务层
  * @author HeLei

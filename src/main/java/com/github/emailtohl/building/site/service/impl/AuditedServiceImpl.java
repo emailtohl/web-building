@@ -23,8 +23,8 @@ import com.github.emailtohl.building.site.dao.audit.RoleAudit;
 import com.github.emailtohl.building.site.dao.audit.UserAudit;
 import com.github.emailtohl.building.site.dto.RoleDto;
 import com.github.emailtohl.building.site.dto.UserDto;
-import com.github.emailtohl.building.site.entities.Role;
-import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.entities.role.Role;
+import com.github.emailtohl.building.site.entities.user.User;
 import com.github.emailtohl.building.site.service.AuditedService;
 /**
  * 查询被审计的实体的历史记录

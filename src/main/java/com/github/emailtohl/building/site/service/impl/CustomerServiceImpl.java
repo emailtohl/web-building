@@ -22,7 +22,7 @@ import org.springframework.util.StringUtils;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.dao.CustomerRepository;
-import com.github.emailtohl.building.site.entities.Customer;
+import com.github.emailtohl.building.site.entities.user.Customer;
 import com.github.emailtohl.building.site.service.CustomerService;
 /**
  * 客户管理（CRM）服务的实现

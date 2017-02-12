@@ -17,8 +17,8 @@ import com.github.emailtohl.building.site.dao.ForumPostRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
 import com.github.emailtohl.building.site.dto.ForumPostDto;
 import com.github.emailtohl.building.site.dto.UserDto;
-import com.github.emailtohl.building.site.entities.ForumPost;
-import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.entities.conference.ForumPost;
+import com.github.emailtohl.building.site.entities.user.User;
 import com.github.emailtohl.building.site.service.ForumPostService;
 /**
  * 论坛Service实现

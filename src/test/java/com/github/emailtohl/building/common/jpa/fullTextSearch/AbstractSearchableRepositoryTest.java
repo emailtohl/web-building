@@ -20,7 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.common.jpa.relationEntities.Relation1;
 import com.github.emailtohl.building.config.RootContextConfiguration;
-import com.github.emailtohl.building.site.entities.ForumPost;
+import com.github.emailtohl.building.site.entities.conference.ForumPost;
 /**
  * Hibernate search组件测试
  * @author HeLei

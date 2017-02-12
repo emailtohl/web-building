@@ -3,7 +3,7 @@ package com.github.emailtohl.building.site.dao;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.github.emailtohl.building.site.entities.Company;
+import com.github.emailtohl.building.site.entities.organization.Company;
 /**
  * 公司的缓存
  * @author HeLei

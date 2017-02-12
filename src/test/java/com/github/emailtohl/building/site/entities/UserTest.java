@@ -21,6 +21,8 @@ import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.initdb.PersistenceData;
 import com.github.emailtohl.building.site.dao.UserRepository;
+import com.github.emailtohl.building.site.entities.role.Authority;
+import com.github.emailtohl.building.site.entities.user.User;
 /**
  * 业务类测试
  * @author HeLei

@@ -8,8 +8,8 @@ import javax.validation.ConstraintViolation;
 
 import org.junit.Test;
 
-import com.github.emailtohl.building.site.entities.Employee;
-import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.entities.user.Employee;
+import com.github.emailtohl.building.site.entities.user.User;
 /**
  * 校验器工具的测试
  * @author HeLei

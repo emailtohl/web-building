@@ -3,7 +3,7 @@ package com.github.emailtohl.building.site.dao.audit;
 import org.springframework.stereotype.Repository;
 
 import com.github.emailtohl.building.common.jpa.envers.AbstractAuditedRepository;
-import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.entities.user.User;
 /**
  * User的历史信息
  * @author HeLei

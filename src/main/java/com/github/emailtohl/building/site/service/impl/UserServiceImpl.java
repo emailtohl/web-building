@@ -4,8 +4,8 @@ import static com.github.emailtohl.building.common.jpa.entity.BaseEntity.CREATE_
 import static com.github.emailtohl.building.common.jpa.entity.BaseEntity.ID_PROPERTY_NAME;
 import static com.github.emailtohl.building.common.jpa.entity.BaseEntity.MODIFY_DATE_PROPERTY_NAME;
 import static com.github.emailtohl.building.common.jpa.entity.BaseEntity.VERSION_PROPERTY_NAME;
-import static com.github.emailtohl.building.site.entities.Authority.USER_ROLE_AUTHORITY_ALLOCATION;
-import static com.github.emailtohl.building.site.entities.Role.ADMIN;
+import static com.github.emailtohl.building.site.entities.role.Authority.USER_ROLE_AUTHORITY_ALLOCATION;
+import static com.github.emailtohl.building.site.entities.role.Role.ADMIN;
 
 import java.io.Serializable;
 import java.security.SecureRandom;
@@ -48,12 +48,12 @@ import com.github.emailtohl.building.filter.UserPasswordEncryptionFilter;
 import com.github.emailtohl.building.site.dao.DepartmentRepository;
 import com.github.emailtohl.building.site.dao.RoleRepository;
 import com.github.emailtohl.building.site.dao.UserRepository;
-import com.github.emailtohl.building.site.entities.Customer;
-import com.github.emailtohl.building.site.entities.Department;
-import com.github.emailtohl.building.site.entities.Employee;
-import com.github.emailtohl.building.site.entities.Role;
-import com.github.emailtohl.building.site.entities.User;
-import com.github.emailtohl.building.site.entities.User.AuthenticationImpl;
+import com.github.emailtohl.building.site.entities.organization.Department;
+import com.github.emailtohl.building.site.entities.role.Role;
+import com.github.emailtohl.building.site.entities.user.Customer;
+import com.github.emailtohl.building.site.entities.user.Employee;
+import com.github.emailtohl.building.site.entities.user.User;
+import com.github.emailtohl.building.site.entities.user.User.AuthenticationImpl;
 import com.github.emailtohl.building.site.service.UserService;
 /**
  * 管理用户的相关服务，实现类中只提供功能

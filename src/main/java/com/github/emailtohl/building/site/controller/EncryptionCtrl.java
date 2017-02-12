@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.github.emailtohl.building.common.encryption.myrsa.Encipher;
 import com.github.emailtohl.building.common.utils.SecurityContextUtil;
 import com.github.emailtohl.building.filter.UserPasswordEncryptionFilter;
-import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.entities.user.User;
 import com.github.emailtohl.building.site.service.UserService;
 import com.google.gson.Gson;
 /**

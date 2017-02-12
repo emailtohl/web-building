@@ -2,7 +2,7 @@ package com.github.emailtohl.building.site.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.github.emailtohl.building.site.entities.Department;
+import com.github.emailtohl.building.site.entities.organization.Department;
 /**
  * 部门数据仓库
  * @author HeLei

@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.site.entities;
+package com.github.emailtohl.building.site.entities.flow;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -8,7 +8,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
-import com.github.emailtohl.building.site.entities.ApplicationForm.Status;
+import com.github.emailtohl.building.site.entities.flow.ApplicationForm.Status;
+import com.github.emailtohl.building.site.entities.user.User;
 /**
  * 申请表的历史处理记录
  * @author HeLei

@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.site.entities;
+package com.github.emailtohl.building.site.entities.conference;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +10,7 @@ import javax.persistence.Table;
 import org.hibernate.search.annotations.Store;
 
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
+import com.github.emailtohl.building.site.entities.user.User;
 /**
  * 论坛帖子对象
  * @author HeLei

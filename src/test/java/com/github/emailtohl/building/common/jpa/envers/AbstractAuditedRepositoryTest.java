@@ -32,9 +32,9 @@ import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.initdb.PersistenceData;
 import com.github.emailtohl.building.site.dao.audit.CleanAuditData;
-import com.github.emailtohl.building.site.entities.Customer;
-import com.github.emailtohl.building.site.entities.Role;
-import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.entities.role.Role;
+import com.github.emailtohl.building.site.entities.user.Customer;
+import com.github.emailtohl.building.site.entities.user.User;
 /**
  * Hibernate envers组件使用测试
  * @author HeLei

@@ -1,7 +1,7 @@
 package com.github.emailtohl.building.initdb;
 
-import static com.github.emailtohl.building.site.entities.Authority.*;
-import static com.github.emailtohl.building.site.entities.Role.*;
+import static com.github.emailtohl.building.site.entities.role.Authority.*;
+import static com.github.emailtohl.building.site.entities.role.Role.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,16 +14,16 @@ import java.util.HashSet;
 
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
-import com.github.emailtohl.building.site.entities.Article;
-import com.github.emailtohl.building.site.entities.Authority;
-import com.github.emailtohl.building.site.entities.Comment;
-import com.github.emailtohl.building.site.entities.Company;
-import com.github.emailtohl.building.site.entities.Customer;
-import com.github.emailtohl.building.site.entities.Department;
-import com.github.emailtohl.building.site.entities.Employee;
-import com.github.emailtohl.building.site.entities.Role;
-import com.github.emailtohl.building.site.entities.Subsidiary;
-import com.github.emailtohl.building.site.entities.User.Gender;
+import com.github.emailtohl.building.site.entities.cms.Article;
+import com.github.emailtohl.building.site.entities.cms.Comment;
+import com.github.emailtohl.building.site.entities.organization.Company;
+import com.github.emailtohl.building.site.entities.organization.Department;
+import com.github.emailtohl.building.site.entities.role.Authority;
+import com.github.emailtohl.building.site.entities.role.Role;
+import com.github.emailtohl.building.site.entities.user.Customer;
+import com.github.emailtohl.building.site.entities.user.Employee;
+import com.github.emailtohl.building.site.entities.user.Subsidiary;
+import com.github.emailtohl.building.site.entities.user.User.Gender;
 /**
  * 初始化数据库使用的测试数据
  * @author HeLei

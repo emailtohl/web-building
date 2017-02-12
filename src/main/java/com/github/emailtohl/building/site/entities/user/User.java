@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.site.entities;
+package com.github.emailtohl.building.site.entities.user;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -49,6 +49,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.github.emailtohl.building.common.Constant;
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
+import com.github.emailtohl.building.site.entities.role.Authority;
+import com.github.emailtohl.building.site.entities.role.Role;
 /**
  * 用户实体类
  * javax校验的注解在field上，JPA约束的注解写在JavaBean属性上

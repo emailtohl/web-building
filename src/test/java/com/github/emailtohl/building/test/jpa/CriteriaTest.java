@@ -23,8 +23,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.common.jpa.AbstractJpaRepository;
 import com.github.emailtohl.building.config.RootContextConfiguration;
-import com.github.emailtohl.building.site.entities.Role;
-import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.entities.role.Role;
+import com.github.emailtohl.building.site.entities.user.User;
 /**
  * JPA标准查询的测试
  * @author HeLei

@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.site.entities;
+package com.github.emailtohl.building.site.entities.role;
 
 import java.util.HashSet;
 import java.util.Objects;

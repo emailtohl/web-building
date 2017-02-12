@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.site.entities;
+package com.github.emailtohl.building.site.entities.user;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,6 +7,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
+
+import com.github.emailtohl.building.site.entities.organization.Department;
 /**
  * 系统的用户一般分为外部客户和内部职员
  * 这是为内部职员建立的实体类

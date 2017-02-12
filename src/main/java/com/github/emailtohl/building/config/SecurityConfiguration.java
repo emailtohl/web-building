@@ -1,22 +1,22 @@
 package com.github.emailtohl.building.config;
 
-import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_DELETE;
-import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_READ_HISTORY;
-import static com.github.emailtohl.building.site.entities.Authority.APPLICATION_FORM_TRANSIT;
-import static com.github.emailtohl.building.site.entities.Authority.AUDIT_ROLE;
-import static com.github.emailtohl.building.site.entities.Authority.AUDIT_USER;
-import static com.github.emailtohl.building.site.entities.Authority.FORUM_DELETE;
-import static com.github.emailtohl.building.site.entities.Authority.RESOURCE_MANAGER;
-import static com.github.emailtohl.building.site.entities.Authority.USER_CREATE_SPECIAL;
-import static com.github.emailtohl.building.site.entities.Authority.USER_CUSTOMER;
-import static com.github.emailtohl.building.site.entities.Authority.USER_DELETE;
-import static com.github.emailtohl.building.site.entities.Authority.USER_DISABLE;
-import static com.github.emailtohl.building.site.entities.Authority.USER_GRANT_ROLES;
-import static com.github.emailtohl.building.site.entities.Authority.USER_READ_ALL;
-import static com.github.emailtohl.building.site.entities.Authority.USER_READ_SELF;
-import static com.github.emailtohl.building.site.entities.Authority.USER_ROLE_AUTHORITY_ALLOCATION;
-import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_ALL;
-import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_SELF;
+import static com.github.emailtohl.building.site.entities.role.Authority.APPLICATION_FORM_DELETE;
+import static com.github.emailtohl.building.site.entities.role.Authority.APPLICATION_FORM_READ_HISTORY;
+import static com.github.emailtohl.building.site.entities.role.Authority.APPLICATION_FORM_TRANSIT;
+import static com.github.emailtohl.building.site.entities.role.Authority.AUDIT_ROLE;
+import static com.github.emailtohl.building.site.entities.role.Authority.AUDIT_USER;
+import static com.github.emailtohl.building.site.entities.role.Authority.FORUM_DELETE;
+import static com.github.emailtohl.building.site.entities.role.Authority.RESOURCE_MANAGER;
+import static com.github.emailtohl.building.site.entities.role.Authority.USER_CREATE_SPECIAL;
+import static com.github.emailtohl.building.site.entities.role.Authority.USER_CUSTOMER;
+import static com.github.emailtohl.building.site.entities.role.Authority.USER_DELETE;
+import static com.github.emailtohl.building.site.entities.role.Authority.USER_DISABLE;
+import static com.github.emailtohl.building.site.entities.role.Authority.USER_GRANT_ROLES;
+import static com.github.emailtohl.building.site.entities.role.Authority.USER_READ_ALL;
+import static com.github.emailtohl.building.site.entities.role.Authority.USER_READ_SELF;
+import static com.github.emailtohl.building.site.entities.role.Authority.USER_ROLE_AUTHORITY_ALLOCATION;
+import static com.github.emailtohl.building.site.entities.role.Authority.USER_UPDATE_ALL;
+import static com.github.emailtohl.building.site.entities.role.Authority.USER_UPDATE_SELF;
 
 import java.io.IOException;
 

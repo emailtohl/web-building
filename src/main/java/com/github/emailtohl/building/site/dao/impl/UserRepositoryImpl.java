@@ -20,8 +20,8 @@ import org.springframework.data.jpa.repository.query.QueryUtils;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.jpaCriterionQuery.AbstractCriterionQueryRepository;
 import com.github.emailtohl.building.site.dao.UserRepositoryCustomization;
-import com.github.emailtohl.building.site.entities.Employee;
-import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.entities.user.Employee;
+import com.github.emailtohl.building.site.entities.user.User;
 /**
  * spring data扫描到接口UserRepository时，会认为UserRepository+Impl作为自定义实现
  * 当调用UserRepositoryImpl中的方法时，不再代理，而是直接将方法交给UserRepositoryImpl

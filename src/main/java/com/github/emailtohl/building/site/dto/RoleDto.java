@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.hibernate.envers.RevisionType;
 
-import com.github.emailtohl.building.site.entities.Role;
+import com.github.emailtohl.building.site.entities.role.Role;
 /**
  * 角色的数据传输对象，主要传输权限名
  * @author HeLei

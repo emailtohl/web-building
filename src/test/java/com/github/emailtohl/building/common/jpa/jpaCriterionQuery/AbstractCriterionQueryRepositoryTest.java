@@ -27,8 +27,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
-import com.github.emailtohl.building.site.entities.Employee;
-import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.entities.user.Employee;
+import com.github.emailtohl.building.site.entities.user.User;
 /**
  * 封装标准查询的组件测试
  * @author HeLei

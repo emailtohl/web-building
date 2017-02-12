@@ -1,6 +1,6 @@
 package com.github.emailtohl.building.site.service;
 
-import static com.github.emailtohl.building.site.entities.Authority.FORUM_DELETE;
+import static com.github.emailtohl.building.site.entities.role.Authority.FORUM_DELETE;
 
 import java.util.List;
 

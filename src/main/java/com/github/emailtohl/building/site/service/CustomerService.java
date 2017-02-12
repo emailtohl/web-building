@@ -1,6 +1,6 @@
 package com.github.emailtohl.building.site.service;
 
-import static com.github.emailtohl.building.site.entities.Authority.USER_CUSTOMER;
+import static com.github.emailtohl.building.site.entities.role.Authority.USER_CUSTOMER;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 
 import com.github.emailtohl.building.common.jpa.Pager;
-import com.github.emailtohl.building.site.entities.Customer;
+import com.github.emailtohl.building.site.entities.user.Customer;
 /**
  * 为客户管理（CRM）提供服务接口
  * @author HeLei

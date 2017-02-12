@@ -7,10 +7,10 @@ import java.util.Date;
 import org.hibernate.envers.RevisionType;
 import org.springframework.beans.BeanUtils;
 
-import com.github.emailtohl.building.site.entities.Customer;
-import com.github.emailtohl.building.site.entities.Department;
-import com.github.emailtohl.building.site.entities.Employee;
-import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.entities.organization.Department;
+import com.github.emailtohl.building.site.entities.user.Customer;
+import com.github.emailtohl.building.site.entities.user.Employee;
+import com.github.emailtohl.building.site.entities.user.User;
 /**
  * User的数据传输对象，与User实体对象不同，数据传输对象专门传递信息，也可以接收前端的表单信息
  * @author HeLei

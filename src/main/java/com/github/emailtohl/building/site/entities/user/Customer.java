@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.site.entities;
+package com.github.emailtohl.building.site.entities.user;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.dto.RoleDto;
 import com.github.emailtohl.building.site.dto.UserDto;
-import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.entities.user.User;
 import com.github.emailtohl.building.site.service.AuditedService;
 /**
  * 查阅Hibernate Envers产生的审计记录

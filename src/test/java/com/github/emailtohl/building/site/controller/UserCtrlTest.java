@@ -23,7 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.site.dto.UserDto;
-import com.github.emailtohl.building.site.entities.Role;
+import com.github.emailtohl.building.site.entities.role.Role;
 import com.github.emailtohl.building.site.service.UserService;
 import com.github.emailtohl.building.stub.SecurityContextManager;
 import com.github.emailtohl.building.stub.ServiceStub;

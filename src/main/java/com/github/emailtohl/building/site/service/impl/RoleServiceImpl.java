@@ -15,8 +15,8 @@ import org.springframework.stereotype.Service;
 
 import com.github.emailtohl.building.site.dao.AuthorityRepository;
 import com.github.emailtohl.building.site.dao.RoleRepository;
-import com.github.emailtohl.building.site.entities.Authority;
-import com.github.emailtohl.building.site.entities.Role;
+import com.github.emailtohl.building.site.entities.role.Authority;
+import com.github.emailtohl.building.site.entities.role.Role;
 import com.github.emailtohl.building.site.service.RoleService;
 /**
  * 角色管理服务的实现

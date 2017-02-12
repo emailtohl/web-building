@@ -3,8 +3,8 @@ package com.github.emailtohl.building.site.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.emailtohl.building.site.entities.ApplicationForm;
-import com.github.emailtohl.building.site.entities.ApplicationHandleHistory;
+import com.github.emailtohl.building.site.entities.flow.ApplicationForm;
+import com.github.emailtohl.building.site.entities.flow.ApplicationHandleHistory;
 /**
  * 申请单数据存放对象，主要存放申请单历史记录
  * 在实体中交叉引用会导致gson解析失败

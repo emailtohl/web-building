@@ -1,13 +1,13 @@
 package com.github.emailtohl.building.site.service;
 
-import static com.github.emailtohl.building.site.entities.Authority.USER_CREATE_SPECIAL;
-import static com.github.emailtohl.building.site.entities.Authority.USER_DELETE;
-import static com.github.emailtohl.building.site.entities.Authority.USER_DISABLE;
-import static com.github.emailtohl.building.site.entities.Authority.USER_GRANT_ROLES;
-import static com.github.emailtohl.building.site.entities.Authority.USER_READ_ALL;
-import static com.github.emailtohl.building.site.entities.Authority.USER_READ_SELF;
-import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_ALL;
-import static com.github.emailtohl.building.site.entities.Authority.USER_UPDATE_SELF;
+import static com.github.emailtohl.building.site.entities.role.Authority.USER_CREATE_SPECIAL;
+import static com.github.emailtohl.building.site.entities.role.Authority.USER_DELETE;
+import static com.github.emailtohl.building.site.entities.role.Authority.USER_DISABLE;
+import static com.github.emailtohl.building.site.entities.role.Authority.USER_GRANT_ROLES;
+import static com.github.emailtohl.building.site.entities.role.Authority.USER_READ_ALL;
+import static com.github.emailtohl.building.site.entities.role.Authority.USER_READ_SELF;
+import static com.github.emailtohl.building.site.entities.role.Authority.USER_UPDATE_ALL;
+import static com.github.emailtohl.building.site.entities.role.Authority.USER_UPDATE_SELF;
 
 import java.util.List;
 import java.util.Set;
@@ -31,10 +31,10 @@ import org.springframework.validation.annotation.Validated;
 
 import com.github.emailtohl.building.common.Constant;
 import com.github.emailtohl.building.common.jpa.Pager;
-import com.github.emailtohl.building.site.entities.Customer;
-import com.github.emailtohl.building.site.entities.Employee;
-import com.github.emailtohl.building.site.entities.Role;
-import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.entities.role.Role;
+import com.github.emailtohl.building.site.entities.user.Customer;
+import com.github.emailtohl.building.site.entities.user.Employee;
+import com.github.emailtohl.building.site.entities.user.User;
 /**
  * 用户管理的服务
  * @author HeLei

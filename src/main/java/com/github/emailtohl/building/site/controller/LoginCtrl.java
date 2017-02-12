@@ -29,8 +29,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.emailtohl.building.exception.ResourceNotFoundException;
 import com.github.emailtohl.building.site.dto.UserDto;
-import com.github.emailtohl.building.site.entities.Customer;
-import com.github.emailtohl.building.site.entities.User;
+import com.github.emailtohl.building.site.entities.user.Customer;
+import com.github.emailtohl.building.site.entities.user.User;
 import com.github.emailtohl.building.site.mail.EmailService;
 import com.github.emailtohl.building.site.service.UserService;
 import com.google.gson.Gson;
