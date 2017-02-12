@@ -14,8 +14,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.search.annotations.Store;
-
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
 import com.github.emailtohl.building.site.entities.user.User;
 
@@ -42,7 +40,7 @@ public class Article extends BaseEntity {
 	private boolean isComment = true;
 	private List<Comment> comments = new ArrayList<>();
 	
-	@org.hibernate.search.annotations.Field(store = Store.YES)
+	@org.hibernate.search.annotations.Field(store = org.hibernate.search.annotations.Store.YES)
 	public String getTitle() {
 		return title;
 	}
@@ -51,7 +49,7 @@ public class Article extends BaseEntity {
 	}
 	
 	@org.hibernate.envers.NotAudited
-	@org.hibernate.search.annotations.Field(boost = @org.hibernate.search.annotations.Boost(1.5F), store = Store.YES)// 关键字加权因子
+	@org.hibernate.search.annotations.Field(boost = @org.hibernate.search.annotations.Boost(1.5F), store = org.hibernate.search.annotations.Store.YES)// 关键字加权因子
 	public String getKeywords() {
 		return keywords;
 	}
@@ -59,7 +57,7 @@ public class Article extends BaseEntity {
 		this.keywords = keywords;
 	}
 	
-	@org.hibernate.search.annotations.Field(store = Store.NO)
+	@org.hibernate.search.annotations.Field(store = org.hibernate.search.annotations.Store.NO)
 	@Lob
 	public String getBody() {
 		return body;

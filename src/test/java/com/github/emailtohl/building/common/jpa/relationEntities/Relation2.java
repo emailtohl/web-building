@@ -5,13 +5,11 @@ import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import org.hibernate.search.annotations.Field;
-
 @Entity
 public class Relation2 implements Serializable {
 	private static final long serialVersionUID = -3114234776366877130L;
 	private short id;
-	@Field(name = "relation2")
+	@org.hibernate.search.annotations.Field(name = "relation2")
 	private String me = "Relation2";
 	private Relation1 relation1;
 	

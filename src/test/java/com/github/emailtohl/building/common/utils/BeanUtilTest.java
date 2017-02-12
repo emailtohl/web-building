@@ -47,7 +47,6 @@ import javax.persistence.OneToOne;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.search.annotations.IndexedEmbedded;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -124,7 +123,7 @@ public class BeanUtilTest {
 			getAnnotation(p, ManyToOne.class);
 			getAnnotation(p, OneToOne.class);
 			getAnnotation(p, Embedded.class);
-			getAnnotation(p, IndexedEmbedded.class);
+			getAnnotation(p, org.hibernate.search.annotations.IndexedEmbedded.class);
 		}
 		logger.debug("分析结束，没有异常");
 	}

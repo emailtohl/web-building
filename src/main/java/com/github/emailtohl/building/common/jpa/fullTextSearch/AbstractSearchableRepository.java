@@ -12,8 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.Query;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
@@ -154,8 +152,8 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 	private void findProper(String name, Class<?> clz, List<String> fields) {
 		try {
 			for (PropertyDescriptor p : Introspector.getBeanInfo(clz, Object.class).getPropertyDescriptors()) {
-				IndexedEmbedded e = BeanUtil.getAnnotation(p, IndexedEmbedded.class);
-				Field f = BeanUtil.getAnnotation(p, Field.class);
+				org.hibernate.search.annotations.IndexedEmbedded e = BeanUtil.getAnnotation(p, org.hibernate.search.annotations.IndexedEmbedded.class);
+				org.hibernate.search.annotations.Field f = BeanUtil.getAnnotation(p, org.hibernate.search.annotations.Field.class);
 				if (e != null) {
 					findProper(name + p.getName(), p.getPropertyType(), fields);
 				} else if (f != null) {
@@ -184,8 +182,8 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 			for (int i = 0; i < fs.length; i++) {
 				if (fs[i].isSynthetic())// 若是内部类连接外围类的引用，则忽略
 					continue;
-				Field f = fs[i].getAnnotation(Field.class);
-				IndexedEmbedded e = fs[i].getAnnotation(IndexedEmbedded.class);
+				org.hibernate.search.annotations.Field f = fs[i].getAnnotation(org.hibernate.search.annotations.Field.class);
+				org.hibernate.search.annotations.IndexedEmbedded e = fs[i].getAnnotation(org.hibernate.search.annotations.IndexedEmbedded.class);
 				if (e != null) {
 					findField(name + fs[i].getName(), fs[i].getType(), fields);
 				} else if (f != null) {

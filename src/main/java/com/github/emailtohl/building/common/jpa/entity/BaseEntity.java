@@ -13,8 +13,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
 
-import org.hibernate.search.annotations.Resolution;
-
 /**
  * Entity 基类
  * 注意：依赖本基类的equals和hashCode方法会使你的实体对象在瞬时状态（没有id）时不能正确地存入集合（如HashSet）中
@@ -101,7 +99,7 @@ public abstract class BaseEntity implements Serializable {
 	 * 获取创建日期
 	 * @return 创建日期
 	 */
-	@org.hibernate.search.annotations.DateBridge(resolution = Resolution.DAY)
+	@org.hibernate.search.annotations.DateBridge(resolution = org.hibernate.search.annotations.Resolution.DAY)
 	@Column(nullable = false, updatable = false, name = "create_date")
 	@Temporal(TemporalType.TIMESTAMP)
 	public Date getCreateDate() {
