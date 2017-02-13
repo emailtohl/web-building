@@ -53,14 +53,18 @@ import org.springframework.data.domain.Pageable;
  * lucene的数据源获取有很多开源框架，如Solr提取数据库和XML；Nutch、Heritrix、Grub获取web站点；
  * Aperture支持web站点，文件系统、邮箱等；Tika提供数据过滤。
  * 
- * 注意：对于文本文件，目前只支持UTF-8格式
+ * 本类同时集成了IndexWriter和IndexReader，但并未对并发做太多限制，这是因为Lucene高度支持索引的并发访问。
+ * 多个Reader可以共享同一索引，多个线程可以共享同一IndexWriter或IndexReader。
+ * 并发的唯一限制就是不能同时打开多于一个writer，如果实例化相同索引目录的writer就会遇到LockObtainFailedException。
+ * 
+ * 注意：对于文本文件，目前只支持UTF-8格式。
  * 
  * 本工具只是适应本项目中轻量级的对文件系统建立索引，查询文本内容，更多应用还需借助成熟的开源框架。
  * 
  * @author HeLei
  * @date 2017.02.04
  */
-public class FileSearch {
+public class FileSearch implements AutoCloseable {
 	private static final Logger logger = LogManager.getLogger();
 	public static final String FILE_NAME = "fileName";
 	public static final String FILE_TIME = "fileTime";
@@ -70,55 +74,93 @@ public class FileSearch {
 	public static final int TOP_HITS = 1000;
 	/** 是否索引过，如果已经索引了，则不能再设置分词器 */
 	private volatile boolean isIndexed = false;
-	private FileFilter textFileFilter = new TextFilesFilter();
-	
 	/** 分词器 */
 	private Analyzer analyzer = new StandardAnalyzer();
 	/** 索引库 */
 	private Directory indexBase;
+	/** 索引写入器 */
+	private IndexWriter indexWriter;
+	/** 索引阅读器 */
+	private IndexReader indexReader;
+	/** 索引搜索器 */
+	private IndexSearcher indexSearcher;
+	/** 文本文件过滤器 */
+	private FileFilter textFileFilter = new TextFilesFilter();
 
 	/**
 	 * 可接受文件系统的索引目录，也可以接受内存形式的索引目录
+	 * 
 	 * @param indexBase 索引目录
 	 */
 	public FileSearch(Directory indexBase) {
 		this.indexBase = indexBase;
 	}
-	
+
 	/**
 	 * 只接受文件系统的索引目录
+	 * 
 	 * @param indexBaseFSDirectory 文件系统的索引目录
 	 * @throws IOException
 	 */
 	public FileSearch(String indexBaseFSDirectory) throws IOException {
 		this.indexBase = FSDirectory.open(Paths.get(indexBaseFSDirectory));
 	}
-	
+
+	@Override
+	public void close() throws Exception {
+		if (indexWriter != null && indexWriter.isOpen())
+			indexWriter.close();
+		if (indexReader != null)
+			indexReader.close();
+		indexBase.close();
+	}
+
 	/**
 	 * 为需要查询的目录创建索引
+	 * 
 	 * @param searchDir 需要查询的目录
 	 * @return 被索引的Document数
+	 * @throws IOException
 	 */
-	public synchronized int index(String searchDir) {
+	public synchronized int index(File searchDir) throws IOException {
 		int numIndexed = 0;
 		IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
 		// 每一次都会进行创建新的索引,第二次删掉原来的创建新的索引
 		indexWriterConfig.setOpenMode(OpenMode.CREATE_OR_APPEND);
 		// 创建索引的Writer
-		try (IndexWriter indexWriter = new IndexWriter(indexBase, indexWriterConfig)) {
-			// 采集原始文档
-			appendDocument(new File(searchDir), indexWriter);
-			indexWriter.commit();
-			numIndexed = indexWriter.numDocs();
-			isIndexed = true;
-		} catch (IOException e) {
-			logger.error("创建索引失败", e);
-		}
+		indexWriter = new IndexWriter(indexBase, indexWriterConfig);
+		// 先删除原有的索引
+		deleteAllIndex();
+		// 采集原始文档
+		appendDocument(searchDir, indexWriter);
+		indexWriter.commit();
+		numIndexed = indexWriter.numDocs();
+		isIndexed = true;
+		indexReader = DirectoryReader.open(indexBase);
+		indexSearcher = new IndexSearcher(indexReader);
 		return numIndexed;
 	}
-	
+
+	/**
+	 * 将文本文件读为lucene的Document并添加进IndexWriter
+	 * 
+	 * @param file
+	 * @param indexWriter
+	 * @throws IOException
+	 */
+	private void appendDocument(File file, IndexWriter indexWriter) throws IOException {
+		if (textFileFilter.accept(file)) {
+			indexWriter.addDocument(getDocument(file));
+		} else if (file.isDirectory()) {
+			for (File sub : file.listFiles()) {
+				appendDocument(sub, indexWriter);
+			}
+		}
+	}
+
 	/**
 	 * 查询出Lucene原始的Document对象
+	 * 
 	 * @param queryString
 	 * @return
 	 */
@@ -128,10 +170,8 @@ public class FileSearch {
 		try {
 			String[] fields = { FILE_NAME, FILE_TIME, FILE_CONTENT, FILE_PATH, FILE_SIZE };
 			QueryParser queryParser = new MultiFieldQueryParser(fields, analyzer);
-//			Query q = new TermQuery(new Term(FILE_CONTENT, queryString));
+			// Query q = new TermQuery(new Term(FILE_CONTENT, queryString));
 			Query query = queryParser.parse(queryString);
-			indexReader = DirectoryReader.open(indexBase);
-			IndexSearcher indexSearcher = new IndexSearcher(indexReader);
 			TopDocs docs = indexSearcher.search(query, TOP_HITS);
 			logger.debug(docs.totalHits);
 			for (ScoreDoc sd : docs.scoreDocs) {
@@ -155,9 +195,10 @@ public class FileSearch {
 		}
 		return list;
 	}
-	
+
 	/**
 	 * 分页查询出Lucene原始的Document对象
+	 * 
 	 * @param queryString 查询语句
 	 * @param pageable Spring-data的分页对象
 	 * @return Spring-data的页面对象
@@ -170,15 +211,13 @@ public class FileSearch {
 			String[] fields = { FILE_NAME, FILE_TIME, FILE_CONTENT, FILE_PATH, FILE_SIZE };
 			QueryParser queryParser = new MultiFieldQueryParser(fields, analyzer);
 			Query query = queryParser.parse(queryString);
-			indexReader = DirectoryReader.open(indexBase);
-			IndexSearcher indexSearcher = new IndexSearcher(indexReader);
 			count = indexSearcher.count(query);
 			Sort sort = getSort(pageable);
 			TopDocs docs = indexSearcher.search(query, TOP_HITS, sort);
 			logger.debug(docs.totalHits);
 			int offset = pageable.getOffset();
 			int end = offset + pageable.getPageSize();
-			
+
 			for (int i = offset; i < end && i < count && i < TOP_HITS; i++) {
 				ScoreDoc sd = docs.scoreDocs[i];
 				logger.debug(sd.score);
@@ -201,7 +240,7 @@ public class FileSearch {
 		}
 		return new PageImpl<Document>(list, pageable, count);
 	}
-	
+
 	private Sort getSort(Pageable pageable) {
 		Sort sort = new Sort();
 		List<SortField> ls = new ArrayList<SortField>();
@@ -219,79 +258,61 @@ public class FileSearch {
 		}
 		return sort;
 	}
-	
+
 	/**
 	 * 添加文件的索引
+	 * 
 	 * @param file
+	 * @throws IOException
 	 */
-	public void addIndex(String file) {
-		File f = new File(file);
-		if (textFileFilter.accept(f)) {
-			IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
-			// 创建索引的Writer
-			try (IndexWriter indexWriter = new IndexWriter(indexBase, indexWriterConfig)) {
-				Document doc = getDocument(f);
-				indexWriter.addDocument(doc);
-				indexWriter.commit();
-			} catch (IOException e) {
-				logger.error("添加索引失败", e);
-			}
-		}
-	}
-	
-	/**
-	 * 更新文件的索引
-	 * @param file
-	 */
-	public synchronized void updateIndex(String file) {
-		File f = new File(file);
-		if (textFileFilter.accept(f)) {
-			IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
-			// 创建索引的Writer
-			try (IndexWriter indexWriter = new IndexWriter(indexBase, indexWriterConfig)) {
-					Document doc = getDocument(f);
-					indexWriter.updateDocument(new Term(FILE_PATH, f.getPath()), doc);
-					indexWriter.commit();
-			} catch (IOException e) {
-				logger.error("更新索引失败", e);
-			}
-		}
-	}
-	
-	/**
-	 * 删除文件的索引
-	 * @param file
-	 */
-	public synchronized void deleteIndex(String file) {
-		File f = new File(file);
-		if (textFileFilter.accept(f)) {
-			IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
-			// 创建索引的Writer
-			try (IndexWriter indexWriter = new IndexWriter(indexBase, indexWriterConfig)) {
-					indexWriter.deleteDocuments(new Term(FILE_PATH, f.getPath()));
-					indexWriter.commit();
-			} catch (IOException e) {
-				logger.error("更新索引失败", e);
-			}
-		}
-	}
-	
-	/**
-	 * 删除全部索引
-	 */
-	public synchronized void deleteAllIndex() {
-		IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
-		// 创建索引的Writer
-		try (IndexWriter indexWriter = new IndexWriter(indexBase, indexWriterConfig)) {
-			indexWriter.deleteAll();
+	public void addIndex(File file) throws IOException {
+		if (textFileFilter.accept(file)) {
+			Document doc = getDocument(file);
+			indexWriter.addDocument(doc);
 			indexWriter.commit();
-		} catch (IOException e) {
-			logger.error("更新索引失败", e);
 		}
 	}
 
 	/**
-	 * 根据查询语句获取文件的路径
+	 * 更新文件的索引
+	 * 
+	 * @param file
+	 * @throws IOException
+	 */
+	public void updateIndex(File file) throws IOException {
+		if (textFileFilter.accept(file)) {
+			Document doc = getDocument(file);
+			indexWriter.updateDocument(new Term(FILE_PATH, file.getPath()), doc);
+			indexWriter.commit();
+		}
+	}
+
+	/**
+	 * 删除文件的索引
+	 * 
+	 * @param file
+	 * @throws IOException
+	 */
+	public void deleteIndex(File file) throws IOException {
+		if (textFileFilter.accept(file)) {
+			indexWriter.deleteDocuments(new Term(FILE_PATH, file.getPath()));
+			indexWriter.commit();
+		}
+	}
+
+	/**
+	 * 删除全部索引
+	 * 
+	 * @throws IOException
+	 */
+	public void deleteAllIndex() throws IOException {
+		indexWriter.deleteAll();
+		indexWriter.commit();
+	}
+
+	/**
+	 * 将查询结果以文件的路径返回
+	 * 
 	 * @param query
 	 * @return 返回的路径是相对于index时的路径，若index时是绝对路径，则返回的也是绝对路径
 	 */
@@ -303,7 +324,7 @@ public class FileSearch {
 		}
 		return paths;
 	}
-	
+
 	public Analyzer getAnalyzer() {
 		return analyzer;
 	}
@@ -317,23 +338,8 @@ public class FileSearch {
 	}
 
 	/**
-	 * 将文本文件读为lucene的Document并添加进IndexWriter
-	 * @param file
-	 * @param indexWriter
-	 * @throws IOException
-	 */
-	private void appendDocument(File file, IndexWriter indexWriter) throws IOException {
-		if (textFileFilter.accept(file)) {
-			indexWriter.addDocument(getDocument(file));
-		} else if (file.isDirectory()) {
-			for (File sub : file.listFiles()) {
-				appendDocument(sub, indexWriter);
-			}
-		}
-	}
-
-	/**
 	 * 分析文本文件，并创建一个Lucene的Document
+	 * 
 	 * @param file
 	 * @return
 	 * @throws IOException
@@ -355,9 +361,10 @@ public class FileSearch {
 		doc.add(fTime);
 		return doc;
 	}
-	
+
 	/**
 	 * 过滤出文本文件
+	 * 
 	 * @author HeLei
 	 * @date 2017.02.04
 	 */
@@ -366,6 +373,7 @@ public class FileSearch {
 		private final FileTypeMap fileTypeMap = FileTypeMap.getDefaultFileTypeMap();
 		private final Set<String> TEXT_SUFFIX = new HashSet<String>(
 				Arrays.asList("txt", "html", "xml", "js", "java", "css", "properties"));
+
 		@Override
 		public boolean accept(File f) {
 			if (f.isDirectory() || !f.canRead() || f.length() > MAX_BYTES)
@@ -390,4 +398,5 @@ public class FileSearch {
 			return flag;
 		}
 	}
+
 }

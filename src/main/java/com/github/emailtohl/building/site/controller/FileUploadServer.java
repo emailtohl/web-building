@@ -13,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
@@ -60,14 +61,20 @@ public class FileUploadServer {
 	@Inject FileSearch fileSearch;
 	
 	@PostConstruct
-	public void createIconDir() {
+	public void createCmsDir() throws IOException {
 		cmsRoot = new File(resourcePath, CMS_DIR);
 		if (!cmsRoot.exists()) {
 			cmsRoot.mkdir();
 		}
 		upDownloader = new UpDownloader(cmsRoot);
+		fileSearch.index(cmsRoot);
 		startAtCmsRoot = Pattern.compile("(^" + PATTERN_SEPARATOR + cmsRoot.getName() + PATTERN_SEPARATOR + "?)|(^cms_dir" + PATTERN_SEPARATOR + "?)");
 		logger.debug(startAtCmsRoot.matcher(cmsRoot.getName()));
+	}
+	
+	@PreDestroy
+	public void closeFileSearch() throws Exception {
+		fileSearch.close();
 	}
 	
 	/**
@@ -116,10 +123,11 @@ public class FileUploadServer {
 	 * 为目录或文件改名
 	 * @param srcName 原来的名字
 	 * @param destName 更新的名字
+	 * @throws IOException 
 	 */
 	@RequestMapping(value = "reName", method = POST, produces = "text/plain; charset=utf-8")
 	@ResponseBody
-	public void reName(String srcName, String destName) {
+	public void reName(String srcName, String destName) throws IOException {
 		String srcap = upDownloader.getAbsolutePath(getRelativePath(srcName));
 		String destap = upDownloader.getAbsolutePath(getRelativePath(destName));
 		File src = new File(srcap);
@@ -127,8 +135,8 @@ public class FileUploadServer {
 		if (src.exists()) {
 			synchronized (fileMutex) {
 				src.renameTo(dest);
-				fileSearch.deleteIndex(srcap);
-				fileSearch.updateIndex(destap);
+				fileSearch.deleteIndex(new File(srcap));
+				fileSearch.updateIndex(new File(destap));
 			}
 		}
 	}
@@ -136,14 +144,15 @@ public class FileUploadServer {
 	/**
 	 * 删除目录或文件
 	 * @param filename
+	 * @throws IOException 
 	 */
 	@RequestMapping(value = "delete", method = POST, produces = "text/plain; charset=utf-8")
 	@ResponseBody
-	public void delete(String filename) {
+	public void delete(String filename) throws IOException {
 		String absolutePath = upDownloader.getAbsolutePath(getRelativePath(filename));
 		synchronized (fileMutex) {
 			UpDownloader.deleteDir(absolutePath);
-			fileSearch.deleteIndex(absolutePath);
+			fileSearch.deleteIndex(new File(absolutePath));
 		}
 	}
 	
@@ -166,7 +175,7 @@ public class FileUploadServer {
 		}
 		fullname = getRelativePath(fullname);
 		String absolutePath = upDownloader.upload(fullname, file);
-		fileSearch.addIndex(absolutePath);
+		fileSearch.addIndex(new File(absolutePath));
 		return filename + ": 上传成功!";
 	}
 	
@@ -186,11 +195,11 @@ public class FileUploadServer {
 	
 	@RequestMapping(value = "writeText", method = POST, produces = "text/plain; charset=utf-8")
 	@ResponseBody
-	public void writeText(@RequestBody Form f) {
+	public void writeText(@RequestBody Form f) throws IOException {
 		synchronized (textUpdateMutex) {
 			String absolutePath = upDownloader.getAbsolutePath(getRelativePath(f.getPath()));
 			textUtil.writeText(absolutePath, f.getTextContext(), f.getCharset());
-			fileSearch.updateIndex(absolutePath);
+			fileSearch.updateIndex(new File(absolutePath));
 		}
 	}
 	

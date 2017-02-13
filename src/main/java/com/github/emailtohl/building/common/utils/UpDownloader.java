@@ -198,6 +198,20 @@ public class UpDownloader {
 	}
 	
 	/**
+	 * 将包名转成目录名
+	 * @param packageName2SystemSeparator
+	 * @return
+	 */
+	public static String packageName2FilePath(String packageName2SystemSeparator) {
+		String replacement;
+		if (File.separator.equals("\\"))
+			replacement = "\\\\";
+		else
+			replacement = "/";
+		return packageName2SystemSeparator.replaceAll("\\.", replacement);
+	}
+	
+	/**
 	 * 返回Web能访问的相对URL地址
 	 * @param absolutePath 存储在本地文件系统中的绝对路径
 	 * @param rootPath 根目录

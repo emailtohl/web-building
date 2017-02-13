@@ -281,7 +281,6 @@ public class RootContextConfiguration
 			indexDir.mkdir();
 		}
 		FileSearch fileSearch = new FileSearch(indexDir.getAbsolutePath());
-		fileSearch.deleteAllIndex();// 使用前注意初始化索引
 		return fileSearch;
 	}
 	
