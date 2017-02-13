@@ -48,8 +48,10 @@ define(['encryption/module', 'common/service/myaes', 'encryption/service'], func
 		"一壶浊酒喜相逢。\r\n" + 
 		"古今多少事，都付笑谈中。";
 		
-		self.ciphertext = myaes.encrypt(self.plaintext, self.aesKey.split(','));
-		
+		if (self.aesKey)
+			self.ciphertext = myaes.encrypt(self.plaintext, self.aesKey.split(','));
+		else
+			self.ciphertext = '';
 	}])
 	;
 });

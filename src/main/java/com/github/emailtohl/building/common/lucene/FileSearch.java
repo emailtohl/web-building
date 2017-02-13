@@ -126,11 +126,9 @@ public class FileSearch implements AutoCloseable {
 		int numIndexed = 0;
 		IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
 		// 每一次都会进行创建新的索引,第二次删掉原来的创建新的索引
-		indexWriterConfig.setOpenMode(OpenMode.CREATE_OR_APPEND);
+		indexWriterConfig.setOpenMode(OpenMode.CREATE);
 		// 创建索引的Writer
 		indexWriter = new IndexWriter(indexBase, indexWriterConfig);
-		// 先删除原有的索引
-		deleteAllIndex();
 		// 采集原始文档
 		appendDocument(searchDir, indexWriter);
 		indexWriter.commit();
