@@ -70,7 +70,7 @@ public class FileSearchTest {
 		
 		// 测试并发
 		short count = 10;
-		File thisFile = new File(PATH + File.separator + UpDownloader.packageName2FilePath(getClass().getName()));
+		File thisFile = new File(PATH + File.separator + UpDownloader.convertPackageNameToFilePath(getClass().getName()));
 		CountDownLatch latch = new CountDownLatch(count);
 		ExecutorService exec = Executors.newCachedThreadPool();
 		for (int i = 0; i < count; i++) {

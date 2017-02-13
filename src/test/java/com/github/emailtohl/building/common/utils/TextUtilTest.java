@@ -23,7 +23,7 @@ public class TextUtilTest {
 	public void testWriteText() {
 		File f = new File("text.txt");
 		try {
-			util.writeText("text.txt", "text", "GB2312");
+			util.writeText(f, "text", "GB2312");
 			assertTrue(f.exists());
 		} finally {
 			if (f.exists())
@@ -33,7 +33,7 @@ public class TextUtilTest {
 
 	@Test
 	public void testGetText() {
-		String s = util.getText("README.md", "UTF-8");
+		String s = util.getText(new File("README.md"), "UTF-8");
 		assertNotNull(s);
 	}
 

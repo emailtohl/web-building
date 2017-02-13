@@ -39,22 +39,21 @@ public class TextUtil {
 	/**
 	 * 以指定编码格式将文本写入文件中
 	 * 注意，本方法不确保线程安全，调用者自行控制
-	 * @param absolutePath 要写入的文件的绝对路径
+	 * @param file 要写入的文件的绝对路径
 	 * @param textContext 文本的内容
 	 * @param charset 编码格式
 	 */
-	public void writeText(String absolutePath, String textContext, String charset) {
+	public void writeText(File file, String textContext, String charset) {
 		Charset cset = getCharset(charset);
 		ByteBuffer buffer = cset.encode(textContext);
 		byte[] bytes = buffer.array();
-		File f = new File(absolutePath);
-		try (OutputStream out = new BufferedOutputStream(new FileOutputStream(f))) {
+		try (OutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
 			out.write(bytes);
 		} catch (IOException e) {
-			logger.error("写入：" + absolutePath + "发生错误", e);
-			if (f.exists())
-				f.delete();
-			throw new RuntimeException("写入：" + absolutePath + "发生错误");
+			logger.error("写入：" + file.getName() + "发生错误", e);
+			if (file.exists())
+				file.delete();
+			throw new RuntimeException("写入：" + file.getName() + "发生错误");
 		}
 	}
 	
@@ -64,8 +63,8 @@ public class TextUtil {
 	 * @param charset 编码格式
 	 * @return 文本的内容
 	 */
-	public String getText(String absolutePath, String charset) {
-		try (InputStream is = new BufferedInputStream(new FileInputStream(absolutePath));
+	public String getText(File file, String charset) {
+		try (InputStream is = new BufferedInputStream(new FileInputStream(file));
 				ByteArrayOutputStream memory = new ByteArrayOutputStream()) {
 			byte[] bytes = new byte[1024];
 			int i;
@@ -82,8 +81,8 @@ public class TextUtil {
             CharBuffer cbuf = cset.decode(bbuf);
             return cbuf.toString();
 		} catch (IOException e) {
-			logger.error("读取" + absolutePath + "失败", e);
-			throw new RuntimeException("读取" + absolutePath + "失败");
+			logger.error("读取" + file.getName() + "失败", e);
+			throw new RuntimeException("读取" + file.getName() + "失败");
 		}
 	}
 	

@@ -8,6 +8,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 		self.content = '';
 		self.path = '';
 		self.dirty = false;
+		
 		var setting = {
 			callback : {
 				onClick : zTreeOnClick,
@@ -37,7 +38,9 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 		self.updateText = function() {
 			if (!self.dirty)
 				return;
-			service.writeText(self.path, self.content, self.charset).success(function(data) {
+			var i = self.path.indexOf(rootName + '/');
+			var path = self.path.substring(i);
+			service.writeText(path, self.content, self.charset).success(function(data) {
 				getFileRoot(self.path);
 			});
 		}

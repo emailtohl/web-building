@@ -56,7 +56,7 @@ public class UpDownloader {
 	 * @throws IOException 保存文件时出现异常
 	 */
 	public String upload(String relativePath, Part part) throws IOException {
-		File f = new File(basePath, getSystemSeparator(relativePath));
+		File f = new File(basePath, getSystemPath(relativePath));
 		if (f.exists()) {
 			throw new IllegalArgumentException("上传文件重名，该文件已经上传");
 		}
@@ -73,7 +73,7 @@ public class UpDownloader {
 	 * @throws IOException 保存文件时出现异常
 	 */
 	public String upload(String relativePath, byte[] bin) throws IOException {
-		File f = new File(basePath, getSystemSeparator(relativePath));
+		File f = new File(basePath, getSystemPath(relativePath));
 		if (f.exists()) {
 			throw new IllegalArgumentException("上传文件重名，该文件已经上传");
 		}
@@ -91,7 +91,7 @@ public class UpDownloader {
 	 * @throws IOException 保存文件时出现异常
 	 */
 	public String upload(String relativePath, InputStream in) throws IOException {
-		File f = new File(basePath, getSystemSeparator(relativePath));
+		File f = new File(basePath, getSystemPath(relativePath));
 		if (f.exists()) {
 			throw new IllegalArgumentException("上传文件重名，该文件已经上传");
 		}
@@ -117,7 +117,7 @@ public class UpDownloader {
 	 * @throws FileNotFoundException 
 	 */
 	public byte[] getFile(String relativePath) throws FileNotFoundException, IOException {
-		File f = new File(basePath, getSystemSeparator(relativePath));
+		File f = new File(basePath, getSystemPath(relativePath));
 		byte[] bin;
 		try (InputStream in = new BufferedInputStream(new FileInputStream(f))) {
 			bin = new byte[in.available()];
@@ -132,7 +132,7 @@ public class UpDownloader {
 	 * @return
 	 */
 	public String getAbsolutePath(String relativePath) {
-		return new File(basePath, getSystemSeparator(relativePath)).getAbsolutePath();
+		return new File(basePath, getSystemPath(relativePath)).getAbsolutePath();
 	}
 	
 	/**
@@ -143,7 +143,7 @@ public class UpDownloader {
 	 * @throws IOException
 	 */
 	public void download(String relativePath, HttpServletResponse response) throws FileNotFoundException, IOException {
-		File f = new File(basePath, getSystemSeparator(relativePath));
+		File f = new File(basePath, getSystemPath(relativePath));
 		try (InputStream fis = new BufferedInputStream(new FileInputStream(f))) {
 			// 设置响应头Content-Disposition，将强制浏览器询问客户是保存还是下载文件，而不是在浏览器中在线打开该文件
 			response.setHeader("Content-Disposition", "attachment;filename=" + f.getName());
@@ -170,7 +170,7 @@ public class UpDownloader {
 	 * @throws IOException
 	 */
 	public void download(String relativePath, OutputStream out) throws FileNotFoundException, IOException {
-		File f = new File(basePath, getSystemSeparator(relativePath));
+		File f = new File(basePath, getSystemPath(relativePath));
 		try (InputStream fis = new BufferedInputStream(new FileInputStream(f))) {
 			int b;
 			byte[] buffer = new byte[1024];
@@ -188,7 +188,7 @@ public class UpDownloader {
 	 * @param path
 	 * @return
 	 */
-	public static String getSystemSeparator(String path) {
+	public static String getSystemPath(String path) {
 		String replacement;
 		if (File.separator.equals("\\"))
 			replacement = "\\\\";
@@ -199,16 +199,16 @@ public class UpDownloader {
 	
 	/**
 	 * 将包名转成目录名
-	 * @param packageName2SystemSeparator
+	 * @param packageName
 	 * @return
 	 */
-	public static String packageName2FilePath(String packageName2SystemSeparator) {
+	public static String convertPackageNameToFilePath(String packageName) {
 		String replacement;
 		if (File.separator.equals("\\"))
 			replacement = "\\\\";
 		else
 			replacement = "/";
-		return packageName2SystemSeparator.replaceAll("\\.", replacement);
+		return packageName.replaceAll("\\.", replacement);
 	}
 	
 	/**

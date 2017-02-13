@@ -51,7 +51,7 @@ public class FileUploadServer {
 	private static final Logger logger = LogManager.getLogger();
 	public static final String CMS_DIR = "cms_dir";
 	private File cmsRoot;
-	private Pattern startAtCmsRoot;
+	private Pattern cmsRoot_pattern;
 	private TextUtil textUtil = new TextUtil();
 	
 	private Object textUpdateMutex = new Object();
@@ -61,15 +61,17 @@ public class FileUploadServer {
 	@Inject FileSearch fileSearch;
 	
 	@PostConstruct
-	public void createCmsDir() throws IOException {
+	public void init() throws IOException {
 		cmsRoot = new File(resourcePath, CMS_DIR);
 		if (!cmsRoot.exists()) {
 			cmsRoot.mkdir();
 		}
 		upDownloader = new UpDownloader(cmsRoot);
+		// 对cms目录下创建索引
 		fileSearch.index(cmsRoot);
-		startAtCmsRoot = Pattern.compile("(^" + PATTERN_SEPARATOR + cmsRoot.getName() + PATTERN_SEPARATOR + "?)|(^cms_dir" + PATTERN_SEPARATOR + "?)");
-		logger.debug(startAtCmsRoot.matcher(cmsRoot.getName()));
+		// 正则式，匹配CMS_DIR目录，用于判断是否cms目录
+		cmsRoot_pattern = Pattern.compile("(^" + PATTERN_SEPARATOR + cmsRoot.getName() + PATTERN_SEPARATOR + "?)|(^cms_dir" + PATTERN_SEPARATOR + "?)");
+		logger.debug(cmsRoot_pattern.matcher(cmsRoot.getName()));
 	}
 	
 	@PreDestroy
@@ -98,6 +100,7 @@ public class FileUploadServer {
 		ZtreeNode node = ZtreeNode.newInstance(cmsRoot);
 		if (!param.isEmpty()) {
 			fileSearch.queryForFilePath(param).forEach(s -> {
+				// 传给前端的是相对于CMS_DIR的路径
 				String relativelyPath = s.substring(s.indexOf(CMS_DIR));
 				node.setOpen(relativelyPath);
 			});
@@ -179,44 +182,56 @@ public class FileUploadServer {
 		return filename + ": 上传成功!";
 	}
 	
+	/**
+	 * 获取系统支持的字符集
+	 * @return
+	 */
 	@RequestMapping(value = "availableCharsets", method = GET)
 	@ResponseBody
 	public Set<String> availableCharsets() {
 		return textUtil.availableCharsets();
 	}
 	
+	/**
+	 * 获取指定路径的文本内容
+	 * @param path
+	 * @param charset
+	 * @return
+	 */
 	@RequestMapping(value = "loadText", method = POST, produces = "text/plain; charset=utf-8")
 	@ResponseBody
 	public String loadText(@RequestParam(value = "path", required = true) String path
 			, @RequestParam(value = "charset", required = false, defaultValue = "UTF-8") String charset) {
 		String absolutePath = upDownloader.getAbsolutePath(getRelativePath(path));
-		return textUtil.getText(absolutePath, charset);
+		return textUtil.getText(new File(absolutePath), charset);
 	}
 	
 	@RequestMapping(value = "writeText", method = POST, produces = "text/plain; charset=utf-8")
 	@ResponseBody
-	public void writeText(@RequestBody Form f) throws IOException {
+	public void writeText(@RequestBody Form form) throws IOException {
 		synchronized (textUpdateMutex) {
-			String absolutePath = upDownloader.getAbsolutePath(getRelativePath(f.getPath()));
-			textUtil.writeText(absolutePath, f.getTextContext(), f.getCharset());
+			String absolutePath = upDownloader.getAbsolutePath(getRelativePath(form.getPath()));
+			File f = new File(absolutePath);
+			textUtil.writeText(f, form.getTextContext(), form.getCharset());
 			fileSearch.updateIndex(new File(absolutePath));
 		}
 	}
 	
 	/**
-	 * 相对于cmsRoot的路径
+	 * 前端传来的路径是CMS_DIR/aaa/bbb
+	 * 将该路径转为相对于cmsRoot的路径：aaa/bbb
+	 * 这样才能便于UpDownloader使用
+	 * 
 	 * @param path
 	 * @return
 	 */
 	private String getRelativePath(String path) {
-		Matcher m = startAtCmsRoot.matcher(path);
-		String relativePath;
-		if (m.find()) {
-			relativePath = m.replaceFirst("");
-		} else {
-			relativePath = path;
+		Matcher m = cmsRoot_pattern.matcher(path);
+		if (!m.find()) {
+			throw new IllegalArgumentException("传入的路径不是：" + CMS_DIR + "路径");
 		}
-		return UpDownloader.getSystemSeparator(relativePath);
+		String relativePath = m.replaceFirst("");;
+		return UpDownloader.getSystemPath(relativePath);
 	}
 	/*
 	public static void main(String[] args) {
