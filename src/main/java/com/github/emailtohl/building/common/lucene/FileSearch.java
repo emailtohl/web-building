@@ -114,16 +114,17 @@ public class FileSearch implements AutoCloseable {
 	 * @throws IOException
 	 */
 	public synchronized int index(File searchDir) throws IOException {
-		try {
-			close();
-		} catch (Exception e) {
-			logger.catching(e);
-		}
+		// 如果是重新索引，那么先关闭原有的indexWriter和indexReader
+		if (indexReader != null)
+			indexReader.close();
+		if (indexWriter != null && indexWriter.isOpen())
+			indexWriter.close();
+		
 		int numIndexed = 0;
 		IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
 		// 每一次都会进行创建新的索引,第二次删掉原来的创建新的索引
 		indexWriterConfig.setOpenMode(OpenMode.CREATE);
-		// 创建索引的Writer
+		// 创建索引的indexWriter
 		indexWriter = new IndexWriter(indexBase, indexWriterConfig);
 		// 采集原始文档
 		appendDocument(searchDir, indexWriter);
@@ -142,8 +143,15 @@ public class FileSearch implements AutoCloseable {
 			indexReader.close();
 		if (indexWriter != null && indexWriter.isOpen())
 			indexWriter.close();
+		// 整体关闭时，关闭掉indexBase，实际上isIndexed也没用了，因为indexBase关闭后，就不能再建索引
 		indexBase.close();
 		isIndexed = false;
+	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
+		close();
 	}
 	
 	/**
