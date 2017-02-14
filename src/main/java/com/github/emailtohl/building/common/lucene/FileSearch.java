@@ -114,12 +114,6 @@ public class FileSearch implements AutoCloseable {
 	 * @throws IOException
 	 */
 	public synchronized int index(File searchDir) throws IOException {
-		// 如果是重新索引，那么先关闭原有的indexWriter和indexReader
-		if (indexReader != null)
-			indexReader.close();
-		if (indexWriter != null && indexWriter.isOpen())
-			indexWriter.close();
-		
 		int numIndexed = 0;
 		IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
 		// 每一次都会进行创建新的索引,第二次删掉原来的创建新的索引
@@ -179,7 +173,6 @@ public class FileSearch implements AutoCloseable {
 	 */
 	public List<Document> query(String queryString) {
 		List<Document> list = new ArrayList<Document>();
-		IndexReader indexReader = null;
 		try {
 			String[] fields = { FILE_NAME, FILE_TIME, FILE_CONTENT, FILE_PATH, FILE_SIZE };
 			QueryParser queryParser = new MultiFieldQueryParser(fields, analyzer);
@@ -197,14 +190,6 @@ public class FileSearch implements AutoCloseable {
 			logger.error("打开索引库失败", e);
 		} catch (ParseException e) {
 			logger.error("查询语句解析失败", e);
-		} finally {
-			if (indexReader != null) {
-				try {
-					indexReader.close();
-				} catch (IOException e) {
-					logger.error("IndexReader关闭失败", e);
-				}
-			}
 		}
 		return list;
 	}
@@ -219,7 +204,6 @@ public class FileSearch implements AutoCloseable {
 	public Page<Document> query(String queryString, Pageable pageable) {
 		List<Document> list = new ArrayList<Document>();
 		int count = 0;
-		IndexReader indexReader = null;
 		try {
 			String[] fields = { FILE_NAME, FILE_TIME, FILE_CONTENT, FILE_PATH, FILE_SIZE };
 			QueryParser queryParser = new MultiFieldQueryParser(fields, analyzer);
@@ -242,14 +226,6 @@ public class FileSearch implements AutoCloseable {
 			logger.error("打开索引库失败", e);
 		} catch (ParseException e) {
 			logger.error("查询语句解析失败", e);
-		} finally {
-			if (indexReader != null) {
-				try {
-					indexReader.close();
-				} catch (IOException e) {
-					logger.error("IndexReader关闭失败", e);
-				}
-			}
 		}
 		return new PageImpl<Document>(list, pageable, count);
 	}
@@ -284,6 +260,7 @@ public class FileSearch implements AutoCloseable {
 			indexWriter.addDocument(doc);
 			indexWriter.commit();
 		}
+		refreshIndexReader();
 		isIndexed = true;
 	}
 
@@ -299,6 +276,7 @@ public class FileSearch implements AutoCloseable {
 			indexWriter.updateDocument(new Term(FILE_PATH, file.getPath()), doc);
 			indexWriter.commit();
 		}
+		refreshIndexReader();
 	}
 
 	/**
@@ -312,17 +290,7 @@ public class FileSearch implements AutoCloseable {
 			indexWriter.deleteDocuments(new Term(FILE_PATH, file.getPath()));
 			indexWriter.commit();
 		}
-	}
-
-	/**
-	 * 删除全部索引
-	 * 
-	 * @throws IOException
-	 */
-	public void deleteAllIndex() throws IOException {
-		indexWriter.deleteAll();
-		indexWriter.commit();
-		isIndexed = false;
+		refreshIndexReader();
 	}
 
 	/**
@@ -376,6 +344,21 @@ public class FileSearch implements AutoCloseable {
 		doc.add(fTime);
 		return doc;
 	}
+	
+	/**
+	 * 当索引变更时，为保持查询有效，需更新IndexReader
+	 * @throws IOException
+	 */
+	private void refreshIndexReader() throws IOException {
+		IndexReader newReader = DirectoryReader.openIfChanged((DirectoryReader) indexReader);
+		if (newReader != null && newReader != indexReader) {
+			synchronized (this) {
+				indexReader.close();
+				indexReader = newReader;
+				indexSearcher = new IndexSearcher(indexReader);
+			}
+		}
+	}
 
 	/**
 	 * 过滤出文本文件
@@ -391,7 +374,7 @@ public class FileSearch implements AutoCloseable {
 
 		@Override
 		public boolean accept(File f) {
-			if (f.isDirectory() || !f.canRead() || f.length() > MAX_BYTES)
+			if (f.isDirectory() || f.length() > MAX_BYTES)
 				return false;
 			boolean flag = false;
 			String name = f.getName();
