@@ -47,8 +47,7 @@ public class FileSearchTest {
 	
 	@After
 	public void tearDown() throws Exception {
-		fs.deleteAllIndex();
-		directory.close();
+		fs.close();
 	}
 	
 	@Test

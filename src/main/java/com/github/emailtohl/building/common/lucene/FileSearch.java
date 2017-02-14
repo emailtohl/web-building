@@ -77,7 +77,7 @@ public class FileSearch implements AutoCloseable {
 	/** 分词器 */
 	private Analyzer analyzer = new StandardAnalyzer();
 	/** 索引库 */
-	private Directory indexBase;
+	private final Directory indexBase;
 	/** 索引写入器 */
 	private IndexWriter indexWriter;
 	/** 索引阅读器 */
@@ -106,15 +106,6 @@ public class FileSearch implements AutoCloseable {
 		this.indexBase = FSDirectory.open(Paths.get(indexBaseFSDirectory));
 	}
 
-	@Override
-	public void close() throws Exception {
-		if (indexWriter != null && indexWriter.isOpen())
-			indexWriter.close();
-		if (indexReader != null)
-			indexReader.close();
-		indexBase.close();
-	}
-
 	/**
 	 * 为需要查询的目录创建索引
 	 * 
@@ -123,6 +114,11 @@ public class FileSearch implements AutoCloseable {
 	 * @throws IOException
 	 */
 	public synchronized int index(File searchDir) throws IOException {
+		try {
+			close();
+		} catch (Exception e) {
+			logger.catching(e);
+		}
 		int numIndexed = 0;
 		IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
 		// 每一次都会进行创建新的索引,第二次删掉原来的创建新的索引
@@ -134,11 +130,22 @@ public class FileSearch implements AutoCloseable {
 		indexWriter.commit();
 		numIndexed = indexWriter.numDocs();
 		isIndexed = true;
-		indexReader = DirectoryReader.open(indexBase);
+		indexReader = DirectoryReader.open(indexWriter);
 		indexSearcher = new IndexSearcher(indexReader);
 		return numIndexed;
 	}
 
+	@Override
+	public void close() throws Exception {
+		// reader建立在writer上，先关闭reader，再关闭writer
+		if (indexReader != null)
+			indexReader.close();
+		if (indexWriter != null && indexWriter.isOpen())
+			indexWriter.close();
+		indexBase.close();
+		isIndexed = false;
+	}
+	
 	/**
 	 * 将文本文件读为lucene的Document并添加进IndexWriter
 	 * 
@@ -269,6 +276,7 @@ public class FileSearch implements AutoCloseable {
 			indexWriter.addDocument(doc);
 			indexWriter.commit();
 		}
+		isIndexed = true;
 	}
 
 	/**
@@ -306,6 +314,7 @@ public class FileSearch implements AutoCloseable {
 	public void deleteAllIndex() throws IOException {
 		indexWriter.deleteAll();
 		indexWriter.commit();
+		isIndexed = false;
 	}
 
 	/**
