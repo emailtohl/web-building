@@ -779,6 +779,23 @@ public final class BeanUtil {
 		Class<?>[] cs = new Class<?>[ls.size()];
 		return ls.toArray(cs);
 	}
+	
+	/**
+	 * 将已有的数组再和其他值组合成新的数组
+	 * @param array
+	 * @param other
+	 * @return
+	 */
+	public static String[] mergeStringArray(String[] array, String... other) {
+		List<String> ls = new ArrayList<String>();
+		for (String t : array) {
+			ls.add(t);
+		}
+		for (String t : other) {
+			ls.add(t);
+		}
+		return ls.toArray(new String[ls.size()]);
+	}
 
 	/**
 	 * 程序中经常有比较两对象的属性值是否一致，以判断对象是否相等，例如数据库表同步场景中 用户可以覆写equals()/hashCode()进行比较
@@ -791,6 +808,7 @@ public final class BeanUtil {
 	 * @param relativelyObj 相对对象
 	 * @return 如若所有属性字段比对成功则返回true，否则返回false
 	 */
+	@Deprecated
 	public static boolean compareProperties(Object baseObj, String[] comparePropertyNames, Object relativelyObj) {
 		if (baseObj == null || comparePropertyNames == null || relativelyObj == null)
 			throw new IllegalArgumentException("做比较的对象是null");// NullPointerException一般由虚拟机抛出，IllegalArgumentException定位问题更清晰
