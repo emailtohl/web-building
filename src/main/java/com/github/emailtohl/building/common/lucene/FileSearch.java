@@ -53,16 +53,20 @@ import org.springframework.data.domain.Pageable;
  * lucene的数据源获取有很多开源框架，如Solr提取数据库和XML；Nutch、Heritrix、Grub获取web站点；
  * Aperture支持web站点，文件系统、邮箱等；Tika提供数据过滤。
  * 
- * 本类同时集成了IndexWriter和IndexReader，但并未对并发做太多限制，这是因为Lucene高度支持索引的并发访问。
+ * 本类同时集成了IndexWriter和IndexReader，但并未对增删改的并发做太多限制，这是因为Lucene高度支持索引的并发访问。
  * 多个Reader可以共享同一索引，多个线程可以共享同一IndexWriter或IndexReader。
- * 并发的唯一限制就是不能同时打开多于一个writer，如果实例化相同索引目录的writer就会遇到LockObtainFailedException。
+ * 对于增删改的并发的唯一限制就是不能同时打开多于一个writer，如果实例化相同索引目录的writer就会遇到LockObtainFailedException。
+ * 
+ * 不过本类对更新索引做了并发限制，主要是因为更新索引时，需要关闭原有的IndexReader，若此时有查询线程在执行，就会出现问题。
+ * 本来lucene提供ReferenceManager<IndexSearcher> referenceManager = new SearcherManager(indexWriter, true, new SearcherFactory());
+ * 支持并发场景下的IndexSearcher的更新，但在关闭资源的API上，我暂时还不清楚使用场景，故自实现锁机制。
  * 
  * 注意：对于文本文件，目前只支持UTF-8格式。
  * 
  * 本工具只是适应本项目中轻量级的对文件系统建立索引，查询文本内容，更多应用还需借助成熟的开源框架。
  * 
  * @author HeLei
- * @date 2017.02.04
+ * @date 2017.02.15
  */
 public class FileSearch implements AutoCloseable {
 	private static final Logger logger = LogManager.getLogger();
@@ -86,6 +90,8 @@ public class FileSearch implements AutoCloseable {
 	private IndexSearcher indexSearcher;
 	/** 文本文件过滤器 */
 	private FileFilter textFileFilter = new TextFilesFilter();
+	/** 查询线程的计数器，没有查询时为0，这时候可以更新IndexReader */
+	private volatile int queryCount = 0;
 
 	/**
 	 * 可接受文件系统的索引目录，也可以接受内存形式的索引目录
@@ -114,6 +120,7 @@ public class FileSearch implements AutoCloseable {
 	 * @throws IOException
 	 */
 	public synchronized int index(File searchDir) throws IOException {
+		_close();
 		int numIndexed = 0;
 		IndexWriterConfig indexWriterConfig = new IndexWriterConfig(analyzer);
 		// 每一次都会进行创建新的索引,第二次删掉原来的创建新的索引
@@ -128,24 +135,6 @@ public class FileSearch implements AutoCloseable {
 		indexReader = DirectoryReader.open(indexWriter);
 		indexSearcher = new IndexSearcher(indexReader);
 		return numIndexed;
-	}
-
-	@Override
-	public void close() throws Exception {
-		// reader建立在writer上，先关闭reader，再关闭writer
-		if (indexReader != null)
-			indexReader.close();
-		if (indexWriter != null && indexWriter.isOpen())
-			indexWriter.close();
-		// 整体关闭时，关闭掉indexBase，实际上isIndexed也没用了，因为indexBase关闭后，就不能再建索引
-		indexBase.close();
-		isIndexed = false;
-	}
-	
-	@Override
-	protected void finalize() throws Throwable {
-		super.finalize();
-		close();
 	}
 	
 	/**
@@ -174,6 +163,11 @@ public class FileSearch implements AutoCloseable {
 	public List<Document> query(String queryString) {
 		List<Document> list = new ArrayList<Document>();
 		try {
+			synchronized (this) {
+				while (queryCount < 0)
+					wait();
+				queryCount++;
+			}
 			String[] fields = { FILE_NAME, FILE_TIME, FILE_CONTENT, FILE_PATH, FILE_SIZE };
 			QueryParser queryParser = new MultiFieldQueryParser(fields, analyzer);
 			// Query q = new TermQuery(new Term(FILE_CONTENT, queryString));
@@ -190,6 +184,13 @@ public class FileSearch implements AutoCloseable {
 			logger.error("打开索引库失败", e);
 		} catch (ParseException e) {
 			logger.error("查询语句解析失败", e);
+		} catch (InterruptedException e) {
+			logger.catching(e);
+		} finally {
+			synchronized (this) {
+				queryCount--;
+				notifyAll();
+			}
 		}
 		return list;
 	}
@@ -205,6 +206,11 @@ public class FileSearch implements AutoCloseable {
 		List<Document> list = new ArrayList<Document>();
 		int count = 0;
 		try {
+			synchronized (this) {
+				while (queryCount < 0)
+					wait();
+				queryCount++;
+			}
 			String[] fields = { FILE_NAME, FILE_TIME, FILE_CONTENT, FILE_PATH, FILE_SIZE };
 			QueryParser queryParser = new MultiFieldQueryParser(fields, analyzer);
 			Query query = queryParser.parse(queryString);
@@ -226,6 +232,13 @@ public class FileSearch implements AutoCloseable {
 			logger.error("打开索引库失败", e);
 		} catch (ParseException e) {
 			logger.error("查询语句解析失败", e);
+		} catch (InterruptedException e) {
+			logger.catching(e);
+		} finally {
+			synchronized (this) {
+				queryCount--;
+				notifyAll();
+			}
 		}
 		return new PageImpl<Document>(list, pageable, count);
 	}
@@ -313,10 +326,8 @@ public class FileSearch implements AutoCloseable {
 	}
 
 	public synchronized void setAnalyzer(Analyzer analyzer) {
-		synchronized (this) {
-			if (isIndexed)
-				throw new IllegalStateException("已经被索引过，不能再设置分词器!");
-		}
+		if (isIndexed)
+			throw new IllegalStateException("已经被索引过，不能再设置分词器!");
 		this.analyzer = analyzer;
 	}
 
@@ -350,16 +361,52 @@ public class FileSearch implements AutoCloseable {
 	 * @throws IOException
 	 */
 	private void refreshIndexReader() throws IOException {
-		IndexReader newReader = DirectoryReader.openIfChanged((DirectoryReader) indexReader);
-		if (newReader != null && newReader != indexReader) {
-			synchronized (this) {
-				indexReader.close();
-				indexReader = newReader;
-				indexSearcher = new IndexSearcher(indexReader);
+		synchronized (this) {
+			try {
+				while (queryCount != 0)
+					wait();
+				queryCount--;
+				IndexReader newReader = DirectoryReader.openIfChanged((DirectoryReader) indexReader);
+				if (newReader != null && newReader != indexReader) {
+					indexReader.close();
+					indexReader = newReader;
+					indexSearcher = new IndexSearcher(indexReader);
+				}
+			} catch (InterruptedException e) {
+				logger.catching(e);
+			} finally {
+				queryCount++;
+				notifyAll();
 			}
 		}
 	}
 
+	@Override
+	public void close() throws Exception {
+		_close();
+		isIndexed = false;
+	}
+	
+	/**
+	 * 关闭除indexBase的所有资源
+	 * @throws IOException 
+	 */
+	private void _close() throws IOException  {
+		// reader建立在writer上，先关闭reader，再关闭writer
+		if (indexReader != null)
+			indexReader.close();
+		if (indexWriter != null && indexWriter.isOpen())
+			indexWriter.close();
+		// 整体关闭时，关闭掉indexBase，实际上isIndexed也没用了，因为indexBase关闭后，就不能再建索引
+		isIndexed = false;
+	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
+		close();
+	}
+	
 	/**
 	 * 过滤出文本文件
 	 * 
