@@ -12,6 +12,7 @@ import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.RequestToViewNameTranslator;
 import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator;
@@ -22,13 +23,15 @@ import org.springframework.web.servlet.view.JstlView;
  * @author HeLei
  * @date 2017.02.04
  */
+
+import com.github.emailtohl.building.config.FreeMarkerViewConfiguration.FreeMarkerController;
 @Configuration
 @EnableWebMvc
 // 启动对spring data的支持，使用其分页排序的功能
 // It also registers the PageableHandlerMethodArgumentResolver and SortHandlerMethodArgumentResolver beans, 
 // enabling conversion of Pageables and Sorts from request parameters
 @EnableSpringDataWebSupport
-@ComponentScan(basePackages = "com.github.emailtohl.building.site.controller", useDefaultFilters = false, includeFilters = @ComponentScan.Filter(Controller.class))
+@ComponentScan(basePackages = "com.github.emailtohl.building.site.controller", useDefaultFilters = false, includeFilters = @ComponentScan.Filter(Controller.class), excludeFilters = @ComponentScan.Filter(FreeMarkerController.class))
 @Import({ WebsocketConfiguration.class })
 public class WebConfiguration extends WebMvcConfigurerAdapter {
 	/**
@@ -37,15 +40,35 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
 	@Inject
 	SpringValidatorAdapter validator;
 	
+	/**
+	 * ViewResolver根据模板名返回一个View接口，该接口的render(model, request, response)
+	 * 方法就是接受数据模型及Servlet的request和response对象，并结结合生成视图输出。
+	 * 
+	 * @return
+	 */
 	@Bean
 	public ViewResolver viewResolver() {
+		// InternalResourceViewResolver将视图解析为Web应用的内部资源，一般是JSP
 		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
 		resolver.setViewClass(JstlView.class);
 		resolver.setPrefix("/WEB-INF/jsp/");
 		resolver.setSuffix(".jsp");
+//		resolver.setExposeContextBeansAsAttributes(true);
 		return resolver;
 	}
 	
+	/**
+	 * 让DispatcherServlet将静态资源转发到Servlet容器中默认的Servlet上
+	 */
+	@Override
+	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+		configurer.enable();
+	}
+	
+	/**
+	 * 接收文件上传功能
+	 * @return
+	 */
 	@Bean
 	public StandardServletMultipartResolver multipartResolver() {
 		return new StandardServletMultipartResolver();

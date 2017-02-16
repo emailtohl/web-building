@@ -16,6 +16,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import com.github.emailtohl.building.config.WebConfiguration;
+import com.github.emailtohl.building.config.FreeMarkerViewConfiguration;
 import com.github.emailtohl.building.config.RootContextConfiguration;
 import com.github.emailtohl.building.filter.PreSecurityLoggingFilter;
 import com.github.emailtohl.building.filter.UserPasswordEncryptionFilter;
@@ -63,6 +64,14 @@ public class ContainerBootstrap implements WebApplicationInitializer {
 //		dispatcher.setInitParameter("spring.profiles.active", PROFILE_PRODUCTION);
 //		container.setInitParameter("spring.profiles.active", PROFILE_PRODUCTION);
 
+		
+		AnnotationConfigWebApplicationContext freemarkerServletContext = new AnnotationConfigWebApplicationContext();
+		freemarkerServletContext.register(FreeMarkerViewConfiguration.class);
+		ServletRegistration.Dynamic freemarkerServlet = container.addServlet("freemarkerServlet",
+				new DispatcherServlet(freemarkerServletContext));
+		freemarkerServlet.setLoadOnStartup(2);
+		freemarkerServlet.addMapping("/public/*");
+		
 		/* 在Servlet容器中注册监听器 */
 		container.addListener(SessionListener.class);
 		

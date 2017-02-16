@@ -183,6 +183,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			"/chat/**",
 			"/systemInfo",
 			"/fileUploadServer/test",
+			"/public/**",
 		};
 		security
 			.authorizeRequests()
