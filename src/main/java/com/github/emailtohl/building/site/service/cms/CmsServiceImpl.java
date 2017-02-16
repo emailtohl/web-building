@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
-import com.github.emailtohl.building.common.utils.BeanUtil;
 import com.github.emailtohl.building.common.utils.SecurityContextUtil;
 import com.github.emailtohl.building.site.dao.cms.ArticleRepository;
 import com.github.emailtohl.building.site.dao.user.UserRepository;
@@ -68,7 +67,7 @@ public class CmsServiceImpl implements CmsService {
 	public void update(long id, Article article) {
 		Article p = articleRepository.findOne(id);
 		if (p != null) {
-			BeanUtils.copyProperties(article, p, BeanUtil.mergeStringArray(BaseEntity.PROPERTY_NAMES, "author"));
+			BeanUtils.copyProperties(article, p, BaseEntity.getIgnoreProperties("author"));
 		}
 	}
 	

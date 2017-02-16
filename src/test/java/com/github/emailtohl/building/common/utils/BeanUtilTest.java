@@ -16,7 +16,6 @@ import static com.github.emailtohl.building.common.utils.BeanUtil.injectField;
 import static com.github.emailtohl.building.common.utils.BeanUtil.injectFieldWithString;
 import static com.github.emailtohl.building.common.utils.BeanUtil.injectPropertyWithString;
 import static com.github.emailtohl.building.common.utils.BeanUtil.merge;
-import static com.github.emailtohl.building.common.utils.BeanUtil.mergeStringArray;
 import static com.github.emailtohl.building.common.utils.BeanUtil.saveListToMap;
 import static com.github.emailtohl.building.initdb.PersistenceData.bar;
 import static com.github.emailtohl.building.initdb.PersistenceData.emailtohl;
@@ -400,13 +399,6 @@ public class BeanUtilTest {
 				assertEquals(Subsidiary.class, getGenericClass(p)[1]);
 			}
 		}
-	}
-
-	@Test
-	public void testMergeStringArray() {
-		String[] arr = {"abc", "bcd"};
-		String[] result = mergeStringArray(arr, "edf", "ghi");
-		assertTrue(Arrays.equals(new String[] {"abc", "bcd", "edf", "ghi"}, result));
 	}
 	
 	@SuppressWarnings("deprecation")

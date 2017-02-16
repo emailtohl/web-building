@@ -1,7 +1,9 @@
 package com.github.emailtohl.building.common.jpa.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.EntityListeners;
@@ -173,5 +175,22 @@ public abstract class BaseEntity implements Serializable {
 			return id.equals(other.getId());
 		}
 	}
-
+	
+	/**
+	 * Spring 的BeanUtils.copyProperties方法在复制时需要指明忽略什么属性
+	 * 而本类在实体复制时往往需要忽略id，createDate，modifyDate，version的属性，因为他们是提供给JPA提供程序使用
+	 * @param array
+	 * @param other
+	 * @return
+	 */
+	public static String[] getIgnoreProperties(String... other) {
+		List<String> ls = new ArrayList<String>();
+		for (String t : PROPERTY_NAMES) {
+			ls.add(t);
+		}
+		for (String t : other) {
+			ls.add(t);
+		}
+		return ls.toArray(new String[ls.size()]);
+	}
 }
