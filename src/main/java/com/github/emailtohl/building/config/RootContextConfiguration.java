@@ -77,6 +77,8 @@ import org.springframework.web.client.RestTemplate;
 
 import com.github.emailtohl.building.common.lucene.FileSearch;
 import com.google.gson.Gson;
+
+import freemarker.template.TemplateExceptionHandler;
 /**
  * spring容器的配置类，它依赖数据源配置类和安全配置类
  * @author HeLei
@@ -121,6 +123,10 @@ public class RootContextConfiguration
 	@Inject
 	@Named("indexBase")
 	File indexBase;
+	
+	@Inject
+	@Named("dataPath")
+	File dataPath;
 	
 	// ------------------关于数据源事务的配置------------------------------------
 	@Bean
@@ -293,6 +299,27 @@ public class RootContextConfiguration
 	@Bean
 	public RestTemplate restTemplate() {
 		return new RestTemplate();
+	}
+
+	/**
+	 * freemarker的配置
+	 * @return
+	 * @throws IOException
+	 */
+	@Bean
+	public freemarker.template.Configuration freeMarkerConfiguration() throws IOException {
+		File templatesDir = new File(dataPath, "templates");
+		if (!templatesDir.exists())
+			templatesDir.mkdir();
+		freemarker.template.Configuration cfg = new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_23);
+		cfg.setDirectoryForTemplateLoading(templatesDir);
+		cfg.setDefaultEncoding("UTF-8");
+		// Sets how errors will appear.
+		// During web page *development* TemplateExceptionHandler.HTML_DEBUG_HANDLER is better.
+		cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+		// Don't log exceptions inside FreeMarker that it will thrown at you anyway:
+		cfg.setLogTemplateExceptions(false);
+		return cfg;
 	}
 	
 	// ---------------------------关于Http客户端的配置----------------------------------

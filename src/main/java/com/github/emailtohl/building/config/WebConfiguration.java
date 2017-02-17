@@ -87,4 +87,5 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
 	public org.springframework.validation.Validator getValidator() {
 		return this.validator;
 	}
+	
 }
