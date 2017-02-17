@@ -23,15 +23,13 @@ import org.springframework.web.servlet.view.JstlView;
  * @author HeLei
  * @date 2017.02.04
  */
-
-import com.github.emailtohl.building.config.FreeMarkerViewConfiguration.FreeMarkerController;
 @Configuration
 @EnableWebMvc
 // 启动对spring data的支持，使用其分页排序的功能
 // It also registers the PageableHandlerMethodArgumentResolver and SortHandlerMethodArgumentResolver beans, 
 // enabling conversion of Pageables and Sorts from request parameters
 @EnableSpringDataWebSupport
-@ComponentScan(basePackages = "com.github.emailtohl.building.site.controller", useDefaultFilters = false, includeFilters = @ComponentScan.Filter(Controller.class), excludeFilters = @ComponentScan.Filter(FreeMarkerController.class))
+@ComponentScan(basePackages = "com.github.emailtohl.building.site.controller", useDefaultFilters = false, includeFilters = @ComponentScan.Filter(Controller.class))
 @Import({ WebsocketConfiguration.class })
 public class WebConfiguration extends WebMvcConfigurerAdapter {
 	/**

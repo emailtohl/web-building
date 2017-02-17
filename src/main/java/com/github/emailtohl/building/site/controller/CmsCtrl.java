@@ -1,16 +1,17 @@
 package com.github.emailtohl.building.site.controller;
 
-import com.github.emailtohl.building.config.FreeMarkerViewConfiguration.FreeMarkerController;
+import java.io.File;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Controller;
 /**
  * 内容管理的控制器
  * @author HeLei
  * @date 2017.02.16
  */
-@FreeMarkerController
+@Controller
 public class CmsCtrl {
-	
-	public CmsCtrl() {
-		super();
-	}
+	@Inject File resourcePath;
 
 }
