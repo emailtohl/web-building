@@ -5,6 +5,7 @@ import static com.github.emailtohl.building.site.entities.role.Authority.FORUM_D
 import java.util.List;
 
 import javax.transaction.Transactional;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.data.domain.Pageable;
@@ -13,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.entities.cms.Article;
+import com.github.emailtohl.building.site.entities.cms.Type;
 
 /**
  * cms的服务层接口
@@ -22,19 +24,13 @@ import com.github.emailtohl.building.site.entities.cms.Article;
 @Validated
 @Transactional
 public interface CmsService {
+	
 	/**
 	 * 获取某文章
 	 * @param id
 	 * @return
 	 */
-	Article findOne(long id);
-	
-	/**
-	 * 查询所有符合标准的对象
-	 * @param query
-	 * @return
-	 */
-	List<Article> findAll(String query);
+	Article findArticle(long id);
 	
 	/**
 	 * 全文搜索
@@ -53,7 +49,7 @@ public interface CmsService {
 	 * @return
 	 */
 	@PreAuthorize("isAuthenticated()")
-	long save(@NotNull String title, String keywords, String body, String type);
+	long saveArticle(@NotNull String title, String keywords, String body, Type type);
 	
 	/**
 	 * 保存文章
@@ -65,7 +61,7 @@ public interface CmsService {
 	 * @return
 	 */
 	@PreAuthorize("isAuthenticated()")
-	long save(@NotNull String email, @NotNull String title, String keywords, String body, String type);
+	long saveArticle(@NotNull String email, @NotNull String title, String keywords, String body, Type type);
 	
 	/**
 	 * 修改某文章
@@ -73,13 +69,63 @@ public interface CmsService {
 	 * @param article
 	 */
 	@PreAuthorize("isAuthenticated()")
-	void update(long id, Article article);
+	void updateArticle(long id, Article article);
 	
 	/**
 	 * 特殊情况下用于管理员删除文章
 	 * @param id
 	 */
 	@PreAuthorize("hasAuthority('" + FORUM_DELETE + "')")
-	void delete(long id);
+	void deleteArticle(long id);
+	
+	
+	/**
+	 * 获取某评论
+	 * @param id
+	 * @return
+	 */
+	Article findComment(long id);
+	
+	/**
+	 * 保存文章，从安全上下文中查找用户名
+	 * @param email 用户名为空，则评论为匿名
+	 * @param articleId
+	 * @param content
+	 * @return
+	 */
+	long saveComment(String email, @Min(1) long articleId, @NotNull String content);
+	
+	/**
+	 * 修改某文章
+	 * @param id
+	 * @param article
+	 */
+	@PreAuthorize("isAuthenticated()")
+	void updateComment(long id, Article article);
+	
+	/**
+	 * 特殊情况下用于管理员删除文章
+	 * @param id
+	 */
+	@PreAuthorize("hasAuthority('" + FORUM_DELETE + "')")
+	void deleteComment(long id);
+	
+	/**
+	 * 最近文章列表
+	 * @return
+	 */
+	List<String> recentArticle();
+	
+	/**
+	 * 最近评论列表
+	 * @return
+	 */
+	List<String> recentComment();
+	
+	/**
+	 * 获取所有的分类
+	 * @return
+	 */
+	List<Type> getArticleTypes();
 	
 }

@@ -15,6 +15,7 @@ import com.github.emailtohl.building.common.utils.SecurityContextUtil;
 import com.github.emailtohl.building.site.dao.cms.ArticleRepository;
 import com.github.emailtohl.building.site.dao.user.UserRepository;
 import com.github.emailtohl.building.site.entities.cms.Article;
+import com.github.emailtohl.building.site.entities.cms.Type;
 import com.github.emailtohl.building.site.entities.user.User;
 
 /**
@@ -30,15 +31,10 @@ public class CmsServiceImpl implements CmsService {
 	UserRepository userRepository;
 
 	@Override
-	public Article findOne(long id) {
+	public Article findArticle(long id) {
 		return articleRepository.findOne(id);
 	}
 	
-	@Override
-	public List<Article> findAll(String query) {
-		return articleRepository.findAll();
-	}
-
 	@Override
 	public Pager<Article> find(String query, Pageable pageable) {
 		Page<Article> page = articleRepository.find(query, pageable);
@@ -46,12 +42,12 @@ public class CmsServiceImpl implements CmsService {
 	}
 
 	@Override
-	public long save(String title, String keywords, String body, String type) {
-		return save(SecurityContextUtil.getCurrentUsername(), title, keywords, body, type);
+	public long saveArticle(String title, String keywords, String body, Type type) {
+		return saveArticle(SecurityContextUtil.getCurrentUsername(), title, keywords, body, type);
 	}
 
 	@Override
-	public long save(String email, String title, String keywords, String body, String type) {
+	public long saveArticle(String email, String title, String keywords, String body, Type type) {
 		Article a = new Article();
 		a.setTitle(title);
 		a.setKeywords(keywords);
@@ -64,7 +60,7 @@ public class CmsServiceImpl implements CmsService {
 	}
 
 	@Override
-	public void update(long id, Article article) {
+	public void updateArticle(long id, Article article) {
 		Article p = articleRepository.findOne(id);
 		if (p != null) {
 			BeanUtils.copyProperties(article, p, BaseEntity.getIgnoreProperties("author"));
@@ -72,8 +68,50 @@ public class CmsServiceImpl implements CmsService {
 	}
 	
 	@Override
-	public void delete(long id) {
+	public void deleteArticle(long id) {
 		articleRepository.delete(id);
+	}
+
+	@Override
+	public Article findComment(long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public long saveComment(String email, long articleId, String content) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void updateComment(long id, Article article) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deleteComment(long id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<String> recentArticle() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> recentComment() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Type> getArticleTypes() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

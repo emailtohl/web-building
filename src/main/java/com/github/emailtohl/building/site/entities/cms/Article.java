@@ -3,14 +3,13 @@ package com.github.emailtohl.building.site.entities.cms;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -36,7 +35,7 @@ public class Article extends BaseEntity {
 	private String body;
 	@NotNull
 	private User author;
-	private String type;
+	private Type type;
 	private boolean isComment = true;
 	private List<Comment> comments = new ArrayList<>();
 	
@@ -78,10 +77,10 @@ public class Article extends BaseEntity {
 	}
 	
 	@org.hibernate.envers.NotAudited
-	public String getType() {
+	public Type getType() {
 		return type;
 	}
-	public void setType(String type) {
+	public void setType(Type type) {
 		this.type = type;
 	}
 	
@@ -95,8 +94,8 @@ public class Article extends BaseEntity {
 	}
 	
 	@org.hibernate.envers.NotAudited
-	@ElementCollection(targetClass = Comment.class, fetch = FetchType.LAZY)
-	@CollectionTable(name = "t_comment")
+	@org.hibernate.search.annotations.IndexedEmbedded
+	@OneToMany(mappedBy = "article")
 	public List<Comment> getComments() {
 		return comments;
 	}

@@ -51,7 +51,10 @@ public class CreateTable1 {
 		entityManager.persist(baz);
 		entityManager.persist(qux);
 	
+		entityManager.persist(parent);
+		entityManager.persist(subType);
 		entityManager.persist(article);
+		entityManager.persist(comment);
 
 		entityManager.getTransaction().commit();
 		entityManager.close();

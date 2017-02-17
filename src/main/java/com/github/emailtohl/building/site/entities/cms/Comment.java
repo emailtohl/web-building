@@ -1,28 +1,35 @@
 package com.github.emailtohl.building.site.entities.cms;
 
-import java.util.Date;
-
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
 
 /**
  * 评论嵌入类
  * @author HeLei
  * @date 2017.02.11
  */
-@Embeddable
-public class Comment implements Comparable<Comment> {
+@Entity
+@Table(name = "t_article_comment")
+public class Comment extends BaseEntity implements Comparable<Comment> {
+	private static final long serialVersionUID = 2074688008515735092L;
+	
 	@NotNull
 	private String content;
-	@NotNull
-	private Date date;
 	private String critics = "匿名";
 	private String icon = "";
+	@NotNull
+	private Article article;
 	private boolean isApproved = true;
 	
+	@org.hibernate.search.annotations.Field
+	@Lob
 	public String getContent() {
 		return content;
 	}
@@ -31,15 +38,7 @@ public class Comment implements Comparable<Comment> {
 		this.content = content;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
+	@org.hibernate.search.annotations.Field
 	public String getCritics() {
 		return critics;
 	}
@@ -56,6 +55,16 @@ public class Comment implements Comparable<Comment> {
 		this.icon = icon;
 	}
 
+	@ManyToOne
+	@JoinColumn(name = "article_id", nullable = false)
+	public Article getArticle() {
+		return article;
+	}
+
+	public void setArticle(Article article) {
+		this.article = article;
+	}
+
 	@Column(name = "is_approved")
 	public boolean isApproved() {
 		return isApproved;
@@ -67,7 +76,7 @@ public class Comment implements Comparable<Comment> {
 
 	@Override
 	public int compareTo(Comment o) {
-		return this.getDate().compareTo(o.getDate());
+		return getCreateDate().compareTo(o.getCreateDate());
 	}
 	
 }

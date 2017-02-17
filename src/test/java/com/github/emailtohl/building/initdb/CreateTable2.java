@@ -56,7 +56,10 @@ public class CreateTable2 {
 		entityManager.persist(baz);
 		entityManager.persist(qux);
 		
+		entityManager.persist(parent);
+		entityManager.persist(subType);
 		entityManager.persist(article);
+		entityManager.persist(comment);
 	}
 	public static void main(String[] args) throws Exception {
 		AnnotationConfigApplicationContext ctx = Spring.getApplicationContext();
