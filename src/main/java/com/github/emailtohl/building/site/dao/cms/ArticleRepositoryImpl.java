@@ -1,7 +1,6 @@
 package com.github.emailtohl.building.site.dao.cms;
 
 import com.github.emailtohl.building.common.jpa.fullTextSearch.AbstractSearchableRepository;
-import com.github.emailtohl.building.common.jpa.fullTextSearch.SearchableRepository;
 import com.github.emailtohl.building.site.entities.cms.Article;
 
 /**
@@ -11,6 +10,6 @@ import com.github.emailtohl.building.site.entities.cms.Article;
  * @date 2017.02.12
  */
 public class ArticleRepositoryImpl extends AbstractSearchableRepository<Article>
-		implements SearchableRepository<Article> {
+		implements ArticleRepositoryCustomization {
 
 }

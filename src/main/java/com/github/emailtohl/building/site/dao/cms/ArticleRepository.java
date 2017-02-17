@@ -2,7 +2,6 @@ package com.github.emailtohl.building.site.dao.cms;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.github.emailtohl.building.common.jpa.fullTextSearch.SearchableRepository;
 import com.github.emailtohl.building.site.entities.cms.Article;
 
 /**
@@ -10,6 +9,6 @@ import com.github.emailtohl.building.site.entities.cms.Article;
  * @author HeLei
  * @date 2017.02.12
  */
-public interface ArticleRepository extends JpaRepository<Article, Long>, SearchableRepository<Article> {
+public interface ArticleRepository extends JpaRepository<Article, Long>, ArticleRepositoryCustomization {
 
 }
