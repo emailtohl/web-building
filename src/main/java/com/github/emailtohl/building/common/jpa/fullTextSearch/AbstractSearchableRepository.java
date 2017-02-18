@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.persistence.Embeddable;
+import javax.persistence.Entity;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.document.Document;
@@ -150,6 +153,8 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 	 * @param fields
 	 */
 	private void findProper(String name, Class<?> clz, List<String> fields) {
+		if (clz.getAnnotation(Entity.class) == null && clz.getAnnotation(Embeddable.class) == null)
+			throw new IllegalArgumentException("被注解为@IndexedEmbedded的属性既不是实体(被@Entity注解)也不是可嵌入类(被@Embeddable注解)");
 		try {
 			for (PropertyDescriptor p : Introspector.getBeanInfo(clz, Object.class).getPropertyDescriptors()) {
 				org.hibernate.search.annotations.IndexedEmbedded e = BeanUtil.getAnnotation(p, org.hibernate.search.annotations.IndexedEmbedded.class);
@@ -176,6 +181,8 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 	 * @param fields
 	 */
 	private void findField(String name, Class<?> clz, List<String> fields) {
+		if (clz.getAnnotation(Entity.class) == null && clz.getAnnotation(Embeddable.class) == null)
+			throw new IllegalArgumentException("被注解为@IndexedEmbedded的属性既不是实体(被@Entity注解)也不是可嵌入类(被@Embeddable注解)");
 		Class<?> clzz = clz;
 		while (clzz != Object.class) {
 			java.lang.reflect.Field[] fs = clz.getDeclaredFields();

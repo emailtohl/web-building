@@ -128,4 +128,11 @@ public interface CmsService {
 	 */
 	List<Type> getArticleTypes();
 	
+	/**
+	 * 获取web页面所需要的数据
+	 * @param query 搜索页面的参数，可以为null
+	 * @return
+	 */
+	WebPage getWebPage(String query);
+	
 }

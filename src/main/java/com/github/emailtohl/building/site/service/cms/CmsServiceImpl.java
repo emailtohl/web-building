@@ -114,4 +114,10 @@ public class CmsServiceImpl implements CmsService {
 		return null;
 	}
 
+	@Override
+	public WebPage getWebPage(String query) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

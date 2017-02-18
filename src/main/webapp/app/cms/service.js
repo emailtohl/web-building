@@ -11,7 +11,7 @@ define(['cms/module', 'common/context' ], function(cmsModule) {
 			 * 根据文本内容查询目录
 			 */
 			query : function(param) {
-				return $http.get('fileUploadServer/query?param=' + param);
+				return $http.get('fileUploadServer/query?param=' + (param ? param : ''));
 			},
 			/**
 			 * 创建一个目录
