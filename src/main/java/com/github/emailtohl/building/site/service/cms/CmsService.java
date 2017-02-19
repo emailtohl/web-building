@@ -9,6 +9,7 @@ import javax.transaction.Transactional;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,7 +28,7 @@ import com.github.emailtohl.building.site.entities.cms.Type;
 @Validated
 @Transactional
 public interface CmsService {
-	
+	String CACHE_NAME = "webPageCache";
 	/**
 	 * 获取某文章
 	 * @param id
@@ -52,7 +53,7 @@ public interface CmsService {
 	 * @return
 	 */
 	@PreAuthorize("isAuthenticated()")
-	long saveArticle(@NotNull String title, String keywords, String body, Type type);
+	long saveArticle(@NotNull String title, String keywords, String body, String type);
 	
 	/**
 	 * 保存文章
@@ -64,20 +65,34 @@ public interface CmsService {
 	 * @return
 	 */
 	@PreAuthorize("isAuthenticated()")
-	long saveArticle(@NotNull String email, @NotNull String title, String keywords, String body, Type type);
+	long saveArticle(@NotNull String email, @NotNull String title, String keywords, String body, String type);
 	
 	/**
 	 * 修改某文章
 	 * @param id
 	 * @param article
 	 */
+	@CacheEvict(value = CACHE_NAME) // 当这个方法被调用后，即会清空缓存
 	@PreAuthorize("isAuthenticated()")
 	void updateArticle(long id, Article article);
+	
+	/**
+	 * 修改某文章
+	 * @param id
+	 * @param title
+	 * @param keywords
+	 * @param body
+	 * @param type
+	 */
+	@CacheEvict(value = CACHE_NAME)
+	@PreAuthorize("isAuthenticated()")
+	void updateArticle(long id, String title, String keywords, String body, String type);
 	
 	/**
 	 * 特殊情况下用于管理员删除文章
 	 * @param id
 	 */
+	@CacheEvict(value = CACHE_NAME)
 	@PreAuthorize("hasAuthority('" + FORUM_DELETE + "')")
 	void deleteArticle(long id);
 	
@@ -96,6 +111,7 @@ public interface CmsService {
 	 * @param content
 	 * @return
 	 */
+	@CacheEvict(value = CACHE_NAME)
 	long saveComment(String email, @Min(1) long articleId, @NotNull String content);
 
 	/**
@@ -104,6 +120,7 @@ public interface CmsService {
 	 * @param content
 	 * @return
 	 */
+	@CacheEvict(value = CACHE_NAME)
 	long saveComment(@Min(1) long articleId, @NotNull String content);
 	
 	/**
@@ -111,6 +128,7 @@ public interface CmsService {
 	 * @param id
 	 * @param article
 	 */
+	@CacheEvict(value = CACHE_NAME)
 	@PreAuthorize("isAuthenticated()")
 	void updateComment(@Min(1) long id, @NotNull String commentContent);
 	
@@ -118,6 +136,7 @@ public interface CmsService {
 	 * 特殊情况下用于管理员删除文章
 	 * @param id
 	 */
+	@CacheEvict(value = CACHE_NAME)
 	@PreAuthorize("hasAuthority('" + FORUM_DELETE + "')")
 	void deleteComment(@Min(1) long id);
 	
@@ -150,7 +169,8 @@ public interface CmsService {
 	 * @param query 搜索页面的参数，可以为null
 	 * @return
 	 */
-	@Cacheable
+	// 从CACHE_NAME的缓存中查询，有则返回缓存中的对象，无则执行实际的方法，并将执行的结果存入缓存中
+	@Cacheable(value = CACHE_NAME)
 	WebPage getWebPage(String query);
 	
 }

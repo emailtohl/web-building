@@ -23,7 +23,7 @@ public class Comment extends BaseEntity implements Comparable<Comment> {
 	
 	@NotNull
 	private String content;
-	private String critics = "匿名";
+	private String critics;
 	private String icon = "";
 	@NotNull
 	private Article article;

@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -68,7 +67,7 @@ public class Article extends BaseEntity {
 	
 	@org.hibernate.envers.NotAudited
 	@org.hibernate.search.annotations.IndexedEmbedded
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "author_id")
 	public User getAuthor() {
 		return author;

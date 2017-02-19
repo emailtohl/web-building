@@ -10,5 +10,10 @@ import com.github.emailtohl.building.site.entities.cms.Type;
  * @date 2017.02.17
  */
 public interface TypeRepository extends JpaRepository<Type, Long> {
-
+	/**
+	 * 根据类型名查询类型实体
+	 * @param name
+	 * @return
+	 */
+	Type findByName(String name);
 }

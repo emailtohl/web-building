@@ -52,20 +52,21 @@ public class CmsServiceImpl implements CmsService {
 	}
 
 	@Override
-	public long saveArticle(String title, String keywords, String body, Type type) {
+	public long saveArticle(String title, String keywords, String body, String type) {
 		return saveArticle(SecurityContextUtil.getCurrentUsername(), title, keywords, body, type);
 	}
 
 	@Override
-	public long saveArticle(String email, String title, String keywords, String body, Type type) {
+	public long saveArticle(String email, String title, String keywords, String body, String type) {
 		Article a = new Article();
 		a.setTitle(title);
 		a.setKeywords(keywords);
 		a.setBody(body);
 		User author = userRepository.findByEmail(email);
 		a.setAuthor(author);
+		Type t = typeRepository.findByName(type);
+		a.setType(t);
 		articleRepository.save(a);
-		a.setType(type);
 		return a.getId();
 	}
 
@@ -75,6 +76,22 @@ public class CmsServiceImpl implements CmsService {
 		if (p != null) {
 			BeanUtils.copyProperties(article, p, BaseEntity.getIgnoreProperties("author"));
 		}
+	}
+
+	@Override
+	public void updateArticle(long id, String title, String keywords, String body, String type) {
+		Article article = new Article();
+		if (StringUtils.hasText(title))
+			article.setTitle(title);
+		if (StringUtils.hasText(keywords))
+			article.setKeywords(keywords);
+		if (StringUtils.hasText(body))
+			article.setBody(body);
+		if (StringUtils.hasText(title)) {
+			Type t =typeRepository.findByName(type);
+			article.setType(t);
+		}
+		updateArticle(id, article);
 	}
 	
 	@Override
@@ -149,8 +166,7 @@ public class CmsServiceImpl implements CmsService {
 
 	@Override
 	public Map<Type, List<Article>> classify() {
-		return articleRepository.findAll()
-				.stream().limit(100)
+		return articleRepository.findAll().stream().limit(100)
 				.collect(Collectors.groupingBy(article -> article.getType()));
 	}
 
