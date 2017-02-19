@@ -1,6 +1,8 @@
 package com.github.emailtohl.building.site.service.cms;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -8,13 +10,17 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
 import com.github.emailtohl.building.common.utils.SecurityContextUtil;
 import com.github.emailtohl.building.site.dao.cms.ArticleRepository;
+import com.github.emailtohl.building.site.dao.cms.CommentRepository;
+import com.github.emailtohl.building.site.dao.cms.TypeRepository;
 import com.github.emailtohl.building.site.dao.user.UserRepository;
 import com.github.emailtohl.building.site.entities.cms.Article;
+import com.github.emailtohl.building.site.entities.cms.Comment;
 import com.github.emailtohl.building.site.entities.cms.Type;
 import com.github.emailtohl.building.site.entities.user.User;
 
@@ -26,7 +32,11 @@ import com.github.emailtohl.building.site.entities.user.User;
 @Service
 public class CmsServiceImpl implements CmsService {
 	@Inject
+	TypeRepository typeRepository;
+	@Inject
 	ArticleRepository articleRepository;
+	@Inject
+	CommentRepository commentRepository;
 	@Inject
 	UserRepository userRepository;
 
@@ -73,44 +83,73 @@ public class CmsServiceImpl implements CmsService {
 	}
 
 	@Override
-	public Article findComment(long id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Comment findComment(long id) {
+		return commentRepository.findOne(id);
 	}
 
 	@Override
 	public long saveComment(String email, long articleId, String content) {
-		// TODO Auto-generated method stub
-		return 0;
+		Article article = articleRepository.findOne(articleId);
+		if (article == null) {
+			throw new IllegalArgumentException("没有此文章");
+		}
+		String critics = "匿名", icon = null;
+		if (StringUtils.hasText(email)) {
+			User u = userRepository.findByEmail(email);
+			if (u != null) {
+				critics = u.getUsername();
+				icon = u.getIconSrc();
+			}
+		}
+		Comment c = new Comment();
+		c.setCritics(critics);
+		c.setIcon(icon);
+		c.setContent(content);
+		c.setApproved(false);
+		c.setArticle(article);
+		commentRepository.save(c);
+		return c.getId();
+	}
+	
+	@Override
+	public long saveComment(long articleId, String content) {
+		String email = SecurityContextUtil.getCurrentUsername();
+		return saveComment(email, articleId, content);
 	}
 
 	@Override
-	public void updateComment(long id, Article article) {
-		// TODO Auto-generated method stub
-		
+	public void updateComment(long id, String commentContent) {
+		Comment c = commentRepository.findOne(id);
+		if (c != null) {
+			c.setContent(commentContent);
+		}
 	}
 
 	@Override
 	public void deleteComment(long id) {
-		// TODO Auto-generated method stub
-		
+		commentRepository.delete(id);
 	}
 
 	@Override
-	public List<String> recentArticle() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Article> recentArticle() {
+		return articleRepository.findAll()
+				.stream().limit(10).collect(Collectors.toList());
 	}
 
 	@Override
-	public List<String> recentComment() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Comment> recentComment() {
+		return commentRepository.findAll()
+				.stream().limit(10).collect(Collectors.toList());
 	}
 
 	@Override
 	public List<Type> getArticleTypes() {
-		// TODO Auto-generated method stub
+		return typeRepository.findAll();
+	}
+
+	@Override
+	public Map<Type, List<Article>> classify() {
+//		typeRepository.findAll().stream().collect(Collectors.groupingBy(classifier));
 		return null;
 	}
 

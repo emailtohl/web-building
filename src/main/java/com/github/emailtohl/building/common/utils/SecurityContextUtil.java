@@ -27,7 +27,7 @@ public final class SecurityContextUtil {
 	}
 	
 	/**
-	 * 获取用户名
+	 * 获取用户名，若未获取，则返回null
 	 * @return
 	 */
 	public static String getCurrentUsername() {

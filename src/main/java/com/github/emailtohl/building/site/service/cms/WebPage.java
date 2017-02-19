@@ -16,47 +16,34 @@ public class WebPage implements Serializable {
 	private static final long serialVersionUID = 2672917432577749422L;
 	
 	/**
-	 * 页面中展现的文章
+	 * 页面中展现最近的文章
 	 */
-	private List<Article> articles;
-	
-	/**
-	 * 总文章数
-	 */
-	private int total;
+	List<Article> recentArticles;
 	
 	/**
 	 * 边栏中最新评论
 	 */
-	private List<Comment> comments;
+	List<Comment> recentComments;
 	
 	/**
-	 * 边栏中的文章类型
+	 * 文章类型，从每个Type里面可以获取关联的Article
 	 */
-	private List<Type> types;
+	List<Type> types;
 
-	public List<Article> getArticles() {
-		return articles;
+	public List<Article> getRecentArticles() {
+		return recentArticles;
 	}
 
-	public void setArticles(List<Article> articles) {
-		this.articles = articles;
+	public void setRecentArticles(List<Article> recentArticles) {
+		this.recentArticles = recentArticles;
 	}
 
-	public int getTotal() {
-		return total;
+	public List<Comment> getRecentComments() {
+		return recentComments;
 	}
 
-	public void setTotal(int total) {
-		this.total = total;
-	}
-
-	public List<Comment> getComments() {
-		return comments;
-	}
-
-	public void setComments(List<Comment> comments) {
-		this.comments = comments;
+	public void setRecentComments(List<Comment> recentComments) {
+		this.recentComments = recentComments;
 	}
 
 	public List<Type> getTypes() {
@@ -66,6 +53,7 @@ public class WebPage implements Serializable {
 	public void setTypes(List<Type> types) {
 		this.types = types;
 	}
+	
 	
 	
 }

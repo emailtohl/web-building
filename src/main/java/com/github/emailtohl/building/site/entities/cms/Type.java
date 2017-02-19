@@ -1,8 +1,12 @@
 package com.github.emailtohl.building.site.entities.cms;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -32,6 +36,11 @@ public class Type extends BaseEntity {
 	 * 上一级分类
 	 */
 	private Type parent;
+	
+	/**
+	 * 分类下的文章
+	 */
+	private Set<Article> articles = new HashSet<Article>();
 
 	
 	public String getName() {
@@ -58,6 +67,15 @@ public class Type extends BaseEntity {
 
 	public void setParent(Type parent) {
 		this.parent = parent;
+	}
+
+	@OneToMany(mappedBy = "type")
+	public Set<Article> getArticles() {
+		return articles;
+	}
+
+	public void setArticles(Set<Article> articles) {
+		this.articles = articles;
 	}
 
 	@Override

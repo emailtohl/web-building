@@ -21,6 +21,7 @@ import com.github.emailtohl.building.site.entities.user.User;
  * @author HeLei
  * @date 2017.02.11
  */
+@org.hibernate.annotations.BatchSize(size = 10)// 因n+1查询问题，盲猜优化，一次性加载size个代理
 @org.hibernate.envers.Audited
 @org.hibernate.search.annotations.Indexed
 @org.hibernate.search.annotations.Analyzer(impl = org.apache.lucene.analysis.standard.StandardAnalyzer.class)
@@ -77,6 +78,8 @@ public class Article extends BaseEntity {
 	}
 	
 	@org.hibernate.envers.NotAudited
+	@ManyToOne
+	@JoinColumn(name = "article_type_id", nullable = true)
 	public Type getType() {
 		return type;
 	}

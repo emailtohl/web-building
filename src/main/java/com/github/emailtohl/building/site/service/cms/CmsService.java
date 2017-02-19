@@ -3,17 +3,20 @@ package com.github.emailtohl.building.site.service.cms;
 import static com.github.emailtohl.building.site.entities.role.Authority.FORUM_DELETE;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.site.entities.cms.Article;
+import com.github.emailtohl.building.site.entities.cms.Comment;
 import com.github.emailtohl.building.site.entities.cms.Type;
 
 /**
@@ -84,7 +87,7 @@ public interface CmsService {
 	 * @param id
 	 * @return
 	 */
-	Article findComment(long id);
+	Comment findComment(long id);
 	
 	/**
 	 * 保存文章，从安全上下文中查找用户名
@@ -94,6 +97,14 @@ public interface CmsService {
 	 * @return
 	 */
 	long saveComment(String email, @Min(1) long articleId, @NotNull String content);
+
+	/**
+	 * 保存文章，从安全上下文中查找用户名，若在上下文找不到用户，则评论为匿名
+	 * @param articleId
+	 * @param content
+	 * @return
+	 */
+	long saveComment(@Min(1) long articleId, @NotNull String content);
 	
 	/**
 	 * 修改某文章
@@ -101,26 +112,26 @@ public interface CmsService {
 	 * @param article
 	 */
 	@PreAuthorize("isAuthenticated()")
-	void updateComment(long id, Article article);
+	void updateComment(@Min(1) long id, @NotNull String commentContent);
 	
 	/**
 	 * 特殊情况下用于管理员删除文章
 	 * @param id
 	 */
 	@PreAuthorize("hasAuthority('" + FORUM_DELETE + "')")
-	void deleteComment(long id);
+	void deleteComment(@Min(1) long id);
 	
 	/**
 	 * 最近文章列表
 	 * @return
 	 */
-	List<String> recentArticle();
+	List<Article> recentArticle();
 	
 	/**
 	 * 最近评论列表
 	 * @return
 	 */
-	List<String> recentComment();
+	List<Comment> recentComment();
 	
 	/**
 	 * 获取所有的分类
@@ -129,10 +140,17 @@ public interface CmsService {
 	List<Type> getArticleTypes();
 	
 	/**
+	 * 根据文章类型进行分类
+	 * @return
+	 */
+	Map<Type, List<Article>> classify();
+	
+	/**
 	 * 获取web页面所需要的数据
 	 * @param query 搜索页面的参数，可以为null
 	 * @return
 	 */
+	@Cacheable
 	WebPage getWebPage(String query);
 	
 }
