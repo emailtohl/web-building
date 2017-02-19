@@ -131,13 +131,13 @@ public class CmsServiceImpl implements CmsService {
 	}
 
 	@Override
-	public List<Article> recentArticle() {
+	public List<Article> recentArticles() {
 		return articleRepository.findAll()
 				.stream().limit(10).collect(Collectors.toList());
 	}
 
 	@Override
-	public List<Comment> recentComment() {
+	public List<Comment> recentComments() {
 		return commentRepository.findAll()
 				.stream().limit(10).collect(Collectors.toList());
 	}
@@ -149,14 +149,18 @@ public class CmsServiceImpl implements CmsService {
 
 	@Override
 	public Map<Type, List<Article>> classify() {
-//		typeRepository.findAll().stream().collect(Collectors.groupingBy(classifier));
-		return null;
+		return articleRepository.findAll()
+				.stream().limit(100)
+				.collect(Collectors.groupingBy(article -> article.getType()));
 	}
 
 	@Override
 	public WebPage getWebPage(String query) {
-		// TODO Auto-generated method stub
-		return null;
+		WebPage wp = new WebPage();
+		wp.recentArticles = recentArticles();
+		wp.recentComments = recentComments();
+		wp.categories = classify();
+		return wp;
 	}
 
 }

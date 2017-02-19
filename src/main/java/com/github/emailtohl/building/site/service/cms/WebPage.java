@@ -2,6 +2,7 @@ package com.github.emailtohl.building.site.service.cms;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import com.github.emailtohl.building.site.entities.cms.Article;
 import com.github.emailtohl.building.site.entities.cms.Comment;
@@ -28,7 +29,7 @@ public class WebPage implements Serializable {
 	/**
 	 * 文章类型，从每个Type里面可以获取关联的Article
 	 */
-	List<Type> types;
+	Map<Type, List<Article>> categories;
 
 	public List<Article> getRecentArticles() {
 		return recentArticles;
@@ -46,14 +47,13 @@ public class WebPage implements Serializable {
 		this.recentComments = recentComments;
 	}
 
-	public List<Type> getTypes() {
-		return types;
+	public Map<Type, List<Article>> getCategories() {
+		return categories;
 	}
 
-	public void setTypes(List<Type> types) {
-		this.types = types;
+	public void setCategories(Map<Type, List<Article>> categories) {
+		this.categories = categories;
 	}
-	
-	
+
 	
 }

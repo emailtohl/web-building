@@ -54,8 +54,7 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 	}
 	
 	/**
-	 * Lucene的默认排序是按照Document的得分进行排序的
-	 * 所以调用本接口，不会使用Pageable中的sort属性
+	 * 返回Lucene源信息的查询接口，不过排序按评分高低进行
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -72,6 +71,9 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 		return new PageImpl<SearchResult<E>>(list, pageable, total);
 	}
 	
+	/**
+	 * 返回与查询语句相符的分页结果
+	 */
 	@Override
 	public Page<E> find(String query, Pageable pageable) {
 		FullTextQuery q = getFullTextQuery(query);

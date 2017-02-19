@@ -125,13 +125,13 @@ public interface CmsService {
 	 * 最近文章列表
 	 * @return
 	 */
-	List<Article> recentArticle();
+	List<Article> recentArticles();
 	
 	/**
 	 * 最近评论列表
 	 * @return
 	 */
-	List<Comment> recentComment();
+	List<Comment> recentComments();
 	
 	/**
 	 * 获取所有的分类
