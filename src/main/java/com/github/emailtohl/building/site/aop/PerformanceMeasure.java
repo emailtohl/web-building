@@ -22,7 +22,7 @@ public class PerformanceMeasure {
 		Object res = jp.proceed();
 		long end = System.currentTimeMillis();
 		long interval = end - start;
-		logger.debug(jp.getSignature() + " : " + interval + " 毫秒");
+		logger.trace(jp.getSignature() + " : " + interval + " 毫秒");
 		return res;
 	}
 }
