@@ -98,6 +98,10 @@ public class Authority extends BaseEntity {
 	 * 资源管理，文件上传，目录创建、改名以及删除
 	 */
 	public static final String RESOURCE_MANAGER = "resource_manager";
+	/**
+	 * 内容管理权限
+	 */
+	public static final String CONTENT_MANAGER = "content_manager";
 	
 	public Authority() {
 		super();

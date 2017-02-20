@@ -153,6 +153,7 @@ public interface CmsService {
 	 * @param parent
 	 * @return
 	 */
+	@CacheEvict(value = CACHE_NAME_TYPE)
 	@PreAuthorize("isAuthenticated()")
 	long saveType(@NotNull String name, String description, String parent);
 	
@@ -162,6 +163,7 @@ public interface CmsService {
 	 * @param description
 	 * @param parent 类型的父类型，如果为null则为顶级类型
 	 */
+	@CacheEvict(value = CACHE_NAME_TYPE)
 	@PreAuthorize("isAuthenticated()")
 	void updateType(@Min(1) long id, @NotNull String name, String description, String parent);
 	
@@ -169,6 +171,7 @@ public interface CmsService {
 	 * 删除一个文章类型
 	 * @param id
 	 */
+	@CacheEvict(value = CACHE_NAME_TYPE)
 	@PreAuthorize("isAuthenticated()")
 	void deleteType(@Min(1) long id);
 	

@@ -36,6 +36,7 @@ public class CreateTable1 {
 		entityManager.persist(audit_user);
 		entityManager.persist(audit_role);
 		entityManager.persist(resource_manager);
+		entityManager.persist(content_manager);
 		
 		entityManager.persist(admin);
 		entityManager.persist(manager);
