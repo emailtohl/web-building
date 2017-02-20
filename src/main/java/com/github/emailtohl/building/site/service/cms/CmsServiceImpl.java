@@ -181,9 +181,11 @@ public class CmsServiceImpl implements CmsService {
 		Type t = new Type();
 		t.setName(name);
 		t.setDescription(description);
-		Type p = typeRepository.findByName(parent);
-		if (p != null) {
-			t.setParent(p);
+		if (StringUtils.hasText(parent)) {
+			Type p = typeRepository.findByName(parent);
+			if (p != null) {
+				t.setParent(p);
+			}
 		}
 		typeRepository.save(t);
 		return t.getId();
