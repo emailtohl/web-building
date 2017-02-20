@@ -1,5 +1,6 @@
 package com.github.emailtohl.building.site.service.cms;
 
+import static com.github.emailtohl.building.initdb.PersistenceData.*;
 import static org.junit.Assert.*;
 
 import java.util.List;
@@ -22,7 +23,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.config.RootContextConfiguration;
-import com.github.emailtohl.building.initdb.PersistenceData;
 import com.github.emailtohl.building.site.dao.audit.CleanAuditData;
 import com.github.emailtohl.building.site.entities.cms.Article;
 import com.github.emailtohl.building.site.entities.cms.Comment;
@@ -64,39 +64,50 @@ public class CmsServiceImplTest {
 	public void testFind() {
 		Pager<Article> p = cmsService.find("文章", pageable);
 		logger.debug(p.getContent());
-//		assertTrue(p.getTotalElements() > 0);
+		assertTrue(p.getTotalElements() > 0);
 	}
 
 	@Test
 	public void testArticle() {
-		long id = cmsService.saveArticle("test", "test", "test", "noType");
+		long id = cmsService.saveArticle("test", "test", "test", subType.getName());
 		assertTrue(id > 0);
 		Article a = cmsService.findArticle(id);
-		assertEquals(PersistenceData.emailtohl, a.getAuthor());
-		cmsService.updateArticle(id, "update", null, "test body", null);
-		a = cmsService.findArticle(id);
-		assertEquals("update", a.getTitle());
-		assertNull(a.getType());
-		cmsService.deleteArticle(id);
-		a = cmsService.findArticle(id);
-		assertNull(a);
-		cleanAuditData.cleanArticleAudit(id);
+		try {
+			assertEquals(emailtohl, a.getAuthor());
+			assertEquals(subType, a.getType());
+			assertTrue(cmsService.findTypeByName(subType.getName()).getArticles().contains(a));
+			
+			cmsService.updateArticle(id, "update", null, "test body", parent.getName());
+			a = cmsService.findArticle(id);
+			assertEquals("update", a.getTitle());
+			assertEquals(parent, a.getType());
+			
+			assertFalse(cmsService.findTypeByName(subType.getName()).getArticles().contains(a));
+			assertTrue(cmsService.findTypeByName(parent.getName()).getArticles().contains(a));
+			
+		} finally {
+			cmsService.deleteArticle(id);
+			cleanAuditData.cleanArticleAudit(id);
+		}
 	}
 
 	@Test
 	public void testComment() {
 		long articleId = cmsService.saveArticle("test", "test", "test", "noType");
 		long commentId = cmsService.saveComment(articleId, "my comment");
-		Comment c = cmsService.findComment(commentId);
-		assertEquals("my comment", c.getContent());
-		assertEquals(PersistenceData.emailtohl.getUsername(), c.getCritics());
-		assertEquals(PersistenceData.emailtohl.getIconSrc(), c.getIcon());
-		cmsService.updateComment(commentId, "update");
-		c = cmsService.findComment(commentId);
-		assertEquals("update", c.getContent());
-		cmsService.deleteComment(commentId);
-		cmsService.deleteArticle(articleId);
-		cleanAuditData.cleanArticleAudit(articleId);
+		try {
+			Comment c = cmsService.findComment(commentId);
+			assertEquals("my comment", c.getContent());
+			assertEquals(emailtohl.getUsername(), c.getCritics());
+			assertEquals(emailtohl.getIconSrc(), c.getIcon());
+			cmsService.updateComment(commentId, "update");
+			c = cmsService.findComment(commentId);
+			assertEquals("update", c.getContent());
+		} finally {
+			cmsService.deleteComment(commentId);
+			cmsService.deleteArticle(articleId);
+			cleanAuditData.cleanArticleAudit(articleId);
+		}
 	}
 
 	@Test

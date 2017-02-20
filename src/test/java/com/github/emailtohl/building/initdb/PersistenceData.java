@@ -284,6 +284,7 @@ public class PersistenceData {
 		article.setBody("这是第一篇文章。编辑或删除它，然后开始写作吧！");
 		article.setKeywords("世界 您好 文章");
 		article.setType(subType);
+		subType.getArticles().add(article);
 		article.setAuthor(foo);
 		
 		comment.setArticle(article);

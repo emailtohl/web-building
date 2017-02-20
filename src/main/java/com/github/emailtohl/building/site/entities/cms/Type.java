@@ -3,6 +3,7 @@ package com.github.emailtohl.building.site.entities.cms;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -42,7 +43,7 @@ public class Type extends BaseEntity {
 	 */
 	private Set<Article> articles = new HashSet<Article>();
 
-	
+	@Column(unique = true, nullable = false)
 	public String getName() {
 		return name;
 	}
@@ -69,7 +70,7 @@ public class Type extends BaseEntity {
 		this.parent = parent;
 	}
 
-	@OneToMany(mappedBy = "type")
+	@OneToMany(/*fetch = FetchType.EAGER, */mappedBy = "type", orphanRemoval = true)
 	public Set<Article> getArticles() {
 		return articles;
 	}
@@ -82,5 +83,29 @@ public class Type extends BaseEntity {
 	public String toString() {
 		return "Type [name=" + name + ", parent=" + parent + "]";
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (getClass() != obj.getClass())
+			return false;
+		Type other = (Type) obj;
+		if (getName() == null) {
+			if (other.getName() != null)
+				return false;
+		} else if (!getName().equals(other.getName()))
+			return false;
+		return true;
+	}
+	
 
 }

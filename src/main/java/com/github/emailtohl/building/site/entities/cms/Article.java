@@ -104,4 +104,9 @@ public class Article extends BaseEntity {
 		this.comments = comments;
 	}
 	
+	@Override
+	public String toString() {
+		return "Article [title=" + title + "]";
+	}
+	
 }

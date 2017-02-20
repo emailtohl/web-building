@@ -10,5 +10,5 @@ import com.github.emailtohl.building.site.entities.cms.Article;
  * @date 2017.02.12
  */
 public interface ArticleRepository extends JpaRepository<Article, Long>, ArticleRepositoryCustomization {
-	
+
 }

@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +33,7 @@ import com.github.emailtohl.building.site.entities.user.User;
  */
 @Service
 public class CmsServiceImpl implements CmsService {
+	private static final Logger logger = LogManager.getLogger();
 	@Inject
 	TypeRepository typeRepository;
 	@Inject
@@ -42,13 +45,14 @@ public class CmsServiceImpl implements CmsService {
 
 	@Override
 	public Article findArticle(long id) {
-		return articleRepository.findOne(id);
+		return filterUser(articleRepository.findOne(id));
 	}
 	
 	@Override
 	public Pager<Article> find(String query, Pageable pageable) {
 		Page<Article> page = articleRepository.find(query, pageable);
-		return new Pager<>(page.getContent(), page.getTotalElements(), page.getNumber(), page.getSize());
+		List<Article> ls = page.getContent().stream().map(this::filterUser).collect(Collectors.toList());
+		return new Pager<>(ls, page.getTotalElements(), page.getNumber(), page.getSize());
 	}
 
 	@Override
@@ -65,16 +69,26 @@ public class CmsServiceImpl implements CmsService {
 		User author = userRepository.findByEmail(email);
 		a.setAuthor(author);
 		Type t = typeRepository.findByName(type);
-		a.setType(t);
+		if (t != null) {
+			a.setType(t);
+			t.getArticles().add(a);
+		}
 		articleRepository.save(a);
 		return a.getId();
 	}
 
 	@Override
 	public void updateArticle(long id, Article article) {
-		Article p = articleRepository.findOne(id);
-		if (p != null) {
-			BeanUtils.copyProperties(article, p, BaseEntity.getIgnoreProperties("author"));
+		Article pa = articleRepository.findOne(id);
+		if (pa != null) {
+			BeanUtils.copyProperties(article, pa, BaseEntity.getIgnoreProperties("author", "type"));
+		}
+		Type t = article.getType();
+		if (t != null) {
+			pa.getType().getArticles().remove(pa);
+			Type pt = typeRepository.findByName(t.getName());
+			pa.setType(pt);
+			pt.getArticles().add(pa);
 		}
 	}
 
@@ -87,16 +101,23 @@ public class CmsServiceImpl implements CmsService {
 			article.setKeywords(keywords);
 		if (StringUtils.hasText(body))
 			article.setBody(body);
-		if (StringUtils.hasText(title)) {
-			Type t =typeRepository.findByName(type);
-			article.setType(t);
+		if (StringUtils.hasText(type)) {
+			Type t = typeRepository.findByName(type);
+			if (t != null) {
+				article.setType(t);
+			}
 		}
 		updateArticle(id, article);
 	}
 	
 	@Override
 	public void deleteArticle(long id) {
-		articleRepository.delete(id);
+		Article a = articleRepository.findOne(id);
+		Type t = a.getType();
+		if (t != null) {
+			t.getArticles().remove(a);
+		}
+		articleRepository.delete(a);
 	}
 
 	@Override
@@ -146,17 +167,64 @@ public class CmsServiceImpl implements CmsService {
 	public void deleteComment(long id) {
 		commentRepository.delete(id);
 	}
+	
+	@Override
+	public Type findTypeByName(String name) {
+		Type t = typeRepository.findByName(name);
+		if (t != null)
+			t.getArticles().forEach(a -> logger.debug(a));// 激活懒加载的内容
+		return t;
+	}
+	
+	@Override
+	public long saveType(String name, String description, String parent) {
+		Type t = new Type();
+		t.setName(name);
+		t.setDescription(description);
+		Type p = typeRepository.findByName(parent);
+		if (p != null) {
+			t.setParent(p);
+		}
+		typeRepository.save(t);
+		return t.getId();
+	}
+
+	@Override
+	public void updateType(long id, String name, String description, String parent) {
+		Type pt = typeRepository.findOne(id);
+		if (pt == null)
+			return;
+		if (StringUtils.hasText(name))
+			pt.setName(name);
+		if (StringUtils.hasText(description))
+			pt.setDescription(description);
+		if (StringUtils.hasText(parent)) {
+			Type pa = typeRepository.findByName(parent);
+			if (pa != null) {
+				pt.setParent(pa);
+			}
+		}
+	}
+
+	@Override
+	public void deleteType(long id) {
+		Type t = typeRepository.findOne(id);
+		if (t == null)
+			return;
+		t.getArticles().forEach(a -> {
+			a.setType(null);
+		});
+		typeRepository.delete(t);
+	}
 
 	@Override
 	public List<Article> recentArticles() {
-		return articleRepository.findAll()
-				.stream().limit(10).collect(Collectors.toList());
+		return articleRepository.findAll().stream().limit(10).map(this::filterUser).collect(Collectors.toList());
 	}
 
 	@Override
 	public List<Comment> recentComments() {
-		return commentRepository.findAll()
-				.stream().limit(10).collect(Collectors.toList());
+		return commentRepository.findAll().stream().limit(10).collect(Collectors.toList());
 	}
 
 	@Override
@@ -166,8 +234,16 @@ public class CmsServiceImpl implements CmsService {
 
 	@Override
 	public Map<Type, List<Article>> classify() {
-		return articleRepository.findAll().stream().limit(100)
-				.collect(Collectors.groupingBy(article -> article.getType()));
+		return articleRepository.findAll().stream().limit(100).map(this::filterUser)
+				.collect(Collectors.groupingBy(article -> {
+					Type t = article.getType();
+					if (t == null) {
+						t = new Type();
+						t.setName("未分类");
+						t.setDescription("系统不存在的分类");
+					}
+					return t;
+				}));
 	}
 
 	@Override
@@ -177,6 +253,26 @@ public class CmsServiceImpl implements CmsService {
 		wp.recentComments = recentComments();
 		wp.categories = classify();
 		return wp;
+	}
+	
+	/**
+	 * 对于文章来说，只需要展示用户名字，头像等基本信息即可
+	 * @param pa
+	 * @return
+	 */
+	private Article filterUser(Article pa) {
+		User tu = new User();
+		User pu = pa.getAuthor();
+		tu.setId(pu.getId());
+		tu.setEmail(pu.getEmail());
+		tu.setUsername(pu.getUsername());
+		tu.setName(pu.getName());
+		tu.setIconSrc(pu.getIconSrc());
+		
+		Article ta = new Article();
+		BeanUtils.copyProperties(pa, ta, "author");
+		ta.setAuthor(tu);
+		return ta;
 	}
 
 }

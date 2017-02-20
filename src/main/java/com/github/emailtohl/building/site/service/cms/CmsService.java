@@ -28,7 +28,8 @@ import com.github.emailtohl.building.site.entities.cms.Type;
 @Validated
 @Transactional
 public interface CmsService {
-	String CACHE_NAME = "webPageCache";
+	String CACHE_NAME_ARTICLE = "articleCache";
+	String CACHE_NAME_TYPE = "typeCache";
 	/**
 	 * 获取某文章
 	 * @param id
@@ -52,6 +53,7 @@ public interface CmsService {
 	 * @param type
 	 * @return
 	 */
+	@CacheEvict(value = CACHE_NAME_ARTICLE) // 当这个方法被调用后，即会清空缓存
 	@PreAuthorize("isAuthenticated()")
 	long saveArticle(@NotNull String title, String keywords, String body, String type);
 	
@@ -64,6 +66,7 @@ public interface CmsService {
 	 * @param type
 	 * @return
 	 */
+	@CacheEvict(value = CACHE_NAME_ARTICLE)
 	@PreAuthorize("isAuthenticated()")
 	long saveArticle(@NotNull String email, @NotNull String title, String keywords, String body, String type);
 	
@@ -72,7 +75,7 @@ public interface CmsService {
 	 * @param id
 	 * @param article
 	 */
-	@CacheEvict(value = CACHE_NAME) // 当这个方法被调用后，即会清空缓存
+	@CacheEvict(value = CACHE_NAME_ARTICLE)
 	@PreAuthorize("isAuthenticated()")
 	void updateArticle(long id, Article article);
 	
@@ -84,7 +87,7 @@ public interface CmsService {
 	 * @param body
 	 * @param type
 	 */
-	@CacheEvict(value = CACHE_NAME)
+	@CacheEvict(value = CACHE_NAME_ARTICLE)
 	@PreAuthorize("isAuthenticated()")
 	void updateArticle(long id, String title, String keywords, String body, String type);
 	
@@ -92,7 +95,7 @@ public interface CmsService {
 	 * 特殊情况下用于管理员删除文章
 	 * @param id
 	 */
-	@CacheEvict(value = CACHE_NAME)
+	@CacheEvict(value = CACHE_NAME_ARTICLE)
 	@PreAuthorize("hasAuthority('" + FORUM_DELETE + "')")
 	void deleteArticle(long id);
 	
@@ -111,7 +114,6 @@ public interface CmsService {
 	 * @param content
 	 * @return
 	 */
-	@CacheEvict(value = CACHE_NAME)
 	long saveComment(String email, @Min(1) long articleId, @NotNull String content);
 
 	/**
@@ -120,7 +122,6 @@ public interface CmsService {
 	 * @param content
 	 * @return
 	 */
-	@CacheEvict(value = CACHE_NAME)
 	long saveComment(@Min(1) long articleId, @NotNull String content);
 	
 	/**
@@ -128,7 +129,6 @@ public interface CmsService {
 	 * @param id
 	 * @param article
 	 */
-	@CacheEvict(value = CACHE_NAME)
 	@PreAuthorize("isAuthenticated()")
 	void updateComment(@Min(1) long id, @NotNull String commentContent);
 	
@@ -136,14 +136,48 @@ public interface CmsService {
 	 * 特殊情况下用于管理员删除文章
 	 * @param id
 	 */
-	@CacheEvict(value = CACHE_NAME)
 	@PreAuthorize("hasAuthority('" + FORUM_DELETE + "')")
 	void deleteComment(@Min(1) long id);
+	
+	/**
+	 * 通过名字查询文章类型
+	 * @param name
+	 * @return
+	 */
+	Type findTypeByName(@NotNull String name);
+
+	/**
+	 * 保存一个文章类型
+	 * @param name
+	 * @param description
+	 * @param parent
+	 * @return
+	 */
+	@PreAuthorize("isAuthenticated()")
+	long saveType(@NotNull String name, String description, String parent);
+	
+	/**
+	 * 更新一个文章类型
+	 * @param name
+	 * @param description
+	 * @param parent 类型的父类型，如果为null则为顶级类型
+	 */
+	@PreAuthorize("isAuthenticated()")
+	void updateType(@Min(1) long id, @NotNull String name, String description, String parent);
+	
+	/**
+	 * 删除一个文章类型
+	 * @param id
+	 */
+	@PreAuthorize("isAuthenticated()")
+	void deleteType(@Min(1) long id);
 	
 	/**
 	 * 最近文章列表
 	 * @return
 	 */
+	// 从CACHE_NAME的缓存中查询，有则返回缓存中的对象，无则执行实际的方法，并将执行的结果存入缓存中
+	@Cacheable(value = CACHE_NAME_ARTICLE)
 	List<Article> recentArticles();
 	
 	/**
@@ -156,6 +190,7 @@ public interface CmsService {
 	 * 获取所有的分类
 	 * @return
 	 */
+	@Cacheable(value = CACHE_NAME_TYPE)
 	List<Type> getArticleTypes();
 	
 	/**
@@ -169,8 +204,6 @@ public interface CmsService {
 	 * @param query 搜索页面的参数，可以为null
 	 * @return
 	 */
-	// 从CACHE_NAME的缓存中查询，有则返回缓存中的对象，无则执行实际的方法，并将执行的结果存入缓存中
-	@Cacheable(value = CACHE_NAME)
 	WebPage getWebPage(String query);
 	
 }
