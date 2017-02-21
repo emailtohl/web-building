@@ -1,5 +1,5 @@
 define(['cms/module', 'common/context' ], function(cmsModule) {
-	return cmsModule.factory('cmsService', [ '$http', 'util', function($http, util) {
+	return cmsModule.factory('resourceService', [ '$http', 'util', function($http, util) {
 		return {
 			/**
 			 * 获取资源管理的根目录的数据结构

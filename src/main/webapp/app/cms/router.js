@@ -1,6 +1,5 @@
 define(['cms/module',
         'cms/resource/ctrl',
-        'cms/content/ctrl',
         ], function(cmsModule) {
 	return cmsModule.config(function($stateProvider) {
 		$stateProvider
