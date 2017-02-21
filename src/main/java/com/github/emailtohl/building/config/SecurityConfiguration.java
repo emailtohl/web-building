@@ -200,7 +200,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/audit/role*").hasAuthority(AUDIT_ROLE)
 				.antMatchers("/role/**").hasAuthority(USER_ROLE_AUTHORITY_ALLOCATION)
 				.antMatchers("/fileUploadServer/**").hasAuthority(RESOURCE_MANAGER)
-				.antMatchers("/cms/**").hasAuthority(CONTENT_MANAGER)
+				.antMatchers("/cms/**").authenticated()
+				.antMatchers(HttpMethod.DELETE, "/cms/**").hasAuthority(CONTENT_MANAGER)
 				.anyRequest().authenticated()
 			// HTTP Basic Authentication是基于REST风格，通过HTTP状态码与访问它的应用程序进行沟通
 			/*.and().httpBasic()*/

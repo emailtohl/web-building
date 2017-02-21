@@ -1,6 +1,6 @@
 package com.github.emailtohl.building.site.service.cms;
 
-import static com.github.emailtohl.building.site.entities.role.Authority.FORUM_DELETE;
+import static com.github.emailtohl.building.site.entities.role.Authority.CONTENT_MANAGER;
 
 import java.util.List;
 import java.util.Map;
@@ -96,7 +96,7 @@ public interface CmsService {
 	 * @param id
 	 */
 	@CacheEvict(value = CACHE_NAME_ARTICLE)
-	@PreAuthorize("hasAuthority('" + FORUM_DELETE + "')")
+	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
 	void deleteArticle(long id);
 	
 	
@@ -109,34 +109,45 @@ public interface CmsService {
 	
 	/**
 	 * 保存文章，从安全上下文中查找用户名
-	 * @param email 用户名为空，则评论为匿名
+	 * @param email 用户名
 	 * @param articleId
 	 * @param content
 	 * @return
 	 */
-	long saveComment(String email, @Min(1) long articleId, @NotNull String content);
+	@PreAuthorize("isAuthenticated() && #email == principal.username)")
+	long saveComment(@NotNull String email, @Min(1) long articleId, @NotNull String content);
 
 	/**
-	 * 保存文章，从安全上下文中查找用户名，若在上下文找不到用户，则评论为匿名
+	 * 保存评论，从安全上下文中查找用户名
 	 * @param articleId
 	 * @param content
 	 * @return
 	 */
+	@PreAuthorize("isAuthenticated()")
 	long saveComment(@Min(1) long articleId, @NotNull String content);
 	
 	/**
-	 * 修改某文章
-	 * @param id
-	 * @param article
+	 * 修改评论
+	 * @param email 用户名
+	 * @param id 评论的id
+	 * @param commentContent 评论的内容
+	 */
+	@PreAuthorize("isAuthenticated() && #email == principal.username)")
+	void updateComment(@NotNull String email, @Min(1) long id, @NotNull String commentContent);
+	
+	/**
+	 * 修改评论
+	 * @param id 评论的id
+	 * @param commentContent 评论的内容
 	 */
 	@PreAuthorize("isAuthenticated()")
 	void updateComment(@Min(1) long id, @NotNull String commentContent);
 	
 	/**
-	 * 特殊情况下用于管理员删除文章
-	 * @param id
+	 * 删除评论
+	 * @param id 评论id
 	 */
-	@PreAuthorize("hasAuthority('" + FORUM_DELETE + "')")
+	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
 	void deleteComment(@Min(1) long id);
 	
 	/**
@@ -154,7 +165,7 @@ public interface CmsService {
 	 * @return
 	 */
 	@CacheEvict(value = CACHE_NAME_TYPE)
-	@PreAuthorize("isAuthenticated()")
+	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
 	long saveType(@NotNull String name, String description, String parent);
 	
 	/**
@@ -164,7 +175,7 @@ public interface CmsService {
 	 * @param parent 类型的父类型，如果为null则为顶级类型
 	 */
 	@CacheEvict(value = CACHE_NAME_TYPE)
-	@PreAuthorize("isAuthenticated()")
+	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
 	void updateType(@Min(1) long id, @NotNull String name, String description, String parent);
 	
 	/**
@@ -172,7 +183,7 @@ public interface CmsService {
 	 * @param id
 	 */
 	@CacheEvict(value = CACHE_NAME_TYPE)
-	@PreAuthorize("isAuthenticated()")
+	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
 	void deleteType(@Min(1) long id);
 	
 	/**

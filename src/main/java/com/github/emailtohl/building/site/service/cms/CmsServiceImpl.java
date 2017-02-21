@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -156,11 +157,19 @@ public class CmsServiceImpl implements CmsService {
 	}
 
 	@Override
-	public void updateComment(long id, String commentContent) {
+	public void updateComment(String email, long id, String commentContent) {
 		Comment c = commentRepository.findOne(id);
 		if (c != null) {
+			if (!StringUtils.hasText(email) || !email.equals(c.getCritics())) {
+				throw new AccessDeniedException("不是评论用户");
+			}
 			c.setContent(commentContent);
 		}
+	}
+	
+	@Override
+	public void updateComment(long id, String commentContent) {
+		updateComment(SecurityContextUtil.getCurrentUsername(), id, commentContent);
 	}
 
 	@Override
