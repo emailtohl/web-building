@@ -70,6 +70,17 @@ public class Type extends BaseEntity {
 		this.parent = parent;
 	}
 
+	/**
+	 * orphanRemoval is an entirely ORM-specific thing. It marks "child" entity
+	 * to be removed when it's no longer referenced from the "parent" entity,
+	 * e.g. when you remove the child entity from the corresponding collection
+	 * of the parent entity.
+	 * 
+	 * ON DELETE CASCADE is a database-specific thing, it deletes the "child"
+	 * row in the database when the "parent" row is deleted.
+	 * 
+	 * @return
+	 */
 	@OneToMany(/*fetch = FetchType.EAGER, */mappedBy = "type", orphanRemoval = true)
 	public Set<Article> getArticles() {
 		return articles;

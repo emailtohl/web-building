@@ -3,11 +3,11 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 	.controller('ContentCtrl', ['$scope', '$http', '$state', 'cmsService', 'util', 'ztreeutil',
 	                                function($scope, $http, $state, service, util, ztreeutil) {
 		var self = this, hideRoot = 'resource'/*这个路径在rootName上一级，用于前端访问所用*/, rootName, style, zTreeObj, cm;
-		self.charset = 'UTF-8';
-		self.contentType = '';
-		self.content = '';
-		self.path = '';
-		self.dirty = false;
+		self.charset = 'UTF-8';// 文本文件默认字符集
+		self.contentType = ''; // 文件的类型、txt/image/pdf等等
+		self.content = '';// 文本文件的内容
+		self.path = '';// 维护当前被点击节点的路径的信息
+		self.dirty = false;// 判断文本是否被修改过，由CodeMirror触发的修改事件修改该状态
 		
 		var setting = {
 			callback : {
@@ -23,10 +23,11 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 		util.loadasync('lib/ztree/zTreeStyle.css');
 		$scope.getAuthentication();
 		getFileRoot();
+		// 获取所有的字符集
 		service.getAvailableCharsets().success(function(data) {
 			self.availableCharsets = data;
 		});
-		
+		// 全文搜索整个文件系统，找出跟查询条件匹配的文件
 		self.query = function() {
 			service.query(self.queryParam).success(function(data) {
 				var zNodes = data;
@@ -34,7 +35,7 @@ define(['jquery', 'cms/module', 'cms/service', 'ztree'], function($, cmsModule) 
 				zTreeObj = $.fn.zTree.init($("#content-tree"), setting, zNodes);
 			});
 		}
-		
+		// 修改文件文本
 		self.updateText = function() {
 			if (!self.dirty)
 				return;
