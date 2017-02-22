@@ -201,6 +201,16 @@ public class CmsCtrl {
 	}
 	
 	/**
+	 * 获取所有的分类
+	 * @return
+	 */
+	@RequestMapping(value = "cms/types", method = GET)
+	@ResponseBody
+	public List<Type> getTypes() {
+		return cmsService.getArticleTypes();
+	}
+	
+	/**
 	 * 通过名字查询文章类型
 	 * @param name
 	 * @return

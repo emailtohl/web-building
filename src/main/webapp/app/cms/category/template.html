@@ -2,7 +2,7 @@
 <section class="content-header">
   <h1>
     CMS
-    <small>分类管理</small>
+    <small>分类目录</small>
   </h1>
   <ol class="breadcrumb">
     <li ui-sref="dashboard"><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -12,6 +12,49 @@
 
 <!-- Main content -->
 <section class="content">
-
+	<div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">文章类型</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                  <th class="col-md-3">类型名</th>
+                  <th class="col-md-3">描述</th>
+                  <th class="col-md-3">父类型</th>
+                  <th class="col-md-3">文章数</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="x in ctrl.typeList" style="cursor: pointer;">
+                  <td ng-bind="x.name" class="col-md-3"></td>
+                  <td ng-bind="x.description" class="col-md-3"></td>
+                  <td ng-bind="x.parent.name" class="col-md-3"></td>
+                  <td ng-bind="x.articles.length" class="col-md-3"></td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                  <th class="col-md-3">类型名</th>
+                  <th class="col-md-3">描述</th>
+                  <th class="col-md-3">父类型</th>
+                  <th class="col-md-3">文章数</th>
+                </tr>
+                </tfoot>
+              </table>
+              <!-- <pager page-number="ctrl.pager.pageNumber" total-pages="ctrl.pager.totalPages" button-count="5" on-click="ctrl.btnClick(pageNumber)"> -->
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+	      <div class="box-footer clearfix" ng-if="hasAuthority('user_create_special')">
+	        <button type="button" class="btn btn-primary btn-block">新增</button>
+	      </div>
+        </div>
+	</div>
 
 </section>

@@ -240,7 +240,21 @@ public class CmsServiceImpl implements CmsService {
 
 	@Override
 	public List<Type> getArticleTypes() {
-		return typeRepository.findAll();
+		return typeRepository.findAll().stream().map(pt -> {
+			Type target = new Type();
+			BeanUtils.copyProperties(pt, target, "articles", "version");
+			// 只保存文章的id和标题
+			target.getArticles()
+					.addAll(pt.getArticles().stream()
+					.map(src -> {
+						Article tar = new Article();
+						tar.setId(src.getId());
+						tar.setTitle(src.getTitle());
+						return tar;
+					})
+					.collect(Collectors.toList()));
+			return target;
+		}).collect(Collectors.toList());
 	}
 
 	@Override
