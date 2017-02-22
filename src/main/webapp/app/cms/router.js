@@ -1,5 +1,7 @@
 define(['cms/module',
         'cms/resource/ctrl',
+        'cms/category/ctrl',
+        'cms/article/ctrl',
         ], function(cmsModule) {
 	return cmsModule.config(function($stateProvider) {
 		$stateProvider
@@ -13,10 +15,15 @@ define(['cms/module',
 			templateUrl : 'app/cms/resource/template.html',
 			controller : 'ResourceCtrl as ctrl'
 		})
-		.state('cms.content', {
-			url : '/content',
-			templateUrl : 'app/cms/content/template.html',
-			controller : 'ContentCtrl as ctrl'
+		.state('cms.category', {
+			url : '/category',
+			templateUrl : 'app/cms/category/template.html',
+			controller : 'CategoryCtrl as ctrl'
+		})
+		.state('cms.article', {
+			url : '/article',
+			templateUrl : 'app/cms/article/template.html',
+			controller : 'ArticleCtrl as ctrl'
 		})
 		;
 	});
