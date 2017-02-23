@@ -62,7 +62,13 @@ public class CmsServiceImplTest {
 
 	@Test
 	public void testFind() {
+		// 从正文中搜索
 		Pager<Article> p = cmsService.find("文章", pageable);
+		logger.debug(p.getContent());
+//		assertTrue(p.getTotalElements() > 0);
+		
+		// 从评论中搜索
+		p = cmsService.find("评论", pageable);
 		logger.debug(p.getContent());
 //		assertTrue(p.getTotalElements() > 0);
 	}

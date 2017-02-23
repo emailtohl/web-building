@@ -5,6 +5,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -162,7 +163,16 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 				org.hibernate.search.annotations.IndexedEmbedded e = BeanUtil.getAnnotation(p, org.hibernate.search.annotations.IndexedEmbedded.class);
 				org.hibernate.search.annotations.Field f = BeanUtil.getAnnotation(p, org.hibernate.search.annotations.Field.class);
 				if (e != null) {
-					findProper(name + p.getName(), p.getPropertyType(), fields);
+					Class<?> embclz = p.getPropertyType();
+					if (Collection.class.isAssignableFrom(embclz)) {// 当属性是集合的时候
+						Class<?>[] genericClasses = BeanUtil.getGenericClass(p);
+						if (genericClasses.length != 1) {
+							throw new IllegalArgumentException("分析不了" + embclz.getName() + "集合存储的实体类型");
+						} else {
+							embclz = genericClasses[0];
+						}
+					}
+					findProper(name + p.getName(), embclz, fields);
 				} else if (f != null) {
 					String field = (name.isEmpty() ? "" : name + '.') + (f.name().isEmpty() ? p.getName() : f.name());
 					if (!fields.contains(field)) {
@@ -194,6 +204,15 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 				org.hibernate.search.annotations.Field f = fs[i].getAnnotation(org.hibernate.search.annotations.Field.class);
 				org.hibernate.search.annotations.IndexedEmbedded e = fs[i].getAnnotation(org.hibernate.search.annotations.IndexedEmbedded.class);
 				if (e != null) {
+					Class<?> embclz = fs[i].getType();
+					if (Collection.class.isAssignableFrom(embclz)) {// 当属性是集合的时候
+						Class<?>[] genericClasses = BeanUtil.getGenericClass(fs[i]);
+						if (genericClasses.length != 1) {
+							throw new IllegalArgumentException("分析不了" + embclz.getName() + "集合存储的实体类型");
+						} else {
+							embclz = genericClasses[0];
+						}
+					}
 					findField(name + fs[i].getName(), fs[i].getType(), fields);
 				} else if (f != null) {
 					String field = (name.isEmpty() ? "" : name + '.') + (f.name().isEmpty() ? fs[i].getName() : f.name());

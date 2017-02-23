@@ -20,6 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.common.jpa.relationEntities.Relation1;
 import com.github.emailtohl.building.config.RootContextConfiguration;
+import com.github.emailtohl.building.site.entities.cms.Article;
 import com.github.emailtohl.building.site.entities.conference.ForumPost;
 /**
  * Hibernate search组件测试
@@ -56,7 +57,13 @@ public class AbstractSearchableRepositoryTest {
 		assertEquals(Relation1.class, t.getEntityClass());
 		logger.debug(Arrays.toString(t.onFields));
 		assertArrayEquals(new String[] {"relation1", "relation2.relation2"}, t.onFields);
+	}
 	
+	@Test
+	public void testIndexedEmbeddedCollection() {
+		class ArticleFullTextSearch extends AbstractSearchableRepository<Article> {}
+		ArticleFullTextSearch articleFullTextSearch = new ArticleFullTextSearch();
+		logger.debug(Arrays.toString(articleFullTextSearch.onFields));
 	}
 	
 }

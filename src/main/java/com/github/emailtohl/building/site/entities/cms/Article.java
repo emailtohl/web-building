@@ -96,6 +96,7 @@ public class Article extends BaseEntity {
 	}
 	
 	@org.hibernate.envers.NotAudited
+	@org.hibernate.search.annotations.IndexedEmbedded
 	@OneToMany(mappedBy = "article")
 	public List<Comment> getComments() {
 		return comments;
