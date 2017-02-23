@@ -12,11 +12,12 @@
 
 <!-- Main content -->
 <section class="content">
-	<div class="row">
+	<div class="row" ng-hide="ctrl.isDetail">
         <div class="col-xs-12">
           <div class="box">
             <div class="box-header">
               <h3 class="box-title">文章类型</h3>
+	           	<button type="button" class="btn btn-default pull-right" ng-click="ctrl.add()">新增</button>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
@@ -30,7 +31,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="x in ctrl.typeList" style="cursor: pointer;">
+                <tr ng-repeat="x in ctrl.typeList" style="cursor: pointer;" ng-click="ctrl.edit(x.id)">
                   <td ng-bind="x.name" class="col-md-3"></td>
                   <td ng-bind="x.description" class="col-md-3"></td>
                   <td ng-bind="x.parent.name" class="col-md-3"></td>
@@ -51,10 +52,42 @@
             <!-- /.box-body -->
           </div>
           <!-- /.box -->
-	      <div class="box-footer clearfix" ng-if="hasAuthority('user_create_special')">
-	        <button type="button" class="btn btn-primary btn-block">新增</button>
+          <!-- 
+	      <div class="box-footer clearfix" >
 	      </div>
+	       -->
         </div>
+	</div>
+
+	<div class="row" ng-show="ctrl.isDetail">
+	  <form role="form" name="f">
+		<div class="box-header">
+          <h3 class="box-title">详情</h3>
+        </div>
+	    <div class="box-body">
+	      <div class="form-group has-feedback" ng-class="{'has-success':f.name.$valid,'has-warning':f.name.$error.required,'has-error':f.name.$error.minlength}">
+	        <label for="">分类名</label>
+	        <input type="text" placeholder="name" name="name" class="form-control" ng-model="ctrl.form.name" required="required">
+	        <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':f.name.$valid,'glyphicon-warning-sign':f.name.$error.required,'glyphicon-remove':f.name.$error.minlength}"></span>
+	      </div>
+	      <div class="form-group">
+	        <label for="">父类型</label>
+	        <select class="form-control select2" style="width: 100%;" select2 ng-model="ctrl.form.parent">
+		      <option value="">无</option>
+		      <option value="{{x.name}}" ng-repeat="x in ctrl.typeList">{{x.name}}</option>
+		    </select>
+	      </div>
+	      <div class="form-group">
+	        <label for="">描述</label>
+	        <textarea rows="3" placeholder="description" class="form-control" ng-model="ctrl.form.description"></textarea>
+	      </div>
+	    </div>
+	    <div class="box-footer clearfix">
+	      <button class="btn btn-default pull-left" ng-click="ctrl.back()">返回</button>
+	      <button class="btn btn-primary pull-right" ng-click="ctrl.submit()">提交</button>
+	    </div>
+	    <!-- /.box-body -->
+	  </form>
 	</div>
 
 </section>

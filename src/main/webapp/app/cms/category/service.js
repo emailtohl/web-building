@@ -4,6 +4,9 @@ define(['cms/module', 'common/context' ], function(cmsModule) {
 			getTypes : function() {
 				return $http.get('cms/types');
 			},
+			findTypeById : function(id) {
+				return $http.get('cms/type/' + id);
+			},
 			saveType : function(type) {
 				return $http.post('cms/type', type);
 			},

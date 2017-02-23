@@ -53,7 +53,7 @@ public interface CmsService {
 	 * @param type
 	 * @return
 	 */
-	@CacheEvict(value = CACHE_NAME_ARTICLE) // 当这个方法被调用后，即会清空缓存
+	@CacheEvict(value = CACHE_NAME_ARTICLE, allEntries = true) // 当这个方法被调用后，即会清空缓存
 	@PreAuthorize("isAuthenticated()")
 	long saveArticle(@NotNull String title, String keywords, String body, String type);
 	
@@ -66,7 +66,7 @@ public interface CmsService {
 	 * @param type
 	 * @return
 	 */
-	@CacheEvict(value = CACHE_NAME_ARTICLE)
+	@CacheEvict(value = CACHE_NAME_ARTICLE, allEntries = true)
 	@PreAuthorize("isAuthenticated()")
 	long saveArticle(@NotNull String email, @NotNull String title, String keywords, String body, String type);
 	
@@ -75,7 +75,7 @@ public interface CmsService {
 	 * @param id
 	 * @param article
 	 */
-	@CacheEvict(value = CACHE_NAME_ARTICLE)
+	@CacheEvict(value = CACHE_NAME_ARTICLE, allEntries = true)
 	@PreAuthorize("isAuthenticated()")
 	void updateArticle(long id, Article article);
 	
@@ -151,6 +151,13 @@ public interface CmsService {
 	void deleteComment(@Min(1) long id);
 	
 	/**
+	 * 根据id查找文章类型
+	 * @param id
+	 * @return
+	 */
+	Type findTypeById(long id);
+	
+	/**
 	 * 通过名字查询文章类型
 	 * @param name
 	 * @return
@@ -164,7 +171,7 @@ public interface CmsService {
 	 * @param parent
 	 * @return
 	 */
-	@CacheEvict(value = CACHE_NAME_TYPE)
+	@CacheEvict(value = CACHE_NAME_TYPE, allEntries = true)
 	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
 	long saveType(@NotNull String name, String description, String parent);
 	
@@ -174,7 +181,7 @@ public interface CmsService {
 	 * @param description
 	 * @param parent 类型的父类型，如果为null则为顶级类型
 	 */
-	@CacheEvict(value = CACHE_NAME_TYPE)
+	@CacheEvict(value = CACHE_NAME_TYPE, allEntries = true)
 	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
 	void updateType(@Min(1) long id, @NotNull String name, String description, String parent);
 	
@@ -182,7 +189,7 @@ public interface CmsService {
 	 * 删除一个文章类型
 	 * @param id
 	 */
-	@CacheEvict(value = CACHE_NAME_TYPE)
+	@CacheEvict(value = CACHE_NAME_TYPE, allEntries = true)
 	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
 	void deleteType(@Min(1) long id);
 	

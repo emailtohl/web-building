@@ -211,6 +211,17 @@ public class CmsCtrl {
 	}
 	
 	/**
+	 * 根据id查找文章类型
+	 * @param id
+	 * @return
+	 */
+	@RequestMapping(value = "cms/type/{id}", method = GET)
+	@ResponseBody
+	public Type findTypeById(@PathVariable long id) {
+		return cmsService.findTypeById(id);
+	}
+	
+	/**
 	 * 通过名字查询文章类型
 	 * @param name
 	 * @return
@@ -230,10 +241,8 @@ public class CmsCtrl {
 	 */
 	@RequestMapping(value = "cms/type", method = POST)
 	@ResponseBody
-	public long saveType(@RequestParam(name = "name", required = true) String name, 
-			@RequestParam(name = "description", required = false) String description, 
-			@RequestParam(name = "parent", required = false) String parent) {
-		return saveType(name, description, parent);
+	public long saveType(@RequestBody TypeForm form) {
+		return cmsService.saveType(form.name, form.description, form.parent);
 	}
 	
 	/**
@@ -244,11 +253,15 @@ public class CmsCtrl {
 	 */
 	@RequestMapping(value = "cms/type/{id}", method = PUT)
 	@ResponseBody
-	public void updateType(@PathVariable("id") long id, 
-			@RequestParam(name = "name", required = false) String name, 
-			@RequestParam(name = "description", required = false) String description, 
-			@RequestParam(name = "parent", required = false) String parent) {
-		cmsService.updateType(id, name, description, parent);
+	public void updateType(@PathVariable("id") long id, @RequestBody TypeForm form) {
+		cmsService.updateType(id, form.name, form.description, form.parent);
+	}
+	
+	class TypeForm {
+		long id;
+		String name;
+		String description;
+		String parent;
 	}
 	
 	/**

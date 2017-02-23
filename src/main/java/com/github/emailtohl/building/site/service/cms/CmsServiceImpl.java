@@ -34,6 +34,7 @@ import com.github.emailtohl.building.site.entities.user.User;
  */
 @Service
 public class CmsServiceImpl implements CmsService {
+	@SuppressWarnings("unused")
 	private static final Logger logger = LogManager.getLogger();
 	@Inject
 	TypeRepository typeRepository;
@@ -178,10 +179,38 @@ public class CmsServiceImpl implements CmsService {
 	}
 	
 	@Override
+	public Type findTypeById(long id) {
+		Type t = null;
+		Type p = typeRepository.findOne(id);
+		if (p != null) {
+			t = new Type();
+			BeanUtils.copyProperties(p, t, "parent", "articles");
+			Type pp = p.getParent();
+			if (pp != null) {
+				Type tp = new Type();
+				BeanUtils.copyProperties(pp, tp, "parent", "articles");
+				t.setParent(tp);
+			}
+		}
+//		t.getArticles().stream().limit(10).forEach(a -> logger.debug(a));
+		return t;
+	}
+	
+	@Override
 	public Type findTypeByName(String name) {
-		Type t = typeRepository.findByName(name);
-		if (t != null)
-			t.getArticles().forEach(a -> logger.debug(a));// 激活懒加载的内容
+		Type t = null;
+		Type p = typeRepository.findByName(name);
+		if (p != null) {
+			t = new Type();
+			BeanUtils.copyProperties(p, t, "parent", "articles");
+			Type pp = p.getParent();
+			if (pp != null) {
+				Type tp = new Type();
+				BeanUtils.copyProperties(pp, tp, "parent", "articles");
+				t.setParent(tp);
+			}
+		}
+//		t.getArticles().stream().limit(10).forEach(a -> logger.debug(a));
 		return t;
 	}
 	
