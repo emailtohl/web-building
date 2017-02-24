@@ -1,8 +1,13 @@
 define(['cms/module', 'common/context' ], function(cmsModule) {
 	return cmsModule.factory('categoryService', [ '$http', 'util', function($http, util) {
 		return {
-			getTypes : function() {
-				return $http.get('cms/types');
+			getTypes : function(name, page) {
+				var param = {
+					page : page,
+					name : name,
+				};
+				param = util.encodeUrlParams(param);
+				return $http.get('cms/types' + (param ? '?' + param : ''));
 			},
 			findTypeById : function(id) {
 				return $http.get('cms/type/' + id);

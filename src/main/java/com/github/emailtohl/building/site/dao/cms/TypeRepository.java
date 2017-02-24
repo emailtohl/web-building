@@ -1,5 +1,7 @@
 package com.github.emailtohl.building.site.dao.cms;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.github.emailtohl.building.site.entities.cms.Type;
@@ -16,4 +18,13 @@ public interface TypeRepository extends JpaRepository<Type, Long> {
 	 * @return
 	 */
 	Type findByName(String name);
+	
+	/**
+	 * 分页查询文章类型
+	 * @param name
+	 * @param pageable
+	 * @return
+	 */
+	Page<Type> findByNameLike(String name, Pageable pageable);
+	
 }

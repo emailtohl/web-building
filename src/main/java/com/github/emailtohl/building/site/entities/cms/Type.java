@@ -82,7 +82,7 @@ public class Type extends BaseEntity {
 	 * 
 	 * @return
 	 */
-	@OneToMany(/*fetch = FetchType.EAGER, */mappedBy = "type", orphanRemoval = true)
+	@OneToMany(mappedBy = "type", orphanRemoval = true)
 	@OrderBy(BaseEntity.CREATE_DATE_PROPERTY_NAME)
 	public Set<Article> getArticles() {
 		return articles;

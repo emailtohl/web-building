@@ -1,5 +1,19 @@
 define(['cms/module', 'cms/category/service'], function(cmsModule) {
 	return cmsModule
+	// 选择框中，过滤掉自身：ng-repeat="x in ctrl.typeList | excludeSelf:ctrl.form.id"
+	.filter('excludeSelf', function() {
+		return function(arr, selfId) {
+			var i, newArr;
+			if (!(arr instanceof Array) || !angular.isNumber(selfId))
+				return arr;
+			newArr = [];
+			for (var i = 0; i < arr.length; i++) {
+				if (arr[i].id != selfId)
+					newArr.push(arr[i]);
+			}
+			return newArr;
+		}
+	})
 	.controller('CategoryCtrl', ['$scope', '$http', '$state', 'categoryService',
 	                                function($scope, $http, $state, service) {
 		var self = this;
@@ -7,8 +21,24 @@ define(['cms/module', 'cms/category/service'], function(cmsModule) {
 		// 用于切换界面，详情状态就是新增和编辑，反之则是列表页面
 		self.isDetail = false;
 		self.form = {};
+		self.queryParam = {
+			page : 1,
+			name : '',
+		};
 		
-		getTypes();
+		self.query = function() {
+			service.getTypes(self.queryParam.name, self.queryParam.page).success(function(data) {
+				self.pager = data;
+				console.log(data);
+			});
+		};
+		
+		self.query();
+		
+		self.btnClick = function(pageNumber) {
+			self.query.page = pageNumber;
+			self.query();
+		};
 		
 		self.add = function() {
 			self.form = {};
@@ -33,23 +63,17 @@ define(['cms/module', 'cms/category/service'], function(cmsModule) {
 		self.submit = function() {
 			if (self.form.id) {
 				service.updateType(self.form.id, self.form).success(function(data) {
-					getTypes();
+					self.query();
 					self.isDetail = false;
 				});
 			} else {
 				service.saveType(self.form).success(function(data) {
-					getTypes();
+					self.query();
 					self.isDetail = false;
 				});
 			}
 		};
-		
-		function getTypes() {
-			service.getTypes().success(function(data) {
-				self.typeList = data;
-				console.log(data);
-			});
-		}
+
 		
 	}])
 	;

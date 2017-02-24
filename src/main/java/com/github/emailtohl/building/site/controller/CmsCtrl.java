@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
 import com.github.emailtohl.building.exception.VerifyFailure;
 import com.github.emailtohl.building.site.entities.cms.Article;
 import com.github.emailtohl.building.site.entities.cms.Comment;
@@ -55,7 +56,7 @@ public class CmsCtrl {
 	@RequestMapping(value = "cms/article/{id}", method = GET)
 	@ResponseBody
 	public Article findArticle(@PathVariable long id) {
-		return cmsService.findArticle(id);
+		return cmsService.getArticle(id);
 	}
 	
 	/**
@@ -68,7 +69,7 @@ public class CmsCtrl {
 	@ResponseBody
 	public Pager<Article> search(@RequestParam(name="query", required = false, defaultValue = "") String query, 
 			@PageableDefault(page = 0, size = 10, sort = {"title", "keywords"}, direction = Direction.DESC) Pageable pageable) {
-		return cmsService.find(query, pageable);
+		return cmsService.searchArticles(query, pageable);
 	}
 	
 	/**
@@ -206,8 +207,9 @@ public class CmsCtrl {
 	 */
 	@RequestMapping(value = "cms/types", method = GET)
 	@ResponseBody
-	public List<Type> getTypes() {
-		return cmsService.getArticleTypes();
+	public Pager<Type> getTypes(@RequestParam(name="name", required = false, defaultValue = "") String name, 
+			@PageableDefault(page = 0, size = 10, sort = {BaseEntity.CREATE_DATE_PROPERTY_NAME}, direction = Direction.DESC) Pageable pageable) {
+		return cmsService.getTypes(name, pageable);
 	}
 	
 	/**

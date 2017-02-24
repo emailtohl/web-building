@@ -17,45 +17,57 @@
           <div class="box">
             <div class="box-header">
               <h3 class="box-title">文章类型</h3>
-	           	<button type="button" class="btn btn-default pull-right" ng-click="ctrl.add()">新增</button>
+              <div class="box-tools">
+		        <form ng-submit="ctrl.query()" class="input-group input-group-sm ng-pristine ng-valid" style="width: 150px;">
+		          <input name="table_search" ng-model="ctrl.queryParam.name" class="form-control pull-right ng-pristine ng-untouched ng-valid ng-empty" placeholder="Search title" type="text">
+		          <div class="input-group-btn">
+		            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+		          </div>
+		        </form>
+		      </div>
+	          
             </div>
             <!-- /.box-header -->
             <div class="box-body">
               <table class="table table-bordered table-hover">
                 <thead>
                 <tr>
-                  <th class="col-md-3">类型名</th>
-                  <th class="col-md-3">描述</th>
-                  <th class="col-md-3">父类型</th>
-                  <th class="col-md-3">文章数</th>
+                  <th class="col-md-1">序号</th>
+                  <th class="col-md-2">类型名</th>
+                  <th class="col-md-2">父类型</th>
+                  <th class="col-md-2">文章数</th>
+                  <th class="col-md-5">描述</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="x in ctrl.typeList" style="cursor: pointer;" ng-click="ctrl.edit(x.id)">
-                  <td ng-bind="x.name" class="col-md-3"></td>
-                  <td ng-bind="x.description" class="col-md-3"></td>
-                  <td ng-bind="x.parent.name" class="col-md-3"></td>
-                  <td ng-bind="x.articles.length" class="col-md-3"></td>
+                <tr ng-repeat="x in ctrl.pager.content" style="cursor: pointer;" ng-click="ctrl.edit(x.id)">
+                  <td ng-bind="$index + 1" class="col-md-1"></td>
+                  <td ng-bind="x.name" class="col-md-2"></td>
+                  <td ng-bind="x.parent.name" class="col-md-2"></td>
+                  <td ng-bind="x.articles.length" class="col-md-2"></td>
+                  <td ng-bind="x.description" class="col-md-5"></td>
                 </tr>
                 </tbody>
                 <tfoot>
                 <tr>
-                  <th class="col-md-3">类型名</th>
-                  <th class="col-md-3">描述</th>
-                  <th class="col-md-3">父类型</th>
-                  <th class="col-md-3">文章数</th>
+                  <th class="col-md-1">序号</th>
+                  <th class="col-md-2">类型名</th>
+                  <th class="col-md-2">父类型</th>
+                  <th class="col-md-2">文章数</th>
+                  <th class="col-md-5">描述</th>
                 </tr>
                 </tfoot>
               </table>
-              <!-- <pager page-number="ctrl.pager.pageNumber" total-pages="ctrl.pager.totalPages" button-count="5" on-click="ctrl.btnClick(pageNumber)"> -->
+              <pager page-number="ctrl.pager.pageNumber" total-pages="ctrl.pager.totalPages" button-count="5" on-click="ctrl.btnClick(pageNumber)">
             </div>
             <!-- /.box-body -->
           </div>
           <!-- /.box -->
-          <!-- 
+          
 	      <div class="box-footer clearfix" >
+	      	<button type="button" class="btn btn-default pull-right" ng-click="ctrl.add()">新增</button>
 	      </div>
-	       -->
+	      
         </div>
 	</div>
 
@@ -74,7 +86,7 @@
 	        <label for="">父类型</label>
 	        <select class="form-control select2" style="width: 100%;" select2 ng-model="ctrl.form.parent">
 		      <option value="">无</option>
-		      <option value="{{x.name}}" ng-repeat="x in ctrl.typeList">{{x.name}}</option>
+		      <option value="{{x.name}}" ng-repeat="x in ctrl.pager.content | excludeSelf:ctrl.form.id">{{x.name}}</option>
 		    </select>
 	      </div>
 	      <div class="form-group">

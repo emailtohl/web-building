@@ -46,14 +46,14 @@ public class CmsServiceImpl implements CmsService {
 	UserRepository userRepository;
 
 	@Override
-	public Article findArticle(long id) {
-		return filterUser(articleRepository.findOne(id));
+	public Article getArticle(long id) {
+		return articlefilter(articleRepository.findOne(id));
 	}
 	
 	@Override
-	public Pager<Article> find(String query, Pageable pageable) {
+	public Pager<Article> searchArticles(String query, Pageable pageable) {
 		Page<Article> page = articleRepository.find(query, pageable);
-		List<Article> ls = page.getContent().stream().map(this::filterUser).collect(Collectors.toList());
+		List<Article> ls = page.getContent().stream().map(this::articlefilter).collect(Collectors.toList());
 		return new Pager<>(ls, page.getTotalElements(), page.getNumber(), page.getSize());
 	}
 
@@ -179,39 +179,26 @@ public class CmsServiceImpl implements CmsService {
 	}
 	
 	@Override
+	public Pager<Type> getTypes(String typeName, Pageable pageable) {
+		Page<Type> page;
+		if (StringUtils.hasText(typeName))
+			page = typeRepository.findByNameLike(typeName.trim() + "%", pageable);
+		else
+			page = typeRepository.findAll(pageable);
+		return new Pager<>(page.getContent().stream().map(this::typeFilter).collect(Collectors.toList())
+				, page.getTotalElements(), page.getNumber(), page.getSize());
+	}
+	
+	@Override
 	public Type findTypeById(long id) {
-		Type t = null;
 		Type p = typeRepository.findOne(id);
-		if (p != null) {
-			t = new Type();
-			BeanUtils.copyProperties(p, t, "parent", "articles");
-			Type pp = p.getParent();
-			if (pp != null) {
-				Type tp = new Type();
-				BeanUtils.copyProperties(pp, tp, "parent", "articles");
-				t.setParent(tp);
-			}
-		}
-		t.setArticles(p.getArticles().stream().limit(10).sorted().collect(Collectors.toSet()));
-		return t;
+		return typeFilter(p);
 	}
 	
 	@Override
 	public Type findTypeByName(String name) {
-		Type t = null;
 		Type p = typeRepository.findByName(name);
-		if (p != null) {
-			t = new Type();
-			BeanUtils.copyProperties(p, t, "parent", "articles");
-			Type pp = p.getParent();
-			if (pp != null) {
-				Type tp = new Type();
-				BeanUtils.copyProperties(pp, tp, "parent", "articles");
-				t.setParent(tp);
-			}
-		}
-		t.setArticles(p.getArticles().stream().limit(10).sorted().collect(Collectors.toSet()));
-		return t;
+		return typeFilter(p);
 	}
 	
 	@Override
@@ -259,7 +246,7 @@ public class CmsServiceImpl implements CmsService {
 
 	@Override
 	public List<Article> recentArticles() {
-		return articleRepository.findAll().stream().limit(10).map(this::filterUser).collect(Collectors.toList());
+		return articleRepository.findAll().stream().limit(10).map(this::articlefilter).collect(Collectors.toList());
 	}
 
 	@Override
@@ -269,26 +256,12 @@ public class CmsServiceImpl implements CmsService {
 
 	@Override
 	public List<Type> getArticleTypes() {
-		return typeRepository.findAll().stream().map(pt -> {
-			Type target = new Type();
-			BeanUtils.copyProperties(pt, target, "articles", "version");
-			// 只保存文章的id和标题
-			target.getArticles()
-					.addAll(pt.getArticles().stream()
-					.map(src -> {
-						Article tar = new Article();
-						tar.setId(src.getId());
-						tar.setTitle(src.getTitle());
-						return tar;
-					})
-					.collect(Collectors.toList()));
-			return target;
-		}).collect(Collectors.toList());
+		return typeRepository.findAll().stream().map(this::typeFilter).collect(Collectors.toList());
 	}
-
+	
 	@Override
 	public Map<Type, List<Article>> classify() {
-		return articleRepository.findAll().stream().limit(100).map(this::filterUser)
+		return articleRepository.findAll().stream().limit(100).map(this::articlefilter)
 				.collect(Collectors.groupingBy(article -> {
 					Type t = article.getType();
 					if (t == null) {
@@ -314,7 +287,9 @@ public class CmsServiceImpl implements CmsService {
 	 * @param pa
 	 * @return
 	 */
-	private Article filterUser(Article pa) {
+	private Article articlefilter(Article pa) {
+		if (pa == null)
+			return null;
 		User tu = new User();
 		User pu = pa.getAuthor();
 		tu.setId(pu.getId());
@@ -327,6 +302,30 @@ public class CmsServiceImpl implements CmsService {
 		BeanUtils.copyProperties(pa, ta, "author");
 		ta.setAuthor(tu);
 		return ta;
+	}
+	
+	/**
+	 * 过滤文章类型
+	 * @param pt
+	 * @return
+	 */
+	private Type typeFilter(Type pt) {
+		if (pt == null)
+			return null;
+		Type t = new Type();
+		BeanUtils.copyProperties(pt, t, "parent", "articles");
+		Type pp = pt.getParent();
+		if (pp != null) {
+			Type tp = new Type();
+			BeanUtils.copyProperties(pp, tp, "parent", "articles");
+			t.setParent(tp);
+		}
+		// 只要文章长度，不加载具体的文章
+		int size = pt.getArticles().size();
+		for (int i = 0; i < size; i++) {
+			t.getArticles().add(new Article());
+		}
+		return t;
 	}
 
 }

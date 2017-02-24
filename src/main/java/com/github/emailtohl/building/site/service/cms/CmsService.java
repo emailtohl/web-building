@@ -35,7 +35,7 @@ public interface CmsService {
 	 * @param id
 	 * @return
 	 */
-	Article findArticle(long id);
+	Article getArticle(long id);
 	
 	/**
 	 * 全文搜索
@@ -43,7 +43,7 @@ public interface CmsService {
 	 * @param pageable
 	 * @return 只返回查找到的实体类E
 	 */
-	Pager<Article> find(String query, Pageable pageable);
+	Pager<Article> searchArticles(String query, Pageable pageable);
 	
 	/**
 	 * 保存文章，从安全上下文中查找用户名
@@ -149,6 +149,13 @@ public interface CmsService {
 	 */
 	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
 	void deleteComment(@Min(1) long id);
+	
+	/**
+	 * 查询文章类型
+	 * @param typeName
+	 * @return
+	 */
+	Pager<Type> getTypes(String typeName, Pageable pageable);
 	
 	/**
 	 * 根据id查找文章类型
