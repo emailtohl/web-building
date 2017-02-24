@@ -192,7 +192,7 @@ public class CmsServiceImpl implements CmsService {
 				t.setParent(tp);
 			}
 		}
-//		t.getArticles().stream().limit(10).forEach(a -> logger.debug(a));
+		t.setArticles(p.getArticles().stream().limit(10).sorted().collect(Collectors.toSet()));
 		return t;
 	}
 	
@@ -210,7 +210,7 @@ public class CmsServiceImpl implements CmsService {
 				t.setParent(tp);
 			}
 		}
-//		t.getArticles().stream().limit(10).forEach(a -> logger.debug(a));
+		t.setArticles(p.getArticles().stream().limit(10).sorted().collect(Collectors.toSet()));
 		return t;
 	}
 	

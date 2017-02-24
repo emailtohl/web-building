@@ -1,6 +1,6 @@
 package com.github.emailtohl.building.site.entities.cms;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -41,7 +42,7 @@ public class Type extends BaseEntity {
 	/**
 	 * 分类下的文章
 	 */
-	private Set<Article> articles = new HashSet<Article>();
+	private Set<Article> articles = new LinkedHashSet<Article>();
 
 	@Column(unique = true, nullable = false)
 	public String getName() {
@@ -82,6 +83,7 @@ public class Type extends BaseEntity {
 	 * @return
 	 */
 	@OneToMany(/*fetch = FetchType.EAGER, */mappedBy = "type", orphanRemoval = true)
+	@OrderBy(BaseEntity.CREATE_DATE_PROPERTY_NAME)
 	public Set<Article> getArticles() {
 		return articles;
 	}

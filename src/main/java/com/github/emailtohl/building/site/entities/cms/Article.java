@@ -26,7 +26,7 @@ import com.github.emailtohl.building.site.entities.user.User;
 @org.hibernate.search.annotations.Analyzer(impl = org.apache.lucene.analysis.standard.StandardAnalyzer.class)
 @Entity
 @Table(name = "t_article")
-public class Article extends BaseEntity {
+public class Article extends BaseEntity implements Comparable<Article> {
 	private static final long serialVersionUID = -5430993268188939177L;
 	@NotNull
 	private String title;
@@ -108,6 +108,15 @@ public class Article extends BaseEntity {
 	@Override
 	public String toString() {
 		return "Article [title=" + title + "]";
+	}
+	
+	@Override
+	public int compareTo(Article o) {
+		int r = 0;
+		if (getCreateDate() != null && o.getCreateDate() != null)
+			// 时间越大越靠前（返回负数）
+			r = o.getCreateDate().compareTo(getCreateDate());
+		return r;
 	}
 	
 }
