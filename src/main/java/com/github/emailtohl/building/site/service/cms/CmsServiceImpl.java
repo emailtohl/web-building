@@ -52,7 +52,12 @@ public class CmsServiceImpl implements CmsService {
 	
 	@Override
 	public Pager<Article> searchArticles(String query, Pageable pageable) {
-		Page<Article> page = articleRepository.find(query, pageable);
+		Page<Article> page;
+		if (StringUtils.hasText(query)) {
+			page = articleRepository.find(query.trim(), pageable);
+		} else {
+			page = articleRepository.findAll(pageable);
+		}
 		List<Article> ls = page.getContent().stream().map(this::articlefilter).collect(Collectors.toList());
 		return new Pager<>(ls, page.getTotalElements(), page.getNumber(), page.getSize());
 	}
@@ -179,7 +184,7 @@ public class CmsServiceImpl implements CmsService {
 	}
 	
 	@Override
-	public Pager<Type> getTypes(String typeName, Pageable pageable) {
+	public Pager<Type> getTypePager(String typeName, Pageable pageable) {
 		Page<Type> page;
 		if (StringUtils.hasText(typeName))
 			page = typeRepository.findByNameLike(typeName.trim() + "%", pageable);
@@ -255,7 +260,7 @@ public class CmsServiceImpl implements CmsService {
 	}
 
 	@Override
-	public List<Type> getArticleTypes() {
+	public List<Type> getTypes() {
 		return typeRepository.findAll().stream().map(this::typeFilter).collect(Collectors.toList());
 	}
 	
@@ -299,8 +304,17 @@ public class CmsServiceImpl implements CmsService {
 		tu.setIconSrc(pu.getIconSrc());
 		
 		Article ta = new Article();
-		BeanUtils.copyProperties(pa, ta, "author");
+		BeanUtils.copyProperties(pa, ta, "author", "type", "comments");
+		// 只获取作者必要信息
 		ta.setAuthor(tu);
+		// 只获取类型一级父目录
+		ta.setType(typeFilter(pa.getType()));
+		// 改变评论懒加载状态，且避免article与comment的交叉引用
+		ta.setComments(pa.getComments().stream().map(pc -> {
+			Comment tc = new Comment();
+			BeanUtils.copyProperties(pc, tc, "article");
+			return tc;
+		}).collect(Collectors.toList()));
 		return ta;
 	}
 	

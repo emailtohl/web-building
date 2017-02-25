@@ -151,11 +151,18 @@ public interface CmsService {
 	void deleteComment(@Min(1) long id);
 	
 	/**
-	 * 查询文章类型
+	 * 获取所有的文章分类
+	 * @return
+	 */
+	@Cacheable(value = CACHE_NAME_TYPE)
+	List<Type> getTypes();
+	
+	/**
+	 * 分页查询文章类型
 	 * @param typeName
 	 * @return
 	 */
-	Pager<Type> getTypes(String typeName, Pageable pageable);
+	Pager<Type> getTypePager(String typeName, Pageable pageable);
 	
 	/**
 	 * 根据id查找文章类型
@@ -213,13 +220,6 @@ public interface CmsService {
 	 * @return
 	 */
 	List<Comment> recentComments();
-	
-	/**
-	 * 获取所有的分类
-	 * @return
-	 */
-	@Cacheable(value = CACHE_NAME_TYPE)
-	List<Type> getArticleTypes();
 	
 	/**
 	 * 根据文章类型进行分类

@@ -1,23 +1,11 @@
 define(['cms/module', 'cms/category/service'], function(cmsModule) {
-	return cmsModule
-	// 选择框中，过滤掉自身：ng-repeat="x in ctrl.typeList | excludeSelf:ctrl.form.id"
-	.filter('excludeSelf', function() {
-		return function(arr, selfId) {
-			var i, newArr;
-			if (!(arr instanceof Array) || !angular.isNumber(selfId))
-				return arr;
-			newArr = [];
-			for (var i = 0; i < arr.length; i++) {
-				if (arr[i].id != selfId)
-					newArr.push(arr[i]);
-			}
-			return newArr;
-		}
-	})
-	.controller('CategoryCtrl', ['$scope', '$http', '$state', 'categoryService',
+	return cmsModule.controller('CategoryCtrl', ['$scope', '$http', '$state', 'categoryService',
 	                                function($scope, $http, $state, service) {
 		var self = this;
 		$scope.getAuthentication();
+		service.getTypes().success(function(data) {
+			self.types = data;
+		});
 		// 用于切换界面，详情状态就是新增和编辑，反之则是列表页面
 		self.isDetail = false;
 		self.form = {};
@@ -27,9 +15,9 @@ define(['cms/module', 'cms/category/service'], function(cmsModule) {
 		};
 		
 		self.query = function() {
-			service.getTypes(self.queryParam.name, self.queryParam.page).success(function(data) {
+			service.getTypePager(self.queryParam.name, self.queryParam.page).success(function(data) {
 				self.pager = data;
-				console.log(data);
+				self.isDetail = false;
 			});
 		};
 		
@@ -47,7 +35,6 @@ define(['cms/module', 'cms/category/service'], function(cmsModule) {
 		
 		self.edit = function(id) {
 			service.findTypeById(id).success(function(data) {
-				console.log(data);
 				self.form = data;
 				if (self.form.parent) {
 					self.form.parent = self.form.parent.name;
@@ -74,6 +61,15 @@ define(['cms/module', 'cms/category/service'], function(cmsModule) {
 			}
 		};
 
+		self['delete'] = function() {
+			if (!self.form.id)
+				return;
+			if (confirm('确定删除' + self.form.name + '吗？')) {
+				service.deleteType(self.form.id).success(function(data) {
+					self.query();
+				});
+			}
+		};
 		
 	}])
 	;

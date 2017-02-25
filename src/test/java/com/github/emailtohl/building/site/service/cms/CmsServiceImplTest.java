@@ -146,7 +146,7 @@ public class CmsServiceImplTest {
 
 	@Test
 	public void testGetArticleTypes() {
-		List<Type> ls = cmsService.getArticleTypes();
+		List<Type> ls = cmsService.getTypes();
 		assertFalse(ls.isEmpty());
 	}
 

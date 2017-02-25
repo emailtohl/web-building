@@ -1,6 +1,9 @@
 package com.github.emailtohl.building.site.controller;
 
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.io.File;
 import java.io.Serializable;
@@ -9,7 +12,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.apache.logging.log4j.LogManager;
@@ -205,11 +207,21 @@ public class CmsCtrl {
 	 * 获取所有的分类
 	 * @return
 	 */
+	@RequestMapping(value = "cms/typePager", method = GET)
+	@ResponseBody
+	public Pager<Type> getTypePager(@RequestParam(name="name", required = false, defaultValue = "") String name, 
+			@PageableDefault(page = 0, size = 10, sort = {BaseEntity.CREATE_DATE_PROPERTY_NAME}, direction = Direction.DESC) Pageable pageable) {
+		return cmsService.getTypePager(name, pageable);
+	}
+	
+	/**
+	 * 获取所有的分类
+	 * @return
+	 */
 	@RequestMapping(value = "cms/types", method = GET)
 	@ResponseBody
-	public Pager<Type> getTypes(@RequestParam(name="name", required = false, defaultValue = "") String name, 
-			@PageableDefault(page = 0, size = 10, sort = {BaseEntity.CREATE_DATE_PROPERTY_NAME}, direction = Direction.DESC) Pageable pageable) {
-		return cmsService.getTypes(name, pageable);
+	public List<Type> getTypes() {
+		return cmsService.getTypes();
 	}
 	
 	/**
@@ -270,9 +282,9 @@ public class CmsCtrl {
 	 * 删除一个文章类型
 	 * @param id
 	 */
-	@RequestMapping(value = "cms/type", method = DELETE)
+	@RequestMapping(value = "cms/type/{id}", method = DELETE)
 	@ResponseBody
-	public void deleteType(@Min(1) long id) {
+	public void deleteType(@PathVariable("id") long id) {
 		cmsService.deleteType(id);
 	}
 	
@@ -292,15 +304,6 @@ public class CmsCtrl {
 	@RequestMapping(value = "public/recentComments", method = GET)
 	public List<Comment> recentComments() {
 		return cmsService.recentComments();
-	}
-	
-	/**
-	 * 获取所有的分类
-	 * @return
-	 */
-	@RequestMapping(value = "public/articleTypes", method = GET)
-	public List<Type> getArticleTypes() {
-		return cmsService.getArticleTypes();
 	}
 	
 	/**
