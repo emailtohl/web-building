@@ -34,30 +34,36 @@
                 <tr>
                   <th class="col-md-1">序号</th>
                   <th class="col-md-2">标题</th>
-                  <th class="col-md-2">作者</th>
-                  <th class="col-md-2">类型</th>
-                  <th class="col-md-2">可评论</th>
-                  <th class="col-md-3">关键词</th>
+                  <th class="col-md-1">作者</th>
+                  <th class="col-md-1">类型</th>
+                  <th class="col-md-1">可评论</th>
+                  <th class="col-md-2">创建时间</th>
+                  <th class="col-md-2">修改时间</th>
+                  <th class="col-md-2">关键词</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr ng-repeat="x in ctrl.pager.content" style="cursor: pointer;" ng-click="ctrl.edit(x.id)">
                   <td ng-bind="$index + 1" class="col-md-1"></td>
                   <td ng-bind="x.title" class="col-md-2"></td>
-                  <td ng-bind="x.author.email" class="col-md-2"></td>
-                  <td ng-bind="x.type.name" class="col-md-2"></td>
-                  <td ng-bind="x.isComment ? '是' : '否'" class="col-md-2"></td>
-                  <td ng-bind="x.keywords" class="col-md-3"></td>
+                  <td ng-bind="x.author.email" class="col-md-1"></td>
+                  <td ng-bind="x.type.name" class="col-md-1"></td>
+                  <td ng-bind="x.isComment ? '是' : '否'" class="col-md-1"></td>
+                  <td ng-bind="x.createDate" class="col-md-2"></td>
+                  <td ng-bind="x.modifyDate" class="col-md-2"></td>
+                  <td ng-bind="x.keywords" class="col-md-2"></td>
                 </tr>
                 </tbody>
                 <tfoot>
                 <tr>
                   <th class="col-md-1">序号</th>
                   <th class="col-md-2">标题</th>
-                  <th class="col-md-2">作者</th>
-                  <th class="col-md-2">类型</th>
-                  <th class="col-md-2">可评论</th>
-                  <th class="col-md-3">关键词</th>
+                  <th class="col-md-1">作者</th>
+                  <th class="col-md-1">类型</th>
+                  <th class="col-md-1">可评论</th>
+                  <th class="col-md-2">创建时间</th>
+                  <th class="col-md-2">修改时间</th>
+                  <th class="col-md-2">关键词</th>
                 </tr>
                 </tfoot>
               </table>

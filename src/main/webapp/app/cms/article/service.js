@@ -5,7 +5,12 @@ define(['cms/module', 'common/context' ], function(cmsModule) {
 		 */
 		function entity2form(e) {
 			var f = {};
-			
+			f.id = e.id;
+			f.title = e.title;
+			f.body = e.body;
+			f.keywords = e.keywords;
+			f.type = e.type;
+			return f;
 		}
 		
 		return {
@@ -21,10 +26,10 @@ define(['cms/module', 'common/context' ], function(cmsModule) {
 				return $http.get('cms/article/' + id);
 			},
 			saveArticle : function(article) {
-				return $http.post('cms/article', article);
+				return $http.post('cms/article', entity2form(article));
 			},
 			updateArticle : function(id, article) {
-				return $http.put('cms/article/' + id, article);
+				return $http.put('cms/article/' + id, entity2form(article));
 			},
 			deleteArticle : function(id) {
 				return $http['delete']('cms/article/' + id);

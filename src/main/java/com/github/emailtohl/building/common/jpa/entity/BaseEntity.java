@@ -112,7 +112,7 @@ public abstract class BaseEntity implements Serializable {
 	 * 设置创建日期
 	 * @param createDate 创建日期
 	 */
-	protected void setCreateDate(Date createDate) {
+	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
 	}
 
@@ -130,7 +130,7 @@ public abstract class BaseEntity implements Serializable {
 	 * 设置修改日期
 	 * @param modifyDate 修改日期
 	 */
-	protected void setModifyDate(Date modifyDate) {
+	public void setModifyDate(Date modifyDate) {
 		this.modifyDate = modifyDate;
 	}
 	
