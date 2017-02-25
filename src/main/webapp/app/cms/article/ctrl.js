@@ -65,7 +65,7 @@ define(['cms/module', 'cms/article/service', 'cms/category/service'], function(c
 		self['delete'] = function() {
 			if (!self.article.id)
 				return;
-			if (confirm('确定删除' + self.article.name + '吗？')) {
+			if (confirm('确定删除《' + self.article.title + '》吗？')) {
 				service.deleteArticle(self.article.id).success(function(data) {
 					self.query();
 				});

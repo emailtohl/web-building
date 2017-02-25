@@ -9,7 +9,15 @@ define(['cms/module', 'common/context' ], function(cmsModule) {
 			f.title = e.title;
 			f.body = e.body;
 			f.keywords = e.keywords;
-			f.type = e.type;
+			if (typeof e.type == 'string') {
+				try {
+					f.type = JSON.parse(e.type).name;
+				} catch (e) {
+					console.info(e);
+				}
+			} else {
+				f.type = e.type.name;
+			}
 			return f;
 		}
 		

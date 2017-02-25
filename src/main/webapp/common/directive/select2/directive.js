@@ -40,7 +40,7 @@ define([ 'common/module', 'common/service/util', 'select2' ], function(common) {
 					} else {
 						var type, i, temp = '';
 						type = typeof model;
-						if (type === 'string') {
+						if (type === 'string') {// 若option的值是对象，angular就会以json形式存储，所以如果是字符串，则直接去匹配是否有此option
 							temp = model.replace(/"/g, '\\"');
 //							$element.find('option').prop('selected', false).filter('[value="' + temp + '"]').prop('selected', true);
 							$element.find('option[value="' + temp + '"]').prop('selected', true);
@@ -50,8 +50,22 @@ define([ 'common/module', 'common/service/util', 'select2' ], function(common) {
 									arguments.callee(model[i]);
 								}
 							} else {
-								temp = JSON.stringify(model);
-								arguments.callee(temp);
+								// 尝试是否以对象ID进行判断相等性
+								if (model.id) {
+									$element.find('option').prop('selected', false)
+									.each(function(i, o) {
+										try {
+											var opv = JSON.parse(o.value);
+											if (opv && opv.id == model.id) {
+												o.selected = true;
+												return false;
+											}
+										} catch (e) {}
+									});
+								} else {
+									temp = JSON.stringify(model);
+									arguments.callee(temp);
+								}
 							}
 						}
 					}

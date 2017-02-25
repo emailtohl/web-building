@@ -93,6 +93,10 @@
 	        <span class="glyphicon form-control-feedback" ng-class="{'glyphicon-ok':f.title.$valid,'glyphicon-warning-sign':f.title.$error.required,'glyphicon-remove':f.title.$error.minlength}"></span>
 	      </div>
 	      <div class="form-group">
+	        <label for="">关键词</label>
+	        <input type="text" placeholder="keywords" name="keywords" class="form-control" ng-model="ctrl.article.keywords">
+	      </div>
+	      <div class="form-group">
 	        <label for="">作者</label>
 	        <input type="text" placeholder="author" name="author" class="form-control" value="{{ctrl.article.author.email}}" disabled="disabled">
 	      </div>
@@ -100,7 +104,7 @@
 	        <label for="">类型</label>
 	        <select class="form-control select2" style="width: 100%;" select2 ng-model="ctrl.article.type">
 		      <option value="">无</option>
-		      <option value="{{x}}" ng-repeat="x in ctrl.types | excludeSelf:ctrl.article.type.id">{{x.name}}</option>
+		      <option value="{{x}}" ng-repeat="x in ctrl.types">{{x.name}}</option>
 		    </select>
 	      </div>
 	      <div class="form-group">
@@ -110,7 +114,7 @@
 	    </div>
 	    <div class="box-footer clearfix">
 	      <button class="btn btn-default pull-left" ng-click="ctrl.back()">返回</button>
-	      <button class="btn btn-primary pull-right" ng-click="ctrl.submit()">提交</button>
+	      <button class="btn btn-primary pull-right" ng-click="ctrl.submit()" ng-disabled="f.$invalid">提交</button>
 	    </div>
 	    <!-- /.box-body -->
 	  </form>
