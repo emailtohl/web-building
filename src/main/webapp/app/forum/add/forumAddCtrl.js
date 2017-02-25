@@ -8,6 +8,7 @@ define(['forum/module', 'forum/add/service', 'ckeditor', 'ckeditorConfig'], func
 		
 		self.forumPost = {};
 		
+		// 需要先获取登录信息才能上传图片
 		promise.then(function(data) {
 			/**
 			 * CKEDITOR API手册参考：

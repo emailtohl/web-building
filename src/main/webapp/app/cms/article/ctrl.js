@@ -1,9 +1,10 @@
-define(['cms/module', 'cms/article/service', 'cms/category/service'], function(cmsModule) {
+define(['cms/module', 'cms/article/service', 'cms/category/service', 'ckeditor', 'ckeditorConfig'], function(cmsModule) {
 	return cmsModule
-	.controller('ArticleCtrl', ['$scope', '$http', '$state', 'articleService', 'categoryService',
-	                                function($scope, $http, $state, service, categoryService) {
-		var self = this;
-		$scope.getAuthentication();
+	.controller('ArticleCtrl', ['$scope', '$http', '$state', 'articleService', 'categoryService', 'util',
+	                                function($scope, $http, $state, service, categoryService, util) {
+		const editorID = "article-editor";
+		var self = this, promise;
+		promise = $scope.getAuthentication();
 		categoryService.getTypes().success(function(data) {
 			self.types = data;
 		});
@@ -41,6 +42,7 @@ define(['cms/module', 'cms/article/service', 'cms/category/service'], function(c
 				console.log(data);
 				self.article = data;
 				self.isDetail = true;
+				refresh(self.article.body);
 			});
 		};
 		
@@ -71,6 +73,36 @@ define(['cms/module', 'cms/article/service', 'cms/category/service'], function(c
 				});
 			}
 		};
+		
+		/**
+		 * 刷新编辑器区的内容
+		 */
+		function refresh(body) {
+			var editor = CKEDITOR.instances[editorID]; // 编辑器的"name"属性的值
+			if (editor) {
+				editor.destroy(true);// 销毁编辑器
+			}
+			CKEDITOR.replace(editorID, {
+				filebrowserImageUploadUrl : getUrlWithCsrfParam(),
+			}); // 替换编辑器，editorID为ckeditor的"id"属性的值
+			editor.on('change', function(event) {
+				self.article.body = this.getData();// 内容
+				$scope.$apply();
+			});
+		}
+		
+		function getUrlWithCsrfParam() {
+			var url = null;
+			// 只有登录了，才有CSRF TOKEN，不然上传文件会报错，如果没登录则屏蔽上传文件功能
+			if ($scope.isAuthenticated()) {
+				url = 'forum/image?type=image';
+				var token = util.getCookie('XSRF-TOKEN');
+				if (token) {
+					url += '&_csrf=' + token;
+				}
+			}
+			return url;
+		}
 		
 	}])
 	;

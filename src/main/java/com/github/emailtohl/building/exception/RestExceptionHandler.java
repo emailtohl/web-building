@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlValue;
 
 import org.springframework.http.HttpStatus;
+import org.hibernate.search.exception.SearchException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -25,6 +26,15 @@ import javax.persistence.OptimisticLockException;
  */
 @ControllerAdvice
 public class RestExceptionHandler {
+	
+	@ExceptionHandler(SearchException.class)
+	public ResponseEntity<ErrorResponse> handleSearchException(SearchException e) {
+		ErrorResponse errors = new ErrorResponse();
+		ErrorItem i = new ErrorItem();
+		i.setMessage(e.getMessage());
+		errors.addError(i);
+		return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+	}
 	
 	@ExceptionHandler(RestException.class)
 	public ResponseEntity<ErrorResponse> handleRestException(RestException e) {

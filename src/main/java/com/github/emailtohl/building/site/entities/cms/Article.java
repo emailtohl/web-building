@@ -36,6 +36,7 @@ public class Article extends BaseEntity implements Comparable<Article> {
 	@NotNull
 	private User author;
 	private Type type;
+	private boolean isPublish = true;
 	private boolean isComment = true;
 	private List<Comment> comments = new ArrayList<>();
 	
@@ -84,6 +85,15 @@ public class Article extends BaseEntity implements Comparable<Article> {
 	}
 	public void setType(Type type) {
 		this.type = type;
+	}
+	
+	@org.hibernate.envers.NotAudited
+	@Column(name = "is_publish")
+	public boolean isPublish() {
+		return isPublish;
+	}
+	public void setPublish(boolean isPublish) {
+		this.isPublish = isPublish;
 	}
 	
 	@org.hibernate.envers.NotAudited

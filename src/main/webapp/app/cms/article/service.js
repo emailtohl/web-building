@@ -15,7 +15,7 @@ define(['cms/module', 'common/context' ], function(cmsModule) {
 				} catch (e) {
 					console.info(e);
 				}
-			} else {
+			} else if (e.type && typeof e.type == 'object') {
 				f.type = e.type.name;
 			}
 			return f;
@@ -42,6 +42,8 @@ define(['cms/module', 'common/context' ], function(cmsModule) {
 			deleteArticle : function(id) {
 				return $http['delete']('cms/article/' + id);
 			},
+			
+			
 		};
 	}]);
 });

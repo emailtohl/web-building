@@ -36,6 +36,7 @@ import com.github.emailtohl.building.site.entities.cms.Comment;
 import com.github.emailtohl.building.site.entities.cms.Type;
 import com.github.emailtohl.building.site.service.cms.CmsService;
 import com.github.emailtohl.building.site.service.cms.WebPage;
+import com.google.gson.Gson;
 
 import freemarker.template.Configuration;
 /**
@@ -49,16 +50,19 @@ public class CmsCtrl {
 	@Inject File resourcePath;
 	@Inject Configuration cfg;
 	@Inject CmsService cmsService;
+	@Inject Gson gson;
 
 	/**
 	 * 获取某文章
 	 * @param id
 	 * @return
 	 */
-	@RequestMapping(value = "cms/article/{id}", method = GET)
+	@RequestMapping(value = "cms/article/{id}", method = GET, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public Article findArticle(@PathVariable long id) {
-		return cmsService.getArticle(id);
+	public String findArticle(@PathVariable long id) {
+		Article article = cmsService.getArticle(id);
+		String json = gson.toJson(article);// 因Article有时间类型，用配置了时间格式的Gson解析
+		return json;
 	}
 	
 	/**
@@ -67,11 +71,13 @@ public class CmsCtrl {
 	 * @param pageable
 	 * @return 只返回查找到的实体类E
 	 */
-	@RequestMapping(value = "cms/article/search", method = GET)
+	@RequestMapping(value = "cms/article/search", method = GET, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public Pager<Article> search(@RequestParam(name="query", required = false, defaultValue = "") String query, 
+	public String search(@RequestParam(name="query", required = false, defaultValue = "") String query, 
 			@PageableDefault(page = 0, size = 10, sort = {"title", "keywords"}, direction = Direction.DESC) Pageable pageable) {
-		return cmsService.searchArticles(query, pageable);
+		Pager<Article> pager = cmsService.searchArticles(query, pageable);
+		String json = gson.toJson(pager);// 因Article有时间类型，用配置了时间格式的Gson解析
+		return json;
 	}
 	
 	/**

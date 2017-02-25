@@ -77,6 +77,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.github.emailtohl.building.common.lucene.FileSearch;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import freemarker.template.TemplateExceptionHandler;
 /**
@@ -293,7 +294,8 @@ public class RootContextConfiguration
 	
 	@Bean
 	public Gson gson() {
-		return new Gson();
+		Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+		return gson;
 	}
 
 	@Bean
