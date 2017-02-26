@@ -6,11 +6,15 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -31,14 +35,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
 import com.github.emailtohl.building.exception.VerifyFailure;
+import com.github.emailtohl.building.site.dto.WebPage;
 import com.github.emailtohl.building.site.entities.cms.Article;
 import com.github.emailtohl.building.site.entities.cms.Comment;
 import com.github.emailtohl.building.site.entities.cms.Type;
 import com.github.emailtohl.building.site.service.cms.CmsService;
-import com.github.emailtohl.building.site.service.cms.WebPage;
 import com.google.gson.Gson;
 
+import freemarker.core.ParseException;
 import freemarker.template.Configuration;
+import freemarker.template.MalformedTemplateNameException;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateNotFoundException;
 /**
  * 内容管理的控制器
  * @author HeLei
@@ -385,9 +394,23 @@ public class CmsCtrl {
 	 * 获取web页面所需要的数据
 	 * @param query 搜索页面的参数，可以为null
 	 * @return
+	 * @throws IOException 
+	 * @throws ParseException 
+	 * @throws MalformedTemplateNameException 
+	 * @throws TemplateNotFoundException 
+	 * @throws TemplateException 
 	 */
 	@RequestMapping(value = "public/webPage", method = GET)
-	public WebPage getWebPage(String query) {
-		return cmsService.getWebPage(query);
+	public void getWebPage(HttpServletRequest request, HttpServletResponse response) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException {
+		WebPage wp = new WebPage();
+		wp.setRecentArticles(recentArticles());
+		wp.setRecentComments(recentComments());
+		wp.setCategories(classify());
+		response.setContentType("text/html");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = response.getWriter();
+		Template t = cfg.getTemplate("blog.html");
+		t.process(wp, out);
+		out.close();
 	}
 }

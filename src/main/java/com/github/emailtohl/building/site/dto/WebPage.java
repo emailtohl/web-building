@@ -1,4 +1,4 @@
-package com.github.emailtohl.building.site.service.cms;
+package com.github.emailtohl.building.site.dto;
 
 import java.io.Serializable;
 import java.util.List;

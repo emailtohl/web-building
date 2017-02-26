@@ -286,11 +286,4 @@ public interface CmsService {
 	 */
 	Map<Type, List<Article>> classify();
 	
-	/**
-	 * 获取web页面所需要的数据
-	 * @param query 搜索页面的参数，可以为null
-	 * @return
-	 */
-	WebPage getWebPage(String query);
-	
 }

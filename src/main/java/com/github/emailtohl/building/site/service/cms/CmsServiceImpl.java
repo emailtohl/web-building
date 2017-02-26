@@ -337,15 +337,6 @@ public class CmsServiceImpl implements CmsService {
 				}));
 	}
 
-	@Override
-	public WebPage getWebPage(String query) {
-		WebPage wp = new WebPage();
-		wp.recentArticles = recentArticles();
-		wp.recentComments = recentComments();
-		wp.categories = classify();
-		return wp;
-	}
-
 	/**
 	 * 对于文章来说，只需要展示用户名字，头像等基本信息即可
 	 * 注意：本方法将所有评论载入，而不管该评论是否允许开放

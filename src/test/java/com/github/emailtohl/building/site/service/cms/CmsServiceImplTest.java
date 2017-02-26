@@ -1,7 +1,12 @@
 package com.github.emailtohl.building.site.service.cms;
 
-import static com.github.emailtohl.building.initdb.PersistenceData.*;
-import static org.junit.Assert.*;
+import static com.github.emailtohl.building.initdb.PersistenceData.emailtohl;
+import static com.github.emailtohl.building.initdb.PersistenceData.parent;
+import static com.github.emailtohl.building.initdb.PersistenceData.subType;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Map;
@@ -155,15 +160,6 @@ public class CmsServiceImplTest {
 		Map<Type, List<Article>> categories = cmsService.classify();
 		categories.entrySet().stream().forEach(e -> logger.debug(e));
 		assertTrue(categories.size() > 0);
-	}
-
-	@Test
-	public void testGetWebPage() {
-		WebPage wp = cmsService.getWebPage("文章");
-		logger.debug(wp.categories);
-		logger.debug(wp.recentArticles);
-		logger.debug(wp.recentComments);
-		assertNotNull(wp);
 	}
 
 }
