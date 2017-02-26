@@ -163,6 +163,46 @@ public class CmsCtrl {
 	void deleteArticle(@PathVariable long id) {
 		cmsService.deleteArticle(id);
 	}
+
+	/**
+	 * 让文章发表
+	 * @param articleId
+	 */
+	@RequestMapping(value = "cms/approveArticle", method = POST)
+	@ResponseBody
+	void approveArticle(@RequestParam long articleId) {
+		cmsService.approveArticle(articleId);
+	}
+	
+	/**
+	 * 拒绝文章发布
+	 * @param articleId
+	 */
+	@RequestMapping(value = "cms/rejectArticle", method = POST)
+	@ResponseBody
+	void rejectArticle(@RequestParam long articleId) {
+		cmsService.rejectArticle(articleId);
+	}
+	
+	/**
+	 * 开放评论
+	 * @param articleId
+	 */
+	@RequestMapping(value = "cms/openComment", method = POST)
+	@ResponseBody
+	void openComment(@RequestParam long articleId) {
+		cmsService.openComment(articleId);
+	}
+	
+	/**
+	 * 关闭评论
+	 * @param articleId
+	 */
+	@RequestMapping(value = "cms/closeComment", method = POST)
+	@ResponseBody
+	void closeComment(@RequestParam long articleId) {
+		cmsService.closeComment(articleId);
+	}
 	
 	/**
 	 * 获取某评论
@@ -207,6 +247,26 @@ public class CmsCtrl {
 	@ResponseBody
 	void deleteComment(@PathVariable long id) {
 		cmsService.deleteComment(id);
+	}
+	
+	/**
+	 * 允许评论发表
+	 * @param commentId
+	 */
+	@RequestMapping(value = "cms/approvedComment", method = POST)
+	@ResponseBody
+	void approvedComment(@RequestParam long commentId) {
+		cmsService.approvedComment(commentId);
+	}
+	
+	/**
+	 * 拒绝评论发表
+	 * @param commentId
+	 */
+	@RequestMapping(value = "cms/rejectComment", method = POST)
+	@ResponseBody
+	void rejectComment(@RequestParam long commentId) {
+		cmsService.rejectComment(commentId);
 	}
 	
 	/**

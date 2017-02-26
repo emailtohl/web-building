@@ -33,6 +33,7 @@ public class Article extends BaseEntity implements Comparable<Article> {
 	private String keywords;
 	@NotNull
 	private String body;
+	private String cover;
 	@NotNull
 	private User author;
 	private Type type;
@@ -64,6 +65,14 @@ public class Article extends BaseEntity implements Comparable<Article> {
 	}
 	public void setBody(String body) {
 		this.body = body;
+	}
+	
+	@org.hibernate.envers.NotAudited
+	public String getCover() {
+		return cover;
+	}
+	public void setCover(String cover) {
+		this.cover = cover;
 	}
 	
 	@org.hibernate.envers.NotAudited

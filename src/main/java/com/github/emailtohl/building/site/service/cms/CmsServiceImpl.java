@@ -2,6 +2,8 @@ package com.github.emailtohl.building.site.service.cms;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -37,6 +39,8 @@ import com.github.emailtohl.building.site.entities.user.User;
 public class CmsServiceImpl implements CmsService {
 	@SuppressWarnings("unused")
 	private static final Logger logger = LogManager.getLogger();
+	private static final Pattern IMG_PATTERN = Pattern.compile("<img\\b[^<>]*?\\bsrc[\\s\\t\\r\\n]*=[\\s\\t\\r\\n]*[\"\"']?[\\s\\t\\r\\n]*(?<imgUrl>[^\\s\\t\\r\\n\"\"'<>]*)[^<>]*?/?[\\s\\t\\r\\n]*>");
+	
 	@Inject
 	TypeRepository typeRepository;
 	@Inject
@@ -74,6 +78,10 @@ public class CmsServiceImpl implements CmsService {
 		a.setTitle(title);
 		a.setKeywords(keywords);
 		a.setBody(body);
+		Matcher m = IMG_PATTERN.matcher(body);
+		if (m.find()) {
+			a.setCover(m.group(1));
+		}
 		User author = userRepository.findByEmail(email);
 		a.setAuthor(author);
 		Type t = typeRepository.findByName(type);
@@ -89,7 +97,13 @@ public class CmsServiceImpl implements CmsService {
 	public void updateArticle(long id, Article article) {
 		Article pa = articleRepository.findOne(id);
 		if (pa != null) {
-			BeanUtils.copyProperties(article, pa, BaseEntity.getIgnoreProperties("author", "type"));
+			BeanUtils.copyProperties(article, pa, BaseEntity.getIgnoreProperties("author", "type", "cover"));
+			Matcher m = IMG_PATTERN.matcher(article.getBody());
+			if (m.find()) {
+				pa.setCover(m.group(1));
+			} else {
+				pa.setCover(null);
+			}
 		}
 		Type t = article.getType();
 		if (t != null) {

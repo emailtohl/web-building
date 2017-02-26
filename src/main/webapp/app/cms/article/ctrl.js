@@ -48,7 +48,12 @@ define(['cms/module', 'cms/article/service', 'cms/category/service', 'ckeditor',
 		};
 		
 		self.back = function() {
-			self.isDetail = false;
+			// 如果有管理权限，则可能做了启动评论、关闭评论，允许发布、禁止发布等功能，所以需要刷新列表。反之则可以直接返回列表页面
+			if ($scope.hasAuthority('content_manager')) {
+				self.query();
+			} else {
+				self.isDetail = false;
+			}
 		};
 		
 		self.submit = function() {
@@ -73,6 +78,38 @@ define(['cms/module', 'cms/article/service', 'cms/category/service', 'ckeditor',
 					self.query();
 				});
 			}
+		};
+		
+		self.approveArticle = function() {
+			if (!self.article.id)
+				return;
+			service.approveArticle(self.article.id).success(function(data) {
+				self.article.isApproved = true;
+			});
+		};
+		
+		self.rejectArticle = function() {
+			if (!self.article.id)
+				return;
+			service.rejectArticle(self.article.id).success(function(data) {
+				self.article.isApproved = false;
+			});
+		};
+		
+		self.openComment = function() {
+			if (!self.article.id)
+				return;
+			service.openComment(self.article.id).success(function(data) {
+				self.article.isComment = true;
+			});
+		};
+		
+		self.closeComment = function() {
+			if (!self.article.id)
+				return;
+			service.closeComment(self.article.id).success(function(data) {
+				self.article.isComment = false;
+			});
 		};
 		
 		/**

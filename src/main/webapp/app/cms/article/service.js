@@ -42,7 +42,18 @@ define(['cms/module', 'common/context' ], function(cmsModule) {
 			deleteArticle : function(id) {
 				return $http['delete']('cms/article/' + id);
 			},
-			
+			approveArticle : function(articleId) {
+				return $http.post('cms/approveArticle?articleId=' + articleId);
+			},
+			rejectArticle : function(articleId) {
+				return $http.post('cms/rejectArticle?articleId=' + articleId);
+			},
+			openComment : function(articleId) {
+				return $http.post('cms/openComment?articleId=' + articleId);
+			},
+			closeComment : function(articleId) {
+				return $http.post('cms/closeComment?articleId=' + articleId);
+			},
 			
 		};
 	}]);
