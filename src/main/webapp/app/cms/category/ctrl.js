@@ -3,9 +3,7 @@ define(['cms/module', 'cms/category/service'], function(cmsModule) {
 	                                function($scope, $http, $state, service) {
 		var self = this;
 		$scope.getAuthentication();
-		service.getTypes().success(function(data) {
-			self.types = data;
-		});
+		getTypes();
 		// 用于切换界面，详情状态就是新增和编辑，反之则是列表页面
 		self.isDetail = false;
 		self.form = {};
@@ -51,11 +49,13 @@ define(['cms/module', 'cms/category/service'], function(cmsModule) {
 			if (self.form.id) {
 				service.updateType(self.form.id, self.form).success(function(data) {
 					self.query();
+					getTypes();
 					self.isDetail = false;
 				});
 			} else {
 				service.saveType(self.form).success(function(data) {
 					self.query();
+					getTypes();
 					self.isDetail = false;
 				});
 			}
@@ -67,10 +67,16 @@ define(['cms/module', 'cms/category/service'], function(cmsModule) {
 			if (confirm('确定删除' + self.form.name + '吗？')) {
 				service.deleteType(self.form.id).success(function(data) {
 					self.query();
+					getTypes();
 				});
 			}
 		};
 		
+		function getTypes() {
+			service.getTypes().success(function(data) {
+				self.types = data;
+			});
+		}
 	}])
 	;
 });

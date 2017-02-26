@@ -29,6 +29,7 @@ import com.github.emailtohl.building.site.entities.user.User;
 
 /**
  * cms的服务层实现
+ * 
  * @author HeLei
  * @data 2017.02.15
  */
@@ -49,7 +50,7 @@ public class CmsServiceImpl implements CmsService {
 	public Article getArticle(long id) {
 		return articlefilter(articleRepository.findOne(id));
 	}
-	
+
 	@Override
 	public Pager<Article> searchArticles(String query, Pageable pageable) {
 		Page<Article> page;
@@ -116,7 +117,7 @@ public class CmsServiceImpl implements CmsService {
 		}
 		updateArticle(id, article);
 	}
-	
+
 	@Override
 	public void deleteArticle(long id) {
 		Article a = articleRepository.findOne(id);
@@ -125,6 +126,26 @@ public class CmsServiceImpl implements CmsService {
 			t.getArticles().remove(a);
 		}
 		articleRepository.delete(a);
+	}
+
+	@Override
+	public void approveArticle(long articleId) {
+		articleRepository.findOne(articleId).setApproved(true);
+	}
+
+	@Override
+	public void rejectArticle(long articleId) {
+		articleRepository.findOne(articleId).setApproved(false);
+	}
+
+	@Override
+	public void openComment(long articleId) {
+		articleRepository.findOne(articleId).setComment(true);
+	}
+
+	@Override
+	public void closeComment(long articleId) {
+		articleRepository.findOne(articleId).setComment(false);
 	}
 
 	@Override
@@ -155,7 +176,7 @@ public class CmsServiceImpl implements CmsService {
 		commentRepository.save(c);
 		return c.getId();
 	}
-	
+
 	@Override
 	public long saveComment(long articleId, String content) {
 		String email = SecurityContextUtil.getCurrentUsername();
@@ -172,7 +193,7 @@ public class CmsServiceImpl implements CmsService {
 			c.setContent(commentContent);
 		}
 	}
-	
+
 	@Override
 	public void updateComment(long id, String commentContent) {
 		updateComment(SecurityContextUtil.getCurrentUsername(), id, commentContent);
@@ -182,7 +203,17 @@ public class CmsServiceImpl implements CmsService {
 	public void deleteComment(long id) {
 		commentRepository.delete(id);
 	}
-	
+
+	@Override
+	public void approvedComment(long commentId) {
+		commentRepository.findOne(commentId).setApproved(true);
+	}
+
+	@Override
+	public void rejectComment(long commentId) {
+		commentRepository.findOne(commentId).setApproved(false);
+	}
+
 	@Override
 	public Pager<Type> getTypePager(String typeName, Pageable pageable) {
 		Page<Type> page;
@@ -190,22 +221,22 @@ public class CmsServiceImpl implements CmsService {
 			page = typeRepository.findByNameLike(typeName.trim() + "%", pageable);
 		else
 			page = typeRepository.findAll(pageable);
-		return new Pager<>(page.getContent().stream().map(this::typeFilter).collect(Collectors.toList())
-				, page.getTotalElements(), page.getNumber(), page.getSize());
+		return new Pager<>(page.getContent().stream().map(this::typeFilter).collect(Collectors.toList()),
+				page.getTotalElements(), page.getNumber(), page.getSize());
 	}
-	
+
 	@Override
 	public Type findTypeById(long id) {
 		Type p = typeRepository.findOne(id);
 		return typeFilter(p);
 	}
-	
+
 	@Override
 	public Type findTypeByName(String name) {
 		Type p = typeRepository.findByName(name);
 		return typeFilter(p);
 	}
-	
+
 	@Override
 	public long saveType(String name, String description, String parent) {
 		Type t = new Type();
@@ -251,23 +282,37 @@ public class CmsServiceImpl implements CmsService {
 
 	@Override
 	public List<Article> recentArticles() {
-		return articleRepository.findAll().stream().limit(10).map(this::articlefilter).collect(Collectors.toList());
+		return articleRepository.findAll().stream().limit(10).filter(pa -> pa.isApproved()).map(this::articlefilter)
+				.peek(this::filterCommentOfArticle).collect(Collectors.toList());
 	}
 
 	@Override
+	public Article readArticle(long id) {
+		Article ta = articlefilter(articleRepository.findOne(id));
+		if (ta != null) {
+			if (ta.isApproved())
+				filterCommentOfArticle(ta);
+			else
+				ta = null;
+		}
+		return ta;
+	}
+	
+	@Override
 	public List<Comment> recentComments() {
-		return commentRepository.findAll().stream().limit(10).collect(Collectors.toList());
+		return commentRepository.findAll().stream().limit(10).filter(pc -> pc.isApproved())
+				.collect(Collectors.toList());
 	}
 
 	@Override
 	public List<Type> getTypes() {
 		return typeRepository.findAll().stream().map(this::typeFilter).collect(Collectors.toList());
 	}
-	
+
 	@Override
 	public Map<Type, List<Article>> classify() {
-		return articleRepository.findAll().stream().limit(100).map(this::articlefilter)
-				.collect(Collectors.groupingBy(article -> {
+		return articleRepository.findAll().stream().limit(100).filter(a -> a.isApproved()).map(this::articlefilter)
+				.peek(this::filterCommentOfArticle).collect(Collectors.groupingBy(article -> {
 					Type t = article.getType();
 					if (t == null) {
 						t = new Type();
@@ -286,9 +331,11 @@ public class CmsServiceImpl implements CmsService {
 		wp.categories = classify();
 		return wp;
 	}
-	
+
 	/**
 	 * 对于文章来说，只需要展示用户名字，头像等基本信息即可
+	 * 注意：本方法将所有评论载入，而不管该评论是否允许开放
+	 * 
 	 * @param pa
 	 * @return
 	 */
@@ -302,7 +349,7 @@ public class CmsServiceImpl implements CmsService {
 		tu.setUsername(pu.getUsername());
 		tu.setName(pu.getName());
 		tu.setIconSrc(pu.getIconSrc());
-		
+
 		Article ta = new Article();
 		BeanUtils.copyProperties(pa, ta, "author", "type", "comments");
 		// 只获取作者必要信息
@@ -317,9 +364,10 @@ public class CmsServiceImpl implements CmsService {
 		}).collect(Collectors.toList()));
 		return ta;
 	}
-	
+
 	/**
 	 * 过滤文章类型
+	 * 
 	 * @param pt
 	 * @return
 	 */
@@ -340,6 +388,19 @@ public class CmsServiceImpl implements CmsService {
 			t.getArticles().add(new Article());
 		}
 		return t;
+	}
+
+	/**
+	 * 过滤文章下的评论，主要用于前端
+	 * 
+	 * @param article
+	 */
+	private void filterCommentOfArticle(Article article) {
+		if (!article.isComment()) {
+			article.getComments().clear();
+		} else {
+			article.getComments().removeIf(comment -> !comment.isApproved());
+		}
 	}
 
 }

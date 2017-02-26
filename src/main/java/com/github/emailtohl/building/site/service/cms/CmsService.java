@@ -35,6 +35,7 @@ public interface CmsService {
 	 * @param id
 	 * @return
 	 */
+	@PreAuthorize("isAuthenticated()")
 	Article getArticle(long id);
 	
 	/**
@@ -43,6 +44,7 @@ public interface CmsService {
 	 * @param pageable
 	 * @return 只返回查找到的实体类E
 	 */
+	@PreAuthorize("isAuthenticated()")
 	Pager<Article> searchArticles(String query, Pageable pageable);
 	
 	/**
@@ -98,13 +100,45 @@ public interface CmsService {
 	@CacheEvict(value = CACHE_NAME_ARTICLE)
 	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
 	void deleteArticle(long id);
+
+	/**
+	 * 让文章发表
+	 * @param articleId
+	 */
+	@CacheEvict(value = CACHE_NAME_ARTICLE)
+	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
+	void approveArticle(long articleId);
 	
+	/**
+	 * 拒绝文章发布
+	 * @param articleId
+	 */
+	@CacheEvict(value = CACHE_NAME_ARTICLE)
+	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
+	void rejectArticle(long articleId);
+	
+	/**
+	 * 开放评论
+	 * @param articleId
+	 */
+	@CacheEvict(value = CACHE_NAME_ARTICLE)
+	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
+	void openComment(long articleId);
+	
+	/**
+	 * 关闭评论
+	 * @param articleId
+	 */
+	@CacheEvict(value = CACHE_NAME_ARTICLE)
+	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
+	void closeComment(long articleId);
 	
 	/**
 	 * 获取某评论
 	 * @param id
 	 * @return
 	 */
+	@PreAuthorize("isAuthenticated()")
 	Comment findComment(long id);
 	
 	/**
@@ -151,10 +185,25 @@ public interface CmsService {
 	void deleteComment(@Min(1) long id);
 	
 	/**
+	 * 允许评论发表
+	 * @param commentId
+	 */
+	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
+	void approvedComment(long commentId);
+	
+	/**
+	 * 拒绝评论发表
+	 * @param commentId
+	 */
+	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
+	void rejectComment(long commentId);
+	
+	/**
 	 * 获取所有的文章分类
 	 * @return
 	 */
 	@Cacheable(value = CACHE_NAME_TYPE)
+	@PreAuthorize("isAuthenticated()")
 	List<Type> getTypes();
 	
 	/**
@@ -162,6 +211,7 @@ public interface CmsService {
 	 * @param typeName
 	 * @return
 	 */
+	@PreAuthorize("isAuthenticated()")
 	Pager<Type> getTypePager(String typeName, Pageable pageable);
 	
 	/**
@@ -169,6 +219,7 @@ public interface CmsService {
 	 * @param id
 	 * @return
 	 */
+	@PreAuthorize("isAuthenticated()")
 	Type findTypeById(long id);
 	
 	/**
@@ -176,6 +227,7 @@ public interface CmsService {
 	 * @param name
 	 * @return
 	 */
+	@PreAuthorize("isAuthenticated()")
 	Type findTypeByName(@NotNull String name);
 
 	/**
@@ -214,6 +266,13 @@ public interface CmsService {
 	// 从CACHE_NAME的缓存中查询，有则返回缓存中的对象，无则执行实际的方法，并将执行的结果存入缓存中
 	@Cacheable(value = CACHE_NAME_ARTICLE)
 	List<Article> recentArticles();
+	
+	/**
+	 * 打开文章
+	 * @param id
+	 * @return
+	 */
+	Article readArticle(long id);
 	
 	/**
 	 * 最近评论列表

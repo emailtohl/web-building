@@ -36,7 +36,7 @@ public class Article extends BaseEntity implements Comparable<Article> {
 	@NotNull
 	private User author;
 	private Type type;
-	private boolean isPublish = true;
+	private boolean isApproved = true;
 	private boolean isComment = true;
 	private List<Comment> comments = new ArrayList<>();
 	
@@ -88,12 +88,12 @@ public class Article extends BaseEntity implements Comparable<Article> {
 	}
 	
 	@org.hibernate.envers.NotAudited
-	@Column(name = "is_publish")
-	public boolean isPublish() {
-		return isPublish;
+	@Column(name = "is_approved")
+	public boolean isApproved() {
+		return isApproved;
 	}
-	public void setPublish(boolean isPublish) {
-		this.isPublish = isPublish;
+	public void setApproved(boolean isApproved) {
+		this.isApproved = isApproved;
 	}
 	
 	@org.hibernate.envers.NotAudited

@@ -35,6 +35,7 @@ define(['cms/module', 'cms/article/service', 'cms/category/service', 'ckeditor',
 		self.add = function() {
 			self.article = {};
 			self.isDetail = true;
+			refresh();
 		};
 		
 		self.edit = function(id) {
@@ -42,7 +43,7 @@ define(['cms/module', 'cms/article/service', 'cms/category/service', 'ckeditor',
 				console.log(data);
 				self.article = data;
 				self.isDetail = true;
-				refresh(self.article.body);
+				refresh();
 			});
 		};
 		
@@ -77,12 +78,12 @@ define(['cms/module', 'cms/article/service', 'cms/category/service', 'ckeditor',
 		/**
 		 * 刷新编辑器区的内容
 		 */
-		function refresh(body) {
+		function refresh() {
 			var editor = CKEDITOR.instances[editorID]; // 编辑器的"name"属性的值
 			if (editor) {
 				editor.destroy(true);// 销毁编辑器
 			}
-			CKEDITOR.replace(editorID, {
+			editor = CKEDITOR.replace(editorID, {
 				filebrowserImageUploadUrl : getUrlWithCsrfParam(),
 			}); // 替换编辑器，editorID为ckeditor的"id"属性的值
 			editor.on('change', function(event) {
