@@ -5,7 +5,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
@@ -56,7 +55,6 @@ import freemarker.template.TemplateNotFoundException;
 @Controller
 public class CmsCtrl {
 	private static final Logger logger = LogManager.getLogger();
-	@Inject File resourcePath;
 	@Inject Configuration cfg;
 	@Inject CmsService cmsService;
 	@Inject Gson gson;

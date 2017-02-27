@@ -39,15 +39,14 @@ public class CmsCtrlTest {
 	@Inject
 	Configuration cfg;
 	@Inject
-	@Named("dataPath")
-	File dataPath;
-	String filename = "text.flt";
+	@Named("templatesPath")
+	File templatesPath;
+	String filename = "index.html";
 	File test;
 
 	@Before
 	public void setUp() throws Exception {
-		File templatesDir = new File(dataPath, "templates");
-		test = new File(templatesDir, filename);
+		test = new File(templatesPath, filename);
 		FileUtils.write(test, "hello ${name}", StandardCharsets.UTF_8);
 	}
 

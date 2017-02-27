@@ -19,11 +19,11 @@
 - 其他组件：如select2,modal,datepicker,ztree,codemirror等等
 
 ## 二、部署
-本项目基于JDK8+tomcat9环境开发，框架部分为了兼容之前的JDK并未用JDK8的语法和新的时间类，但site包下的业务程序则需要调整才能兼容之前的JDK版本。
+本项目基于JDK8+tomcat9环境开发，common包中的框架部分代码使用传统的JDK6语法，使之可应用得更广泛，而site包下的业务程序则大量使用JDK8的语法，如Lambda表达式，方法引用，Stream流式风格处理集合以及新的时间类。
 
-> 注意：由于本项目监控和聊天功能使用websocket这种长连接技术，所以集群环境下websocket只能转到固定服务器上，若与登录时的服务器不同，前端浏览器的sessionId就会被更新，使得登录状态失效。
+> 注意：由于本项目监控和聊天功能使用websocket这种长连接技术，所以部署在集群环境下websocket只能转到固定服务器上，若与登录时的服务器不同，前端浏览器的sessionId就会被更新，使得登录状态失效。
 
-> 事实上websocket是改变规则的技术，它让服务器与浏览器、服务器与服务器之间（代码中有示例）通信更实时，完全可以自定义集群之间的数据共享。
+> 事实上websocket是改变规则的技术，它让服务器与浏览器、服务器与服务器之间（代码中有示例）通信更实时，完全可以自定义集群之间的数据共享，可参考com.github.emailtohl.building.message包中建立在websocket之上的自定义集群通信技术(4.1.7)。
 
 ### 2.1 数据源
 由于属于学习研究型项目，所以本系统中存在3份数据源配置，要保持一致（真实生产环境可以简化为一份）：
@@ -47,12 +47,11 @@ return lookup.getDataSource("jdbc/building");
 ```
 
 ###(3) 位于src/main/resources/META-INF/persistence.xml
-执行测试用例时，由于不在容器环境中，所以使用Spring的LocalEntityManagerFactoryBean来管理实体工厂，该Bean需要读取META-INF/persistence.xml中的配置。
+该文件实际上是JPA规范所要求的，不过由于引入了Spring的LocalEntityManagerFactoryBean来管理实体工厂，此文件可以省略。为了保留参考，我将此文件应用到测试环境下，此文件之所以没有放在src/test/resources中，是因为src/test/java/目录下有许多其他供测试的Entities，为避免Hibernate自动更新把数据表弄混乱，所以它仍然存放在src/main/resources/下。
 
-> 注意，此文件之所以没有放在src/test/resources中，是因为src/test/java/目录下有许多其他供测试的Entities，为避免把数据表弄混乱，所以它仍然存放在src/main/resources/下
 
 ### 2.2 创建数据库
-使用JPA Hibernate开发项目的好处之一，就是可以以面向对象的视角来设计数据库表结构，在src/test/java/下的com.github.emailtohl.building.initdb包中可以有两种方式让JPA提供者（这里是Hibernate）生成数据表，并填入初始化的测试数据。它们是带main函数的类，执行后即可创建好数据库表结构，该包下的CleanTestData可以将测试数据清除。
+系统分析，数据建模是软件开发中最重要的环节，使用JPA Hibernate开发项目的好处之一，就是可以以面向对象的视角来设计数据库表结构，在src/test/java/下的com.github.emailtohl.building.initdb包中可以有两种方式让Hibernate生成数据表，并填入初始化的测试数据。它们是带main函数的类，执行后即可创建好数据库表结构，该包下的CleanTestData可以将测试数据清除。
 
 ### 2.3 后端配置
 xml的DTD、scheme校验很繁琐，项目尽可能避免使用xml，在配置上倾向于编程式的风格，servlet、filter、listener均通过com.github.emailtohl.building.bootstrap下的程序启动，并未配置在web.xml中
@@ -73,7 +72,7 @@ xml的DTD、scheme校验很繁琐，项目尽可能避免使用xml，在配置�
 完成数据库配置后，执行src/test/java/com.github.emailtohl.building.initdb.CreateTable1，JPA Hibernate会自动创建数据表和初始的测试数据，创建的数据见com.github.emailtohl.building.initdb.PersistenceData，可自行创建自己的账户
 
 ### 3.3 登录系统
-打开浏览器连接到系统后，可进入首页，当访问授权地址时要求用户登录，用户可使用超级管理员账号是：emailtohl@163.com/123456登录，系统中还预存了几个测试账户，他们统一定义在com.github.emailtohl.building.initdb.PersistenceData中，也可以在src/main/resources/config.properties配置发件邮箱后，再在登录页面中注册新的账户。
+打开浏览器连接到系统后，可进入首页，当访问授权地址时要求用户登录，用户可使用超级管理员账号是：emailtohl@163.com/123456登录，系统中还预存了几个测试账户，他们统一定义在com.github.emailtohl.building.initdb.PersistenceData中，也可以在登录页面中注册新的账户。
 
 > 注意：注册用户会根据用户的邮箱发激活邮件，邮箱的配置在src/main/resources/config.properties中
 
@@ -88,14 +87,14 @@ xml的DTD、scheme校验很繁琐，项目尽可能避免使用xml，在配置�
 
 - SecurityBootstrap 向容器注册spring security的一系列过滤器，执行安全方面的初始化。
 
-- FilterBootstrap 由于Filter加载有顺序之分，所以FilterBootstrap根据顺序注册Filter，，这些Filter离执行的servlet最近，如压缩、JPA懒加载等过滤器。
+- FilterBootstrap 由于Filter加载有顺序之分，所以FilterBootstrap根据顺序注册Filter，这些Filter距离servlet最近，如压缩、JPA懒加载等过滤器。
 
 #### 4.1.2 config包
-- DataSourceConfiguration 根据spring依赖加载配置的顺序，DataSourceConfiguration是第一个被执行，它初始化最底层的数据源，由于@profile的配置，在单元测试时，spring会读取测试环境的配置，而在tomcat容器中运行时，spring则会读取生产环境的配置。
+- DataSourceConfiguration 根据spring依赖加载配置的顺序，DataSourceConfiguration是第一个被执行，它初始化最底层的数据源，并且定义外部存储目录。由于@profile的配置，在单元测试时，spring会读取测试环境的配置，而在tomcat容器中运行时，spring则会读取生产环境的配置。
 
 - JPAConfiguration 它同样对测试和生产环境进行区分，该配置将JPA交于spring来管理，这样当bean中含有@PersistenceContext注解时，spring会在每次线程执行时，向bean注入一个新的实体管理器EntityManager。JPAConfiguration还配置了spring data，如此一来，大大减少了dao层的编码——仅仅声明接口无需编写实现，当然若有编写实现的需求时，可参看本项目中在源代码中UserRepositoryImpl的解决方案。
 
-- SecurityConfiguration 对spring security进行配置，不仅为web层提供安全保护，同时也为应用程序service接口层提供安全保护。实际上，spring security的管理的核心其实就是AuthenticationManager，本配置为自定义AuthenticationProvider提供了示例。
+- SecurityConfiguration 对spring security进行配置，不仅为web层提供安全保护，同时也为应用程序service接口层提供安全保护。实际上，spring security的管理的核心其实就是AuthenticationManager，com.github.emailtohl.building.site.service.user.UserServiceImpl提供了自定义AuthenticationProvider示例。
 
 - RootContextConfiguration 它将其他配置@Import进来，并注册了常用Bean，如线程管理器，Java标准校验，HttpClient，邮件客户端等实用Bean
 

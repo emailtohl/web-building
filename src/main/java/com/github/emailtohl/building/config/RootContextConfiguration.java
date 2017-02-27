@@ -70,6 +70,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 import org.springframework.util.ErrorHandler;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -126,8 +127,8 @@ public class RootContextConfiguration
 	File indexBase;
 	
 	@Inject
-	@Named("dataPath")
-	File dataPath;
+	@Named("contextRoot")
+	File contextRoot;
 	
 	// ------------------关于数据源事务的配置------------------------------------
 	@Bean
@@ -302,6 +303,19 @@ public class RootContextConfiguration
 	public RestTemplate restTemplate() {
 		return new RestTemplate();
 	}
+	
+	@Bean(name = "templatesPath")
+	public File templatesPath() {
+		File templatesPath = new File(contextRoot, "templates");
+		if (!templatesPath.exists()) {
+			templatesPath.mkdir();
+		}
+		String path = env.getProperty("templatesPath");
+		if (StringUtils.hasText(path)) {
+			templatesPath = new File(path);
+		}
+		return templatesPath;
+	}
 
 	/**
 	 * freemarker的配置
@@ -310,11 +324,9 @@ public class RootContextConfiguration
 	 */
 	@Bean
 	public freemarker.template.Configuration freeMarkerConfiguration() throws IOException {
-		File templatesDir = new File(dataPath, "templates");
-		if (!templatesDir.exists())
-			templatesDir.mkdir();
+		File templatesPath = templatesPath();
 		freemarker.template.Configuration cfg = new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_23);
-		cfg.setDirectoryForTemplateLoading(templatesDir);
+		cfg.setDirectoryForTemplateLoading(templatesPath);
 		cfg.setDefaultEncoding("UTF-8");
 		// Sets how errors will appear.
 		// During web page *development* TemplateExceptionHandler.HTML_DEBUG_HANDLER is better.
