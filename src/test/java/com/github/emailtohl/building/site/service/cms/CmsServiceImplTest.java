@@ -80,7 +80,7 @@ public class CmsServiceImplTest {
 
 	@Test
 	public void testArticle() {
-		long id = cmsService.saveArticle("test", "test", "test", subType.getName());
+		long id = cmsService.saveArticle("test", "test", "test", "summary", subType.getName());
 		assertTrue(id > 0);
 		Article a = cmsService.getArticle(id);
 		try {
@@ -104,7 +104,7 @@ public class CmsServiceImplTest {
 
 	@Test
 	public void testComment() {
-		long articleId = cmsService.saveArticle("test", "test", "test", "noType");
+		long articleId = cmsService.saveArticle("test", "test", "test", "summary", "noType");
 		long commentId = cmsService.saveComment(articleId, "my comment");
 		try {
 			Comment c = cmsService.findComment(commentId);

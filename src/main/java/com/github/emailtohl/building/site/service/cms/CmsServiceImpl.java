@@ -68,19 +68,30 @@ public class CmsServiceImpl implements CmsService {
 	}
 
 	@Override
-	public long saveArticle(String title, String keywords, String body, String type) {
-		return saveArticle(SecurityContextUtil.getCurrentUsername(), title, keywords, body, type);
+	public long saveArticle(String title, String keywords, String body, String summary, String type) {
+		return saveArticle(SecurityContextUtil.getCurrentUsername(), title, keywords, body, summary, type);
 	}
 
 	@Override
-	public long saveArticle(String email, String title, String keywords, String body, String type) {
+	public long saveArticle(String email, String title, String keywords, String body, String summary, String type) {
 		Article a = new Article();
 		a.setTitle(title);
 		a.setKeywords(keywords);
 		a.setBody(body);
+		// 将第一幅图作为封面
 		Matcher m = IMG_PATTERN.matcher(body);
 		if (m.find()) {
 			a.setCover(m.group(1));
+		}
+		// 若没有摘要，则选取前50字
+		if (!StringUtils.hasText(summary)) {
+			int size = body.length();
+			if (size > 50) {
+				summary = body.substring(0, 50) + "……";
+			} else {
+				summary = body;
+			}
+			a.setSummary(summary.replaceAll(IMG_PATTERN.pattern(), ""));
 		}
 		User author = userRepository.findByEmail(email);
 		a.setAuthor(author);

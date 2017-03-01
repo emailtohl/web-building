@@ -8,6 +8,7 @@ define(['cms/module', 'common/context' ], function(cmsModule) {
 			f.id = e.id;
 			f.title = e.title;
 			f.body = e.body;
+			f.summary = e.summary;
 			f.keywords = e.keywords;
 			if (typeof e.type == 'string') {
 				try {

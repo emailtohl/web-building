@@ -101,7 +101,7 @@ public class CmsCtrl {
 			}
 			throw new VerifyFailure(e.toString());
 		}
-		cmsService.saveArticle(form.title, form.keywords, form.body, form.type);
+		cmsService.saveArticle(form.title, form.keywords, form.body, form.summary, form.type);
 	}
 	
 	/**
@@ -112,6 +112,7 @@ public class CmsCtrl {
 		@NotNull String title;
 		String keywords;
 		@NotNull String body;
+		String summary;
 		String type;
 		public String getTitle() {
 			return title;

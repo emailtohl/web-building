@@ -33,6 +33,7 @@ public class Article extends BaseEntity implements Comparable<Article> {
 	private String keywords;
 	@NotNull
 	private String body;
+	private String summary;
 	private String cover;
 	@NotNull
 	private User author;
@@ -65,6 +66,15 @@ public class Article extends BaseEntity implements Comparable<Article> {
 	}
 	public void setBody(String body) {
 		this.body = body;
+	}
+	
+	@org.hibernate.search.annotations.Field(store = org.hibernate.search.annotations.Store.YES, boost = @org.hibernate.search.annotations.Boost(1.2f))
+	@Lob
+	public String getSummary() {
+		return summary;
+	}
+	public void setSummary(String summary) {
+		this.summary = summary;
 	}
 	
 	@org.hibernate.envers.NotAudited

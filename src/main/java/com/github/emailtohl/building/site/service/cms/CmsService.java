@@ -52,12 +52,13 @@ public interface CmsService {
 	 * @param title
 	 * @param keywords
 	 * @param body
+	 * @param summary
 	 * @param type
 	 * @return
 	 */
 	@CacheEvict(value = CACHE_NAME_ARTICLE, allEntries = true) // 当这个方法被调用后，即会清空缓存
 	@PreAuthorize("isAuthenticated()")
-	long saveArticle(@NotNull String title, String keywords, String body, String type);
+	long saveArticle(@NotNull String title, String keywords, String body, String summary, String type);
 	
 	/**
 	 * 保存文章
@@ -70,7 +71,7 @@ public interface CmsService {
 	 */
 	@CacheEvict(value = CACHE_NAME_ARTICLE, allEntries = true)
 	@PreAuthorize("isAuthenticated()")
-	long saveArticle(@NotNull String email, @NotNull String title, String keywords, String body, String type);
+	long saveArticle(@NotNull String email, @NotNull String title, String keywords, String body, String summary, String type);
 	
 	/**
 	 * 修改某文章
