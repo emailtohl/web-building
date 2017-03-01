@@ -168,6 +168,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			"/systemInfo",
 			"/fileUploadServer/test",
 			"/public/**",
+			"/templates/**",
+			"/article",// cms中发布的文章
 		};
 		security
 			.authorizeRequests()

@@ -398,7 +398,7 @@ public class CmsCtrl {
 	 * @throws TemplateNotFoundException 
 	 * @throws TemplateException 
 	 */
-	@RequestMapping(value = "public/webPage", method = GET)
+	@RequestMapping(value = "article", method = GET)
 	public void getWebPage(HttpServletRequest request, HttpServletResponse response) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException {
 		WebPage wp = new WebPage();
 		wp.setRecentArticles(recentArticles());
@@ -407,7 +407,7 @@ public class CmsCtrl {
 		response.setContentType("text/html");
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
-		Template t = cfg.getTemplate("blog.html");
+		Template t = cfg.getTemplate("article.html");
 		t.process(wp, out);
 		out.close();
 	}
