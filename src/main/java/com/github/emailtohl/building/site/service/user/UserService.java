@@ -18,6 +18,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.method.P;
@@ -43,13 +45,16 @@ import com.github.emailtohl.building.site.entities.user.User;
 @Transactional
 @Validated
 public interface UserService extends AuthenticationProvider, UserDetailsService {
-
+	String CACHE_NAME_USER = "userCache";
+	String CACHE_NAME_USER_PAGER = "userPagerCache";
+	
 	/**
 	 * 创建雇员账号
 	 * 注意：对于Spring Security来说，新增用户时，必须同时为其添加相应的用户授权，否则即便激活了该用户，也不会让其登录
 	 * @param u
 	 * @return
 	 */
+	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
 	@PreAuthorize("hasAuthority('" + USER_CREATE_SPECIAL + "')")
 	Long addEmployee(@Valid Employee u);
 	
@@ -59,18 +64,21 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @param u
 	 * @return
 	 */
+	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
 	Long addCustomer(@Valid Customer u);
 	
 	/**
 	 * 启用用户，无需权限即可
 	 * @param id
 	 */
+	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
 	void enableUser(@Min(value = 1L) Long id);
 	
 	/**
 	 * 禁用用户
 	 * @param id
 	 */
+	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
 	@PreAuthorize("hasAuthority('" + USER_DISABLE + "')")
 	void disableUser(@Min(value = 1L) Long id);
 	
@@ -78,6 +86,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * 授予用户角色
 	 * @param roleNames
 	 */
+	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
 	@PreAuthorize("hasAuthority('" + USER_GRANT_ROLES + "')")
 	void grantRoles(long id, String... roleNames);
 	
@@ -85,6 +94,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * 新建用户时，授予普通用户角色
 	 * @param id
 	 */
+	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
 	void grantUserRole(long id);
 	
 	/**
@@ -94,6 +104,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @param email
 	 * @param newPassword
 	 */
+	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
 	@PreAuthorize("#email == authentication.principal.username")
 	void changePassword(@P("email") String email, @NotNull @Pattern(regexp = "^[^\\s&\"<>]+$") String newPassword);
 	
@@ -103,12 +114,14 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @param email
 	 * @param newPassword
 	 */
+	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
 	void changePasswordByEmail(String email, @NotNull @Pattern(regexp = "^[^\\s&\"<>]+$") String newPassword);
 	
 	/**
 	 * 删除用户
 	 * @param id
 	 */
+	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
 	@PreAuthorize("hasAuthority('" + USER_DELETE + "')")
 	void deleteUser(@Min(value = 1L) Long id);
 	
@@ -118,6 +131,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @param id
 	 * @return
 	 */
+	@Cacheable(value = CACHE_NAME_USER, key = "#root.args[0]")
 	@PostAuthorize("hasAuthority('" + USER_READ_ALL + "') || (hasAuthority('" + USER_READ_SELF + "') && returnObject.username == principal.username)")
 	User getUser(@Min(value = 1L) Long id);
 	
@@ -127,6 +141,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @param email
 	 * @return
 	 */
+	@Cacheable(value = CACHE_NAME_USER, key = "#root.args[0]")
 	@PostAuthorize("hasAuthority('" + USER_READ_ALL + "') || (hasAuthority('" + USER_READ_SELF + "') && #email == principal.username)")
 	User getUserByEmail(@NotNull @P("email") String email);
 	
@@ -134,6 +149,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * 修改用户的头像地址
 	 * @param iconSrc 修改用户头像的地址
 	 */
+	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
 	@PreAuthorize("isAuthenticated()")
 	void updateIconSrc(long id, String iconSrc);
 	
@@ -141,6 +157,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * 将用户的头像二进制文件存入数据库
 	 * @param icon 二进制图片文件
 	 */
+	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
 	@PreAuthorize("isAuthenticated()")
 	void updateIcon(long id, byte[] icon);
 	
@@ -152,6 +169,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * 
 	 * @param u中的id不能为null， u中属性不为null的值为修改项
 	 */
+	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
 	@PreAuthorize("hasAuthority('" + USER_UPDATE_ALL + "') || (hasAuthority('" + USER_UPDATE_SELF + "') && #email == principal.username)")
 	void mergeEmployee(@NotNull @P("email") String email, Employee emp);
 	
@@ -163,6 +181,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * 
 	 * @param u中的id不能为null， u中属性不为null的值为修改项
 	 */
+	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
 	@PreAuthorize("hasAuthority('" + USER_UPDATE_ALL + "') || (hasAuthority('" + USER_UPDATE_SELF + "') && #email == principal.username)")
 	void mergeCustomer(@NotNull @P("email") String email, Customer cus);
 	
@@ -175,6 +194,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @param pageable
 	 * @return
 	 */
+	@Cacheable(value = CACHE_NAME_USER_PAGER, key = "#root.args")
 	@NotNull
 	@PreAuthorize("isAuthenticated()")
 	Pager<User> getUserPager(User u, Pageable pageable);
@@ -230,6 +250,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @param publicKey
 	 * @param module
 	 */
+	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
 	@PreAuthorize("isAuthenticated()")
 	void setPublicKey(@NotNull String publicKey);
 	
@@ -238,6 +259,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @param publicKey
 	 * @param module
 	 */
+	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
 	@PreAuthorize("isAuthenticated()")
 	void clearPublicKey();
 	

@@ -8,6 +8,8 @@ import java.util.Set;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 
@@ -22,21 +24,27 @@ import com.github.emailtohl.building.site.entities.role.Role;
 @Transactional
 @Validated
 public interface RoleService {
+	String CACHE_NAME_ROLE = "roleCache";
+	String CACHE_NAME_ROLE_LIST = "roleListCache";
+	String CACHE_NAME_AUTHORITY_LIST = "authorityListCache";
 	/**
 	 * 获取角色
 	 */
+	@Cacheable(value = CACHE_NAME_ROLE, key = "#root.args[0]")
 	Role getRole(long id);
 	
 	/**
 	 * 获取所有角色
 	 * @return
 	 */
+	@Cacheable(value = CACHE_NAME_ROLE_LIST)
 	List<Role> getRoles();
 	
 	/**
 	 * 获取所有权限
 	 * @return
 	 */
+	@Cacheable(value = CACHE_NAME_AUTHORITY_LIST)
 	List<Authority> getAuthorities();
 	
 	/**
@@ -45,6 +53,7 @@ public interface RoleService {
 	 * @param role
 	 * @return
 	 */
+	@CacheEvict(value = { CACHE_NAME_ROLE, CACHE_NAME_ROLE_LIST }, allEntries = true)
 	long createRole(@Valid Role role);
 	
 	/**
@@ -53,6 +62,7 @@ public interface RoleService {
 	 * @param authorityNames 角色含有的权限名字
 	 * @return
 	 */
+	@CacheEvict(value = { CACHE_NAME_ROLE, CACHE_NAME_ROLE_LIST }, allEntries = true)
 	long createRole(@Valid Role role, Set<String> authorityNames);
 	
 	/**
@@ -61,6 +71,7 @@ public interface RoleService {
 	 * @param id
 	 * @param role
 	 */
+	@CacheEvict(value = { CACHE_NAME_ROLE, CACHE_NAME_ROLE_LIST }, allEntries = true)
 	void updateRole(long id, @Valid Role role);
 	
 	/**
@@ -68,11 +79,13 @@ public interface RoleService {
 	 * @param roleId 角色ID
 	 * @param authorityNames 权限名
 	 */
+	@CacheEvict(value = { CACHE_NAME_ROLE, CACHE_NAME_ROLE_LIST }, allEntries = true)
 	void grantAuthorities(long roleId, Set<String> authorityNames);
 	
 	/**
 	 * 删除角色
 	 * @param id
 	 */
+	@CacheEvict(value = { CACHE_NAME_ROLE, CACHE_NAME_ROLE_LIST }, allEntries = true)
 	void deleteRole(long id);
 }

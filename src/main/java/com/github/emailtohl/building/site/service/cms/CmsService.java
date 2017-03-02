@@ -38,6 +38,7 @@ public interface CmsService {
 	 * @param id
 	 * @return
 	 */
+	@Cacheable(value = CACHE_NAME_ARTICLE, key = "#root.args[0]")
 	@PreAuthorize("isAuthenticated()")
 	Article getArticle(long id);
 	
