@@ -68,12 +68,12 @@ public class CmsServiceImpl implements CmsService {
 	}
 
 	@Override
-	public long saveArticle(String title, String keywords, String body, String summary, String type) {
+	public Article saveArticle(String title, String keywords, String body, String summary, String type) {
 		return saveArticle(SecurityContextUtil.getCurrentUsername(), title, keywords, body, summary, type);
 	}
 
 	@Override
-	public long saveArticle(String email, String title, String keywords, String body, String summary, String type) {
+	public Article saveArticle(String email, String title, String keywords, String body, String summary, String type) {
 		Article a = new Article();
 		a.setTitle(title);
 		a.setKeywords(keywords);
@@ -101,11 +101,11 @@ public class CmsServiceImpl implements CmsService {
 			t.getArticles().add(a);
 		}
 		articleRepository.save(a);
-		return a.getId();
+		return a;
 	}
 
 	@Override
-	public void updateArticle(long id, Article article) {
+	public Article updateArticle(long id, Article article) {
 		Article pa = articleRepository.findOne(id);
 		if (pa != null) {
 			BeanUtils.copyProperties(article, pa, BaseEntity.getIgnoreProperties("author", "type", "cover"));
@@ -123,10 +123,11 @@ public class CmsServiceImpl implements CmsService {
 			pa.setType(pt);
 			pt.getArticles().add(pa);
 		}
+		return pa;
 	}
 
 	@Override
-	public void updateArticle(long id, String title, String keywords, String body, String type) {
+	public Article updateArticle(long id, String title, String keywords, String body, String summary, String type) {
 		Article article = new Article();
 		if (StringUtils.hasText(title))
 			article.setTitle(title);
@@ -134,13 +135,15 @@ public class CmsServiceImpl implements CmsService {
 			article.setKeywords(keywords);
 		if (StringUtils.hasText(body))
 			article.setBody(body);
+		if (StringUtils.hasText(summary))
+			article.setSummary(summary);
 		if (StringUtils.hasText(type)) {
 			Type t = typeRepository.findByName(type);
 			if (t != null) {
 				article.setType(t);
 			}
 		}
-		updateArticle(id, article);
+		return updateArticle(id, article);
 	}
 
 	@Override
@@ -154,23 +157,31 @@ public class CmsServiceImpl implements CmsService {
 	}
 
 	@Override
-	public void approveArticle(long articleId) {
-		articleRepository.findOne(articleId).setApproved(true);
+	public Article approveArticle(long articleId) {
+		Article a = articleRepository.findOne(articleId);
+		a.setApproved(true);
+		return a;
 	}
 
 	@Override
-	public void rejectArticle(long articleId) {
-		articleRepository.findOne(articleId).setApproved(false);
+	public Article rejectArticle(long articleId) {
+		Article a = articleRepository.findOne(articleId);
+		a.setApproved(false);
+		return a;
 	}
 
 	@Override
-	public void openComment(long articleId) {
-		articleRepository.findOne(articleId).setComment(true);
+	public Article openComment(long articleId) {
+		Article a = articleRepository.findOne(articleId);
+		a.setComment(true);
+		return a;
 	}
 
 	@Override
-	public void closeComment(long articleId) {
-		articleRepository.findOne(articleId).setComment(false);
+	public Article closeComment(long articleId) {
+		Article a = articleRepository.findOne(articleId);
+		a.setComment(false);
+		return a;
 	}
 
 	@Override
@@ -209,7 +220,7 @@ public class CmsServiceImpl implements CmsService {
 	}
 
 	@Override
-	public void updateComment(String email, long id, String commentContent) {
+	public long updateComment(String email, long id, String commentContent) {
 		Comment c = commentRepository.findOne(id);
 		if (c != null) {
 			if (!StringUtils.hasText(email) || !email.equals(c.getCritics())) {
@@ -217,26 +228,36 @@ public class CmsServiceImpl implements CmsService {
 			}
 			c.setContent(commentContent);
 		}
+		return c.getArticle().getId();
 	}
 
 	@Override
-	public void updateComment(long id, String commentContent) {
-		updateComment(SecurityContextUtil.getCurrentUsername(), id, commentContent);
+	public long updateComment(long id, String commentContent) {
+		return updateComment(SecurityContextUtil.getCurrentUsername(), id, commentContent);
 	}
 
 	@Override
-	public void deleteComment(long id) {
-		commentRepository.delete(id);
+	public long deleteComment(long id) {
+		Comment c = commentRepository.findOne(id);
+		long articleId = c.getArticle().getId();
+		commentRepository.delete(c);
+		return articleId;
 	}
 
 	@Override
-	public void approvedComment(long commentId) {
-		commentRepository.findOne(commentId).setApproved(true);
+	public long approvedComment(long commentId) {
+		Comment c = commentRepository.findOne(commentId);
+		long articleId = c.getArticle().getId();
+		c.setApproved(true);
+		return articleId;
 	}
 
 	@Override
-	public void rejectComment(long commentId) {
-		commentRepository.findOne(commentId).setApproved(false);
+	public long rejectComment(long commentId) {
+		Comment c = commentRepository.findOne(commentId);
+		long articleId = c.getArticle().getId();
+		c.setApproved(false);
+		return articleId;
 	}
 
 	@Override

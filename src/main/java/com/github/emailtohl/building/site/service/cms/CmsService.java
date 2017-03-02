@@ -10,6 +10,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,7 +30,9 @@ import com.github.emailtohl.building.site.entities.cms.Type;
 @Transactional
 public interface CmsService {
 	String CACHE_NAME_ARTICLE = "articleCache";
-	String CACHE_NAME_TYPE = "typeCache";
+	String CACHE_NAME_ARTICLE_LIST = "articleListCache";
+	String CACHE_NAME_CLASSIFY = "classifyCache";
+	
 	/**
 	 * 获取某文章
 	 * @param id
@@ -56,9 +59,10 @@ public interface CmsService {
 	 * @param type
 	 * @return
 	 */
-	@CacheEvict(value = CACHE_NAME_ARTICLE, allEntries = true) // 当这个方法被调用后，即会清空缓存
+	@CacheEvict(value = { CACHE_NAME_ARTICLE_LIST, CACHE_NAME_CLASSIFY }, allEntries = true) // 当这个方法被调用后，即会清空缓存
+	@CachePut(value = CACHE_NAME_ARTICLE, key = "#result.id")
 	@PreAuthorize("isAuthenticated()")
-	long saveArticle(@NotNull String title, String keywords, String body, String summary, String type);
+	Article saveArticle(@NotNull String title, String keywords, String body, String summary, String type);
 	
 	/**
 	 * 保存文章
@@ -69,18 +73,21 @@ public interface CmsService {
 	 * @param type
 	 * @return
 	 */
-	@CacheEvict(value = CACHE_NAME_ARTICLE, allEntries = true)
+	@CacheEvict(value = { CACHE_NAME_ARTICLE_LIST, CACHE_NAME_CLASSIFY }, allEntries = true)
+	@CachePut(value = CACHE_NAME_ARTICLE, key = "#result.id")
 	@PreAuthorize("isAuthenticated()")
-	long saveArticle(@NotNull String email, @NotNull String title, String keywords, String body, String summary, String type);
+	Article saveArticle(@NotNull String email, @NotNull String title, String keywords, String body, String summary, String type);
 	
 	/**
 	 * 修改某文章
 	 * @param id
 	 * @param article
+	 * @return
 	 */
-	@CacheEvict(value = CACHE_NAME_ARTICLE, allEntries = true)
+	@CacheEvict(value = { CACHE_NAME_ARTICLE_LIST, CACHE_NAME_CLASSIFY }, allEntries = true)
+	@CachePut(value = CACHE_NAME_ARTICLE, key = "#result.id")
 	@PreAuthorize("isAuthenticated()")
-	void updateArticle(long id, Article article);
+	Article updateArticle(long id, Article article);
 	
 	/**
 	 * 修改某文章
@@ -89,16 +96,18 @@ public interface CmsService {
 	 * @param keywords
 	 * @param body
 	 * @param type
+	 * @return
 	 */
-	@CacheEvict(value = CACHE_NAME_ARTICLE)
+	@CacheEvict(value = { CACHE_NAME_ARTICLE_LIST, CACHE_NAME_CLASSIFY }, allEntries = true)
+	@CachePut(value = CACHE_NAME_ARTICLE, key = "#result.id")
 	@PreAuthorize("isAuthenticated()")
-	void updateArticle(long id, String title, String keywords, String body, String type);
+	Article updateArticle(long id, String title, String keywords, String body, String summary, String type);
 	
 	/**
 	 * 特殊情况下用于管理员删除文章
 	 * @param id
 	 */
-	@CacheEvict(value = CACHE_NAME_ARTICLE)
+	@CacheEvict(value = { CACHE_NAME_ARTICLE, CACHE_NAME_ARTICLE_LIST, CACHE_NAME_CLASSIFY }, allEntries = true)
 	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
 	void deleteArticle(long id);
 
@@ -106,33 +115,37 @@ public interface CmsService {
 	 * 让文章发表
 	 * @param articleId
 	 */
-	@CacheEvict(value = CACHE_NAME_ARTICLE)
+	@CacheEvict(value = { CACHE_NAME_ARTICLE_LIST, CACHE_NAME_CLASSIFY }, allEntries = true)
+	@CachePut(value = CACHE_NAME_ARTICLE, key = "#result.id")
 	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
-	void approveArticle(long articleId);
+	Article approveArticle(long articleId);
 	
 	/**
 	 * 拒绝文章发布
 	 * @param articleId
 	 */
-	@CacheEvict(value = CACHE_NAME_ARTICLE)
+	@CacheEvict(value = { CACHE_NAME_ARTICLE_LIST, CACHE_NAME_CLASSIFY }, allEntries = true)
+	@CachePut(value = CACHE_NAME_ARTICLE, key = "#result.id")
 	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
-	void rejectArticle(long articleId);
+	Article rejectArticle(long articleId);
 	
 	/**
 	 * 开放评论
 	 * @param articleId
 	 */
-	@CacheEvict(value = CACHE_NAME_ARTICLE)
+	@CacheEvict(value = { CACHE_NAME_ARTICLE_LIST, CACHE_NAME_CLASSIFY }, allEntries = true)
+	@CachePut(value = CACHE_NAME_ARTICLE, key = "#result.id")
 	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
-	void openComment(long articleId);
+	Article openComment(long articleId);
 	
 	/**
 	 * 关闭评论
 	 * @param articleId
 	 */
-	@CacheEvict(value = CACHE_NAME_ARTICLE)
+	@CacheEvict(value = { CACHE_NAME_ARTICLE_LIST, CACHE_NAME_CLASSIFY }, allEntries = true)
+	@CachePut(value = CACHE_NAME_ARTICLE, key = "#result.id")
 	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
-	void closeComment(long articleId);
+	Article closeComment(long articleId);
 	
 	/**
 	 * 获取某评论
@@ -149,6 +162,7 @@ public interface CmsService {
 	 * @param content
 	 * @return
 	 */
+	@CacheEvict(value = CACHE_NAME_ARTICLE, key = "#root.args[1]")
 	@PreAuthorize("isAuthenticated() && #email == principal.username)")
 	long saveComment(@NotNull String email, @Min(1) long articleId, @NotNull String content);
 
@@ -158,6 +172,7 @@ public interface CmsService {
 	 * @param content
 	 * @return
 	 */
+	@CacheEvict(value = CACHE_NAME_ARTICLE, key = "#root.args[0]")
 	@PreAuthorize("isAuthenticated()")
 	long saveComment(@Min(1) long articleId, @NotNull String content);
 	
@@ -166,44 +181,54 @@ public interface CmsService {
 	 * @param email 用户名
 	 * @param id 评论的id
 	 * @param commentContent 评论的内容
+	 * @return 文章的id，用于更新缓存
 	 */
+	@CacheEvict(value = CACHE_NAME_ARTICLE, key = "#result")
 	@PreAuthorize("isAuthenticated() && #email == principal.username)")
-	void updateComment(@NotNull String email, @Min(1) long id, @NotNull String commentContent);
+	long updateComment(@NotNull String email, @Min(1) long id, @NotNull String commentContent);
 	
 	/**
 	 * 修改评论
 	 * @param id 评论的id
 	 * @param commentContent 评论的内容
+	 * @return 文章的id，用于更新缓存
 	 */
+	@CacheEvict(value = CACHE_NAME_ARTICLE, key = "#result")
 	@PreAuthorize("isAuthenticated()")
-	void updateComment(@Min(1) long id, @NotNull String commentContent);
+	long updateComment(@Min(1) long id, @NotNull String commentContent);
 	
 	/**
 	 * 删除评论
 	 * @param id 评论id
+	 * @return 文章的id，用于更新缓存
+	 * @return 文章的id，用于更新缓存
 	 */
+	@CacheEvict(value = CACHE_NAME_ARTICLE, key = "#result")
 	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
-	void deleteComment(@Min(1) long id);
+	long deleteComment(@Min(1) long id);
 	
 	/**
 	 * 允许评论发表
 	 * @param commentId
+	 * @return 文章的id，用于更新缓存
 	 */
+	@CacheEvict(value = CACHE_NAME_ARTICLE, key = "#result")
 	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
-	void approvedComment(long commentId);
+	long approvedComment(long commentId);
 	
 	/**
 	 * 拒绝评论发表
 	 * @param commentId
+	 * @return 文章的id，用于更新缓存
 	 */
+	@CacheEvict(value = CACHE_NAME_ARTICLE, key = "#result")
 	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
-	void rejectComment(long commentId);
+	long rejectComment(long commentId);
 	
 	/**
 	 * 获取所有的文章分类
 	 * @return
 	 */
-	@Cacheable(value = CACHE_NAME_TYPE)
 	@PreAuthorize("isAuthenticated()")
 	List<Type> getTypes();
 	
@@ -238,7 +263,6 @@ public interface CmsService {
 	 * @param parent
 	 * @return
 	 */
-	@CacheEvict(value = CACHE_NAME_TYPE, allEntries = true)
 	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
 	long saveType(@NotNull String name, String description, String parent);
 	
@@ -248,7 +272,6 @@ public interface CmsService {
 	 * @param description
 	 * @param parent 类型的父类型，如果为null则为顶级类型
 	 */
-	@CacheEvict(value = CACHE_NAME_TYPE, allEntries = true)
 	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
 	void updateType(@Min(1) long id, @NotNull String name, String description, String parent);
 	
@@ -256,7 +279,6 @@ public interface CmsService {
 	 * 删除一个文章类型
 	 * @param id
 	 */
-	@CacheEvict(value = CACHE_NAME_TYPE, allEntries = true)
 	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
 	void deleteType(@Min(1) long id);
 	
@@ -264,8 +286,7 @@ public interface CmsService {
 	 * 最近文章列表
 	 * @return
 	 */
-	// 从CACHE_NAME的缓存中查询，有则返回缓存中的对象，无则执行实际的方法，并将执行的结果存入缓存中
-	@Cacheable(value = CACHE_NAME_ARTICLE)
+	@Cacheable(value = CACHE_NAME_ARTICLE_LIST)
 	List<Article> recentArticles();
 	
 	/**
@@ -273,6 +294,7 @@ public interface CmsService {
 	 * @param id
 	 * @return
 	 */
+	@Cacheable(value = CACHE_NAME_ARTICLE, key = "#root.args[0]")
 	Article readArticle(long id);
 	
 	/**
@@ -285,6 +307,7 @@ public interface CmsService {
 	 * 根据文章类型进行分类
 	 * @return
 	 */
+	@Cacheable(value = CACHE_NAME_CLASSIFY)
 	Map<Type, List<Article>> classify();
 	
 }

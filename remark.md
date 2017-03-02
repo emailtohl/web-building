@@ -390,4 +390,18 @@ mvn cobertura:check
 |False				|findByActiveFalse()									|… where x.active = false								|
 |IgnoreCase			|findByFirstnameIgnoreCase								|… where UPPER(x.firstame) = UPPER(?1)					|
 
+## 九、关于Spring cache内建表达式说明
 
+缓存，即键值对，@Cacheable 和 @CachePut注解中的value为必填项，该值指明了缓存的名字，大致上是一个Map的名字。被注解的方法需要有返回值，即不能应用于void方法，该返回值即Map中的值，而Map中的键可以默认为参数，也可以用注解中的key指定（SPEL表达式，见下表）。
+@CacheEvict 可以应用于void方法，它用于清除缓存之用。
+
+|表达式				|						描述																	|
+|-------------------|-------------------------------------------------------------------------------------------|
+|#root.args			|The arguments passed in to the cached method, as an array									|
+|#root.caches		|The caches this method is executed against, as an array									|
+|#root.target		|The target object																			|
+|#root.targetClass	|The target object’s class; a shortcut for #root.target.class								|
+|#root.method		|The cached method																			|
+|#root.methodName	|The cached method’s name; a shortcut for||#root.method.name								|
+|#result			|The return value from the method call (not available with @Cacheable)						|
+|#Argument			|The name of any method argument (such as #argName) or argument index (such as #a0 or #p0)	|

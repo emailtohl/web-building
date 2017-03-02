@@ -159,7 +159,7 @@ public class CmsCtrl {
 			}
 			throw new VerifyFailure(e.toString());
 		}
-		cmsService.updateArticle(id, form.title, form.keywords, form.body, form.type);
+		cmsService.updateArticle(id, form.title, form.keywords, form.body, form.summary, form.type);
 	}
 	
 	/**

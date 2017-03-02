@@ -80,7 +80,7 @@ public class CmsServiceImplTest {
 
 	@Test
 	public void testArticle() {
-		long id = cmsService.saveArticle("test", "test", "test", "summary", subType.getName());
+		long id = cmsService.saveArticle("test", "test", "test", "summary", subType.getName()).getId();
 		assertTrue(id > 0);
 		Article a = cmsService.getArticle(id);
 		try {
@@ -88,7 +88,7 @@ public class CmsServiceImplTest {
 			assertEquals(subType, a.getType());
 //			assertTrue(cmsService.findTypeByName(subType.getName()).getArticles().contains(a));
 			
-			cmsService.updateArticle(id, "update", null, "test body", parent.getName());
+			cmsService.updateArticle(id, "update", null, "test body", "summary", parent.getName());
 			a = cmsService.getArticle(id);
 			assertEquals("update", a.getTitle());
 			assertEquals(parent, a.getType());
@@ -104,7 +104,7 @@ public class CmsServiceImplTest {
 
 	@Test
 	public void testComment() {
-		long articleId = cmsService.saveArticle("test", "test", "test", "summary", "noType");
+		long articleId = cmsService.saveArticle("test", "test", "test", "summary", "noType").getId();
 		long commentId = cmsService.saveComment(articleId, "my comment");
 		try {
 			Comment c = cmsService.findComment(commentId);
