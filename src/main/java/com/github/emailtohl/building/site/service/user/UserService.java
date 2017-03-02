@@ -19,6 +19,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,50 +53,59 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * 创建雇员账号
 	 * 注意：对于Spring Security来说，新增用户时，必须同时为其添加相应的用户授权，否则即便激活了该用户，也不会让其登录
 	 * @param u
-	 * @return
+	 * @return 用于缓存
 	 */
-	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
+	@CacheEvict(value = CACHE_NAME_USER_PAGER, allEntries = true)
+	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
 	@PreAuthorize("hasAuthority('" + USER_CREATE_SPECIAL + "')")
-	Long addEmployee(@Valid Employee u);
+	User addEmployee(@Valid Employee u);
 	
 	/**
 	 * 注册普通账号，无需权限即可
 	 * 注意：对于Spring Security来说，新增用户时，必须同时为其添加相应的用户授权，否则即便激活了该用户，也不会让其登录
 	 * @param u
-	 * @return
+	 * @return 用于缓存
 	 */
-	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
-	Long addCustomer(@Valid Customer u);
+	@CacheEvict(value = CACHE_NAME_USER_PAGER, allEntries = true)
+	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
+	User addCustomer(@Valid Customer u);
 	
 	/**
 	 * 启用用户，无需权限即可
 	 * @param id
+	 * @return 用于缓存
 	 */
-	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
-	void enableUser(@Min(value = 1L) Long id);
+	@CacheEvict(value = CACHE_NAME_USER_PAGER, allEntries = true)
+	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
+	User enableUser(@Min(value = 1L) Long id);
 	
 	/**
 	 * 禁用用户
 	 * @param id
+	 * @return 用于缓存
 	 */
-	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
+	@CacheEvict(value = CACHE_NAME_USER_PAGER, allEntries = true)
+	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
 	@PreAuthorize("hasAuthority('" + USER_DISABLE + "')")
-	void disableUser(@Min(value = 1L) Long id);
+	User disableUser(@Min(value = 1L) Long id);
 	
 	/**
 	 * 授予用户角色
 	 * @param roleNames
+	 * @return 用于缓存
 	 */
-	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
+	@CacheEvict(value = CACHE_NAME_USER_PAGER, allEntries = true)
+	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
 	@PreAuthorize("hasAuthority('" + USER_GRANT_ROLES + "')")
-	void grantRoles(long id, String... roleNames);
+	User grantRoles(long id, String... roleNames);
 	
 	/**
 	 * 新建用户时，授予普通用户角色
 	 * @param id
+	 * @return 用于缓存
 	 */
-	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
-	void grantUserRole(long id);
+	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
+	User grantUserRole(long id);
 	
 	/**
 	 * 修改密码，限制只能本人才能修改
@@ -103,19 +113,21 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * authentication是直接从SecurityContextHolder中获取的对象
 	 * @param email
 	 * @param newPassword
+	 * @return 用于缓存
 	 */
-	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
+	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
 	@PreAuthorize("#email == authentication.principal.username")
-	void changePassword(@P("email") String email, @NotNull @Pattern(regexp = "^[^\\s&\"<>]+$") String newPassword);
+	User changePassword(@P("email") String email, @NotNull @Pattern(regexp = "^[^\\s&\"<>]+$") String newPassword);
 	
 	/**
 	 * 修改密码，用于用户忘记密码的场景，没有权限控制
 	 * 由方法内部逻辑判断进行修改
 	 * @param email
 	 * @param newPassword
+	 * @return 用于缓存
 	 */
-	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
-	void changePasswordByEmail(String email, @NotNull @Pattern(regexp = "^[^\\s&\"<>]+$") String newPassword);
+	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
+	User changePasswordByEmail(String email, @NotNull @Pattern(regexp = "^[^\\s&\"<>]+$") String newPassword);
 	
 	/**
 	 * 删除用户
@@ -129,7 +141,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * 查询用户，通过认证的均可调用
 	 * returnObject和principal是spring security内置对象
 	 * @param id
-	 * @return
+	 * @return 用于缓存
 	 */
 	@Cacheable(value = CACHE_NAME_USER, key = "#root.args[0]")
 	@PostAuthorize("hasAuthority('" + USER_READ_ALL + "') || (hasAuthority('" + USER_READ_SELF + "') && returnObject.username == principal.username)")
@@ -139,7 +151,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * 通过邮箱名查询用户，通过认证的均可调用
 	 * 
 	 * @param email
-	 * @return
+	 * @return 用于缓存
 	 */
 	@Cacheable(value = CACHE_NAME_USER, key = "#root.args[0]")
 	@PostAuthorize("hasAuthority('" + USER_READ_ALL + "') || (hasAuthority('" + USER_READ_SELF + "') && #email == principal.username)")
@@ -149,17 +161,18 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * 修改用户的头像地址
 	 * @param iconSrc 修改用户头像的地址
 	 */
-	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
+	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
 	@PreAuthorize("isAuthenticated()")
-	void updateIconSrc(long id, String iconSrc);
+	User updateIconSrc(long id, String iconSrc);
 	
 	/**
 	 * 将用户的头像二进制文件存入数据库
 	 * @param icon 二进制图片文件
+	 * @return 用于缓存
 	 */
-	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
+	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
 	@PreAuthorize("isAuthenticated()")
-	void updateIcon(long id, byte[] icon);
+	User updateIcon(long id, byte[] icon);
 	
 	/**
 	 * 修改用户
@@ -168,10 +181,12 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * 修改密码，启用/禁用账户，授权功能，不走此接口
 	 * 
 	 * @param u中的id不能为null， u中属性不为null的值为修改项
+	 * @return 用于缓存
 	 */
-	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
+	@CacheEvict(value = CACHE_NAME_USER_PAGER, allEntries = true)
+	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
 	@PreAuthorize("hasAuthority('" + USER_UPDATE_ALL + "') || (hasAuthority('" + USER_UPDATE_SELF + "') && #email == principal.username)")
-	void mergeEmployee(@NotNull @P("email") String email, Employee emp);
+	User mergeEmployee(@NotNull @P("email") String email, Employee emp);
 	
 	/**
 	 * 修改用户
@@ -180,10 +195,12 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * 修改密码，启用/禁用账户，授权功能，不走此接口
 	 * 
 	 * @param u中的id不能为null， u中属性不为null的值为修改项
+	 * @return 用于缓存
 	 */
-	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
+	@CacheEvict(value = CACHE_NAME_USER_PAGER, allEntries = true)
+	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
 	@PreAuthorize("hasAuthority('" + USER_UPDATE_ALL + "') || (hasAuthority('" + USER_UPDATE_SELF + "') && #email == principal.username)")
-	void mergeCustomer(@NotNull @P("email") String email, Customer cus);
+	User mergeCustomer(@NotNull @P("email") String email, Customer cus);
 	
 	/**
 	 * 获取用户Pager
@@ -226,6 +243,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @param pageable
 	 * @return
 	 */
+	@Cacheable(value = CACHE_NAME_USER_PAGER, key = "#root.args")
 	@PreAuthorize("isAuthenticated()")
 	Pager<User> getPageByRoles(String email, Set<String> roleNames, Pageable pageable);
 	
@@ -250,17 +268,17 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @param publicKey
 	 * @param module
 	 */
-	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
+	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
 	@PreAuthorize("isAuthenticated()")
-	void setPublicKey(@NotNull String publicKey);
+	User setPublicKey(@NotNull String publicKey);
 	
 	/**
 	 * 删除用户的公钥
 	 * @param publicKey
 	 * @param module
 	 */
-	@CacheEvict(value = { CACHE_NAME_USER, CACHE_NAME_USER_PAGER }, allEntries = true)
+	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
 	@PreAuthorize("isAuthenticated()")
-	void clearPublicKey();
+	User clearPublicKey();
 	
 }

@@ -60,7 +60,7 @@ public interface CmsService {
 	 * @param type
 	 * @return
 	 */
-	@CacheEvict(value = { CACHE_NAME_ARTICLE_LIST, CACHE_NAME_CLASSIFY }, allEntries = true) // 当这个方法被调用后，即会清空缓存
+	@CacheEvict(value = { CACHE_NAME_ARTICLE_LIST, CACHE_NAME_CLASSIFY }, allEntries = true)
 	@CachePut(value = CACHE_NAME_ARTICLE, key = "#result.id")
 	@PreAuthorize("isAuthenticated()")
 	Article saveArticle(@NotNull String title, String keywords, String body, String summary, String type);

@@ -123,7 +123,7 @@ public class UserServiceImplTest {
 	
 	@Test
 	public void testCRUD1() {
-		Long id = userService.addEmployee(emp);
+		Long id = userService.addEmployee(emp).getId();
 		try {
 			assertNotNull(id);
 			// test query
@@ -166,7 +166,7 @@ public class UserServiceImplTest {
 	
 	@Test
 	public void testCRUD2() {
-		Long id = userService.addCustomer(cus);
+		Long id = userService.addCustomer(cus).getId();
 		try {
 			assertNotNull(id);
 			// test query

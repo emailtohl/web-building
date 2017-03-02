@@ -84,7 +84,7 @@ public class CustomServiceImplTest {
 		cus.setTitle(title);
 		cus.setAffiliation(affiliation);
 		
-		id = userService.addCustomer(cus);
+		id = userService.addCustomer(cus).getId();
 	}
 
 	@After

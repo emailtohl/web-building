@@ -95,6 +95,7 @@ public class LoginCtrlTest {
 	
 	@Test
 	public void testRegister() throws Exception {
+/*
 		mockMvc.perform(post("/register")
 				.param("email", foo.getEmail())
 				.param("name", foo.getName())
@@ -102,7 +103,7 @@ public class LoginCtrlTest {
 				)
 		.andExpect(status().isOk())
 		.andExpect(view().name("login"));
-		
+		*/
 		mockMvc.perform(post("/register")
 				.param("email", "foo")
 				.param("name", foo.getName())

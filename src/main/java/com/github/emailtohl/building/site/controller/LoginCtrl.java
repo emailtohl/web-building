@@ -101,7 +101,7 @@ public class LoginCtrl {
 		try {
 			// 第二步，添加该用户，若报运行时异常，则抛出，告诉用户该账号不能注册
 			Customer c = form.convertCustomer();
-			long id = userService.addCustomer(c);
+			long id = userService.addCustomer(c).getId();
 			
 			// 第三步，邮件通知用户，让其激活该账号
 			String url = requet.getScheme() + "://" + requet.getServerName() + ":" + requet.getServerPort() + requet.getContextPath() + "/enable?id=" + id;

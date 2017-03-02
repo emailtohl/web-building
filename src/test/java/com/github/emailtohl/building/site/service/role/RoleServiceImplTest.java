@@ -85,7 +85,7 @@ public class RoleServiceImplTest {
 		auth2Id = auth2.getId();
 		
 		roleId = roleService.createRole(r);
-		userId = userService.addEmployee(u);
+		userId = userService.addEmployee(u).getId();
 	}
 
 	@After

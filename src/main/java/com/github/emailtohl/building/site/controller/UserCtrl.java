@@ -195,7 +195,7 @@ public class UserCtrl {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		Employee emp = form.convertEmployee();
-		Long id = userService.addEmployee(emp);
+		Long id = userService.addEmployee(emp).getId();
 		String uri = ServletUriComponentsBuilder.fromCurrentServletMapping().path("/user/{id}")
 				.buildAndExpand(id).toString();
 		HttpHeaders headers = new HttpHeaders();
@@ -219,7 +219,7 @@ public class UserCtrl {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		Customer cus = form.convertCustomer();
-		Long id = userService.addCustomer(cus);
+		Long id = userService.addCustomer(cus).getId();
 		String uri = ServletUriComponentsBuilder.fromCurrentServletMapping().path("/user/{id}")
 				.buildAndExpand(id).toString();
 		HttpHeaders headers = new HttpHeaders();

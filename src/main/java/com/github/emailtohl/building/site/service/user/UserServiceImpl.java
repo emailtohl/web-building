@@ -1,9 +1,5 @@
 package com.github.emailtohl.building.site.service.user;
 
-import static com.github.emailtohl.building.common.jpa.entity.BaseEntity.CREATE_DATE_PROPERTY_NAME;
-import static com.github.emailtohl.building.common.jpa.entity.BaseEntity.ID_PROPERTY_NAME;
-import static com.github.emailtohl.building.common.jpa.entity.BaseEntity.MODIFY_DATE_PROPERTY_NAME;
-import static com.github.emailtohl.building.common.jpa.entity.BaseEntity.VERSION_PROPERTY_NAME;
 import static com.github.emailtohl.building.site.entities.role.Authority.USER_ROLE_AUTHORITY_ALLOCATION;
 import static com.github.emailtohl.building.site.entities.role.Role.ADMIN;
 
@@ -77,9 +73,9 @@ public class UserServiceImpl implements UserService, Serializable {
 	}
 	
 	@Override
-	public Long addEmployee(Employee u) {
+	public User addEmployee(Employee u) {
 		Employee e = new Employee();
-		BeanUtils.copyProperties(u, e, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, VERSION_PROPERTY_NAME, "roles", "enabled", "department");
+		BeanUtils.copyProperties(u, e, BaseEntity.getIgnoreProperties("roles", "enabled", "department"));
 		// 关于工号
 		synchronized (this) {
 			Integer max = userRepository.getMaxEmpNo();
@@ -107,13 +103,13 @@ public class UserServiceImpl implements UserService, Serializable {
 		pw = BCrypt.hashpw(pw, BCrypt.gensalt(HASHING_ROUNDS, RANDOM));
 		e.setPassword(pw);
 		userRepository.save(e);
-		return e.getId();
+		return e;
 	}
 
 	@Override
-	public Long addCustomer(Customer u) {	
+	public User addCustomer(Customer u) {	
 		Customer e = new Customer();
-		BeanUtils.copyProperties(u, e, ID_PROPERTY_NAME, CREATE_DATE_PROPERTY_NAME, MODIFY_DATE_PROPERTY_NAME, VERSION_PROPERTY_NAME, "roles", "enabled", "password", "department");
+		BeanUtils.copyProperties(u, e, BaseEntity.getIgnoreProperties("roles", "enabled", "password", "department"));
 		Role r = roleRepository.findByName(Role.USER);
 		e.getRoles().add(r);
 		r.getUsers().add(e);
@@ -126,21 +122,25 @@ public class UserServiceImpl implements UserService, Serializable {
 		pw = BCrypt.hashpw(pw, BCrypt.gensalt(HASHING_ROUNDS, RANDOM));
 		e.setPassword(pw);
 		userRepository.save(e);
-		return e.getId();
+		return e;
 	}
 
 	@Override
-	public void enableUser(Long id) {
-		userRepository.findOne(id).setEnabled(true);
+	public User enableUser(Long id) {
+		User u = userRepository.findOne(id);
+		u.setEnabled(true);
+		return u;
 	}
 
 	@Override
-	public void disableUser(Long id) {
-		userRepository.findOne(id).setEnabled(false);
+	public User disableUser(Long id) {
+		User u = userRepository.findOne(id);
+		u.setEnabled(false);
+		return u;
 	}
 	
 	@Override
-	public void grantRoles(long id, String... roleNames) {
+	public User grantRoles(long id, String... roleNames) {
 		// 能进此接口的拥有USER_ROLE_AUTHORITY_ALLOCATION权限，现在认为含有该权限的人就拥有ADMIN角色
 		boolean isAdmin = SecurityContextUtil.hasAnyAuthority(USER_ROLE_AUTHORITY_ALLOCATION);
 		User u = userRepository.findOne(id);
@@ -166,26 +166,29 @@ public class UserServiceImpl implements UserService, Serializable {
 			u.getRoles().add(r);
 			r.getUsers().add(u);
 		}
+		return u;
 	}
 	
 	@Override
-	public void grantUserRole(long id) {
+	public User grantUserRole(long id) {
 		User u = userRepository.findOne(id);
 		Role r = roleRepository.findByName(Role.USER);
 		u.getRoles().add(r);
 		r.getUsers().add(u);
+		return u;
 	}
 	
 	@Override
-	public void changePassword(String email, String newPassword) {
+	public User changePassword(String email, String newPassword) {
 		String hashPw = BCrypt.hashpw(newPassword, BCrypt.gensalt(HASHING_ROUNDS, RANDOM));
 		User u = userRepository.findByEmail(email);
 		u.setPassword(hashPw);
+		return u;
 	}
 
 	@Override
-	public void changePasswordByEmail(String email, String newPassword) {
-		changePassword(email, newPassword);
+	public User changePasswordByEmail(String email, String newPassword) {
+		return changePassword(email, newPassword);
 	}
 
 	@Override
@@ -207,7 +210,7 @@ public class UserServiceImpl implements UserService, Serializable {
 	}
 	
 	@Override
-	public void mergeEmployee(String email, Employee emp) {
+	public User mergeEmployee(String email, Employee emp) {
 		User u = userRepository.findByEmail(email);
 		if (!(u instanceof Employee)) {
 			throw new IllegalArgumentException("未找到该职员");
@@ -224,9 +227,10 @@ public class UserServiceImpl implements UserService, Serializable {
 		emp.setDepartment(null);
 		BeanUtil.merge(entity, emp);
 		userRepository.save(entity);
+		return entity;
 	}
 	
-	public void mergeCustomer(String email, Customer cus) {
+	public User mergeCustomer(String email, Customer cus) {
 		User u = userRepository.findByEmail(email);
 		if (!(u instanceof Customer)) {
 			throw new IllegalArgumentException("未找到该客户");
@@ -238,16 +242,21 @@ public class UserServiceImpl implements UserService, Serializable {
 		cus.setEnabled(null);
 		BeanUtil.merge(entity, cus);
 		userRepository.save(entity);
+		return entity;
 	}
 
 	@Override
-	public void updateIconSrc(long id, String iconSrc) {
-		userRepository.getOne(id).setIconSrc(iconSrc);
+	public User updateIconSrc(long id, String iconSrc) {
+		User u = userRepository.getOne(id);
+		u.setIconSrc(iconSrc);
+		return u;
 	}
 
 	@Override
-	public void updateIcon(long id, byte[] icon) {
-		userRepository.getOne(id).setIcon(icon);
+	public User updateIcon(long id, byte[] icon) {
+		User u = userRepository.getOne(id);
+		u.setIcon(icon);
+		return u;
 	}
 
 	@Override
@@ -293,21 +302,23 @@ public class UserServiceImpl implements UserService, Serializable {
 	}
 	
 	@Override
-	public void setPublicKey(String publicKey) {
+	public User setPublicKey(String publicKey) {
 		String email = SecurityContextUtil.getCurrentUsername();
 		User u = userRepository.findByEmail(email);
 		if (u != null) {
 			u.setPublicKey(publicKey);
 		}
+		return u;
 	}
 	
 	@Override
-	public void clearPublicKey() {
+	public User clearPublicKey() {
 		String email = SecurityContextUtil.getCurrentUsername();
 		User u = userRepository.findByEmail(email);
 		if (u != null) {
 			u.setPublicKey(null);
 		}
+		return u;
 	}
 
 	Encipher encipher = new Encipher();
