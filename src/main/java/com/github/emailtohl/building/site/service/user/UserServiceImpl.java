@@ -429,6 +429,8 @@ public class UserServiceImpl implements UserService, Serializable {
 	 * @return
 	 */
 	private User convert(User user) {
+		if (user == null)
+			return null;
 		User result;
 		if (user instanceof Employee) {
 			result = new Employee();

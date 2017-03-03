@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
+import com.github.emailtohl.building.site.entities.user.User;
 import com.github.emailtohl.building.site.service.user.UserService;
 import com.github.emailtohl.building.stub.SecurityContextManager;
 import com.github.emailtohl.building.stub.ServiceStub;
@@ -173,16 +174,20 @@ public class UserServiceTest {
 		userService.getUserByEmail(serviceStub.customer.getEmail());
 	}
 	
-	@Test
+	@Test(expected = AccessDeniedException.class)
 	public void testGetUserByEmail2() {
 		securityContextManager.setBar();
-		userService.getUserByEmail(serviceStub.customer.getEmail());
+		User u = userService.getUserByEmail(serviceStub.employee.getEmail());
+		System.out.println(u);
 		securityContextManager.setBaz();
-		userService.getUserByEmail(serviceStub.customer.getEmail());
+		u = userService.getUserByEmail(serviceStub.customer.getEmail());
+		System.out.println(u);
+		u = userService.getUserByEmail(serviceStub.employee.getEmail());
+		System.out.println(u);
 	}
-	
+
 	@Test
-	public void testGetUserByEmail4() {
+	public void testGetUserByEmail3() {
 		securityContextManager.setEmailtohl();
 		userService.getUserByEmail(serviceStub.customer.getEmail());
 	}

@@ -5,10 +5,7 @@ import static com.github.emailtohl.building.initdb.PersistenceData.employee;
 import static com.github.emailtohl.building.initdb.PersistenceData.foo;
 import static com.github.emailtohl.building.initdb.PersistenceData.manager;
 import static com.github.emailtohl.building.initdb.PersistenceData.user;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -273,4 +270,13 @@ public class UserServiceImplTest {
 		userService.clearPublicKey();
 	}
 
+	@Test
+	public void testCache() {
+		securityContextManager.setFoo();
+		User u = userService.getUser(Long.MAX_VALUE);// 不存在的id
+		assertNull(u);
+		// 打断点可以看见返回为null可以被缓存，且在第二次调用时直接返回了缓存结果
+		u = userService.getUser(Long.MAX_VALUE);// 不存在的id
+		assertNull(u);
+	}
 }
