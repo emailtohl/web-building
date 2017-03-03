@@ -8,6 +8,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.PUT;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,12 +42,9 @@ import com.github.emailtohl.building.site.entities.cms.Type;
 import com.github.emailtohl.building.site.service.cms.CmsService;
 import com.google.gson.Gson;
 
-import freemarker.core.ParseException;
 import freemarker.template.Configuration;
-import freemarker.template.MalformedTemplateNameException;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import freemarker.template.TemplateNotFoundException;
 /**
  * 内容管理的控制器
  * @author HeLei
@@ -394,13 +392,10 @@ public class CmsCtrl {
 	 * @param query 搜索页面的参数，可以为null
 	 * @return
 	 * @throws IOException 
-	 * @throws ParseException 
-	 * @throws MalformedTemplateNameException 
-	 * @throws TemplateNotFoundException 
 	 * @throws TemplateException 
 	 */
-	@RequestMapping(value = "article", method = GET)
-	public void getWebPage(HttpServletRequest request, HttpServletResponse response) throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException {
+	@RequestMapping(value = "blog", method = GET)
+	public void getWebPage(HttpServletRequest request, HttpServletResponse response) throws TemplateException, IOException {
 		WebPage wp = new WebPage();
 		wp.setRecentArticles(recentArticles());
 		wp.setRecentComments(recentComments());
@@ -410,6 +405,31 @@ public class CmsCtrl {
 		PrintWriter out = response.getWriter();
 		Template t = cfg.getTemplate("article.html");
 		t.process(wp, out);
+		out.close();
+	}
+	
+	/**
+	 * 获取文章详情
+	 * @param request
+	 * @param response
+	 * @throws TemplateException
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "article", method = GET)
+	public void getDetail(@RequestParam long id, HttpServletRequest request, HttpServletResponse response) throws TemplateException, IOException {
+		Article a = cmsService.getArticle(id);
+//		String body = a.getBody();
+//		body = body.replaceAll("\"resource/image_dir", "\"../resource/image_dir");
+//		a.setBody(body);
+		Map<String, Object> model = new HashMap<>();
+		model.put("article", a);
+		List<Article> ls = cmsService.recentArticles();
+		model.put("recentArticles", ls);
+		response.setContentType("text/html");
+		response.setCharacterEncoding("UTF-8");
+		PrintWriter out = response.getWriter();
+		Template t = cfg.getTemplate("detail.html");
+		t.process(model, out);
 		out.close();
 	}
 }

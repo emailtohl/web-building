@@ -167,8 +167,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			"/chat/**",
 			"/systemInfo",
 			"/fileUploadServer/test",
-			"/public/**",
 			"/templates/**",
+			"/blog",// cms中发布的文章
 			"/article",// cms中发布的文章
 		};
 		security
