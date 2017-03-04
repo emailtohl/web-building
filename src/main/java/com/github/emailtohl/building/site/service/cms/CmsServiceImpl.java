@@ -101,7 +101,7 @@ public class CmsServiceImpl implements CmsService {
 			t.getArticles().add(a);
 		}
 		articleRepository.save(a);
-		return a;
+		return articlefilter(a);
 	}
 
 	@Override
@@ -123,7 +123,7 @@ public class CmsServiceImpl implements CmsService {
 			pa.setType(pt);
 			pt.getArticles().add(pa);
 		}
-		return pa;
+		return articlefilter(pa);
 	}
 
 	@Override
@@ -160,28 +160,28 @@ public class CmsServiceImpl implements CmsService {
 	public Article approveArticle(long articleId) {
 		Article a = articleRepository.findOne(articleId);
 		a.setApproved(true);
-		return a;
+		return articlefilter(a);
 	}
 
 	@Override
 	public Article rejectArticle(long articleId) {
 		Article a = articleRepository.findOne(articleId);
 		a.setApproved(false);
-		return a;
+		return articlefilter(a);
 	}
 
 	@Override
 	public Article openComment(long articleId) {
 		Article a = articleRepository.findOne(articleId);
 		a.setComment(true);
-		return a;
+		return articlefilter(a);
 	}
 
 	@Override
 	public Article closeComment(long articleId) {
 		Article a = articleRepository.findOne(articleId);
 		a.setComment(false);
-		return a;
+		return articlefilter(a);
 	}
 
 	@Override

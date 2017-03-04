@@ -87,11 +87,27 @@
 			</div>
 		</div>
 		
-		<div class="row tm-margin-t-mid">
+		<div class="row tm-margin-t-mid col-md-8 col-md-offset-3">
 			<div class="col-xs-12">
-				<h3 class="tm-gold-text">Pellentesque fermentum mauris</h3>
-				<p>Vivamus accumsan blandit ligula. Sed lobortis efficitur sapien</p>
-				<p>Nulla ultrices nibh ac accumsan lobortis. Nulla facilisi. Praesent velit ante, congue ac dignissim in, vehicula sit amet urna. Fusce in dapibus quam, eget finibus velit. Nullam erat odio, vulputate id est ut, consequat rutrum justo. Vivamus vel leo vel nunc tincidunt mattis. Sed neque diam, semper suscipit dictum a, sodales ac metus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Morbi vel pharetra massa, non iaculis tortor. Nulla porttitor tincidunt felis et feugiat. Vivamus fermentum ligula justo, sit amet blandit nisl volutpat id.</p>
+				<#list article.comments as comment>
+					<p>${comment.critics} <img alt="" src="${comment.icon}" style="width:32px;"></p>
+					<p>${comment.content}</p>
+				</#list>
+			</div>
+			<div class="col-xs-12">
+				<h3 class="tm-gold-text">发表评论</h3>
+				<p>你的账号：</p>
+				<p class="row col-md-8">
+					<form action="cms/comment" method="post" enctype="application/x-www-form-urlencoded">
+						<div class="form-group">
+							<label for="comment">评论</label>
+							<textarea id="comment" name="comment" cols="90" rows="8" maxlength="65525" aria-required="true" required="required"></textarea>
+						</div>
+						<div class="form-group">
+							<input type="submit" class="btn btn-default" value="提交">
+						</div>
+					</form>
+				</p>
 			</div>
 		</div>
 

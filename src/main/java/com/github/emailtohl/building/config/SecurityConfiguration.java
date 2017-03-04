@@ -202,7 +202,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/audit/role*").hasAuthority(AUDIT_ROLE)
 				.antMatchers("/role/**").hasAuthority(USER_ROLE_AUTHORITY_ALLOCATION)
 				.antMatchers("/fileUploadServer/**").hasAuthority(RESOURCE_MANAGER)
-				.antMatchers("/cms/**").hasAuthority(CONTENT_MANAGER)
+				.antMatchers(HttpMethod.POST, "/cms/comment").permitAll()// 发表评论，如果没认证则为匿名
+				.antMatchers(HttpMethod.DELETE, "/cms/article/**").hasAuthority(CONTENT_MANAGER)
+				.antMatchers(HttpMethod.DELETE, "/cms/comment/**").hasAuthority(CONTENT_MANAGER)
+				.antMatchers(HttpMethod.POST, "/cms/approveArticle/**").hasAuthority(CONTENT_MANAGER)
+				.antMatchers(HttpMethod.POST, "/cms/rejectArticle/**").hasAuthority(CONTENT_MANAGER)
+				.antMatchers(HttpMethod.POST, "/cms/openComment/**").hasAuthority(CONTENT_MANAGER)
+				.antMatchers(HttpMethod.POST, "/cms/closeComment/**").hasAuthority(CONTENT_MANAGER)
+				.antMatchers(HttpMethod.POST, "/cms/approvedComment/**").hasAuthority(CONTENT_MANAGER)
+				.antMatchers(HttpMethod.POST, "/cms/rejectComment/**").hasAuthority(CONTENT_MANAGER)
+				.antMatchers("/cms/**").fullyAuthenticated()
 				.anyRequest().authenticated()
 			// HTTP Basic Authentication是基于REST风格，通过HTTP状态码与访问它的应用程序进行沟通
 			/*.and().httpBasic()*/
@@ -235,7 +244,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			// 请注意,如果maxSessionsPreventsLogin设置为true,因异常导致浏览器更换sessionId后，则该用户将在会话到期前无法再次登录
 				.sessionFixation().changeSessionId().maximumSessions(1)/*.maxSessionsPreventsLogin(true)*/
 				.sessionRegistry(sessionRegistryImpl())
-			.and().and().csrf()/*.disable()*/.csrfTokenRepository(csrfTokenRepository())
+			.and().and().csrf()/*.disable()*/.ignoringAntMatchers("/cms/comment")
+			.csrfTokenRepository(csrfTokenRepository())
 			.and().addFilterAfter(new CsrfHeaderFilter(), CsrfFilter.class)
 			// rememberMe默认的过期时间是2周，这里设为四周；默认的私钥名是SpringSecured，这里设为"building"
 			.rememberMe().tokenValiditySeconds(2419200).key("building");

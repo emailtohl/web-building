@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService, Serializable {
 		pw = BCrypt.hashpw(pw, BCrypt.gensalt(HASHING_ROUNDS, RANDOM));
 		e.setPassword(pw);
 		userRepository.save(e);
-		return e;
+		return convert(e);
 	}
 
 	@Override
@@ -122,21 +122,21 @@ public class UserServiceImpl implements UserService, Serializable {
 		pw = BCrypt.hashpw(pw, BCrypt.gensalt(HASHING_ROUNDS, RANDOM));
 		e.setPassword(pw);
 		userRepository.save(e);
-		return e;
+		return convert(e);
 	}
 
 	@Override
 	public User enableUser(Long id) {
 		User u = userRepository.findOne(id);
 		u.setEnabled(true);
-		return u;
+		return convert(u);
 	}
 
 	@Override
 	public User disableUser(Long id) {
 		User u = userRepository.findOne(id);
 		u.setEnabled(false);
-		return u;
+		return convert(u);
 	}
 	
 	@Override
@@ -166,7 +166,7 @@ public class UserServiceImpl implements UserService, Serializable {
 			u.getRoles().add(r);
 			r.getUsers().add(u);
 		}
-		return u;
+		return convert(u);
 	}
 	
 	@Override
@@ -175,7 +175,7 @@ public class UserServiceImpl implements UserService, Serializable {
 		Role r = roleRepository.findByName(Role.USER);
 		u.getRoles().add(r);
 		r.getUsers().add(u);
-		return u;
+		return convert(u);
 	}
 	
 	@Override
@@ -183,7 +183,7 @@ public class UserServiceImpl implements UserService, Serializable {
 		String hashPw = BCrypt.hashpw(newPassword, BCrypt.gensalt(HASHING_ROUNDS, RANDOM));
 		User u = userRepository.findByEmail(email);
 		u.setPassword(hashPw);
-		return u;
+		return convert(u);
 	}
 
 	@Override
@@ -227,7 +227,7 @@ public class UserServiceImpl implements UserService, Serializable {
 		emp.setDepartment(null);
 		BeanUtil.merge(entity, emp);
 		userRepository.save(entity);
-		return entity;
+		return convert(entity);
 	}
 	
 	public User mergeCustomer(String email, Customer cus) {
@@ -242,21 +242,21 @@ public class UserServiceImpl implements UserService, Serializable {
 		cus.setEnabled(null);
 		BeanUtil.merge(entity, cus);
 		userRepository.save(entity);
-		return entity;
+		return convert(entity);
 	}
 
 	@Override
 	public User updateIconSrc(long id, String iconSrc) {
 		User u = userRepository.getOne(id);
 		u.setIconSrc(iconSrc);
-		return u;
+		return convert(u);
 	}
 
 	@Override
 	public User updateIcon(long id, byte[] icon) {
 		User u = userRepository.getOne(id);
 		u.setIcon(icon);
-		return u;
+		return convert(u);
 	}
 
 	@Override
@@ -308,7 +308,7 @@ public class UserServiceImpl implements UserService, Serializable {
 		if (u != null) {
 			u.setPublicKey(publicKey);
 		}
-		return u;
+		return convert(u);
 	}
 	
 	@Override
@@ -318,7 +318,7 @@ public class UserServiceImpl implements UserService, Serializable {
 		if (u != null) {
 			u.setPublicKey(null);
 		}
-		return u;
+		return convert(u);
 	}
 
 	Encipher encipher = new Encipher();

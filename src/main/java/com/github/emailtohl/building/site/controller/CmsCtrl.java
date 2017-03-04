@@ -222,7 +222,7 @@ public class CmsCtrl {
 	}
 	
 	/**
-	 * 保存评论，从安全上下文中查找用户名
+	 * 保存评论，从安全上下文中查找用户名，如果没有认证则为匿名
 	 * @param articleId 被评论文章的ID
 	 * @param content 评论的内容
 	 */
