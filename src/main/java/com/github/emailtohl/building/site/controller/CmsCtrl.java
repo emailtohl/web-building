@@ -394,7 +394,7 @@ public class CmsCtrl {
 	 * @throws IOException 
 	 * @throws TemplateException 
 	 */
-	@RequestMapping(value = "blog", method = GET)
+	@RequestMapping(value = "article", method = GET)
 	public void getWebPage(HttpServletRequest request, HttpServletResponse response) throws TemplateException, IOException {
 		WebPage wp = new WebPage();
 		wp.setRecentArticles(recentArticles());
@@ -415,7 +415,7 @@ public class CmsCtrl {
 	 * @throws TemplateException
 	 * @throws IOException
 	 */
-	@RequestMapping(value = "article", method = GET)
+	@RequestMapping(value = "detail", method = GET)
 	public void getDetail(@RequestParam long id, HttpServletRequest request, HttpServletResponse response) throws TemplateException, IOException {
 		Article a = cmsService.getArticle(id);
 //		String body = a.getBody();

@@ -137,10 +137,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	 */
 	@Override
 	public void configure(WebSecurity security) {
-		security.ignoring().antMatchers("/lib/**");
-		security.ignoring().antMatchers("/common/**");
-		security.ignoring().antMatchers("/app/**");
-		security.ignoring().antMatchers("/download/**");
+		security.ignoring().antMatchers("/lib/**")
+		.antMatchers("/common/**")
+		.antMatchers("/app/**")
+		.antMatchers("/download/**")
+		.antMatchers("/templates/**")
+		.antMatchers("/article/**")
+		.antMatchers("/detail/**");
 	}
 	/**
 	 * 配置Http安全访问规则
@@ -167,9 +170,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			"/chat/**",
 			"/systemInfo",
 			"/fileUploadServer/test",
-			"/templates/**",
-			"/blog",// cms中发布的文章
-			"/article",// cms中发布的文章
 		};
 		security
 			.authorizeRequests()

@@ -16,6 +16,7 @@ import javax.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -230,7 +231,8 @@ public class LoginCtrl {
 							User u = userService.getUserByEmail(email);
 							iconSrc = u.getIconSrc();
 							iconSrcMap.put(email, iconSrc);// 先放入缓存供下次查询
-						} catch (IllegalArgumentException | NullPointerException e2) {
+						} catch (IllegalArgumentException | NullPointerException | AccessDeniedException e2) {
+							// 这里是查询用户的头像，不涉及安全问题，当匿名用户访问时会被拒绝
 							logger.debug("可能是匿名用户，查询不到User，也可能是该用户未上传图片");
 						}
 					}

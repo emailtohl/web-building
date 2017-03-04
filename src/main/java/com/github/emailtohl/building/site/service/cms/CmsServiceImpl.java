@@ -190,7 +190,7 @@ public class CmsServiceImpl implements CmsService {
 	}
 
 	@Override
-	public long saveComment(String email, long articleId, String content) {
+	public Comment saveComment(String email, long articleId, String content) {
 		Article article = articleRepository.findOne(articleId);
 		if (article == null) {
 			throw new IllegalArgumentException("没有此文章");
@@ -210,17 +210,19 @@ public class CmsServiceImpl implements CmsService {
 		c.setApproved(false);
 		c.setArticle(article);
 		commentRepository.save(c);
-		return c.getId();
+		return c;
 	}
 
 	@Override
-	public long saveComment(long articleId, String content) {
+	public Comment saveComment(long articleId, String content) {
 		String email = SecurityContextUtil.getCurrentUsername();
+		if (!StringUtils.hasText(email))
+			email = "匿名";
 		return saveComment(email, articleId, content);
 	}
 
 	@Override
-	public long updateComment(String email, long id, String commentContent) {
+	public Comment updateComment(String email, long id, String commentContent) {
 		Comment c = commentRepository.findOne(id);
 		if (c != null) {
 			if (!StringUtils.hasText(email) || !email.equals(c.getCritics())) {
@@ -228,36 +230,36 @@ public class CmsServiceImpl implements CmsService {
 			}
 			c.setContent(commentContent);
 		}
-		return c.getArticle().getId();
+		return c;
 	}
 
 	@Override
-	public long updateComment(long id, String commentContent) {
+	public Comment updateComment(long id, String commentContent) {
+		String email = SecurityContextUtil.getCurrentUsername();
+		if (!StringUtils.hasText(email))
+			email = "匿名";
 		return updateComment(SecurityContextUtil.getCurrentUsername(), id, commentContent);
 	}
 
 	@Override
-	public long deleteComment(long id) {
+	public void deleteComment(long id) {
 		Comment c = commentRepository.findOne(id);
-		long articleId = c.getArticle().getId();
+		c.getArticle().getComments().remove(c);
 		commentRepository.delete(c);
-		return articleId;
 	}
 
 	@Override
-	public long approvedComment(long commentId) {
+	public Comment approvedComment(long commentId) {
 		Comment c = commentRepository.findOne(commentId);
-		long articleId = c.getArticle().getId();
 		c.setApproved(true);
-		return articleId;
+		return c;
 	}
 
 	@Override
-	public long rejectComment(long commentId) {
+	public Comment rejectComment(long commentId) {
 		Comment c = commentRepository.findOne(commentId);
-		long articleId = c.getArticle().getId();
 		c.setApproved(false);
-		return articleId;
+		return c;
 	}
 
 	@Override

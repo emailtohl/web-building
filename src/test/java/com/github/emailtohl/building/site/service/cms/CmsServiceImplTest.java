@@ -105,7 +105,7 @@ public class CmsServiceImplTest {
 	@Test
 	public void testComment() {
 		long articleId = cmsService.saveArticle("test", "test", "test", "summary", "noType").getId();
-		long commentId = cmsService.saveComment(articleId, "my comment");
+		long commentId = cmsService.saveComment(articleId, "my comment").getId();
 		try {
 			Comment c = cmsService.findComment(commentId);
 			assertEquals("my comment", c.getContent());
