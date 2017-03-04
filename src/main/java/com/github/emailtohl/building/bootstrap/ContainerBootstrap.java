@@ -67,7 +67,7 @@ public class ContainerBootstrap implements WebApplicationInitializer {
 		container.addListener(SessionListener.class);
 		
 		/* 在Servlet容器中注册过滤器 */
-		FilterRegistration.Dynamic registration = container.addFilter("characterEncodingFilter", new CharacterEncodingFilter());
+		FilterRegistration.Dynamic registration = container.addFilter("characterEncodingFilter", new CharacterEncodingFilter("UTF-8"));
 		/* 第一个参数为null：响应默认的DispatcherType.REQUEST
 		         第二个参数为false，表明该filter将在web.xml中配置的任何filter之前
 		         第三个参数表明将响应所有地址 */

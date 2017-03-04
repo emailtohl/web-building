@@ -227,10 +227,10 @@ public class CmsCtrl {
 	 * @param content 评论的内容
 	 */
 	@RequestMapping(value = "cms/comment", method = POST)
-	@ResponseBody
-	public void saveComment(@RequestParam(required = true, name = "articleId") long articleId,
+	public String saveComment(@RequestParam(required = true, name = "articleId") long articleId,
 			@RequestParam(required = true, name = "content") String content) {
 		cmsService.saveComment(articleId, content);
+		return "redirect:/detail?id=" + articleId;
 	}
 	
 	/**
@@ -239,10 +239,10 @@ public class CmsCtrl {
 	 * @param commentContent 评论的内容
 	 */
 	@RequestMapping(value = "cms/comment/{id}", method = PUT)
-	@ResponseBody
-	public void updateComment(@PathVariable("id") long id, 
+	public String updateComment(@PathVariable("id") long id, 
 			@RequestParam(required = true, name = "commentContent") String commentContent) {
-		cmsService.updateComment(id, commentContent);
+		Comment c = cmsService.updateComment(id, commentContent);
+		return "redirect:/detail?id=" + c.getId();
 	}
 	
 	/**
