@@ -2,6 +2,7 @@ define(['cms/module',
         'cms/resource/ctrl',
         'cms/category/ctrl',
         'cms/article/ctrl',
+        'cms/comment/ctrl',
         ], function(cmsModule) {
 	return cmsModule.config(function($stateProvider) {
 		$stateProvider
@@ -24,6 +25,11 @@ define(['cms/module',
 			url : '/article',
 			templateUrl : 'app/cms/article/template.html',
 			controller : 'ArticleCtrl as ctrl'
+		})
+		.state('cms.comment', {
+			url : '/comment',
+			templateUrl : 'app/cms/comment/template.html',
+			controller : 'CommentCtrl as ctrl'
 		})
 		;
 	});

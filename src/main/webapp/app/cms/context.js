@@ -6,4 +6,6 @@ define(['cms/module',
         'cms/category/ctrl',
         'cms/article/service',
         'cms/article/ctrl',
+        'cms/comment/service',
+        'cms/comment/ctrl',
         ], function() {});

@@ -166,7 +166,7 @@ public class CmsCtrl {
 	 */
 	@RequestMapping(value = "cms/article/{id}", method = DELETE)
 	@ResponseBody
-	void deleteArticle(@PathVariable long id) {
+	public void deleteArticle(@PathVariable long id) {
 		cmsService.deleteArticle(id);
 	}
 
@@ -176,7 +176,7 @@ public class CmsCtrl {
 	 */
 	@RequestMapping(value = "cms/approveArticle", method = POST)
 	@ResponseBody
-	void approveArticle(@RequestParam long articleId) {
+	public void approveArticle(@RequestParam long articleId) {
 		cmsService.approveArticle(articleId);
 	}
 	
@@ -186,7 +186,7 @@ public class CmsCtrl {
 	 */
 	@RequestMapping(value = "cms/rejectArticle", method = POST)
 	@ResponseBody
-	void rejectArticle(@RequestParam long articleId) {
+	public void rejectArticle(@RequestParam long articleId) {
 		cmsService.rejectArticle(articleId);
 	}
 	
@@ -196,7 +196,7 @@ public class CmsCtrl {
 	 */
 	@RequestMapping(value = "cms/openComment", method = POST)
 	@ResponseBody
-	void openComment(@RequestParam long articleId) {
+	public void openComment(@RequestParam long articleId) {
 		cmsService.openComment(articleId);
 	}
 	
@@ -206,8 +206,23 @@ public class CmsCtrl {
 	 */
 	@RequestMapping(value = "cms/closeComment", method = POST)
 	@ResponseBody
-	void closeComment(@RequestParam long articleId) {
+	public void closeComment(@RequestParam long articleId) {
 		cmsService.closeComment(articleId);
+	}
+	
+	/**
+	 * 查询评论列表
+	 * @param articleTitle
+	 * @param pageable
+	 * @return
+	 */
+	@RequestMapping(value = "cms/comments", method = GET, produces = "application/json; charset=utf-8")
+	@ResponseBody
+	public String queryComments(@RequestParam(required = false, name = "articleTitle", defaultValue = "") String articleTitle, 
+			@PageableDefault(page = 0, size = 10, sort = {BaseEntity.CREATE_DATE_PROPERTY_NAME, "article.title"}, direction = Direction.DESC) Pageable pageable) {
+		Pager<Comment> pager = cmsService.queryComments(articleTitle, pageable);
+		String json = gson.toJson(pager);// 因Article有时间类型，用配置了时间格式的Gson解析
+		return json;
 	}
 	
 	/**
@@ -217,7 +232,7 @@ public class CmsCtrl {
 	 */
 	@RequestMapping(value = "cms/comment/{id}", method = GET)
 	@ResponseBody
-	public Comment findComment(long id) {
+	public Comment findComment(@PathVariable long id) {
 		return cmsService.findComment(id);
 	}
 	
@@ -251,7 +266,7 @@ public class CmsCtrl {
 	 */
 	@RequestMapping(value = "cms/comment/{id}", method = DELETE)
 	@ResponseBody
-	void deleteComment(@PathVariable long id) {
+	public void deleteComment(@PathVariable long id) {
 		cmsService.deleteComment(id);
 	}
 	
@@ -261,7 +276,7 @@ public class CmsCtrl {
 	 */
 	@RequestMapping(value = "cms/approvedComment", method = POST)
 	@ResponseBody
-	void approvedComment(@RequestParam long commentId) {
+	public void approvedComment(@RequestParam long commentId) {
 		cmsService.approvedComment(commentId);
 	}
 	
@@ -271,7 +286,7 @@ public class CmsCtrl {
 	 */
 	@RequestMapping(value = "cms/rejectComment", method = POST)
 	@ResponseBody
-	void rejectComment(@RequestParam long commentId) {
+	public void rejectComment(@RequestParam long commentId) {
 		cmsService.rejectComment(commentId);
 	}
 	

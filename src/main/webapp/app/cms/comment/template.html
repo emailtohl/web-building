@@ -1,0 +1,137 @@
+<!-- Content Header (Page header) -->
+<section class="content-header">
+  <h1>
+    CMS
+    <small>评论管理</small>
+  </h1>
+  <ol class="breadcrumb">
+    <li ui-sref="dashboard"><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+    <li class="active">comment</li>
+  </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+	<div class="row" ng-hide="ctrl.isDetail">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">管理评论</h3>
+              <div class="box-tools">
+		        <form ng-submit="ctrl.query()" class="input-group input-group-sm ng-pristine ng-valid" style="width: 150px;">
+		          <input name="table_search" ng-model="ctrl.queryParam.query" class="form-control pull-right ng-pristine ng-untouched ng-valid ng-empty" placeholder="search" type="text">
+		          <div class="input-group-btn">
+		            <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+		          </div>
+		        </form>
+		      </div>
+	          
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                  <th class="col-md-1">序号</th>
+                  <th class="col-md-2">文章标题</th>
+                  <th class="col-md-1">文章类型</th>
+                  <th class="col-md-1">评论者</th>
+                  <th class="col-md-4">评论内容</th>
+                  <th class="col-md-1">可发布</th>
+                  <th class="col-md-2">创建时间</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="x in ctrl.pager.content" style="cursor: pointer;" ng-click="ctrl.edit(x.id)">
+                  <td ng-bind="$index + 1" class="col-md-1"></td>
+                  <td ng-bind="x.article.title" class="col-md-2"></td>
+                  <td ng-bind="x.article.type.name" class="col-md-1"></td>
+                  <td ng-bind="x.critics" class="col-md-1"></td>
+                  <td ng-bind="x.content | omit" class="col-md-4"></td>
+                  <td ng-bind="x.isApproved ? '是' : '否'" class="col-md-1"></td>
+                  <td ng-bind="x.createDate" class="col-md-2"></td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                  <th class="col-md-1">序号</th>
+                  <th class="col-md-2">文章标题</th>
+                  <th class="col-md-1">文章类型</th>
+                  <th class="col-md-1">评论者</th>
+                  <th class="col-md-4">评论内容</th>
+                  <th class="col-md-1">可发布</th>
+                  <th class="col-md-2">创建时间</th>
+                </tr>
+                </tfoot>
+              </table>
+              <pager page-number="ctrl.pager.pageNumber" total-pages="ctrl.pager.totalPages" button-count="5" on-click="ctrl.btnClick(pageNumber)">
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+          
+	      <div class="box-footer clearfix" >
+	      </div>
+	      
+        </div>
+	</div>
+
+	<div class="row" ng-show="ctrl.isDetail">
+		<div class="box-header">
+          <h3 class="box-title">详情</h3>
+          <button type="button" class="btn btn-warning pull-right" ng-click="ctrl.delete()" ng-if="hasAuthority('content_manager')">删除</button>
+        </div>
+	    <div class="box-body">
+	      <div class="col-md-6">
+		      <div class="form-group">
+		        <label for="">评论者</label>
+		        <input type="text" placeholder="critics" class="form-control" value="{{ctrl.comment.critics}}" readonly="readonly">
+		      </div>
+		      <div class="form-group">
+		        <label for="">创建日期</label>
+		        <input type="text" placeholder="date" class="form-control" value="{{ctrl.comment.createDate}}" readonly="readonly">
+		      </div>
+		      <div class="form-group">
+		        <label for="">修改日期</label>
+		        <input type="text" placeholder="date" class="form-control" value="{{ctrl.comment.modifyDate}}" readonly="readonly">
+		      </div>
+	      </div>
+	      <div class="col-md-6">
+		      <div class="form-group">
+		        <label for="">文章名</label>
+		        <input type="text" placeholder="title" class="form-control" value="{{ctrl.comment.article.title}}" readonly="readonly">
+		      </div>
+		      <div class="form-group">
+		        <label for="">类型</label>
+		        <input type="text" placeholder="type" class="form-control" value="{{ctrl.comment.article.type.name}}" readonly="readonly">
+		      </div>
+		      <div class="form-group">
+		        <label for="">关键字</label>
+		        <input type="text" placeholder="type" class="form-control" value="{{ctrl.comment.article.keywords}}" readonly="readonly">
+		      </div>
+	      </div>
+	      <div class="col-md-12">
+    		  <div class="form-group">
+		        <label for="">评论</label>
+		        <textarea rows="3" placeholder="body" class="form-control" >{{ctrl.comment.content}}</textarea>
+		      </div>
+	      </div>
+	      <div class="col-md-12">
+		      <div class="form-group">
+		        <label for="">正文</label>
+		        <textarea id="comment-article-body" rows="3" placeholder="body" class="form-control" >{{ctrl.comment.article.body}}</textarea>
+		      </div>
+	      </div>
+	    </div>
+	    <div class="box-footer clearfix">
+	      <button class="btn btn-default pull-left" ng-click="ctrl.back()">返回</button>
+	      <button type="button" style="margin-left: 60px;" class="btn btn-success" ng-click="ctrl.approveArticle()" ng-if="hasAuthority('content_manager') && !ctrl.comment.isApproved && ctrl.comment.id">允许发布</button>
+	      <button type="button" style="margin-left: 60px;" class="btn btn-warning" ng-click="ctrl.rejectArticle()" ng-if="hasAuthority('content_manager') && ctrl.comment.isApproved && ctrl.comment.id">禁止发布</button>
+	      <button type="button" style="margin-left: 60px;" class="btn btn-success" ng-click="ctrl.openComment()" ng-if="hasAuthority('content_manager') && !ctrl.comment.isComment && ctrl.comment.id">允许评论</button>
+	      <button type="button" style="margin-left: 60px;" class="btn btn-warning" ng-click="ctrl.closeComment()" ng-if="hasAuthority('content_manager') && ctrl.comment.isComment && ctrl.comment.id">禁止评论</button>
+	      <button class="btn btn-primary pull-right" ng-click="ctrl.submit()" ng-disabled="f.$invalid">提交</button>
+	    </div>
+	    <!-- /.box-body -->
+	</div>
+
+</section>

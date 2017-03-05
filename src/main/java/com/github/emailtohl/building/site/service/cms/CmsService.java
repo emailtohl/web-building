@@ -154,6 +154,14 @@ public interface CmsService {
 	Comment findComment(long id);
 	
 	/**
+	 * 根据文章标题查询评论
+	 * @param articleTitle
+	 * @param pageable
+	 * @return
+	 */
+	Pager<Comment> queryComments(String articleTitle, Pageable pageable);
+	
+	/**
 	 * 保存文章，从安全上下文中查找用户名
 	 * @param email 用户名
 	 * @param articleId

@@ -185,8 +185,28 @@ public class CmsServiceImpl implements CmsService {
 	}
 
 	@Override
+	public Pager<Comment> queryComments(String articleTitle, Pageable pageable) {
+		Page<Comment> page;
+		if (StringUtils.hasText(articleTitle))
+			page = commentRepository.findByArticleTitleLike(articleTitle, pageable);
+		else
+			page = commentRepository.findAll(pageable);
+		List<Comment> ls = page.getContent().parallelStream().map(c -> {
+			Comment t = new Comment();
+			BeanUtils.copyProperties(c, t, "article");
+			t.setArticle(articlefilter(c.getArticle()));
+			return t;
+		}).collect(Collectors.toList());
+		return new Pager<Comment>(ls, page.getTotalElements(), page.getNumber(), page.getSize());
+	}
+	
+	@Override
 	public Comment findComment(long id) {
-		return commentRepository.findOne(id);
+		Comment c = commentRepository.findOne(id);
+		Comment t = new Comment();
+		BeanUtils.copyProperties(c, t, "article");
+		t.setArticle(articlefilter(c.getArticle()));
+		return t;
 	}
 
 	@Override
@@ -396,7 +416,7 @@ public class CmsServiceImpl implements CmsService {
 		// 只获取类型一级父目录
 		ta.setType(typeFilter(pa.getType()));
 		// 改变评论懒加载状态，且避免article与comment的交叉引用
-		ta.setComments(pa.getComments().stream().map(pc -> {
+		ta.setComments(pa.getComments().stream().filter(c -> c.isApproved()).map(pc -> {
 			Comment tc = new Comment();
 			BeanUtils.copyProperties(pc, tc, "article");
 			return tc;
