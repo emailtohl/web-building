@@ -125,9 +125,8 @@
 	    </div>
 	    <div class="box-footer clearfix">
 	      <button class="btn btn-default pull-left" ng-click="ctrl.back()">返回</button>
-	      <button type="button" style="margin-left: 60px;" class="btn btn-success" ng-click="ctrl.approvedComment()" ng-if="hasAuthority('content_manager') && !ctrl.comment.isApproved && ctrl.comment.id">允许发布</button>
-	      <button type="button" style="margin-left: 60px;" class="btn btn-warning" ng-click="ctrl.rejectComment()" ng-if="hasAuthority('content_manager') && ctrl.comment.isApproved && ctrl.comment.id">禁止发布</button>
-	      <button class="btn btn-primary pull-right" ng-click="ctrl.submit()" ng-disabled="f.$invalid">提交</button>
+	      <button type="button" style="margin-left: 60px;" class="btn btn-success pull-right" ng-click="ctrl.approvedComment()" ng-if="hasAuthority('content_manager') && !ctrl.comment.isApproved && ctrl.comment.id">允许发布</button>
+	      <button type="button" style="margin-left: 60px;" class="btn btn-warning pull-right" ng-click="ctrl.rejectComment()" ng-if="hasAuthority('content_manager') && ctrl.comment.isApproved && ctrl.comment.id">禁止发布</button>
 	    </div>
 	    <!-- /.box-body -->
 	</div>

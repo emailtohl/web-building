@@ -80,5 +80,10 @@ public class Comment extends BaseEntity implements Comparable<Comment> {
 	public int compareTo(Comment o) {
 		return getCreateDate().compareTo(o.getCreateDate());
 	}
+
+	@Override
+	public String toString() {
+		return "Comment [content=" + content + ", critics=" + critics + "]";
+	}
 	
 }

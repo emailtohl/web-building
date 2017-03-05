@@ -229,6 +229,7 @@ public class CmsServiceImpl implements CmsService {
 		c.setContent(content);
 //		c.setApproved(false);
 		c.setArticle(article);
+		article.getComments().add(c);
 		commentRepository.save(c);
 		return articlefilter(article);
 	}
@@ -244,13 +245,17 @@ public class CmsServiceImpl implements CmsService {
 	@Override
 	public Article updateComment(String email, long id, String commentContent) {
 		Comment c = commentRepository.findOne(id);
-		if (c != null) {
-			if (!StringUtils.hasText(email) || !email.equals(c.getCritics())) {
-				throw new AccessDeniedException("不是评论用户");
-			}
-			c.setContent(commentContent);
+		if (!StringUtils.hasText(email) || !email.equals(c.getCritics())) {
+			throw new AccessDeniedException("不是评论用户");
 		}
-		return articlefilter(c.getArticle());
+		Article a = c.getArticle();
+		a.getComments().parallelStream().forEach(comment -> {
+			if (comment.equals(c)) {
+				comment.setContent(commentContent);
+			}
+		});
+		c.setContent(commentContent);
+		return articlefilter(a);
 	}
 
 	@Override

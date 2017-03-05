@@ -433,9 +433,6 @@ public class CmsCtrl {
 	@RequestMapping(value = "detail", method = GET)
 	public void getDetail(@RequestParam long id, HttpServletRequest request, HttpServletResponse response) throws TemplateException, IOException {
 		Article a = cmsService.getArticle(id);
-//		String body = a.getBody();
-//		body = body.replaceAll("\"resource/image_dir", "\"../resource/image_dir");
-//		a.setBody(body);
 		Map<String, Object> model = new HashMap<>();
 		model.put("article", a);
 		List<Article> ls = cmsService.recentArticles();
