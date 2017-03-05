@@ -185,10 +185,10 @@ public class CmsServiceImpl implements CmsService {
 	}
 
 	@Override
-	public Pager<Comment> queryComments(String articleTitle, Pageable pageable) {
+	public Pager<Comment> queryComments(String query, Pageable pageable) {
 		Page<Comment> page;
-		if (StringUtils.hasText(articleTitle))
-			page = commentRepository.findByArticleTitleLike(articleTitle, pageable);
+		if (StringUtils.hasText(query))
+			page = commentRepository.find(query, pageable);
 		else
 			page = commentRepository.findAll(pageable);
 		List<Comment> ls = page.getContent().parallelStream().map(c -> {
@@ -210,7 +210,7 @@ public class CmsServiceImpl implements CmsService {
 	}
 
 	@Override
-	public Comment saveComment(String email, long articleId, String content) {
+	public Article saveComment(String email, long articleId, String content) {
 		Article article = articleRepository.findOne(articleId);
 		if (article == null) {
 			throw new IllegalArgumentException("没有此文章");
@@ -227,14 +227,14 @@ public class CmsServiceImpl implements CmsService {
 		c.setCritics(critics);
 		c.setIcon(icon);
 		c.setContent(content);
-		c.setApproved(false);
+//		c.setApproved(false);
 		c.setArticle(article);
 		commentRepository.save(c);
-		return c;
+		return articlefilter(article);
 	}
 
 	@Override
-	public Comment saveComment(long articleId, String content) {
+	public Article saveComment(long articleId, String content) {
 		String email = SecurityContextUtil.getCurrentUsername();
 		if (!StringUtils.hasText(email))
 			email = "匿名";
@@ -242,7 +242,7 @@ public class CmsServiceImpl implements CmsService {
 	}
 
 	@Override
-	public Comment updateComment(String email, long id, String commentContent) {
+	public Article updateComment(String email, long id, String commentContent) {
 		Comment c = commentRepository.findOne(id);
 		if (c != null) {
 			if (!StringUtils.hasText(email) || !email.equals(c.getCritics())) {
@@ -250,11 +250,11 @@ public class CmsServiceImpl implements CmsService {
 			}
 			c.setContent(commentContent);
 		}
-		return c;
+		return articlefilter(c.getArticle());
 	}
 
 	@Override
-	public Comment updateComment(long id, String commentContent) {
+	public Article updateComment(long id, String commentContent) {
 		String email = SecurityContextUtil.getCurrentUsername();
 		if (!StringUtils.hasText(email))
 			email = "匿名";
@@ -262,24 +262,26 @@ public class CmsServiceImpl implements CmsService {
 	}
 
 	@Override
-	public void deleteComment(long id) {
+	public Article deleteComment(long id) {
 		Comment c = commentRepository.findOne(id);
-		c.getArticle().getComments().remove(c);
+		Article a = c.getArticle();
+		a.getComments().remove(c);
 		commentRepository.delete(c);
+		return articlefilter(a);
 	}
 
 	@Override
-	public Comment approvedComment(long commentId) {
+	public Article approvedComment(long commentId) {
 		Comment c = commentRepository.findOne(commentId);
 		c.setApproved(true);
-		return c;
+		return articlefilter(c.getArticle());
 	}
 
 	@Override
-	public Comment rejectComment(long commentId) {
+	public Article rejectComment(long commentId) {
 		Comment c = commentRepository.findOne(commentId);
 		c.setApproved(false);
-		return c;
+		return articlefilter(c.getArticle());
 	}
 
 	@Override

@@ -166,67 +166,68 @@ public interface CmsService {
 	 * @param email 用户名
 	 * @param articleId
 	 * @param content
-	 * @return
+	 * @return article 用于清除缓存
 	 */
-	@CacheEvict(value = CACHE_NAME_ARTICLE, key = "#root.args[1]")
+	@CachePut(value = CACHE_NAME_ARTICLE, key = "#result.id")
 	@PreAuthorize("isAuthenticated() && #email == principal.username)")
-	Comment saveComment(@NotNull String email, @Min(1) long articleId, @NotNull String content);
+	Article saveComment(@NotNull String email, @Min(1) long articleId, @NotNull String content);
 
 	/**
 	 * 保存评论，从安全上下文中查找用户名，如果没有查找到，则以匿名方式保存
 	 * @param articleId
 	 * @param content
-	 * @return
+	 * @return article 用于清除缓存
 	 */
-	@CacheEvict(value = CACHE_NAME_ARTICLE, key = "#root.args[0]")
-	Comment saveComment(@Min(1) long articleId, @NotNull String content);
+	@CachePut(value = CACHE_NAME_ARTICLE, key = "#result.id")
+	Article saveComment(@Min(1) long articleId, @NotNull String content);
 	
 	/**
 	 * 修改评论
 	 * @param email 用户名
 	 * @param id 评论的id
 	 * @param commentContent 评论的内容
-	 * @return
+	 * @return article 用于清除缓存
 	 */
-	@CacheEvict(value = CACHE_NAME_ARTICLE, key = "#result")
+	@CachePut(value = CACHE_NAME_ARTICLE, key = "#result.id")
 	@PreAuthorize("isAuthenticated() && #email == principal.username)")
-	Comment updateComment(@NotNull String email, @Min(1) long id, @NotNull String commentContent);
+	Article updateComment(@NotNull String email, @Min(1) long id, @NotNull String commentContent);
 	
 	/**
 	 * 修改评论
 	 * @param id 评论的id
 	 * @param commentContent 评论的内容
-	 * @return
+	 * @return article 用于清除缓存
 	 */
-	@CacheEvict(value = CACHE_NAME_ARTICLE, key = "#result")
+	@CachePut(value = CACHE_NAME_ARTICLE, key = "#result.id")
 	@PreAuthorize("isAuthenticated()")
-	Comment updateComment(@Min(1) long id, @NotNull String commentContent);
+	Article updateComment(@Min(1) long id, @NotNull String commentContent);
 	
 	/**
 	 * 删除评论
 	 * @param id 评论id
+	 * return article 用于清除缓存
 	 */
-	@CacheEvict(value = CACHE_NAME_ARTICLE, key = "#result")
+	@CachePut(value = CACHE_NAME_ARTICLE, key = "#result.id")
 	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
-	void deleteComment(@Min(1) long id);
+	Article deleteComment(@Min(1) long id);
 	
 	/**
 	 * 允许评论发表
 	 * @param commentId
-	 * @return
+	 * @return article 用于清除缓存
 	 */
-	@CacheEvict(value = CACHE_NAME_ARTICLE, key = "#result")
+	@CachePut(value = CACHE_NAME_ARTICLE, key = "#result.id")
 	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
-	Comment approvedComment(long commentId);
+	Article approvedComment(long commentId);
 	
 	/**
 	 * 拒绝评论发表
 	 * @param commentId
-	 * @return
+	 * @return article 用于清除缓存
 	 */
-	@CacheEvict(value = CACHE_NAME_ARTICLE, key = "#result")
+	@CachePut(value = CACHE_NAME_ARTICLE, key = "#result.id")
 	@PreAuthorize("hasAuthority('" + CONTENT_MANAGER + "')")
-	Comment rejectComment(long commentId);
+	Article rejectComment(long commentId);
 	
 	/**
 	 * 获取所有的文章分类

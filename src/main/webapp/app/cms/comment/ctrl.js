@@ -58,7 +58,7 @@ define(['cms/module', 'cms/article/service', 'cms/category/service'], function(c
 		self.approvedComment = function() {
 			if (!self.comment.id)
 				return;
-			service.approveArticle(self.comment.id).success(function(data) {
+			service.approvedComment(self.comment.id).success(function(data) {
 				self.comment.isApproved = true;
 			});
 		};
@@ -66,7 +66,7 @@ define(['cms/module', 'cms/article/service', 'cms/category/service'], function(c
 		self.rejectComment = function() {
 			if (!self.comment.id)
 				return;
-			service.rejectArticle(self.comment.id).success(function(data) {
+			service.rejectComment(self.comment.id).success(function(data) {
 				self.comment.isApproved = false;
 			});
 		};

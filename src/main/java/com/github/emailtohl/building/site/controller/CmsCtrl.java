@@ -218,9 +218,9 @@ public class CmsCtrl {
 	 */
 	@RequestMapping(value = "cms/comments", method = GET, produces = "application/json; charset=utf-8")
 	@ResponseBody
-	public String queryComments(@RequestParam(required = false, name = "articleTitle", defaultValue = "") String articleTitle, 
+	public String queryComments(@RequestParam(required = false, name = "query", defaultValue = "") String query, 
 			@PageableDefault(page = 0, size = 10, sort = {BaseEntity.CREATE_DATE_PROPERTY_NAME, "article.title"}, direction = Direction.DESC) Pageable pageable) {
-		Pager<Comment> pager = cmsService.queryComments(articleTitle, pageable);
+		Pager<Comment> pager = cmsService.queryComments(query, pageable);
 		String json = gson.toJson(pager);// 因Article有时间类型，用配置了时间格式的Gson解析
 		return json;
 	}
@@ -256,8 +256,8 @@ public class CmsCtrl {
 	@RequestMapping(value = "cms/comment/{id}", method = PUT)
 	public String updateComment(@PathVariable("id") long id, 
 			@RequestParam(required = true, name = "commentContent") String commentContent) {
-		Comment c = cmsService.updateComment(id, commentContent);
-		return "redirect:/detail?id=" + c.getId();
+		Article a = cmsService.updateComment(id, commentContent);
+		return "redirect:/detail?id=" + a.getId();
 	}
 	
 	/**

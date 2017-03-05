@@ -11,7 +11,7 @@ import com.github.emailtohl.building.site.entities.cms.Comment;
  * @author HeLei
  * @date 2017.02.17
  */
-public interface CommentRepository extends JpaRepository<Comment, Long> {
+public interface CommentRepository extends JpaRepository<Comment, Long>, CommentRepositoryCustomization {
 	
 	Page<Comment> findByCriticsLike(String critics, Pageable pageable);
 	

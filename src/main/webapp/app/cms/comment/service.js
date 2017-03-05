@@ -1,10 +1,10 @@
 define(['cms/module', 'common/context' ], function(cmsModule) {
 	return cmsModule.factory('commentService', [ '$http', 'util', function($http, util) {
 		return {
-			queryComments : function(articleTitle, page) {
+			queryComments : function(query, page) {
 				var param = {
 					page : page,
-					articleTitle : articleTitle,
+					query : query,
 				};
 				param = util.encodeUrlParams(param);
 				return $http.get('cms/comments' + (param ? '?' + param : ''));
