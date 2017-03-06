@@ -205,39 +205,40 @@ public class LoginCtrl {
 	@RequestMapping(value = "authentication", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> authentication() {
-		Map<String, Object> map = null;
+		Map<String, Object> map = new HashMap<String, Object>();
 		SecurityContext context = SecurityContextHolder.getContext();
-		if (context != null) {
-			Authentication authentication = context.getAuthentication();
-			if (authentication != null) {
-				map = new HashMap<String, Object>();
-				map.put("username", authentication.getName());
-				map.put("details", authentication.getDetails());
-				map.put("principal", authentication.getPrincipal());
-			}
-			/*
-			 * 如果是自定义的AuthenticationProvider，则可以提供含有图片等附加信息
-			 * 但如果是spring security框架提供的UserDetails则不会包含图片信息，可在返回的Map上添加上图片信息
-			 */
-			Object userDetails = authentication.getPrincipal();
-			if (userDetails != null) {
-				try {
-					userDetails.getClass().getDeclaredField("iconSrc");
-				} catch (NoSuchFieldException | SecurityException e1) {// 如果是框架的实现，则无此字段
-					String email = authentication.getName();// UserDetails中的username实则email
-					String iconSrc = iconSrcMap.get(email);// 先查询缓存是否有此信息
-					if (iconSrc == null) {// 若缓存没有则去数据库查询
-						try {// 匿名用户在数据库中查不到，会抛IllegalArgumentException异常
-							User u = userService.getUserByEmail(email);
-							iconSrc = u.getIconSrc();
-							iconSrcMap.put(email, iconSrc);// 先放入缓存供下次查询
-						} catch (IllegalArgumentException | NullPointerException | AccessDeniedException e2) {
-							// 这里是查询用户的头像，不涉及安全问题，当匿名用户访问时会被拒绝
-							logger.debug("可能是匿名用户，查询不到User，也可能是该用户未上传图片");
-						}
+		if (context == null) {
+			return map;
+		}
+		Authentication authentication = context.getAuthentication();
+		if (authentication == null) {
+			return map;
+		}
+		map.put("username", authentication.getName());
+		map.put("details", authentication.getDetails());
+		map.put("principal", authentication.getPrincipal());
+		/*
+		 * 如果是自定义的AuthenticationProvider，则可以提供含有图片等附加信息 但如果是spring
+		 * security框架提供的UserDetails则不会包含图片信息，可在返回的Map上添加上图片信息
+		 */
+		Object userDetails = authentication.getPrincipal();
+		if (userDetails != null) {
+			try {
+				userDetails.getClass().getDeclaredField("iconSrc");
+			} catch (NoSuchFieldException | SecurityException e1) {// 如果是框架的实现，则无此字段
+				String email = authentication.getName();// UserDetails中的username实则email
+				String iconSrc = iconSrcMap.get(email);// 先查询缓存是否有此信息
+				if (iconSrc == null) {// 若缓存没有则去数据库查询
+					try {// 匿名用户在数据库中查不到，会抛IllegalArgumentException异常
+						User u = userService.getUserByEmail(email);
+						iconSrc = u.getIconSrc();
+						iconSrcMap.put(email, iconSrc);// 先放入缓存供下次查询
+					} catch (IllegalArgumentException | NullPointerException | AccessDeniedException e2) {
+						// 这里是查询用户的头像，不涉及安全问题，当匿名用户访问时会被拒绝
+						logger.debug("可能是匿名用户，查询不到User，也可能是该用户未上传图片");
 					}
-					map.put("iconSrc", iconSrc);// 然后放入返回的UserDetails中
 				}
+				map.put("iconSrc", iconSrc);// 然后放入返回的UserDetails中
 			}
 		}
 		return map;

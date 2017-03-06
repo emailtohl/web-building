@@ -12,6 +12,11 @@
  -->
 <link rel="stylesheet" href="templates/css/bootstrap.min.css">                                      <!-- Bootstrap style -->
 <link rel="stylesheet" href="templates/css/templatemo-style.css">                                   <!-- Templatemo style -->
+<style type="text/css">
+	img.icon {
+		width:32px;
+	}
+</style>
 
 <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -80,7 +85,11 @@
 			</div>
 
 			<div class="col-xs-12 col-sm-12 col-md-8 col-lg-9 col-xl-9 tm-2-rows-sm-down-1">
-				<h3 class="tm-gold-text">${article.title}</h3> <em>${article.createDate}</em>
+				<h3 class="tm-gold-text">${article.title}</h3>
+				<p>
+					<img class="icon" src="${article.author.iconSrc!}"> <strong>${article.author.email}</strong>
+					<em>${article.createDate?string("yyyy-MM-dd HH:mm:ss")}</em>
+				</p>
 				<div>
 					${article.body}
 				</div>
@@ -90,7 +99,20 @@
 		<div class="row tm-margin-t-mid col-md-8 col-md-offset-3">
 			<div class="col-xs-12">
 				<#list article.comments as comment>
-					<p>${comment.critics!} <img alt="" src="${comment.icon!}" style="width:32px;"> ${comment.createDate}</p>
+					<p>
+						<#if comment.icon??>
+							<img class="icon" alt="" src="${comment.icon!}" >
+						<#else>
+							<img class="icon" alt="" src="lib/AdminLTE/img/user2-160x160.jpg" >
+						</#if>
+						<#if comment.critics??>
+							<strong>${comment.critics!}</strong>
+						<#else>
+							<strong>匿名</strong>
+						</#if>
+						
+						  <em>${comment.createDate?string("yyyy-MM-dd HH:mm:ss")}</em>
+					</p>
 					<p>${comment.content}</p>
 				</#list>
 			</div>
@@ -98,7 +120,10 @@
 			<#if article.comment>
 				<div class="col-xs-12">
 					<h3 class="tm-gold-text">发表评论</h3>
-					<p>你的账号：<span id="accountName"></span> <img id="accountIcon" alt="" src="" style="width:32px;"></p>
+					<p>
+						<img class="icon" id="accountIcon" alt="" src="" >
+						<span id="accountName"></span> 
+					</p>
 					<p class="row col-md-8">
 						<form action="cms/comment" method="post" enctype="application/x-www-form-urlencoded" accept-charset="UTF-8">
 							<input type="hidden" name="articleId" value="${article.id?c}">
@@ -287,11 +312,14 @@
 	$(function() {
 		$.get('authentication', function(data){
 			console.log(data);
-			$('span#accountName').text(data.username);
-			$('img#accountIcon').attr('src', data.iconSrc);
+			var username = data.username || '';
+			if (username == 'anonymousUser')
+				username = '匿名';
+			var iconSrc = data.iconSrc || 'lib/AdminLTE/img/user2-160x160.jpg';
+			$('span#accountName').text(username);
+			$('img#accountIcon').attr('src', iconSrc);
 		});
 	});
-	
 </script>
 
 </body>
