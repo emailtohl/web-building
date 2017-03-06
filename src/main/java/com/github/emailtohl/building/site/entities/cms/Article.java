@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -126,6 +127,7 @@ public class Article extends BaseEntity implements Comparable<Article> {
 	
 	@org.hibernate.envers.NotAudited
 	@org.hibernate.search.annotations.IndexedEmbedded
+	@OrderBy(BaseEntity.CREATE_DATE_PROPERTY_NAME + " DESC")
 	@OneToMany(mappedBy = "article")
 	public List<Comment> getComments() {
 		return comments;

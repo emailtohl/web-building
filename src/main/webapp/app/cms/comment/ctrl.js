@@ -51,7 +51,7 @@ define(['cms/module', 'cms/article/service', 'cms/category/service'], function(c
 		};
 		
 		self.btnClick = function(pageNumber) {
-			self.query.page = pageNumber;
+			self.queryParam.page = pageNumber;
 			self.query();
 		};
 
