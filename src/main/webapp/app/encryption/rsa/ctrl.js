@@ -56,7 +56,7 @@ define(['encryption/module', 'common/service/myrsa', 'encryption/service'], func
 		});
 		service.testMessage().success(function(data) {
 			console.log(data);
-			if (self.privateKey) {
+			if (self.privateKey && data.ciphertext) {
 				self.testMessage = myrsa.decrypt(data.ciphertext, self.privateKey);
 			} else {
 				self.testMessage = data.ciphertext;

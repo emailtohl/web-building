@@ -46,6 +46,7 @@ import com.github.emailtohl.building.site.entities.user.User;
 @Transactional
 @Validated
 public interface UserService extends AuthenticationProvider, UserDetailsService {
+	// 该缓存map的key是用户的email而非id，这是因为getUserByEmail方法在上下文访问较多，而通过id访问的场景主要在于用户管理里面，无需缓存
 	String CACHE_NAME_USER = "userCache";
 	String CACHE_NAME_USER_PAGER = "userPagerCache";
 	
@@ -56,7 +57,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @return 用于缓存
 	 */
 	@CacheEvict(value = CACHE_NAME_USER_PAGER, allEntries = true)
-	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
+	@CachePut(value = CACHE_NAME_USER, key = "#result.email")
 	@PreAuthorize("hasAuthority('" + USER_CREATE_SPECIAL + "')")
 	User addEmployee(@Valid Employee u);
 	
@@ -67,7 +68,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @return 用于缓存
 	 */
 	@CacheEvict(value = CACHE_NAME_USER_PAGER, allEntries = true)
-	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
+	@CachePut(value = CACHE_NAME_USER, key = "#result.email")
 	User addCustomer(@Valid Customer u);
 	
 	/**
@@ -76,7 +77,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @return 用于缓存
 	 */
 	@CacheEvict(value = CACHE_NAME_USER_PAGER, allEntries = true)
-	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
+	@CachePut(value = CACHE_NAME_USER, key = "#result.email")
 	User enableUser(@Min(value = 1L) Long id);
 	
 	/**
@@ -85,7 +86,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @return 用于缓存
 	 */
 	@CacheEvict(value = CACHE_NAME_USER_PAGER, allEntries = true)
-	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
+	@CachePut(value = CACHE_NAME_USER, key = "#result.email")
 	@PreAuthorize("hasAuthority('" + USER_DISABLE + "')")
 	User disableUser(@Min(value = 1L) Long id);
 	
@@ -95,7 +96,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @return 用于缓存
 	 */
 	@CacheEvict(value = CACHE_NAME_USER_PAGER, allEntries = true)
-	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
+	@CachePut(value = CACHE_NAME_USER, key = "#result.email")
 	@PreAuthorize("hasAuthority('" + USER_GRANT_ROLES + "')")
 	User grantRoles(long id, String... roleNames);
 	
@@ -104,7 +105,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @param id
 	 * @return 用于缓存
 	 */
-	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
+	@CachePut(value = CACHE_NAME_USER, key = "#result.email")
 	User grantUserRole(long id);
 	
 	/**
@@ -115,7 +116,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @param newPassword
 	 * @return 用于缓存
 	 */
-	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
+	@CachePut(value = CACHE_NAME_USER, key = "#result.email")
 	@PreAuthorize("#email == authentication.principal.username")
 	User changePassword(@P("email") String email, @NotNull @Pattern(regexp = "^[^\\s&\"<>]+$") String newPassword);
 	
@@ -126,7 +127,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @param newPassword
 	 * @return 用于缓存
 	 */
-	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
+	@CachePut(value = CACHE_NAME_USER, key = "#result.email")
 	User changePasswordByEmail(String email, @NotNull @Pattern(regexp = "^[^\\s&\"<>]+$") String newPassword);
 	
 	/**
@@ -141,9 +142,8 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * 查询用户，通过认证的均可调用
 	 * returnObject和principal是spring security内置对象
 	 * @param id
-	 * @return 用于缓存
+	 * @return
 	 */
-	@Cacheable(value = CACHE_NAME_USER, key = "#root.args[0]")
 	@PostAuthorize("hasAuthority('" + USER_READ_ALL + "') || (hasAuthority('" + USER_READ_SELF + "') && returnObject.username == principal.username)")
 	User getUser(@Min(value = 1L) Long id);
 	
@@ -151,7 +151,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * 通过邮箱名查询用户，通过认证的均可调用
 	 * 
 	 * @param email
-	 * @return 用于缓存
+	 * @return
 	 */
 	@Cacheable(value = CACHE_NAME_USER, key = "#root.args[0]")
 	@PostAuthorize("hasAuthority('" + USER_READ_ALL + "') || (hasAuthority('" + USER_READ_SELF + "') && #email == principal.username)")
@@ -161,7 +161,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * 修改用户的头像地址
 	 * @param iconSrc 修改用户头像的地址
 	 */
-	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
+	@CachePut(value = CACHE_NAME_USER, key = "#result.email")
 	@PreAuthorize("isAuthenticated()")
 	User updateIconSrc(long id, String iconSrc);
 	
@@ -170,7 +170,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @param icon 二进制图片文件
 	 * @return 用于缓存
 	 */
-	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
+	@CachePut(value = CACHE_NAME_USER, key = "#result.email")
 	@PreAuthorize("isAuthenticated()")
 	User updateIcon(long id, byte[] icon);
 	
@@ -184,7 +184,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @return 用于缓存
 	 */
 	@CacheEvict(value = CACHE_NAME_USER_PAGER, allEntries = true)
-	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
+	@CachePut(value = CACHE_NAME_USER, key = "#result.email")
 	@PreAuthorize("hasAuthority('" + USER_UPDATE_ALL + "') || (hasAuthority('" + USER_UPDATE_SELF + "') && #email == principal.username)")
 	User mergeEmployee(@NotNull @P("email") String email, Employee emp);
 	
@@ -198,7 +198,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @return 用于缓存
 	 */
 	@CacheEvict(value = CACHE_NAME_USER_PAGER, allEntries = true)
-	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
+	@CachePut(value = CACHE_NAME_USER, key = "#result.email")
 	@PreAuthorize("hasAuthority('" + USER_UPDATE_ALL + "') || (hasAuthority('" + USER_UPDATE_SELF + "') && #email == principal.username)")
 	User mergeCustomer(@NotNull @P("email") String email, Customer cus);
 	
@@ -268,7 +268,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @param publicKey
 	 * @param module
 	 */
-	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
+	@CachePut(value = CACHE_NAME_USER, key = "#result.email")
 	@PreAuthorize("isAuthenticated()")
 	User setPublicKey(@NotNull String publicKey);
 	
@@ -277,7 +277,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	 * @param publicKey
 	 * @param module
 	 */
-	@CachePut(value = CACHE_NAME_USER, key = "#result.id")
+	@CachePut(value = CACHE_NAME_USER, key = "#result.email")
 	@PreAuthorize("isAuthenticated()")
 	User clearPublicKey();
 	
