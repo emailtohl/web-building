@@ -34,6 +34,7 @@ import org.springframework.validation.annotation.Validated;
 
 import com.github.emailtohl.building.common.Constant;
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.exception.NotFoundException;
 import com.github.emailtohl.building.site.entities.role.Role;
 import com.github.emailtohl.building.site.entities.user.Customer;
 import com.github.emailtohl.building.site.entities.user.Employee;
@@ -149,13 +150,13 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	
 	/**
 	 * 通过邮箱名查询用户，通过认证的均可调用
-	 * 
 	 * @param email
 	 * @return
+	 * @throws NotFoundException 由于应用了缓存策略，返回结果不能为null，所以若未找到资源，则抛此异常
 	 */
 	@Cacheable(value = CACHE_NAME_USER, key = "#root.args[0]")
 	@PostAuthorize("hasAuthority('" + USER_READ_ALL + "') || (hasAuthority('" + USER_READ_SELF + "') && #email == principal.username)")
-	User getUserByEmail(@NotNull @P("email") String email);
+	User getUserByEmail(@NotNull @P("email") String email) throws NotFoundException;
 	
 	/**
 	 * 修改用户的头像地址

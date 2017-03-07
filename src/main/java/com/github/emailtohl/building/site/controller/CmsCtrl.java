@@ -34,6 +34,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
+import com.github.emailtohl.building.exception.NotFoundException;
+import com.github.emailtohl.building.exception.ResourceNotFoundException;
 import com.github.emailtohl.building.exception.VerifyFailure;
 import com.github.emailtohl.building.site.dto.WebPage;
 import com.github.emailtohl.building.site.entities.cms.Article;
@@ -65,7 +67,12 @@ public class CmsCtrl {
 	@RequestMapping(value = "cms/article/{id}", method = GET, produces = "application/json; charset=utf-8")
 	@ResponseBody
 	public String findArticle(@PathVariable long id) {
-		Article article = cmsService.getArticle(id);
+		Article article;
+		try {
+			article = cmsService.getArticle(id);
+		} catch (NotFoundException e) {
+			throw new ResourceNotFoundException(e);
+		}
 		String json = gson.toJson(article);// 因Article有时间类型，用配置了时间格式的Gson解析
 		return json;
 	}
@@ -432,7 +439,12 @@ public class CmsCtrl {
 	 */
 	@RequestMapping(value = "detail", method = GET)
 	public void getDetail(@RequestParam long id, HttpServletRequest request, HttpServletResponse response) throws TemplateException, IOException {
-		Article a = cmsService.getArticle(id);
+		Article a;
+		try {
+			a = cmsService.getArticle(id);
+		} catch (NotFoundException e) {
+			throw new ResourceNotFoundException(e);
+		}
 		Map<String, Object> model = new HashMap<>();
 		model.put("article", a);
 		List<Article> ls = cmsService.recentArticles();

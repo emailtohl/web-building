@@ -35,6 +35,7 @@ import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.utils.Validator;
 import com.github.emailtohl.building.config.RootContextConfiguration;
+import com.github.emailtohl.building.exception.NotFoundException;
 import com.github.emailtohl.building.initdb.PersistenceData;
 import com.github.emailtohl.building.site.dao.audit.CleanAuditData;
 import com.github.emailtohl.building.site.dao.role.RoleRepository;
@@ -215,7 +216,7 @@ public class UserServiceImplTest {
 		userService.changePassword(bar.getEmail(), old);
 	}
 	
-	public void testUpdateIcon() {
+	public void testUpdateIcon() throws NotFoundException {
 		String iconSrc = "img/icon-head-foo.jpg";
 		securityContextManager.setFoo();
 		ClassLoader cl = PersistenceData.class.getClassLoader();
@@ -262,7 +263,7 @@ public class UserServiceImplTest {
 	}
 	
 	@Test
-	public void testPublicKey() {
+	public void testPublicKey() throws NotFoundException {
 		securityContextManager.setFoo();
 		userService.setPublicKey("eyJtb2R1bGUiOiI5MTIxMzkwMjU2NDM1ODA1MjM4NDg4MDI5NDE3MjgxMzIxNjk4NTYxMDk2NTcwNTE5NDc2OTM4NDQ4NDA1NzgxMjAyMDM4NzM1NzQwNDg0OTczODQ5NzU2MTIzNjE3MjQ1MzI1MzMzMTEzNDMwMzAwMjc4NjIyNjc2NjkwMDEzMzkxOTgxMjAyMTk2NzY5Mjg2MDc3NzMwODkwOTkxODIyMDMzNTk4NjQ1NjkwMzU1NzYxNTU3NjUwNjkwMzI1MTE2NTUzODQ3OTI0NTc5OTk1MTQwNDM0NDkyOTk3NDg0MDg1NjM5ODI2NjU4NzY1NDM4NTE3ODk0Mzg5NTc4NDg1ODYxNDMxMjY3Mzg0OTM3MDE1MzgyMjg2MzAzODYxOTU5NzcyOTA1OTQwNDUzNjMxNjA2OSIsInB1YmxpY0tleSI6IjY1NTM3In0=");
 		User u = userService.getUserByEmail(foo.getEmail());

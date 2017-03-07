@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.exception.NotFoundException;
 import com.github.emailtohl.building.site.entities.cms.Article;
 import com.github.emailtohl.building.site.entities.cms.Comment;
 import com.github.emailtohl.building.site.entities.cms.Type;
@@ -37,9 +38,10 @@ public interface CmsService {
 	 * 获取某文章
 	 * @param id
 	 * @return
+	 * @throws NotFoundException 由于缓存机制，返回一定不能为null，所以使用NotFoundException表示未找到文章
 	 */
 	@Cacheable(value = CACHE_NAME_ARTICLE, key = "#root.args[0]")
-	Article getArticle(long id);
+	Article getArticle(long id) throws NotFoundException;
 	
 	/**
 	 * 全文搜索

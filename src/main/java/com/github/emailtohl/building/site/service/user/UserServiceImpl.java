@@ -39,6 +39,7 @@ import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
 import com.github.emailtohl.building.common.utils.BeanUtil;
 import com.github.emailtohl.building.common.utils.SecurityContextUtil;
+import com.github.emailtohl.building.exception.NotFoundException;
 import com.github.emailtohl.building.filter.PreSecurityLoggingFilter;
 import com.github.emailtohl.building.filter.UserPasswordEncryptionFilter;
 import com.github.emailtohl.building.site.dao.organization.DepartmentRepository;
@@ -205,8 +206,11 @@ public class UserServiceImpl implements UserService, Serializable {
 	}
 
 	@Override
-	public User getUserByEmail(String email) {
-		return convert(userRepository.findByEmail(email));
+	public User getUserByEmail(String email) throws NotFoundException {
+		User u = userRepository.findByEmail(email);
+		if (u == null)
+			throw new NotFoundException("未找到该用户：" + email);
+		return convert(u);
 	}
 	
 	@Override

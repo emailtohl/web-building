@@ -28,6 +28,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.config.RootContextConfiguration;
+import com.github.emailtohl.building.exception.NotFoundException;
 import com.github.emailtohl.building.site.dao.audit.CleanAuditData;
 import com.github.emailtohl.building.site.entities.cms.Article;
 import com.github.emailtohl.building.site.entities.cms.Comment;
@@ -59,7 +60,7 @@ public class CmsServiceImplTest {
 	}
 
 	@Test
-	public void testFindArticle() {
+	public void testFindArticle() throws NotFoundException {
 		List<Article> ls = cmsService.recentArticles();
 		Article a = ls.get(0);
 		assertEquals(a, cmsService.getArticle(a.getId()));
@@ -79,7 +80,7 @@ public class CmsServiceImplTest {
 	}
 
 	@Test
-	public void testArticle() {
+	public void testArticle() throws NotFoundException {
 		long id = cmsService.saveArticle("test", "test", "test", "summary", subType.getName()).getId();
 		assertTrue(id > 0);
 		Article a = cmsService.getArticle(id);
@@ -105,7 +106,9 @@ public class CmsServiceImplTest {
 	@Test
 	public void testComment() {
 		long articleId = cmsService.saveArticle("test", "test", "test", "summary", "noType").getId();
-		long commentId = cmsService.saveComment(articleId, "my comment").getId();
+		Article article = cmsService.saveComment(articleId, "my comment");
+		assertFalse(article.getComments().isEmpty());
+		long commentId = article.getComments().get(0).getId();
 		try {
 			Comment c = cmsService.findComment(commentId);
 			assertEquals("my comment", c.getContent());

@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.github.emailtohl.building.exception.NotFoundException;
 import com.github.emailtohl.building.exception.ResourceNotFoundException;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.user.Customer;
@@ -233,7 +234,7 @@ public class LoginCtrl {
 						User u = userService.getUserByEmail(email);
 						iconSrc = u.getIconSrc();
 						iconSrcMap.put(email, iconSrc);// 先放入缓存供下次查询
-					} catch (IllegalArgumentException | NullPointerException | AccessDeniedException e2) {
+					} catch (IllegalArgumentException | NullPointerException | AccessDeniedException | NotFoundException e2) {
 						// 这里是查询用户的头像，不涉及安全问题，当匿名用户访问时会被拒绝
 						logger.debug("可能是匿名用户，查询不到User，也可能是该用户未上传图片");
 					}

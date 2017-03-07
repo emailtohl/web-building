@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
+import com.github.emailtohl.building.exception.NotFoundException;
 import com.github.emailtohl.building.site.entities.user.User;
 import com.github.emailtohl.building.site.service.user.UserService;
 import com.github.emailtohl.building.stub.SecurityContextManager;
@@ -169,13 +170,13 @@ public class UserServiceTest {
 	}
 	
 	@Test(expected = AuthenticationCredentialsNotFoundException.class)
-	public void testGetUserByEmail1() {
+	public void testGetUserByEmail1() throws NotFoundException {
 		SecurityContextHolder.clearContext();
 		userService.getUserByEmail(serviceStub.customer.getEmail());
 	}
 	
 	@Test(expected = AccessDeniedException.class)
-	public void testGetUserByEmail2() {
+	public void testGetUserByEmail2() throws NotFoundException {
 		securityContextManager.setBar();
 		User u = userService.getUserByEmail(serviceStub.employee.getEmail());
 		System.out.println(u);
@@ -187,7 +188,7 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void testGetUserByEmail3() {
+	public void testGetUserByEmail3() throws NotFoundException {
 		securityContextManager.setEmailtohl();
 		userService.getUserByEmail(serviceStub.customer.getEmail());
 	}

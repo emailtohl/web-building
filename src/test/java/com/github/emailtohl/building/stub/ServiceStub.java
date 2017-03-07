@@ -23,6 +23,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.github.emailtohl.building.common.jpa.Pager;
+import com.github.emailtohl.building.exception.NotFoundException;
 import com.github.emailtohl.building.site.entities.flow.ApplicationForm;
 import com.github.emailtohl.building.site.entities.flow.ApplicationHandleHistory;
 import com.github.emailtohl.building.site.entities.flow.ApplicationForm.Status;
@@ -78,9 +79,14 @@ public class ServiceStub {
 		when(userService.clearPublicKey()).thenReturn(employee);
 		when(userService.getUser(employeeId)).thenReturn(employee);
 		when(userService.getUser(customerId)).thenReturn(customer);
-		when(userService.getUserByEmail(emailtohl.getEmail())).thenReturn(emailtohl);
-		when(userService.getUserByEmail(employee.getEmail())).thenReturn(customer);
-		when(userService.getUserByEmail(customer.getEmail())).thenReturn(customer);
+		try {
+			when(userService.getUserByEmail(emailtohl.getEmail())).thenReturn(emailtohl);
+			when(userService.getUserByEmail(employee.getEmail())).thenReturn(customer);
+			when(userService.getUserByEmail(customer.getEmail())).thenReturn(customer);
+			when(userService.getUserByEmail(customer.getEmail())).thenReturn(customer);
+			when(userService.getUserByEmail("aaa@test.com")).thenThrow(new NotFoundException("未找到"));
+		} catch (NotFoundException e) {
+		}
 		when(userService.mergeEmployee(employee.getEmail(), employee)).thenReturn(employee);
 		when(userService.mergeCustomer(customer.getEmail(), customer)).thenReturn(customer);
 		Pager<User> employeePager = new Pager<User>(Arrays.asList(employee));

@@ -45,6 +45,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.github.emailtohl.building.common.jpa.Pager;
 import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
 import com.github.emailtohl.building.common.utils.UpDownloader;
+import com.github.emailtohl.building.exception.NotFoundException;
 import com.github.emailtohl.building.exception.ResourceNotFoundException;
 import com.github.emailtohl.building.site.dto.UserDto;
 import com.github.emailtohl.building.site.entities.role.Role;
@@ -135,9 +136,11 @@ public class UserCtrl {
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	public String getUserByEmail(@RequestParam String email) {
-		User u = userService.getUserByEmail(email);
-		if (u == null) {
-			throw new ResourceNotFoundException();
+		User u;
+		try {
+			u = userService.getUserByEmail(email);
+		} catch (NotFoundException e) {
+			throw new ResourceNotFoundException(e);
 		}
 		return gson.toJson(u);
 	}
