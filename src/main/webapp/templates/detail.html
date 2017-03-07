@@ -113,7 +113,7 @@
 						
 						  <em>${comment.createDate?string("yyyy-MM-dd HH:mm:ss")}</em>
 					</p>
-					<p>${comment.content}</p>
+					<p>${comment.content?html}</p>
 				</#list>
 			</div>
 			
