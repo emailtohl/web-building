@@ -103,9 +103,6 @@ public class JPAConfiguration {
 	 * @EnableTransactionManagement 启动了事务管理功能
 	 * 应该提供一个PlatformTransactionManager默认实现
 	 * 由LocalContainerEntityManagerFactoryBean构造出jpa的事务管理器
-	 * 
-	 * 编译期，由于无法判断是开发环境还是生产环境，所以需要在@Conditional作进一步判断
-	 * 
 	 * @return
 	 */
 	@Profile(PROFILE_DEVELPMENT)

@@ -42,13 +42,13 @@ public class DataSourceConfiguration {
 	 * 还需要为spring配置PropertySourcesPlaceholderConfigurer对应xml中的配置是
 	 * <context:property-placeholder />
 	 */
-	@Value("${local.driverClassName}")
+	@Value("${jdbc.driverClassName}")
 	String driverClassName;
-	@Value("${local.url}")
+	@Value("${jdbc.url}")
 	String url;
-	@Value("${local.username}")
+	@Value("${jdbc.username}")
 	String username;
-	@Value("${local.password}")
+	@Value("${jdbc.password}")
 	String password;
 	
 	/**
@@ -68,10 +68,10 @@ public class DataSourceConfiguration {
 	@Profile(PROFILE_DEVELPMENT)
 	@Bean(name = "test_dataSource")
 	public DataSource springTestDataSource() {
-		logger.info(env.getProperty("local.driverClassName"));
-		logger.info(env.getProperty("local.url"));
-		logger.info(env.getProperty("local.username"));
-		logger.info(env.getProperty("local.password"));
+		logger.info(env.getProperty("jdbc.driverClassName"));
+		logger.info(env.getProperty("jdbc.url"));
+		logger.info(env.getProperty("jdbc.username"));
+		logger.info(env.getProperty("jdbc.password"));
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName(driverClassName);
 		dataSource.setUrl(url);

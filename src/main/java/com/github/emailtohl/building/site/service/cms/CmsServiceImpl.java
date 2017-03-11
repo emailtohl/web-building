@@ -118,7 +118,9 @@ public class CmsServiceImpl implements CmsService {
 		}
 		Type t = article.getType();
 		if (t != null) {
-			pa.getType().getArticles().remove(pa);
+			if (pa.getType() != null) {
+				pa.getType().getArticles().remove(pa);
+			}
 			Type pt = typeRepository.findByName(t.getName());
 			pa.setType(pt);
 			pt.getArticles().add(pa);
