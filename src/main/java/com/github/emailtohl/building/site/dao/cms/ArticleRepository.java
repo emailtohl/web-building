@@ -1,5 +1,7 @@
 package com.github.emailtohl.building.site.dao.cms;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.github.emailtohl.building.site.entities.cms.Article;
@@ -11,4 +13,5 @@ import com.github.emailtohl.building.site.entities.cms.Article;
  */
 public interface ArticleRepository extends JpaRepository<Article, Long>, ArticleRepositoryCustomization {
 
+	Page<Article> findByTypeName(String typeName, Pageable pageable);
 }

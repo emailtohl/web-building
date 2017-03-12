@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
@@ -64,7 +65,7 @@ public class CmsCtrl {
 	 * @param id
 	 * @return
 	 */
-	@RequestMapping(value = "cms/article/{id}", method = GET, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "cms/article/{id}", method = GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public String findArticle(@PathVariable long id) {
 		Article article;
@@ -83,7 +84,7 @@ public class CmsCtrl {
 	 * @param pageable
 	 * @return 只返回查找到的实体类E
 	 */
-	@RequestMapping(value = "cms/article/search", method = GET, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "cms/article/search", method = GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public String search(@RequestParam(name="query", required = false, defaultValue = "") String query, 
 			@PageableDefault(page = 0, size = 10, sort = {"title", "keywords"}, direction = Direction.DESC) Pageable pageable) {
@@ -223,7 +224,7 @@ public class CmsCtrl {
 	 * @param pageable
 	 * @return
 	 */
-	@RequestMapping(value = "cms/comments", method = GET, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "cms/comments", method = GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	public String queryComments(@RequestParam(required = false, name = "query", defaultValue = "") String query, 
 			@PageableDefault(page = 0, size = 10, sort = {BaseEntity.CREATE_DATE_PROPERTY_NAME, "article.title"}, direction = Direction.DESC) Pageable pageable) {

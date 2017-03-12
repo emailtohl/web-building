@@ -62,7 +62,7 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
 	public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
 		configurer.enable();
 	}
-	
+
 	/**
 	 * 接收文件上传功能
 	 * @return

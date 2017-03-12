@@ -27,6 +27,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
@@ -112,7 +113,7 @@ public class UserCtrl {
 	 * @param id
 	 * @return
 	 */
-	@RequestMapping(value = "id/{id}", method = GET, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "id/{id}", method = GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	public String getUserById(@PathVariable("id") Long id) {
@@ -132,7 +133,7 @@ public class UserCtrl {
 	 * @param email
 	 * @return
 	 */
-	@RequestMapping(value = "email", method = GET, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "email", method = GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	@ResponseBody
 	@ResponseStatus(HttpStatus.OK)
 	public String getUserByEmail(@RequestParam String email) {

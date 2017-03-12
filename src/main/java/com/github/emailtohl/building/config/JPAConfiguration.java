@@ -70,7 +70,7 @@ public class JPAConfiguration {
 	 */
 	@Profile(PROFILE_DEVELPMENT)
 	@Bean(name = "entityManagerFactory")
-	public LocalEntityManagerFactoryBean LocalEntityManagerFactory() {
+	public LocalEntityManagerFactoryBean localEntityManagerFactory() {
 		LocalEntityManagerFactoryBean emfb = new LocalEntityManagerFactoryBean();
 		emfb.setPersistenceUnitName("building-unit");
 		Map<String, Object> properties = new HashMap<String, Object>();
@@ -108,7 +108,7 @@ public class JPAConfiguration {
 	@Profile(PROFILE_DEVELPMENT)
 	@Bean(name = "jpaTransactionManager")
 	public PlatformTransactionManager development_jpaTransactionManager() {
-		return new JpaTransactionManager(LocalEntityManagerFactory().getObject());
+		return new JpaTransactionManager(localEntityManagerFactory().getObject());
 	}
 	
 	@Profile({ PROFILE_PRODUCTION, PROFILE_QA })

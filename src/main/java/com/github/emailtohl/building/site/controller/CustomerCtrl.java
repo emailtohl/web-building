@@ -15,6 +15,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,7 +43,7 @@ public class CustomerCtrl {
 	 * @param pageable
 	 * @return
 	 */
-	@RequestMapping(value = "pager", method = GET, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "pager", method = GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public Pager<Customer> query(@RequestParam(required = false) String name, @RequestParam(required = false) String title, @RequestParam(required = false) String affiliation, 
 			@PageableDefault(page = 0, size = 10, sort = {"name", "title", "affiliation"}, direction = Direction.DESC) Pageable pageable) {
 		return customerService.query(name, title, affiliation, pageable);
@@ -53,7 +54,7 @@ public class CustomerCtrl {
 	 * @param id
 	 * @return
 	 */
-	@RequestMapping(value = "{id}", method = GET, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "{id}", method = GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public Customer getCustomer(@PathVariable("id") Long id) {
 		return customerService.getCustomer(id);
 	}
@@ -63,7 +64,7 @@ public class CustomerCtrl {
 	 * @param id
 	 * @param form
 	 */
-	@RequestMapping(value = "{id}", method = PUT, produces = "application/json; charset=utf-8")
+	@RequestMapping(value = "{id}", method = PUT, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public void update(@PathVariable("id") Long id, @RequestBody UserDto form) {
 		customerService.update(id, form.convertCustomer());
 	}
