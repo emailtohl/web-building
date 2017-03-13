@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.dao.support.PersistenceExceptionTranslator;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.hibernate5.HibernateExceptionTranslator;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBuilder;
@@ -40,6 +41,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 		repositoryImplementationPostfix = "Impl", 
 		transactionManagerRef = "jpaTransactionManager", 
 		entityManagerFactoryRef = "entityManagerFactory")
+@EnableJpaAuditing(auditorAwareRef = "auditorAwareImpl")
 @Import({ DataSourceConfiguration.class })
 public class JPAConfiguration {
 	@Inject

@@ -193,7 +193,7 @@ public class CmsServiceImpl implements CmsService {
 			page = commentRepository.find(query, pageable);
 		else
 			page = commentRepository.findAll(pageable);
-		List<Comment> ls = page.getContent().parallelStream().map(c -> {
+		List<Comment> ls = page.getContent().stream().map(c -> {
 			Comment t = new Comment();
 			BeanUtils.copyProperties(c, t, "article");
 			t.setArticle(articlefilter(c.getArticle()));
@@ -381,6 +381,11 @@ public class CmsServiceImpl implements CmsService {
 				.collect(Collectors.toList());
 	}
 
+	@Override
+	public long commentCount(Long articleId) {
+		return commentRepository.countByArticleId(articleId);
+	}
+	
 	@Override
 	public List<Type> getTypes() {
 		return typeRepository.findAll().stream().map(this::typeFilter).collect(Collectors.toList());

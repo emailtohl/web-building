@@ -91,7 +91,7 @@ import freemarker.template.TemplateExceptionHandler;
 @EnableTransactionManagement
 // 启动Aspect动态代理
 @EnableAspectJAutoProxy
-// Bean中注解@Async的方法会异步执行，本注解通常需要在配置类中实现AsyncConfigurer接口，注册线程执行器和异常处理器
+// Bean中注解@Async的方法会异步执行
 @EnableAsync
 // 启动时间计划任务，spring在扫描类时，发现有@Scheduled注解的方法，即可定时执行该方法
 @EnableScheduling
@@ -155,7 +155,9 @@ public class RootContextConfiguration
 	
 	// ------------------关于线程执行器，异步方法，时间定时器的配置------------------------
 	/**
-	 * 向Spring容器中注册任务执行执行器
+	 * Spring的ThreadPoolTaskScheduler既实现了TaskExecutor接口（对@Async注解的方法异步执行），又实现了TaskScheduler接口（对@Scheduled注解方法按计划执行）
+	 * 为了让线程资源有效地被管理使用，这里配置的ThreadPoolTaskScheduler不仅为应用程序使用，同时也将其配置到AsyncConfigurer, SchedulingConfigurer接口中。
+	 * 这样执行器和调度器都使用相同的线程池。
 	 */
 	@Bean
 	public ThreadPoolTaskScheduler taskScheduler() {

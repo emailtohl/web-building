@@ -232,6 +232,13 @@ public interface CmsService {
 	Article rejectComment(long commentId);
 	
 	/**
+	 * 查询一篇文章的评论数
+	 * @param articleId
+	 * @return
+	 */
+	long commentCount(Long articleId);
+	
+	/**
 	 * 获取所有的文章分类
 	 * @return
 	 */

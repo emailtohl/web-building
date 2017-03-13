@@ -153,6 +153,13 @@ public class CmsServiceImplTest {
 	}
 
 	@Test
+	public void testCommentCount() {
+		List<Article> ls = cmsService.recentArticles();
+		Article a = ls.get(0);
+		assertTrue(cmsService.commentCount(a.getId()) > 0);
+	}
+	
+	@Test
 	public void testGetArticleTypes() {
 		List<Type> ls = cmsService.getTypes();
 		assertFalse(ls.isEmpty());

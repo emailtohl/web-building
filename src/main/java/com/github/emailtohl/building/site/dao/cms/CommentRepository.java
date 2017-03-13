@@ -17,4 +17,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long>, Comment
 	
 	Page<Comment> findByArticleTitleLike(String articleTitle, Pageable pageable);
 	
+	/**
+	 * 计算某文章有多少评论
+	 * @param articleId
+	 * @return
+	 */
+	long countByArticleId(long articleId);
 }
