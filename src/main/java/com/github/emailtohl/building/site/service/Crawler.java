@@ -42,11 +42,19 @@ public class Crawler {
 	}
 	
 	@Scheduled(fixedDelay = 50000)
-	public void fetch() throws IOException {
+	public void fetch() {
 		Connection conn = getConnection("http://localhost:8080/building/article");
 //		conn.cookie("cookie_admin_username", "zt")
 //		.cookie("cookie_admin_password", "4da64b5779c9d82140c450b33124ccc3");
-		Document doc = conn.get();
+		Document doc = null;
+		try {
+			doc = conn.get();
+		} catch (IOException e1) {
+//			logger.catching(e1);
+		}
+		if (doc == null) {
+			return;
+		}
 		if (logger.isDebugEnabled()) {
 			logger.debug(doc);
 		}

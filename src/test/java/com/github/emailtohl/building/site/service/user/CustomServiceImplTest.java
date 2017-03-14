@@ -35,8 +35,6 @@ import com.github.emailtohl.building.site.dao.audit.CleanAuditData;
 import com.github.emailtohl.building.site.entities.user.Customer;
 import com.github.emailtohl.building.site.entities.user.Subsidiary;
 import com.github.emailtohl.building.site.entities.user.User.Gender;
-import com.github.emailtohl.building.site.service.user.CustomerService;
-import com.github.emailtohl.building.site.service.user.UserService;
 import com.github.emailtohl.building.stub.SecurityContextManager;
 /**
  * 客户管理服务的测试

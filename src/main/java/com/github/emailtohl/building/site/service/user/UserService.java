@@ -52,7 +52,7 @@ public interface UserService extends AuthenticationProvider, UserDetailsService 
 	String CACHE_NAME_USER_PAGER = "userPagerCache";
 	
 	/**
-	 * 创建雇员账号
+	 * 创建雇员账号，但只授予Employee的角色
 	 * 注意：对于Spring Security来说，新增用户时，必须同时为其添加相应的用户授权，否则即便激活了该用户，也不会让其登录
 	 * @param u
 	 * @return 用于缓存

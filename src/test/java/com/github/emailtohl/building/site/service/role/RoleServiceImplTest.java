@@ -1,12 +1,9 @@
 package com.github.emailtohl.building.site.service.role;
 
-import static org.junit.Assert.assertEquals;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.HashSet;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -17,7 +14,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -25,13 +21,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.github.emailtohl.building.bootspring.SpringConfigForTest;
 import com.github.emailtohl.building.config.RootContextConfiguration;
+import com.github.emailtohl.building.exception.NotFoundException;
 import com.github.emailtohl.building.site.dao.audit.CleanAuditData;
 import com.github.emailtohl.building.site.dao.role.AuthorityRepository;
 import com.github.emailtohl.building.site.entities.role.Authority;
 import com.github.emailtohl.building.site.entities.role.Role;
 import com.github.emailtohl.building.site.entities.user.Employee;
 import com.github.emailtohl.building.site.entities.user.User;
-import com.github.emailtohl.building.site.service.role.RoleService;
 import com.github.emailtohl.building.site.service.user.UserService;
 import com.github.emailtohl.building.stub.SecurityContextManager;
 /**
@@ -53,6 +49,7 @@ public class RoleServiceImplTest {
 	
 	Employee u;
 	Role r;
+	String roleName = "roleTest";
 	Authority auth1, auth2;
 	Long userId, roleId, auth1Id, auth2Id;
 
@@ -70,11 +67,8 @@ public class RoleServiceImplTest {
 		u.setEmail("userEmailTest@test.com");
 		u.setPassword("123456");
 		
-		r.setName("roleTest");
+		r.setName(roleName);
 		r.setDescription("test");
-		
-		u.getRoles().add(r);
-		r.getUsers().add(u);
 		
 		r.getAuthorities().add(auth1);
 		auth1.getRoles().add(r);
@@ -84,92 +78,62 @@ public class RoleServiceImplTest {
 		auth1Id = auth1.getId();
 		auth2Id = auth2.getId();
 		
+		// 注意：在新建用户时，接口只授予Employee角色，所以需要创建好了User后再授予角色
 		roleId = roleService.createRole(r);
 		userId = userService.addEmployee(u).getId();
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		if (roleId != null) {// 先删角色的，roleService会将其关联的权限和用户全部删除
-			roleService.deleteRole(roleId);
-			cleanAuditData.cleanRoleAudit(roleId);
-			// 测试用户是否与角色切断关系
-			User qu = userService.getUser(userId);
-			assertFalse(qu.getRoles().contains(r));
-			
-			// 测试权限是否与角色切断关系
-//			Authority a1 = authorityRepository.findOne(auth1Id),
-//					a2 = authorityRepository.findOne(auth2Id);
-//			因现在authorityRepository中的事务还未提交，无法获取到数据
-//			assertFalse(a1.getRoles().contains(r));
-//			assertFalse(a2.getRoles().contains(r));
-		}
+		roleService.deleteRole(roleId);
+		cleanAuditData.cleanRoleAudit(roleId);
+
+		userService.deleteUser(userId);
+		cleanAuditData.cleanUserAudit(userId);
+
+		authorityRepository.delete(auth1Id);
+		cleanAuditData.cleanAuthorityAudit(auth1Id);
+		authorityRepository.delete(auth2Id);
+		cleanAuditData.cleanAuthorityAudit(auth2Id);
 		
-		if (userId != null) {
-			userService.deleteUser(userId);
-			cleanAuditData.cleanUserAudit(userId);
-		}
-		
-		if (auth1Id != null) {
-			authorityRepository.delete(auth1Id);
-			cleanAuditData.cleanAuthorityAudit(auth1Id);
-		}
-		if (auth2Id != null) {
-			authorityRepository.delete(auth2Id);
-			cleanAuditData.cleanAuthorityAudit(auth2Id);
-		}
-		
-		Cache c = cacheManager.getCache(AuthorityRepository.CACHE_NAME);
-		c.clear();
+//		Cache c = cacheManager.getCache(AuthorityRepository.CACHE_NAME);
+//		c.clear();
 	}
 
 	@Test
-	public void test() {
+	public void testGet() {
+		assertNotNull(roleService.getRole(roleId));
 		assertFalse(roleService.getRoles().isEmpty());
-		assertFalse(roleService.getAuthorities().isEmpty());
+		assertTrue(roleService.getAuthorities().contains(auth1));
+		assertTrue(roleService.getAuthorities().contains(auth2));
+	}
+
+	@Test
+	public void testUpdateAndCache() throws NotFoundException {
+		// 先执行带缓存的方法，使其缓存上
+		User tu = userService.getUserByEmail(u.getEmail());
+		// 初创用户时，只有Employee权限
+		boolean flag = tu.getRoles().parallelStream().anyMatch(tr -> Role.EMPLOYEE.equals(tr.getName()));
+		assertTrue(flag);
 		
-		Role r = new Role();
-		r.setName("改名");
-		r.setDescription("改描述");
-		auth2 = authorityRepository.findOne(auth2Id);
-		r.getAuthorities().add(auth2);
-		roleService.updateRole(roleId, r);
-		// 再次查询该角色，测试是否更新基本内容和相关权限
-		Role q = roleService.getRole(roleId);
-		assertFalse(q.getAuthorities().contains(auth1));
-		assertTrue(q.getAuthorities().contains(auth2));
-		assertEquals("改名", r.getName());
-		assertEquals("改描述", r.getDescription());
+		// 为其授予新的角色
+		userService.grantRoles(tu.getId(), roleName);
+		tu = userService.getUserByEmail(u.getEmail());
+		// 用户的角色变了，查看是否清空缓存重新加载最新状态
+		flag = tu.getRoles().parallelStream().anyMatch(tr -> roleName.equals(tr.getName()));
+		assertTrue(flag);
+		
+		String newRoleName = "updateRole";
+		Role updateRole = new Role(newRoleName, "for test");
+		// 更新角色名字
+		roleService.updateRole(roleId, updateRole);
+		// 再次加载user
+		tu = userService.getUserByEmail(u.getEmail());
+		flag = tu.getRoles().parallelStream().anyMatch(tr -> roleName.equals(tr.getName()));
+		// 不再包含原先的"roleTest"的角色名
+		assertFalse(flag);
+		flag = tu.getRoles().parallelStream().anyMatch(tr -> newRoleName.equals(tr.getName()));
+		// 包含新的角色名，证明缓存被清除
+		assertTrue(flag);
 	}
-	
-	@Test
-	public void testCreateRoleRoleSetOfString() {
-		Role otherRole = new Role();
-		otherRole.setName("otherRole");
-		otherRole.setDescription("otherRole test");
-		Long id = null;
-		try {
-			id = roleService.createRole(otherRole, new HashSet<String>(Arrays.asList(auth1.getName(), auth2.getName())));
-			assertNotNull(id);
-			Role q = roleService.getRole(id);
-			logger.debug(q.getAuthorities());
-			assertTrue(q.getAuthorities().contains(auth1));
-			assertTrue(q.getAuthorities().contains(auth2));
-		} finally {
-			if (id != null) {
-				roleService.deleteRole(id);
-				cleanAuditData.cleanRoleAudit(id);
-			}
-		}
-	}
-
-	@Test
-	public void testGrantAuthorities() {
-		roleService.grantAuthorities(roleId, new HashSet<String>(Arrays.asList(auth2.getName())));
-		Role q = roleService.getRole(roleId);
-		logger.debug(q.getAuthorities());
-		assertFalse(q.getAuthorities().contains(auth1));
-		assertTrue(q.getAuthorities().contains(auth2));
-	}
-
 }

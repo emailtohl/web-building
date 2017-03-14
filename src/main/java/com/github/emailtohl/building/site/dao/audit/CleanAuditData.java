@@ -33,6 +33,8 @@ public class CleanAuditData {
 	
 	private static final String select_role_rev = "SELECT rev FROM t_role_aud WHERE id = ?";
 	private static final String delete_role_authority_aud = "DELETE FROM t_role_authority_aud WHERE role_id = ?";
+	private static final String delete_role_user_aud = "DELETE FROM t_user_role_aud WHERE role_id = ?";
+	private static final String delete_user_aud_by_rev = "DELETE FROM t_user_aud WHERE rev = ?";
 	private static final String delete_role_aud = "DELETE FROM t_role_aud WHERE id = ?";
 	public void cleanRoleAudit(Long id) {
 		List<Long> revs = jdbcTemplate.queryForList(select_role_rev, Long.class, id);
@@ -41,7 +43,9 @@ public class CleanAuditData {
 			args.add(new Long[] {rev});
 		});
 		jdbcTemplate.update(delete_role_authority_aud, id);
+		jdbcTemplate.update(delete_role_user_aud, id);
 		jdbcTemplate.update(delete_role_aud, id);
+		jdbcTemplate.batchUpdate(delete_user_aud_by_rev, args);
 		jdbcTemplate.batchUpdate(delete_revinfo, args);
 	}
 	

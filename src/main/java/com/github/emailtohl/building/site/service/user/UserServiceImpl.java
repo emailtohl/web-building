@@ -196,7 +196,7 @@ public class UserServiceImpl implements UserService, Serializable {
 	public void deleteUser(Long id) {
 		User entity = userRepository.findOne(id);
 		// 先删除外联关系
-		entity.setRoles(null);
+		entity.getRoles().clear();
 		userRepository.delete(entity);
 	}
 
