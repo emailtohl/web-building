@@ -58,6 +58,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter;
+import org.springframework.remoting.rmi.RmiProxyFactoryBean;
+import org.springframework.remoting.rmi.RmiServiceExporter;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -65,6 +68,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -75,6 +79,8 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.HandlerMapping;
+import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 
 import com.github.emailtohl.building.common.lucene.FileSearch;
 import com.google.gson.Gson;
@@ -440,4 +446,56 @@ public class RootContextConfiguration
 		return mailSender;
 	}
 
+	/**
+	 * 提供RMI访问服务
+	 * @param authenticationService
+	 * @return
+	 */
+	@Bean
+	public RmiServiceExporter rmiExporter(@Named("userServiceImpl") AuthenticationProvider authenticationService) {
+		RmiServiceExporter rmiExporter = new RmiServiceExporter();
+		rmiExporter.setService(authenticationService);
+		rmiExporter.setServiceName("authenticationServiceRMI");
+		rmiExporter.setServiceInterface(AuthenticationProvider.class);
+		rmiExporter.setRegistryPort(1199);
+		return rmiExporter;
+	}
+	
+	/**
+	 * 访问本RMI服务
+	 * @return
+	 */
+	@Bean
+	public RmiProxyFactoryBean authenticationServiceRMI() {
+		RmiProxyFactoryBean rmiProxy = new RmiProxyFactoryBean();
+		rmiProxy.setServiceUrl("rmi://localhost:1199/authenticationServiceRMI");
+		rmiProxy.setServiceInterface(AuthenticationProvider.class);
+		return rmiProxy;
+	}
+	
+	/**
+	 * 提供Http服务
+	 * @param authenticationService
+	 * @return
+	 */
+	@Bean
+	public HttpInvokerServiceExporter httpExportedAuthenticationService(@Named("userServiceImpl") AuthenticationProvider authenticationService) {
+		HttpInvokerServiceExporter exporter = new HttpInvokerServiceExporter();
+		exporter.setService(authenticationService);
+		exporter.setServiceInterface(AuthenticationProvider.class);
+		return exporter;
+	}
+	
+	/**
+	 * 访问本Http服务
+	 * @return
+	 */
+	@Bean
+	public HandlerMapping httpInvokerMapping() {
+		SimpleUrlHandlerMapping mapping = new SimpleUrlHandlerMapping();
+		Properties mappings = new Properties();
+		mappings.setProperty("/services/authentication", "httpExportedAuthenticationService");
+		mapping.setMappings(mappings);
+		return mapping;
+	}
 }
