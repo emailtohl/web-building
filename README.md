@@ -19,7 +19,7 @@
 - 其他组件：如select2,modal,datepicker,ztree,codemirror等等
 
 ## 二、部署
-本项目基于JDK8+tomcat9环境开发，common包中的框架部分代码使用传统的JDK6语法，使之可应用得更广泛，而site包下的业务程序则大量使用JDK8的语法，如Lambda表达式，方法引用，Stream流式风格处理集合以及新的时间类。
+本项目基于JDK8+tomcat9环境开发，common包中的框架部分代码使用传统的JDK6语法，使之可应用得更广泛，而site包下的业务程序则大量使用JDK8的语法，如Lambda表达式，方法引用，Stream流式风格以及新的时间类。
 
 > 注意：由于本项目监控和聊天功能使用websocket这种长连接技术，所以部署在集群环境下websocket只能转到固定服务器上，若与登录时的服务器不同，前端浏览器的sessionId就会被更新，使得登录状态失效。
 
@@ -27,10 +27,10 @@
 
 ### 2.1 数据源
 由于属于学习研究型项目，所以本系统中存在3份数据源配置，要保持一致（真实生产环境可以简化为一份）：
-###(1) 位于src/main/resources/database.properties
+#### (1) 位于src/main/resources/database.properties
 该文件主要为开发阶段提供简易的数据源，生产环境中，为了避免内存泄漏，安全，不统一等问题，应该在JavaEE容器中查找，例如tomcat的数据源配置，见(2)
 
-###(2) tomcat的context.xml文件：
+#### (2) tomcat的context.xml文件：
 ```xml
 	<Resource name="jdbc/building" type="javax.sql.DataSource"
 		maxActive="20" maxIdle="5" maxWait="10000" username="postgres"
@@ -46,7 +46,7 @@ JndiDataSourceLookup lookup = new JndiDataSourceLookup();
 return lookup.getDataSource("jdbc/building");
 ```
 
-###(3) 位于src/main/resources/META-INF/persistence.xml
+#### (3) 位于src/main/resources/META-INF/persistence.xml
 该文件实际上是JPA规范所要求的，不过由于引入了Spring的LocalEntityManagerFactoryBean来管理实体工厂，此文件可以省略。为了保留参考，我将此文件应用到测试环境下，此文件之所以没有放在src/test/resources中，是因为src/test/java/目录下有许多其他供测试的Entities，为避免Hibernate自动更新把数据表弄混乱，所以它仍然存放在src/main/resources/下。
 
 
@@ -155,4 +155,4 @@ README仅简述了项目概况，该项目是我学习所用，如何配置和�
 
 为验证通用技术，建立了如下几个示例业务模块：用户、授权实体建模，首页聊天室、实时数据监控、论坛全文搜索，工单流程申请，客户关系管理，内容管理，密钥管理等。
 
-现项目可裁剪应用于普通项目中。
+现项目基本完成可裁剪应用于普通项目中。
