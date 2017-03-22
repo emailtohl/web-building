@@ -842,6 +842,28 @@ var mine = (function(){
 		}
 	}
 	
+	/**
+	 * 获取格式化的当前时间
+	 * @returns
+	 */
+	function getNowFormatDate() {
+		var date = new Date();
+		var seperator1 = '-';
+		var seperator2 = ':';
+		var month = date.getMonth() + 1;
+		var strDate = date.getDate();
+		if (month >= 1 && month <= 9) {
+			month = '0' + month;
+		}
+		if (strDate >= 0 && strDate <= 9) {
+			strDate = '0' + strDate;
+		}
+		var currentdate = date.getFullYear() + seperator1 + month + seperator1
+				+ strDate + ' ' + date.getHours() + seperator2
+				+ date.getMinutes() + seperator2 + date.getSeconds();
+		return currentdate;
+	}
+	
 	return {
 		/**
 		 * 参数：o 说明：o是一个将要被扩展的对象，该方法接收多个参数，并把所有的参数属性复制进o对象的属性中
@@ -967,6 +989,11 @@ var mine = (function(){
 		 * 说明：对象的深度拷贝
 		 */		
 		deepCopy : deepCopy,
+		/**
+		 * 参数：无
+		 * 说明：获取格式化的当前时间
+		 */		
+		getNowFormatDate : getNowFormatDate,
 	};
 	
 }());
