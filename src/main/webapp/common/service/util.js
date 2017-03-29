@@ -217,7 +217,7 @@ define([ 'common/module' ], function(commonModule) {
 			 * 在cookie中获取Spring security写入cookie中的token
 			 */
 			getCsrfToken : function() {
-				return getCookie('XSRF-TOKEN');
+				return this.getCookie('XSRF-TOKEN');
 			},
 		};
 	} ]);

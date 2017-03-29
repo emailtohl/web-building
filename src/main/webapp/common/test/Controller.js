@@ -78,7 +78,7 @@ define(['angular', 'test/module'], function(angular) {
 			alert('确认后关闭模态框，注意可能引起底层异常，但是关注self.open状态，该状态是正常的');
 		};
 	}])
-	.controller('TestFileuploadCtrl', ['$rootScope', '$scope', '$http', '$state', function($rootScope, $scope, $http, $state) {
+	.controller('TestFileuploadCtrl', ['$rootScope', '$scope', '$http', '$state', 'FileUploader', '$cookieStore', 'util', function($rootScope, $scope, $http, $state, FileUploader, $cookieStore, util) {
 		var self = this;
 		self.fileInvalid = function() {
 			var file1, file2;
@@ -96,6 +96,18 @@ define(['angular', 'test/module'], function(angular) {
 			self.modal.open = true;
 			$scope.$apply();
 		};
+		
+		// 使用第三方上传文件组件
+		
+		// 如果不是angular设置的cookie则会报异常
+//		var csrfToken = $cookieStore.get('XSRF-TOKEN');
+		var csrfToken = util.getCsrfToken();
+		$scope.uploader = new FileUploader({
+			url : 'fileUploadServer/testng',
+			headers : {'X-XSRF-TOKEN' : csrfToken},
+			withCredentials : true
+		});
+		
 	}])
 	.controller('TestZtreeCtrl', ['$rootScope', '$scope', '$http', '$state', 'ztreeutil', function($rootScope, $scope, $http, $state, ztreeutil) {
 		var self = this;

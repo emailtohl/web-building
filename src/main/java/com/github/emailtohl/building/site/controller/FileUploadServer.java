@@ -305,4 +305,11 @@ public class FileUploadServer {
 		String result = ServletUtil.multipartOnload(request, "temp/");
 		return result;
 	}
+	
+	@RequestMapping(value = "testng", method = POST, produces = "text/plain; charset=utf-8")
+	@ResponseBody
+	public String testng(HttpServletRequest request) {
+		String result = ServletUtil.multipartOnload(request, "temp/");
+		return result;
+	}
 }

@@ -29,6 +29,7 @@ require.config({
 		'adminLTE' : '../lib/AdminLTE/js/app.min',
 		'angular' : '../lib/angular/angular.min',
 		'angular-animate' : '../lib/angular/angular-animate.min',
+		'angular-file-uploader' : '../lib/angular/angular-file-uploader.min',
 		'angular-cookies' : '../lib/angular/angular-cookies.min',
 		'uirouter' : '../lib/angular/ui-router',
 		'bootstrap-slider' : '../lib/bootstrap-slider/bootstrap-slider',
@@ -97,6 +98,10 @@ require.config({
 		'angular-cookies' : {
 			deps : [ 'angular' ],
 			exports : 'ngCookies'
+		},
+		'angular-file-uploader' : {
+			deps : [ 'angular' ],
+			exports : 'ngUploader'
 		},
 		'uirouter' : {
 			deps : [ 'angular' ],
