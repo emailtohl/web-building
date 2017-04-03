@@ -125,6 +125,8 @@ public class Article extends BaseEntity implements Comparable<Article> {
 		this.isComment = isComment;
 	}
 	
+	// 使用LazyCollectionOption.EXTRA，集合在调用size(),isEmpty(),contains()等操作时不会加载实例
+	@org.hibernate.annotations.LazyCollection(org.hibernate.annotations.LazyCollectionOption.EXTRA)
 	@org.hibernate.envers.NotAudited
 	@org.hibernate.search.annotations.IndexedEmbedded
 	@OrderBy(BaseEntity.CREATE_DATE_PROPERTY_NAME + " DESC")

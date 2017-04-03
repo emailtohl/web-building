@@ -71,7 +71,10 @@ public class Type extends BaseEntity {
 		this.parent = parent;
 	}
 
-	/**
+	// 使用LazyCollectionOption.EXTRA，集合在调用size(),isEmpty(),contains()等操作时不会加载实例
+	@org.hibernate.annotations.LazyCollection(org.hibernate.annotations.LazyCollectionOption.EXTRA)
+	/*
+	 * 孤儿删除和级联删除的区别：
 	 * orphanRemoval is an entirely ORM-specific thing. It marks "child" entity
 	 * to be removed when it's no longer referenced from the "parent" entity,
 	 * e.g. when you remove the child entity from the corresponding collection
@@ -79,8 +82,6 @@ public class Type extends BaseEntity {
 	 * 
 	 * ON DELETE CASCADE is a database-specific thing, it deletes the "child"
 	 * row in the database when the "parent" row is deleted.
-	 * 
-	 * @return
 	 */
 	@OneToMany(mappedBy = "type", orphanRemoval = true)
 	@OrderBy(BaseEntity.CREATE_DATE_PROPERTY_NAME)
