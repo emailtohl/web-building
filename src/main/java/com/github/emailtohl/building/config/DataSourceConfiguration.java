@@ -20,6 +20,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.util.StringUtils;
 /**
@@ -78,6 +80,20 @@ public class DataSourceConfiguration {
 		dataSource.setUsername(username);
 		dataSource.setPassword(password);
 		return dataSource;
+	}
+	
+	/**
+	 * 开发环境
+	 * 没有连接池
+	 * @return
+	 */
+	@Profile(PROFILE_DEVELPMENT)
+	@Bean(name = "embedded_dataSource")
+	public DataSource embeddedDataSource() {
+		return new EmbeddedDatabaseBuilder()
+				.setType(EmbeddedDatabaseType.H2)
+//				.addScripts("classpath:test-data.sql")
+				.build();
 	}
 	
 	/**

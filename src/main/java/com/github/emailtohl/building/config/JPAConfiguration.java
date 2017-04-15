@@ -46,11 +46,11 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class JPAConfiguration {
 	@Inject
 	@Named("dataSource")
-	DataSource dataSource;
+	protected DataSource dataSource;
 	
 	@Inject
 	@Named("dataPath")
-	File dataPath;
+	protected File dataPath;
 	
 	/**
 	 * 以Hibernate作为JPA的实现类
