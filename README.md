@@ -3,7 +3,7 @@
 **Java JavaScript 业务框架 spring springmvc springsecurity springdata JPA Hibernate search Envers Lucene angularjs1.× AdminLTE**
 
 ## 一、 说明
-此项目被称为“building”，意指“不断完善”的项目，我将日常学习或自己开发的工具、框架整合在一起。这不仅是一个总结，同时还可以在此基础上开发业务项目。
+此项目被称为“building”，意指“不断完善”的项目，我将日常学习或自己开发的工具、框架整合在一起。这不仅是一个总结，同时还可以在此基础上开发业务项目。代码风格上，公共部分代码，如common包使用传统的JDK6语法，使之可应用得更广泛，而业务代码，如site包则大量使用JDK8的语法，如Lambda表达式，方法引用，Stream流式风格以及新的时间类。
 
 本项目在技术选型上尽量符合业界标准，主要使用的技术有：
 #### Java
@@ -19,18 +19,20 @@
 - 其他组件：如select2,modal,datepicker,ztree,codemirror等等
 
 ## 二、部署
-本项目基于JDK8+tomcat9环境开发，common包中的框架部分代码使用传统的JDK6语法，使之可应用得更广泛，而site包下的业务程序则大量使用JDK8的语法，如Lambda表达式，方法引用，Stream流式风格以及新的时间类。
+本项目基于JDK8+tomcat9+postgresql环境开发，并使用websocket技术，最好使用相同环境部署。容器方面，可以使用tomcat8，而数据库方面，得益于持久层使用的JPA技术，可很容易地切换。
 
-> 注意：由于本项目监控和聊天功能使用websocket这种长连接技术，所以部署在集群环境下websocket只能转到固定服务器上，若与登录时的服务器不同，前端浏览器的sessionId就会被更新，使得登录状态失效。
+需要说明的是本项目中集成的websocket不适合于集群，这是因为websocket是双向长连接技术，与负载均衡中的Http分发原理不同。在集群环境下若websocket连接的服务器和http分发到的服务器不同，则sessionId会被刷新，使得登录状态失效。目前还未找到有效解决方案。
 
-> 事实上websocket是改变规则的技术，它让服务器与浏览器、服务器与服务器之间（代码中有示例）通信更实时，完全可以自定义集群之间的数据共享，可参考com.github.emailtohl.building.message包中建立在websocket之上的自定义集群通信技术(4.1.7)。
+不过websocket是一门改变规则的技术，虽然离开了负载均衡器的Http转发这一传统模式，但我们可以使用websocket自定义集群环境，可参考com.github.emailtohl.building.message包中建立在websocket之上的自定义集群通信技术(4.1.7)。
 
 ### 2.1 数据源
-由于属于学习研究型项目，所以本系统中存在3份数据源配置，要保持一致（真实生产环境可以简化为一份）：
+由于属于学习研究型项目，项目中创建了3份数据源配置，而真实生产环境可以简化为一份：
 #### (1) 位于src/main/resources/database.properties
-该文件主要为开发阶段提供简易的数据源，生产环境中，为了避免内存泄漏，安全，不统一等问题，应该在JavaEE容器中查找，例如tomcat的数据源配置，见(2)
+这是由应用程序管理的数据源，负责创建和关闭，主要用于开发测试阶段。而生产环境中，一般是获取容器提供的数据源，这样可以避免内存泄漏，安全等问题。
 
 #### (2) tomcat的context.xml文件：
+容器启动时，也是在生产环境中配置的数据源：
+
 ```xml
 	<Resource name="jdbc/building" type="javax.sql.DataSource"
 		maxActive="20" maxIdle="5" maxWait="10000" username="postgres"
@@ -39,24 +41,39 @@
 		url="jdbc:postgresql://localhost:5432/building" />
 ```
 
-此处配置的是容器的数据源，程序通过JNDI查询使用该数据源，在spring环境中使用非常简便：
+程序通过JNDI查询使用该数据源，在spring环境中使用非常简便：
 
 ```java
-JndiDataSourceLookup lookup = new JndiDataSourceLookup();
-return lookup.getDataSource("jdbc/building");
+	@Profile({ “production", "qa" })
+	@Bean(name = "dataSource")
+	public DataSource jndiDataSource() {
+		JndiDataSourceLookup lookup = new JndiDataSourceLookup();
+		return lookup.getDataSource("jdbc/building");
+	}
 ```
 
 #### (3) 位于src/main/resources/META-INF/persistence.xml
-该文件实际上是JPA规范所要求的，不过由于引入了Spring的LocalEntityManagerFactoryBean来管理实体工厂，此文件可以省略。为了保留参考，我将此文件应用到测试环境下，此文件之所以没有放在src/test/resources中，是因为src/test/java/目录下有许多其他供测试的Entities，为避免Hibernate自动更新把数据表弄混乱，所以它仍然存放在src/main/resources/下。
+该文件实际上是JPA规范所要求的，不过我们采用的是spring而非Java EE容器来管理JPA，所以通过Spring的LocalContainerEntityManagerFactoryBean就可以省略此文件。
+
+为了参考，我保留了此文件，并将此文件用于单元测试环境中，由Spring的LocalEntityManagerFactoryBean读取使用。
+
+需要说明的是，此文件之所以没有放在src/test/resources中，是因为src/test/java/目录下有许多其他供测试的Entities，为避免Hibernate自动更新功能将数据表弄混乱，所以它仍然存放在src/main/resources/下。
 
 
 ### 2.2 创建数据库
 系统分析，数据建模是软件开发中最重要的环节，使用JPA Hibernate开发项目的好处之一，就是可以以面向对象的视角来设计数据库表结构，在src/test/java/下的com.github.emailtohl.building.initdb包中可以有两种方式让Hibernate生成数据表，并填入初始化的测试数据。它们是带main函数的类，执行后即可创建好数据库表结构，该包下的CleanTestData可以将测试数据清除。
 
-### 2.3 后端配置
-xml的DTD、scheme校验很繁琐，项目尽可能避免使用xml，在配置上倾向于编程式的风格，servlet、filter、listener均通过com.github.emailtohl.building.bootstrap下的程序启动，并未配置在web.xml中
+部署时，数据库方面需要做的是：
+(1)在postgresql中创建名为building的数据库
+(2)将数据库的地址、用户名、密码配置到前面说的配置文件中，然后执行src/test/java/下的com.github.emailtohl.building.initdb.CreateTable1.java
 
-### 2.4 前端配置
+### 2.3 tomcat容器配置
+项目部署到tomcat中，需要根据上述2.1.(2)配置tomcat的数据源，然后配置项目中存放文件的虚拟目录，详情见本文件同目录下的remark.md文件。若还需要在tomcat中配置Https或集群，也可以参考该文档。
+
+### 2.4 后端配置
+xml的DTD、scheme校验很繁琐，项目尽可能避免使用xml，在配置上倾向于编程式的风格，servlet、filter、listener均通过com.github.emailtohl.building.bootstrap下的程序启动，并未配置在web.xml中。
+
+### 2.5 前端配置
 前端主要靠RequireJS统一管理代码，配置在webapp/common/main.js中。
 业务代码统一位于webapp/app/下
 逻辑模块则是由Angular组织，每个Angular模块一般由3个文件组成：
@@ -69,7 +86,7 @@ xml的DTD、scheme校验很繁琐，项目尽可能避免使用xml，在配置�
 项目基于maven构建，先导出为eclipse项目，当依赖包完全下载好后，根据前面介绍配置好本地数据库，本项目使用的数据库是postgresql，若要改为MySQL，则需要进com.github.emailtohl.building.config.JPAConfiguration中配置。
 
 ### 3.2 初始化数据库
-完成数据库配置后，执行src/test/java/com.github.emailtohl.building.initdb.CreateTable1，JPA Hibernate会自动创建数据表和初始的测试数据，创建的数据见com.github.emailtohl.building.initdb.PersistenceData，可自行创建自己的账户
+完成数据库配置后，执行src/test/java/com.github.emailtohl.building.initdb.CreateTable1，JPA Hibernate会自动创建数据表和初始的测试数据，创建的基础数据见com.github.emailtohl.building.initdb.PersistenceData，可自行创建自己的账户
 
 ### 3.3 登录系统
 打开浏览器连接到系统后，可进入首页，当访问授权地址时要求用户登录，用户可使用超级管理员账号是：emailtohl@163.com/123456登录，系统中还预存了几个测试账户，他们统一定义在com.github.emailtohl.building.initdb.PersistenceData中，也可以在登录页面中注册新的账户。
@@ -96,11 +113,11 @@ xml的DTD、scheme校验很繁琐，项目尽可能避免使用xml，在配置�
 
 - SecurityConfiguration 对spring security进行配置，不仅为web层提供安全保护，同时也为应用程序service接口层提供安全保护。实际上，spring security的管理的核心其实就是AuthenticationManager，com.github.emailtohl.building.site.service.user.UserServiceImpl提供了自定义AuthenticationProvider示例。
 
-- RootContextConfiguration 它将其他配置@Import进来，并注册了常用Bean，如线程管理器，Java标准校验，HttpClient，邮件客户端等实用Bean
+- RootContextConfiguration 它将其他配置@Import进来，并注册了常用Bean，如线程管理器，Java标准校验，HttpClient，邮件客户端等实用Bean。
 
-- MvcConfiguration 不用多说，这是对Spring mvc的配置，并在ContainerBootstrap中读取
+- MvcConfiguration 不用多说，这是对Spring mvc的配置，并在ContainerBootstrap中读取。
 
-- WebsocketConfiguration 由于Websocket的应用程序受容器（如Tomcat）直接管理和调用，本配置可将其纳入Spring容器管理，并接受Spring的依赖注入
+- WebsocketConfiguration 由于Websocket的应用程序受容器（如Tomcat）直接管理和调用，本配置可将其纳入Spring容器管理，并接受Spring的依赖注入。
 
 #### 4.1.3 common包
 作为公用组件，common包里面提供了自定义的一些实用工具，特别是JPA的BaseDao，封装了基本JPA的功能，并提供动态查询、全文搜索、审计查询功能，进一步简化数据访问层的编码工作。此外utils中的BeanTools是自定义的一些分析JavaBean的工具，为我编写基础组件或框架所用。
@@ -119,17 +136,17 @@ xml的DTD、scheme校验很繁琐，项目尽可能避免使用xml，在配置�
 #### 4.1.7 message包
 该包使用了Spring-context包中的消息发布-订阅(Publish-Subscribe)技术，能很好地解决观察者模式的紧耦合问题，利用该技术再结合websocket，可使集群环境下各服务端通过广播地址创建连接，从而发布集群消息。
 
-1. 首先创建出继承ApplicationEvent的ClusterEvent，将原java.util.EventObject中瞬时的source改为持久化；
+(1)首先创建出继承ApplicationEvent的ClusterEvent，将原java.util.EventObject中瞬时的source改为持久化；
 
-2. 关注ClusterManager，当spring的上下文初始化或刷新时，会触发ContextRefreshedEvent，这时候就发起连接到本服务地址上；
+(2)关注ClusterManager，当spring的上下文初始化或刷新时，会触发ContextRefreshedEvent，这时候就发起连接到本服务地址上；
 
-3. 经过短暂的响应后ClusterManager就会将自身的地址通过socket发到广播地址上；
+(3)经过短暂的响应后ClusterManager就会将自身的地址通过socket发到广播地址上；
 
-4. ClusterManager的listener属性是一个线程，它也使用socket（基于TCP双向收发消息）监听广播地址上的消息（没有消息时会在receive处阻塞）；
+(4)ClusterManager的listener属性是一个线程，它也使用socket（基于TCP双向收发消息）监听广播地址上的消息（没有消息时会在receive处阻塞）；
 
-5. 当收到消息时，如果是自己的地址就忽略，否则就根据该消息创建一个websocket连接，并将该websocket连接注册到ClusterEventMulticaster中；
+(5)当收到消息时，如果是自己的地址就忽略，否则就根据该消息创建一个websocket连接，并将该websocket连接注册到ClusterEventMulticaster中；
 
-6. 一旦使用ApplicationEventPublisher#publishEvent(ClusterEvent event)，ClusterEventMulticaster的multicastEvent(ApplicationEvent event)就会广播该消息，不仅实现ApplicationListener<ClusterEvent>的类会收到，websocket中的各节点也会收到。
+(6)一旦使用ApplicationEventPublisher#publishEvent(ClusterEvent event)，ClusterEventMulticaster的multicastEvent(ApplicationEvent event)就会广播该消息，不仅实现ApplicationListener<ClusterEvent>的类会收到，websocket中的各节点也会收到。
 
 > 注意：端点的IP是通过InetAddress.getLocalHost().getHostAddress();获取，注意多个端点在同一网段中；此外，若端点的端口号不是8080，则需要配置config.properties文件中的local.host值。
 
