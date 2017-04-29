@@ -2,10 +2,11 @@
 
 ## 一、数据源
 系统中存在3份数据源配置，要保持一致：
-###1. 位于src/main/resources/database.properties
+
+### 1. 位于src/main/resources/database.properties
 该文件主要为开发测试提供数据源配置，生产环境中，为了避免内存泄漏，安全，不统一等问题，应该使用tomcat容器中的数据源，见2
 
-###2. tomcat的context.xml文件：
+### 2. tomcat的context.xml文件：
 ```xml
 	<Resource name="jdbc/building" type="javax.sql.DataSource"
 		maxActive="20" maxIdle="5" maxWait="10000" username="postgres"
@@ -15,15 +16,15 @@
 ```
 > 此处配置的是容器的数据源，程序通过JNDI查询使用该数据源
 
-###3. 位于src/main/resources/META-INF/persistence.xml
+### 3. 位于src/main/resources/META-INF/persistence.xml
 执行测试用例时，由于不在容器环境中，所以使用LocalEntityManagerFactoryBean来管理实体工厂，该Bean需要读取META-INF/persistence.xml中的配置。
 > 注意，此文件之所以没有放在src/test/resources中，是因为src/test/java/目录下有许多其他共测试的Entities，为避免把数据表弄混乱，所以它仍然存放在src/main/resources/下
 
 ## 二、项目的部署
-###1. 创建数据库
+### 1. 创建数据库
 在src/test/java/下的com.github.emailtohl.building.initdb包中可以有两种方式让JPA提供者生成数据表，并填入初始化数据。
 
-###2. 项目的配置
+### 2. 项目的配置
 项目的servlet、filter、listener均通过com.github.emailtohl.building.bootstrap下的程序启动，并未配置在web.xml中
 
 
@@ -175,7 +176,7 @@ keytool -keystore D:\home\tomcat.keystore -export -alias tomcat -file D:\home\to
 
 ### 2. 开启tomcat的对集群的支持
 
-在tomcat的server.xml的<Engine>标签中添加下面这段配置，（直接copy），配置具体含义见[tomcat官方的集群配置文档](http://tomcat.apache.org/tomcat-8.0-doc/cluster-howto.html)
+在tomcat的server.xml的Engine标签中添加下面这段配置，（直接copy），配置具体含义见[tomcat官方的集群配置文档](http://tomcat.apache.org/tomcat-8.0-doc/cluster-howto.html)
 (http://tomcat.apache.org/tomcat-9.0-doc/cluster-howto.html)
 
 ```xml
