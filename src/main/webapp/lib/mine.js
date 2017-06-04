@@ -764,6 +764,23 @@ var mine = (function(){
 		}
 		return promise;
 	}
+
+	/**
+	 *  同步下载资源
+	 */
+	function loadsync(url) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, false);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState !== XMLHttpRequest.DONE)
+                return;
+            if (!ajaxok(xhr.status)) {
+                throw Error(xhr.status);
+            }
+        };
+        xhr.send(null);
+        return xhr.responseText;
+	}
 	
 	/**
 	 * 根据总行数和每页大小计算总页数
@@ -979,6 +996,11 @@ var mine = (function(){
 		 * 说明：根据总行数和每页大小计算总页数
 		 */
 		countTotalPage : countTotalPage,
+		/**
+		 * 参数：url
+		 * 说明：同步下载资源
+		 */
+		loadsync : loadsync,
 		/**
 		 * 参数：url
 		 * 说明：异步下载js文件或css
