@@ -680,45 +680,45 @@ var mine = (function(){
 	/**
 	 * 创建页码按钮
 	 */
-	function createPageItems(nav, totalPage, pageNum) {
+	function createPageItems(nav, totalPages, pageNumber) {
 		var i, j, ul, prev, next, items = '', promise = new Promise();
 		ul = document.createElement('ul');
 		ul.className = 'pagination';
 		prev = '<li><a href="javascript:void(0)" aria-label="Previous"><span aria-hidden="true">«</span></a></li>';
 		next = '<li><a href="javascript:void(0)" aria-label="Next"><span aria-hidden="true">»</span></a></li>'
-		for (i = 1; i <= totalPage; i++) {
-			items += '<li class="' + (i == pageNum ? 'active' : '') + '" data-pagenum="' + i + '"><a href="javascript:void(0)">' + i + '</a></li>';
+		for (i = 1; i <= totalPages; i++) {
+			items += '<li class="' + (i == pageNumber ? 'active' : '') + '" data-page-number="' + i + '"><a href="javascript:void(0)">' + i + '</a></li>';
 		}
 		ul.innerHTML = prev + items + next;
 		items = ul.getElementsByTagName('li');
 		prev = items[0];
 		next = items[items.length - 1];
-		if (pageNum <= 1) {
-			pageNum = 1;
+		if (pageNumber <= 1) {
+			pageNumber = 1;
 			prev.classList.add('disabled');
 		}
-		if (pageNum >= totalPage) {
-			pageNum = totalPage;
+		if (pageNumber >= totalPages) {
+			pageNumber = totalPages;
 			next.classList.add('disabled');
 		}
 		for (i = 1; i < items.length - 1; i++) {
 			items[i].onclick = function() {
-				pageNum = parseInt(this.getAttribute('data-pagenum'));
+				var pageNum = parseInt(this.getAttribute('data-page-number'));
 				promise.invoke(pageNum);
 				setActive();
 			};
 		}
 		prev.onclick = function() {
-			if (pageNum > 1) {
-				pageNum--;
-				promise.invoke(pageNum);
+			if (pageNumber > 1) {
+				pageNumber--;
+				promise.invoke(pageNumber);
 				setActive();
 			}
 		};
 		next.onclick = function() {
-			if (pageNum < totalPage) {
-				pageNum++;
-				promise.invoke(pageNum);
+			if (pageNumber < totalPages) {
+				pageNumber++;
+				promise.invoke(pageNumber);
 				setActive();
 			}
 		};
@@ -736,9 +736,9 @@ var mine = (function(){
 				callbackfun = callback;
 				return self;
 			};
-			this.invoke = function(pageNum) {
+			this.invoke = function(pageNumber) {
 				if (callbackfun) {
-					callbackfun(pageNum);
+					callbackfun(pageNumber);
 				}
 			};
 		}
@@ -747,7 +747,7 @@ var mine = (function(){
 		 */
 		function setActive() {
 			for (var i = 1; i < items.length - 1; i++) {
-				if (i == pageNum) {
+				if (i == pageNumber) {
 					items[i].classList.add('active');
 				} else {
 					items[i].classList.remove('active');
@@ -755,10 +755,10 @@ var mine = (function(){
 			}
 			prev.classList.remove('disabled');
 			next.classList.remove('disabled');
-			if (pageNum == 1) {
+			if (pageNumber == 1) {
 				prev.classList.add('disabled');
 			}
-			if (pageNum == totalPage) {
+			if (pageNumber == totalPages) {
 				next.classList.add('disabled');
 			}
 		}
@@ -987,7 +987,7 @@ var mine = (function(){
 		 */
 		rollover : rollover,
 		/**
-		 * 参数：nav, totalPage, pageNum
+		 * 参数：nav, totalPages, pageNumber
 		 * 说明：创建页码按钮
 		 */
 		createPageItems : createPageItems,
