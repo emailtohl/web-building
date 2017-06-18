@@ -1,7 +1,6 @@
 package com.github.emailtohl.building.site.entities.user;
 
 import javax.persistence.Entity;
-import javax.persistence.Table;
 /**
  * 系统的用户一般分为外部客户和内部职员
  * 这是为客户建立的实体类
@@ -10,7 +9,7 @@ import javax.persistence.Table;
  */
 @org.hibernate.envers.Audited
 @Entity
-@Table(name = "t_customer")
+//@Table(name = "t_customer")
 public class Customer extends User {
 	private static final long serialVersionUID = -1136305533524407299L;
 	/**
