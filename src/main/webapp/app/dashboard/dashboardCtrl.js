@@ -1,6 +1,6 @@
 define(['angular', 'dashboard/module', 'sparkline', 'knob'], function(angular) {
 	return angular.module('dashboardModule')
-	.controller('DashboardCtrl', ['$scope', '$http', '$state', '$cookies', function($scope, $http, $state, $cookies) {
+	.controller('DashboardCtrl', ['$scope', '$http', '$state', '$cookies', 'util', function($scope, $http, $state, $cookies, util) {
 		var self = this, isHttps = window.location.protocol == 'https:' ? true : false;
 		// AdminLTE dashboard demo (This is only for demo purposes)
 		// AdminLTE for demo purposes
@@ -13,7 +13,8 @@ define(['angular', 'dashboard/module', 'sparkline', 'knob'], function(angular) {
 		$scope.getAuthentication(function(data) {
 			var callee = arguments.callee;
 			if (data && data.username) {
-				var url = (isHttps ? 'wss://' : 'ws://') + window.location.host + '/building/chat/' + data.username;
+				var chatUrl = util.getRootName() + '/chat/';
+				var url = (isHttps ? 'wss://' : 'ws://') + window.location.host + chatUrl + data.username;
 				var connection = new WebSocket(url);
 				
 				connection.onopen = function(e) {
@@ -69,7 +70,8 @@ define(['angular', 'dashboard/module', 'sparkline', 'knob'], function(angular) {
 		 */
 		self.systemInfo = {};
 		(function SystemInfo() {
-			var url = (isHttps ? 'wss://' : 'ws://') + window.location.host + '/building/systemInfo';
+			var systemInfoUrl = util.getRootName() + '/systemInfo';
+			var url = (isHttps ? 'wss://' : 'ws://') + window.location.host + systemInfoUrl;
 			var connection = new WebSocket(url);
 			var $knob = $(".knob"), isCreated = false;
 			

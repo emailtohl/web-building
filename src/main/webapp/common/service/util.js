@@ -219,6 +219,13 @@ define([ 'common/module' ], function(commonModule) {
 			getCsrfToken : function() {
 				return this.getCookie('XSRF-TOKEN');
 			},
+			/**
+			 * 获取项目根目录名
+			 */
+			getRootName : function() {
+				var i = window.location.pathname.indexOf('/', 1);
+				return window.location.pathname.substring(0, i);
+			},
 		};
 	} ]);
 });
