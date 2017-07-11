@@ -2,6 +2,8 @@
 
 **Java JavaScript 业务框架 spring springmvc springsecurity springdata JPA Hibernate search Envers Lucene angularjs1.× AdminLTE**
 
+> 注意，此项目在构建过程中不断添加新特性导致配置结构复杂，现重构项目，前后端代码架构统一，地址为git@github.com:emailtohl/integration.git
+
 ## 一、 说明
 此项目被称为“building”，意指“不断完善”的项目，我将日常学习或自己开发的工具、框架整合在一起。这不仅是一个总结，同时还可以在此基础上开发业务项目。代码风格上，公共部分代码，如common包使用传统的JDK6语法，使之可应用得更广泛，而业务代码，如site包则大量使用JDK8的语法，如Lambda表达式，方法引用，Stream流式风格以及新的时间类。
 

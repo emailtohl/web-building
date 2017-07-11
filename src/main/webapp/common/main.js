@@ -51,7 +51,6 @@ require.config({
 		'iCheck' : '../lib/iCheck/icheck.min',
 		'jvectormap' : '../lib/jvectormap/jquery-jvectormap-1.2.2.min',
 		'jvectormap-world' : '../lib/jvectormap/jquery-jvectormap-world-mill-en',
-		'knob' : '../lib/knob/jquery.knob',
 		'raphael' : '../lib/morris/raphael-min',
 		'morris' : '../lib/morris/morris.min',
 		'pace' : '../lib/pace/pace.min',
