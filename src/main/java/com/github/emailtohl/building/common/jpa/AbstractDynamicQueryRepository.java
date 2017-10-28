@@ -33,9 +33,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import javax.persistence.TypedQuery;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.github.emailtohl.building.common.utils.BeanUtil;
 
 /**
@@ -51,7 +48,6 @@ import com.github.emailtohl.building.common.utils.BeanUtil;
  * @date 2016.09.08
  */
 public abstract class AbstractDynamicQueryRepository<E extends Serializable> extends AbstractJpaRepository<Long, E> implements DynamicQueryRepository<E> {
-	private static final Logger logger = LogManager.getLogger();
 	/**
 	 * 匹配JPQL的正则式
 	 */
@@ -69,7 +65,7 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 	/**
 	 * 查询字符串时，是否用LIKE模糊查询
 	 */
-	private boolean isFuzzy = true;
+	protected boolean isFuzzy = true;
 
 	protected AbstractDynamicQueryRepository() {
 		super();
@@ -106,7 +102,7 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 			alias = m.group(aliasIndex).trim();
 		}
 		from = m.group(fromIndex);
-		logger.debug(
+		LOG.debug(
 				"count: \n" + "SELECT COUNT(" + distinct + " " + alias + ") "  + from + "\n" + "Arguments: \n" + args);
 		TypedQuery<Long> countQuery = entityManager.createQuery("SELECT COUNT(" + distinct + " " + alias + ") " + from,
 				idClass);
@@ -128,7 +124,7 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 		Integer startPosition = pageNumber * pageSize;
 		pagedQuery.setFirstResult(startPosition.intValue());
 		pagedQuery.setMaxResults(pageSize);
-		logger.debug("SELECT Query: \n" + jpql + "\n" + "Arguments: \n" + Arrays.toString(args) + "\n"
+		LOG.debug("SELECT Query: \n" + jpql + "\n" + "Arguments: \n" + Arrays.toString(args) + "\n"
 				+ "firstResult: \n" + startPosition + "\n" + "maxResults: \n" + pageSize);
 		List<E> singlePage = pagedQuery.getResultList();
 		Pager<E> p = new Pager<E>(singlePage, totalElements, pageNumber, pageSize);
@@ -159,7 +155,7 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 			alias = m.group(aliasIndex).trim();
 		}
 		from = m.group(fromIndex);
-		logger.debug(
+		LOG.debug(
 				"count: \n" + "SELECT COUNT(" + distinct + " " + alias + ") "  + from + "\n" + "Arguments: \n" + args);
 		TypedQuery<Long> countQuery = entityManager.createQuery("SELECT COUNT(" + distinct + " " + alias + ") " + from,
 				idClass);
@@ -180,7 +176,7 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 //		 这是从第0页起的计算方式
 		Integer startPosition = pageNumber * pageSize;
 		pagedQuery.setMaxResults(pageSize);
-		logger.debug("SELECT Query: \n" + jpql + "\n" + "Arguments: \n" + args + "\n" + "firstResult: \n"
+		LOG.debug("SELECT Query: \n" + jpql + "\n" + "Arguments: \n" + args + "\n" + "firstResult: \n"
 				+ startPosition + "\n" + "maxResults: \n" + pageSize);
 		List<E> singlePage = pagedQuery.getResultList();
 		Pager<E> p = new Pager<E>(singlePage, totalElements, pageNumber, pageSize);
@@ -302,7 +298,7 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 			}
 		}// END Inner class
 		new Predicate().predicate(entity, alias);
-		logger.debug("JPQL: \n" + jpql.toString() + "\n" + "Arguments: \n" + Arrays.toString(args.toArray()));
+		LOG.debug("JPQL: \n" + jpql.toString() + "\n" + "Arguments: \n" + Arrays.toString(args.toArray()));
 		return new JpqlAndArgs(jpql.toString(), args.toArray());
 	}
 
@@ -399,7 +395,7 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 			}
 		}// END Inner class
 		new Predicate().predicate(entity, alias);
-		logger.debug("JPQL: \n" + jpql.toString() + "\n" + "Arguments: \n" + Arrays.toString(args.toArray()));
+		LOG.debug("JPQL: \n" + jpql.toString() + "\n" + "Arguments: \n" + Arrays.toString(args.toArray()));
 		return new JpqlAndArgs(jpql.toString(), args.toArray());
 	}
 
@@ -420,7 +416,7 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 	 * @param o
 	 * @return
 	 */
-	private boolean availableObj(Object o) {
+	protected boolean availableObj(Object o) {
 		return o instanceof Serializable && o instanceof String || o instanceof Number || o instanceof Enum
 				|| o instanceof Character || o instanceof Boolean || o instanceof Date || o instanceof Calendar
 				|| o instanceof Timestamp || o instanceof TimeZone || o instanceof TemporalAmount || o instanceof Temporal;

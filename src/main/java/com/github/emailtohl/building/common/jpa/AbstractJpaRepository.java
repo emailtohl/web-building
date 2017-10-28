@@ -20,7 +20,7 @@ import org.apache.logging.log4j.Logger;
  * @date 2016.09.08
  */
 public abstract class AbstractJpaRepository<I extends Serializable, E extends Serializable> {
-	private static final Logger logger = LogManager.getLogger();
+	protected static final Logger LOG = LogManager.getLogger();
 	protected final Class<I> idClass;
 	protected final Class<E> entityClass;
 	@PersistenceUnit
@@ -66,15 +66,15 @@ public abstract class AbstractJpaRepository<I extends Serializable, E extends Se
 		idClass = (Class<I>) classes[0];
 		entityClass = (Class<E>) classes[1];
 		if (idClass == null) {
-			logger.debug("初始化： " + this.getClass() + " 时，idClass == null");
+			LOG.debug("初始化： " + this.getClass() + " 时，idClass == null");
 			throw new IllegalStateException("初始化： " + this.getClass() + " 时，idClass == null");
 		}
 		if (entityClass == null) {
-			logger.debug("初始化： " + this.getClass() + " 时，entityClass == null");
+			LOG.debug("初始化： " + this.getClass() + " 时，entityClass == null");
 			throw new IllegalStateException("初始化： " + this.getClass() + " 时，entityClass == null");
 		}
-		logger.debug(idClass);
-		logger.debug(entityClass);
+		LOG.debug(idClass);
+		LOG.debug(entityClass);
 	}
 
 	/**
