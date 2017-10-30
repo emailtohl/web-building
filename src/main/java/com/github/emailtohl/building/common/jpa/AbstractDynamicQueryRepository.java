@@ -1,6 +1,5 @@
 package com.github.emailtohl.building.common.jpa;
 
-import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -218,7 +217,7 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 		class Predicate {
 			boolean first = true;
 			int position = 1;
-			
+
 			void predicate(Object o, String prefix) {
 				Class<?> clz;
 				// 如果是本实体继承树上的类，则只分析基类的属性
@@ -235,70 +234,69 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 						clz = clz.getSuperclass();
 					}
 				}
-				BeanInfo info;
 				try {
-					info = Introspector.getBeanInfo(clz, Object.class);
-				} catch (IntrospectionException e) {
-					e.printStackTrace();
-					throw new IllegalArgumentException(e);
-				}
-				PropertyDescriptor[] descriptors = info.getPropertyDescriptors();
-				for (PropertyDescriptor descriptor : descriptors) {
-					if (BeanUtil.getAnnotation(descriptor, Transient.class) != null) {
-						continue;
-					}
-					Object value = null;
-					try {
+					for (PropertyDescriptor descriptor : Introspector.getBeanInfo(clz, Object.class)
+							.getPropertyDescriptors()) {
+						if (BeanUtil.getAnnotation(descriptor, Transient.class) != null) {
+							continue;
+						}
 						Method m = descriptor.getReadMethod();
 						if (m == null) {
 							continue;
 						}
-						value = m.invoke(o);
-					} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-						e.printStackTrace();
-					}
-					if (value == null) {
-						continue;
-					}
-					if (availableObj(value)) {
-						String name = descriptor.getName();
-						if (first) {
-							jpql.append(" WHERE ");
-							first = false;
-							if (value instanceof String && isFuzzy) {
-								jpql.append(prefix).append('.').append(name).append(" LIKE ?").append(position);
-							} else {
-								jpql.append(prefix).append('.').append(name).append(" = ?").append(position);
-							}
-						} else {
-							jpql.append(" AND ");
-							if (value instanceof String && isFuzzy) {
-								jpql.append(prefix).append('.').append(name).append(" LIKE ?").append(position);
-							} else {
-								jpql.append(prefix).append('.').append(name).append(" = ?").append(position);
-							}
+						Object value = m.invoke(o);
+						if (value == null) {
+							continue;
 						}
-						args.add(value);
-						position++;
-					} else {
-						ManyToOne manyToOne = BeanUtil.getAnnotation(descriptor, ManyToOne.class);
-						OneToOne oneToOne = BeanUtil.getAnnotation(descriptor, OneToOne.class);
-						Embedded embedded = BeanUtil.getAnnotation(descriptor, Embedded.class);
-						if (manyToOne != null || oneToOne != null || embedded != null) {
-							if (set.contains(o)) {// 若遇到相互关联的情况，则终止递归
-								return;
-							}
-							set.add(o);
+						if (availableObj(value)) {
 							String name = descriptor.getName();
-							predicate(value, prefix + "." + name);
+							if (first) {
+								jpql.append(" WHERE ");
+								first = false;
+								if (value instanceof String && isFuzzy) {
+									jpql.append("lower(").append(prefix).append('.').append(name).append(')').append(" LIKE ?").append(position);
+								} else {
+									jpql.append(prefix).append('.').append(name).append(" = ?").append(position);
+								}
+							} else {
+								jpql.append(" AND ");
+								if (value instanceof String && isFuzzy) {
+									jpql.append("lower(").append(prefix).append('.').append(name).append(')').append(" LIKE ?").append(position);
+								} else {
+									jpql.append(prefix).append('.').append(name).append(" = ?").append(position);
+								}
+							}
+							if (value instanceof String && isFuzzy) {
+								args.add(((String) value).trim().toLowerCase());
+							} else {
+								args.add(value);
+							}
+							position++;
+						} else {
+							ManyToOne manyToOne = BeanUtil.getAnnotation(descriptor, ManyToOne.class);
+							OneToOne oneToOne = BeanUtil.getAnnotation(descriptor, OneToOne.class);
+							Embedded embedded = BeanUtil.getAnnotation(descriptor, Embedded.class);
+							if (manyToOne != null || oneToOne != null || embedded != null) {
+								if (set.contains(o)) {// 若遇到相互关联的情况，则终止递归
+									return;
+								}
+								set.add(o);
+								String name = descriptor.getName();
+								predicate(value, prefix + "." + name);
+							}
 						}
-					}
 
+					}
+				} catch (IntrospectionException | IllegalAccessException | IllegalArgumentException
+						| InvocationTargetException e) {
+					LOG.catching(e);
+					throw new IllegalArgumentException(e);
 				}
 			}
 		}// END Inner class
 		new Predicate().predicate(entity, alias);
-		LOG.debug("JPQL: \n" + jpql.toString() + "\n" + "Arguments: \n" + Arrays.toString(args.toArray()));
+		if (LOG.isDebugEnabled())
+			LOG.debug("JPQL: \n" + jpql.toString() + "\n" + "Arguments: \n" + Arrays.toString(args.toArray()));
 		return new JpqlAndArgs(jpql.toString(), args.toArray());
 	}
 
@@ -343,15 +341,17 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 					for (int i = 0; i < fields.length; i++) {
 						Field field = fields[i];
 						int modifiers = field.getModifiers();
-						if (Modifier.isStatic(modifiers) || Modifier.isTransient(modifiers) || field.getAnnotation(Transient.class) != null) {
+						if (Modifier.isStatic(modifiers) || Modifier.isTransient(modifiers)
+								|| field.getAnnotation(Transient.class) != null) {
 							continue;
 						}
 						field.setAccessible(true);
 						Object value = null;
 						try {
 							value = field.get(o);
-						} catch (IllegalArgumentException | IllegalAccessException e) {
-							e.printStackTrace();
+						} catch (IllegalAccessException e) {
+							LOG.catching(e);
+							throw new IllegalArgumentException(e);
 						}
 						if (value == null) {
 							continue;
@@ -362,19 +362,23 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 								jpql.append(" WHERE ");
 								first = false;
 								if (value instanceof String && isFuzzy) {
-									jpql.append(prefix).append('.').append(name).append(" LIKE ?").append(position);
+									jpql.append("lower(").append(prefix).append('.').append(name).append(')').append(" LIKE ?").append(position);
 								} else {
-									jpql.append(prefix).append('.').append(name).append(" = ?").append(position);
+									jpql.append("lower(").append(prefix).append('.').append(name).append(')').append(" = ?").append(position);
 								}
 							} else {
 								jpql.append(" AND ");
 								if (value instanceof String && isFuzzy) {
-									jpql.append(prefix).append('.').append(name).append(" LIKE ?").append(position);
+									jpql.append("lower(").append(prefix).append('.').append(name).append(')').append(" LIKE ?").append(position);
 								} else {
-									jpql.append(prefix).append('.').append(name).append(" = ?").append(position);
+									jpql.append("lower(").append(prefix).append('.').append(name).append(')').append(" = ?").append(position);
 								}
 							}
-							args.add(value);
+							if (value instanceof String && isFuzzy) {
+								args.add(((String) value).trim().toLowerCase());
+							} else {
+								args.add(value);
+							}
 							position++;
 						} else {
 							ManyToOne manyToOne = field.getAnnotation(ManyToOne.class);
@@ -395,7 +399,8 @@ public abstract class AbstractDynamicQueryRepository<E extends Serializable> ext
 			}
 		}// END Inner class
 		new Predicate().predicate(entity, alias);
-		LOG.debug("JPQL: \n" + jpql.toString() + "\n" + "Arguments: \n" + Arrays.toString(args.toArray()));
+		if (LOG.isDebugEnabled())
+			LOG.debug("JPQL: \n" + jpql.toString() + "\n" + "Arguments: \n" + Arrays.toString(args.toArray()));
 		return new JpqlAndArgs(jpql.toString(), args.toArray());
 	}
 

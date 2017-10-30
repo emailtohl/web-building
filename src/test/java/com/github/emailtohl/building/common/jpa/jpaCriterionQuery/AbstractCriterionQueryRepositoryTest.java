@@ -6,9 +6,16 @@ import static com.github.emailtohl.building.initdb.PersistenceData.foo;
 import static org.junit.Assert.assertFalse;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.persistence.AccessType;
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -129,4 +136,31 @@ public class AbstractCriterionQueryRepositoryTest {
 		assertFalse(page.getContent().isEmpty());
 	}
 
+	@Test
+	public void testToPredicate() {
+		Employee params = new Employee();
+		params.setName(foo.getName().toUpperCase());
+		params.setUsername(foo.getUsername().toUpperCase());
+		
+		EntityManager em = employeeRepository.getEntityManager();
+		CriteriaBuilder b = em.getCriteriaBuilder();
+		CriteriaQuery<Employee> q = b.createQuery(employeeRepository.getEntityClass());
+		Root<Employee> r = q.from(employeeRepository.getEntityClass());
+		Set<Predicate> set = employeeRepository.toPredicate(params, AccessType.FIELD, r, b);
+		Predicate[] ps = new Predicate[set.size()];
+		q = q.select(r).where(set.toArray(ps));
+//		em.getTransaction().begin();
+		List<Employee> ls = em.createQuery(q).getResultList();
+		assertFalse(ls.isEmpty());
+		ls.forEach(e -> System.out.println(e));
+		
+		set = employeeRepository.toPredicate(params, AccessType.PROPERTY, r, b);
+		ps = new Predicate[set.size()];
+		q = q.select(r).where(set.toArray(ps));
+		ls = em.createQuery(q).getResultList();
+		assertFalse(ls.isEmpty());
+		ls.forEach(e -> System.out.println(e));
+		
+//		em.getTransaction().commit();
+	}
 }

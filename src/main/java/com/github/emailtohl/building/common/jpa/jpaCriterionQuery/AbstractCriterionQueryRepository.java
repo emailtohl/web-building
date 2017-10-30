@@ -33,6 +33,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.query.QueryUtils;
 
 import com.github.emailtohl.building.common.jpa.AbstractDynamicQueryRepository;
+import com.github.emailtohl.building.common.jpa.entity.BaseEntity;
 import com.github.emailtohl.building.common.utils.BeanUtil;
 
 /**
@@ -138,7 +139,7 @@ public abstract class AbstractCriterionQueryRepository<E extends Serializable> e
 								path = prefix.get(name);
 							}
 							if (value instanceof String && isFuzzy) {
-								predicates.add(b.like((Path<String>) path, ((String) value).trim()));
+								predicates.add(b.like(b.lower((Path<String>) path), ((String) value).trim().toLowerCase()));
 							} else {
 								predicates.add(b.equal(path, value));
 							}
@@ -188,7 +189,7 @@ public abstract class AbstractCriterionQueryRepository<E extends Serializable> e
 						clz = clz.getSuperclass();
 					}
 				}
-				while (clz != null && clz != Object.class) {
+				while (clz != null && clz != BaseEntity.class && clz != Object.class) {
 					Field[] fields = clz.getDeclaredFields();
 					for (int i = 0; i < fields.length; i++) {
 						Field field = fields[i];
@@ -217,7 +218,7 @@ public abstract class AbstractCriterionQueryRepository<E extends Serializable> e
 								path = prefix.get(name);
 							}
 							if (value instanceof String && isFuzzy) {
-								predicates.add(b.like((Path<String>) path, ((String) value).trim()));
+								predicates.add(b.like(b.lower((Path<String>) path), ((String) value).trim().toLowerCase()));
 							} else {
 								predicates.add(b.equal(path, value));
 							}
