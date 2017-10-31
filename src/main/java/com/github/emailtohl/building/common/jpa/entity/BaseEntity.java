@@ -74,7 +74,7 @@ public abstract class BaseEntity implements Serializable {
 	 * 若jdbc返回0，要么item不存在，要么不再有版本0，此时会抛javax.persistence.OptimisticLockException异常
 	 * 需捕获此异常给用户适当提示。
 	 */
-	protected int version;
+	protected Integer version;
 	
 	/**
 	 * 获取ID
@@ -135,11 +135,11 @@ public abstract class BaseEntity implements Serializable {
 	}
 	
 	@Version
-	protected int getVersion() {
+	protected Integer getVersion() {
 		return version;
 	}
 
-	protected void setVersion(int version) {
+	protected void setVersion(Integer version) {
 		this.version = version;
 	}
 
