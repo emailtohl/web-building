@@ -172,7 +172,7 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 							embclz = genericClasses[0];
 						}
 					}
-					findProper(name + p.getName(), embclz, fields);
+					findProper(name.isEmpty() ? p.getName() : name + '.' + p.getName(), embclz, fields);
 				} else if (f != null) {
 					String field = (name.isEmpty() ? "" : name + '.') + (f.name().isEmpty() ? p.getName() : f.name());
 					if (!fields.contains(field)) {
@@ -213,7 +213,7 @@ public abstract class AbstractSearchableRepository<E extends Serializable> exten
 							embclz = genericClasses[0];
 						}
 					}
-					findField(name + fs[i].getName(), fs[i].getType(), fields);
+					findField(name.isEmpty() ? fs[i].getName() : name + '.' + fs[i].getName(), fs[i].getType(), fields);
 				} else if (f != null) {
 					String field = (name.isEmpty() ? "" : name + '.') + (f.name().isEmpty() ? fs[i].getName() : f.name());
 					if (!fields.contains(field)) {
