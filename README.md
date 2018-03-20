@@ -1,6 +1,7 @@
-# DEPRECATED
+# 废弃 DEPRECATED
 
 此项目已弃用，不再维护，请转至更新项目:[integration](https://github.com/emailtohl/integration)。
+
 This project is deprecated and no longer being maintained, please switch to the update project: [integration](https://github.com/emailtohl/integration).
 
 
@@ -18,7 +19,7 @@ This project is deprecated and no longer being maintained, please switch to the 
  - 安全：spring security（XSS、CSRF、Session固定、应用层安全校验）
  - 数据访问层：JPA Hibernate、spring data、lucene（搜索引擎）
  - 其他：Hibernate校验、Hibernate Envers（审计）、Hibernate Search（全文搜索）等
- 
+
 #### JavaScript
 - bootstrap + adminLTE
 - RequireJS
